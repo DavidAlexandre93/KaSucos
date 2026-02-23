@@ -74,12 +74,86 @@ const subscriptionOptions = [
   { id: "kids", name: "Maçã + Morango Kids", description: "Sem açúcar adicionado", price: 11.9 },
 ];
 
+const flavorIngredients = {
+  frutas: [
+    {
+      id: "banana",
+      name: "Banana",
+      calories: 89,
+      benefits: ["Fonte de potássio", "Energia rápida"],
+    },
+    {
+      id: "morango",
+      name: "Morango",
+      calories: 32,
+      benefits: ["Rico em vitamina C", "Ação antioxidante"],
+    },
+    {
+      id: "abacaxi",
+      name: "Abacaxi",
+      calories: 50,
+      benefits: ["Auxilia na digestão", "Hidratação natural"],
+    },
+  ],
+  vegetais: [
+    {
+      id: "couve",
+      name: "Couve",
+      calories: 35,
+      benefits: ["Alto teor de fibras", "Rico em ferro"],
+    },
+    {
+      id: "cenoura",
+      name: "Cenoura",
+      calories: 41,
+      benefits: ["Fonte de vitamina A", "Contribui para a saúde da pele"],
+    },
+    {
+      id: "beterraba",
+      name: "Beterraba",
+      calories: 43,
+      benefits: ["Apoia a circulação", "Pré-treino natural"],
+    },
+  ],
+  superalimentos: [
+    {
+      id: "chia",
+      name: "Chia",
+      calories: 49,
+      benefits: ["Ômega-3 vegetal", "Promove saciedade"],
+    },
+    {
+      id: "gengibre",
+      name: "Gengibre",
+      calories: 16,
+      benefits: ["Ação anti-inflamatória", "Estimula a digestão"],
+    },
+    {
+      id: "spirulina",
+      name: "Spirulina",
+      calories: 20,
+      benefits: ["Proteína vegetal", "Apoia a imunidade"],
+    },
+  ],
+};
+
+const ingredientGroups = [
+  { id: "frutas", label: "Frutas" },
+  { id: "vegetais", label: "Vegetais" },
+  { id: "superalimentos", label: "Superalimentos" },
+];
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
 function App() {
   const [selectedJuices, setSelectedJuices] = useState(["detox", "imunidade", "digestivo"]);
   const [isSubscriptionPaused, setIsSubscriptionPaused] = useState(false);
+  const [selectedIngredients, setSelectedIngredients] = useState({
+    frutas: ["abacaxi"],
+    vegetais: ["couve"],
+    superalimentos: ["gengibre"],
+  });
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -91,12 +165,46 @@ function App() {
     [selectedItems]
   );
 
+  const selectedFlavorItems = useMemo(
+    () =>
+      ingredientGroups.flatMap((group) =>
+        flavorIngredients[group.id].filter((ingredient) =>
+          selectedIngredients[group.id].includes(ingredient.id)
+        )
+      ),
+    [selectedIngredients]
+  );
+
+  const estimatedCalories = useMemo(
+    () => selectedFlavorItems.reduce((total, ingredient) => total + ingredient.calories, 0),
+    [selectedFlavorItems]
+  );
+
+  const liveBenefits = useMemo(
+    () => Array.from(new Set(selectedFlavorItems.flatMap((ingredient) => ingredient.benefits))),
+    [selectedFlavorItems]
+  );
+
   const toggleJuiceSelection = (juiceId) => {
     setSelectedJuices((current) => {
       if (current.includes(juiceId)) {
         return current.filter((id) => id !== juiceId);
       }
       return [...current, juiceId];
+    });
+  };
+
+  const toggleIngredient = (groupId, ingredientId) => {
+    setSelectedIngredients((current) => {
+      const currentGroup = current[groupId];
+      const updatedGroup = currentGroup.includes(ingredientId)
+        ? currentGroup.filter((id) => id !== ingredientId)
+        : [...currentGroup, ingredientId];
+
+      return {
+        ...current,
+        [groupId]: updatedGroup,
+      };
     });
   };
 
@@ -119,6 +227,9 @@ function App() {
           </li>
           <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
+          </li>
+          <li>
+            <a href="#combinador">Combinador</a>
           </li>
           <li>
             <a href="#assinatura">Assinatura</a>
@@ -222,6 +333,68 @@ function App() {
             mantidos refrigerados entre 2°C e 6°C. Após o recebimento, consuma em até 24h para
             preservar sabor, nutrientes e segurança alimentar.
           </aside>
+        </section>
+
+        <section id="combinador" className="section flavor-combiner">
+          <div className="section-title">
+            <h3>Combinador de sabores</h3>
+            <p>
+              Selecione frutas, vegetais e superalimentos para criar sua bebida personalizada.
+              As calorias e os benefícios são atualizados em tempo real.
+            </p>
+          </div>
+
+          <div className="combiner-layout">
+            <div className="combiner-groups">
+              {ingredientGroups.map((group) => (
+                <article key={group.id} className="combiner-group">
+                  <h4>{group.label}</h4>
+                  <div className="combiner-options">
+                    {flavorIngredients[group.id].map((ingredient) => {
+                      const isSelected = selectedIngredients[group.id].includes(ingredient.id);
+                      return (
+                        <label
+                          key={ingredient.id}
+                          className={`ingredient-option ${isSelected ? "selected" : ""}`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleIngredient(group.id, ingredient.id)}
+                          />
+                          <div>
+                            <strong>{ingredient.name}</strong>
+                            <span>{ingredient.calories} kcal por porção</span>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <aside className="combiner-summary" aria-live="polite">
+              <h4>Resumo da bebida</h4>
+              <p>
+                <strong>Ingredientes selecionados:</strong> {selectedFlavorItems.length}
+              </p>
+              <p>
+                <strong>Calorias estimadas:</strong> {estimatedCalories} kcal
+              </p>
+
+              <h5>Benefícios em destaque</h5>
+              {liveBenefits.length ? (
+                <ul>
+                  {liveBenefits.map((benefit) => (
+                    <li key={benefit}>{benefit}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Selecione ingredientes para visualizar os benefícios.</p>
+              )}
+            </aside>
+          </div>
         </section>
 
         <section id="assinatura" className="subscription">

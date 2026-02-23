@@ -271,6 +271,91 @@ main {
   line-height: 1.5;
 }
 
+.flavor-combiner {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.combiner-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+.combiner-groups {
+  display: grid;
+  gap: 12px;
+}
+
+.combiner-group {
+  border: 1px solid #ddeade;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f6faf7;
+}
+
+.combiner-group h4 {
+  margin: 0 0 10px;
+  color: var(--green-900);
+}
+
+.combiner-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.ingredient-option {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  border: 1px solid #d4e5d9;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.ingredient-option.selected {
+  border-color: #7ec38f;
+  background: #e9f7ec;
+}
+
+.ingredient-option div {
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredient-option span {
+  color: var(--text-600);
+  font-size: 14px;
+}
+
+.combiner-summary {
+  background: var(--green-900);
+  color: #fff;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.combiner-summary p {
+  color: #edf7ef;
+}
+
+.combiner-summary h5 {
+  margin: 10px 0 6px;
+}
+
+.combiner-summary ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
 .subscription {
   margin-top: 30px;
   background: var(--green-900);
@@ -390,6 +475,10 @@ main {
 
 @media (max-width: 980px) {
   .subscription-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .combiner-layout {
     grid-template-columns: 1fr;
   }
 }
