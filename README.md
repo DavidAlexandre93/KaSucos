@@ -38,7 +38,13 @@ Change the data in `public/data/data.json` and add images to `public/img/`.
 ## npm deprecation warnings
 If you see warnings such as `rimraf@2`, `babel-eslint`, or `core-js@2` during install, those typically come from an old lockfile or a previously installed dependency tree.
 
-This repo currently uses a modern Vite + React dependency set in `package.json`, so the cleanest fix is to remove stale install artifacts and reinstall:
+This repo currently uses a modern Vite + React dependency set in `package.json`. To avoid stale transitive dependencies, run a clean reinstall:
+
+```bash
+npm run reinstall:clean
+```
+
+Or manually:
 
 ```bash
 rm -rf node_modules package-lock.json yarn.lock

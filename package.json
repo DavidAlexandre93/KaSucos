@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
+    "clean:deps": "rm -rf node_modules package-lock.json yarn.lock",
+    "reinstall:clean": "npm run clean:deps && npm install",
     "build": "vite build",
     "preview": "vite preview"
   },
