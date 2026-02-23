@@ -74,6 +74,44 @@ const subscriptionOptions = [
   { id: "kids", name: "Maçã + Morango Kids", description: "Sem açúcar adicionado", price: 11.9 },
 ];
 
+const paymentMethods = [
+  {
+    id: "credit",
+    title: "Cartão de crédito",
+    description: "Aceitamos Visa, Mastercard, Elo, American Express e Hipercard.",
+    detail: "Parcelamento em até 12x com aprovação imediata.",
+    tags: ["Visa", "Mastercard", "Elo", "Amex", "Hipercard"],
+  },
+  {
+    id: "boleto",
+    title: "Boleto bancário",
+    description: "Opção sem cartão para quem prefere pagar à vista.",
+    detail: "Compensação em até 1 dia útil e confirmação automática do pedido.",
+    tags: ["Sem cartão", "À vista"],
+  },
+  {
+    id: "pix",
+    title: "Pix",
+    description: "Pagamento instantâneo com QR Code e chave Copia e Cola.",
+    detail: "Desconto extra de 5% em compras avulsas.",
+    tags: ["Instantâneo", "24/7", "QR Code"],
+  },
+  {
+    id: "wallets",
+    title: "Carteiras digitais",
+    description: "Finalize com Apple Pay ou Google Pay em poucos toques.",
+    detail: "Checkout com biometria, sem digitar dados do cartão.",
+    tags: ["Apple Pay", "Google Pay"],
+  },
+  {
+    id: "bnpl",
+    title: "Buy now, pay later",
+    description: "Compre agora e pague em parcelas quinzenais sem burocracia.",
+    detail: "Ideal para incluir mais clientes com limite reduzido no cartão.",
+    tags: ["Aprovação rápida", "Parcelas quinzenais"],
+  },
+];
+
 const flavorIngredients = {
   frutas: [
     {
@@ -239,6 +277,7 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("credit");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -326,6 +365,11 @@ function App() {
     [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
   );
 
+  const highlightedPaymentMethod = useMemo(
+    () => paymentMethods.find((method) => method.id === selectedPaymentMethod),
+    [selectedPaymentMethod]
+  );
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -351,6 +395,9 @@ function App() {
           </li>
           <li>
             <a href="#assinatura">Assinatura</a>
+          </li>
+          <li>
+            <a href="#pagamentos">Pagamentos</a>
           </li>
           <li>
             <a href="#consultoria">Consultoria</a>
@@ -651,6 +698,41 @@ function App() {
                   objetivo para ampliar as combinações.
                 </p>
               )}
+            </aside>
+          </div>
+        </section>
+
+        <section id="pagamentos" className="section payments">
+          <div className="section-title">
+            <h3>Múltiplos métodos de pagamento</h3>
+            <p>
+              Mais opções para incluir diferentes perfis de clientes: cartão de crédito com
+              diversas bandeiras, boleto, Pix, carteiras digitais e buy now pay later.
+            </p>
+          </div>
+
+          <div className="payments-layout">
+            <article className="payment-methods-list">
+              {paymentMethods.map((method) => (
+                <button
+                  key={method.id}
+                  className={selectedPaymentMethod === method.id ? "selected" : ""}
+                  onClick={() => setSelectedPaymentMethod(method.id)}
+                >
+                  <strong>{method.title}</strong>
+                  <span>{method.description}</span>
+                </button>
+              ))}
+            </article>
+
+            <aside className="payment-method-highlight" aria-live="polite">
+              <h4>{highlightedPaymentMethod?.title}</h4>
+              <p>{highlightedPaymentMethod?.detail}</p>
+              <ul>
+                {highlightedPaymentMethod?.tags.map((tag) => (
+                  <li key={tag}>{tag}</li>
+                ))}
+              </ul>
             </aside>
           </div>
         </section>
