@@ -271,6 +271,111 @@ main {
   line-height: 1.5;
 }
 
+.inventory-sync {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.inventory-summary {
+  margin-top: 14px;
+  background: #f5faf6;
+  border: 1px solid #d8e8dc;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+}
+
+.inventory-summary p {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.inventory-summary button,
+.inventory-actions button,
+.sync-btn {
+  border: 1px solid #c6dccd;
+  background: #fff;
+  color: var(--green-900);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inventory-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.inventory-card {
+  border: 1px solid #d8e8dc;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f8fcf9;
+}
+
+.inventory-card.blocked {
+  border-color: #f3b2b2;
+  background: #fff7f7;
+}
+
+.inventory-card h4 {
+  margin: 0 0 8px;
+}
+
+.inventory-card p {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.inventory-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.inventory-status {
+  margin-top: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.inventory-status span {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.inventory-status .ok {
+  background: #e6f5ea;
+  color: #1e7040;
+}
+
+.inventory-status .warning {
+  background: #fff3df;
+  color: #8a5608;
+}
+
+.inventory-status .blocked {
+  background: #ffe5e5;
+  color: #933535;
+}
+
+.sync-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
 .flavor-combiner {
   background: #fff;
   border: 1px solid #e2ece4;
