@@ -45,6 +45,27 @@ const benefits = [
   },
 ];
 
+const sustainabilityInitiatives = [
+  {
+    title: "Embalagens recicláveis",
+    description:
+      "Nossas garrafas e tampas são 100% recicláveis, com instruções de descarte no rótulo para facilitar a coleta seletiva.",
+    metric: "92% dos pedidos já usam embalagem reciclável",
+  },
+  {
+    title: "Ingredientes orgânicos selecionados",
+    description:
+      "Priorizamos frutas, vegetais e superalimentos de produtores orgânicos parceiros, reduzindo uso de agrotóxicos.",
+    metric: "Mais de 70% do cardápio com base orgânica",
+  },
+  {
+    title: "Política de redução de plástico",
+    description:
+      "Retiramos canudos plásticos, adotamos lacres de menor gramatura e incentivamos retornáveis para assinantes.",
+    metric: "Meta de reduzir 35% do plástico virgem até 2026",
+  },
+];
+
 const refrigeratedDeliveryOptions = [
   {
     title: "Entrega refrigerada expressa",
@@ -344,6 +365,9 @@ function App() {
             <a href="#beneficios">Benefícios</a>
           </li>
           <li>
+            <a href="#sustentabilidade">Sustentabilidade</a>
+          </li>
+          <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
           </li>
           <li>
@@ -423,6 +447,26 @@ function App() {
               <article key={item.title}>
                 <h4>{item.title}</h4>
                 <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="sustentabilidade" className="section sustainability">
+          <div className="section-title">
+            <h3>Sustentabilidade e embalagens</h3>
+            <p>
+              Transparência sobre reciclagem, ingredientes orgânicos e redução de plástico para
+              consumidores conscientes.
+            </p>
+          </div>
+
+          <div className="sustainability-grid">
+            {sustainabilityInitiatives.map((initiative) => (
+              <article key={initiative.title} className="sustainability-card">
+                <h4>{initiative.title}</h4>
+                <p>{initiative.description}</p>
+                <small>{initiative.metric}</small>
               </article>
             ))}
           </div>
