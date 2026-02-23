@@ -14,14 +14,44 @@ This is a ReactJS based landing page template, fit for a startup company/service
 All 'visual' data can be easily modified by changing the data.json file.
 
 ## Make it Yours!
-### 1. Preps
-You will need to have <a href="https://nodejs.org/">Node JS</a> installed on your pc. 
+### 1. Prerequisites
+Install <a href="https://nodejs.org/">Node.js</a> 20.x.
 
-### 2. Clone Files
-After cloning the files, you will have to run ```yarn``` followed by ```yarn start``` in the CLI
-### 3. Add your own data 
-Change the data in the ```data.json``` file as well as add any images to ```public/img/```
-You can also change styles by modifying the ```public/css``` files.
+### 2. Install and run locally
+After cloning the files, install dependencies and start the dev server:
+
+```bash
+npm install
+npm run dev
+```
+
+You can also use Yarn if you prefer:
+
+```bash
+yarn
+yarn dev
+```
+
+### 3. Add your own data
+Change the data in `public/data/data.json` and add images to `public/img/`.
+
+## npm deprecation warnings
+If you see warnings such as `rimraf@2`, `babel-eslint`, or `core-js@2` during install, those typically come from an old lockfile or a previously installed dependency tree.
+
+This repo currently uses a modern Vite + React dependency set in `package.json`. To avoid stale transitive dependencies, run a clean reinstall:
+
+```bash
+npm run reinstall:clean
+```
+
+Or manually:
+
+```bash
+rm -rf node_modules package-lock.json yarn.lock
+npm install
+```
+
+Warnings by themselves do **not** always mean your build is broken, but reinstalling from a clean state usually removes outdated transitive packages.
 
 
 ## Like this project?
