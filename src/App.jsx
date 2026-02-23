@@ -276,6 +276,115 @@ const juiceRecommendations = [
   },
 ];
 
+const campaignPreferenceOptions = [
+  { id: "detox", label: "Sucos detox" },
+  { id: "energetico", label: "Sucos energéticos" },
+  { id: "semLactose", label: "Sem lactose" },
+];
+
+const purchaseFrequencyOptions = [
+  { id: "alta", label: "Alta (2+ pedidos por semana)", minPurchases: 8 },
+  { id: "media", label: "Média (1 pedido por semana)", minPurchases: 4 },
+  { id: "baixa", label: "Baixa (até 3 pedidos por mês)", minPurchases: 1 },
+];
+
+const crmCustomers = [
+  {
+    id: "cliente-01",
+    name: "Mariana Oliveira",
+    preference: "detox",
+    frequency: "alta",
+    monthlyPurchases: 10,
+    channel: "WhatsApp",
+  },
+  {
+    id: "cliente-02",
+    name: "Lucas Mendes",
+    preference: "energetico",
+    frequency: "media",
+    monthlyPurchases: 5,
+    channel: "E-mail",
+  },
+  {
+    id: "cliente-03",
+    name: "Carla Nogueira",
+    preference: "semLactose",
+    frequency: "media",
+    monthlyPurchases: 4,
+    channel: "WhatsApp",
+  },
+  {
+    id: "cliente-04",
+    name: "Felipe Santos",
+    preference: "detox",
+    frequency: "baixa",
+    monthlyPurchases: 2,
+    channel: "Push app",
+  },
+  {
+    id: "cliente-05",
+    name: "Aline Rocha",
+    preference: "energetico",
+    frequency: "alta",
+    monthlyPurchases: 9,
+    channel: "WhatsApp",
+  },
+];
+
+const campaignLibrary = {
+  detox: {
+    alta: {
+      title: "VIP Detox da Semana",
+      message:
+        "Ofereça upgrade para kit 10x detox com 15% OFF e entrega refrigerada prioritária para manter recorrência.",
+    },
+    media: {
+      title: "Rotina Detox 2x1",
+      message:
+        "Envie cupom de recompra com validade de 5 dias para converter pedidos quinzenais em semanais.",
+    },
+    baixa: {
+      title: "Volte ao Detox",
+      message:
+        "Dispare campanha de reativação com frete grátis + sugestão de plano de 3 dias para retomar o hábito.",
+    },
+  },
+  energetico: {
+    alta: {
+      title: "Pré-treino Premium",
+      message:
+        "Campanha com combos energéticos + shot de gengibre como brinde para clientes de alta frequência.",
+    },
+    media: {
+      title: "Energia no Meio da Semana",
+      message:
+        "Incentive o 2º pedido da semana com desconto progressivo em sucos vermelhos e cítricos energéticos.",
+    },
+    baixa: {
+      title: "Retorno Energia Natural",
+      message:
+        "Oferta de primeira recomposição do mês com 20% OFF em kits pré e pós-treino.",
+    },
+  },
+  semLactose: {
+    alta: {
+      title: "Clube Zero Lactose",
+      message:
+        "Envie campanhas exclusivas com lançamentos sem lactose e pontos extras no programa de fidelidade.",
+    },
+    media: {
+      title: "Semana Leve Sem Lactose",
+      message:
+        "Sugira assinatura quinzenal com preço fechado e comunicação focada em digestibilidade.",
+    },
+    baixa: {
+      title: "Reativação Sem Lactose",
+      message:
+        "Dispare cupom de retomada com recomendação de sabores suaves e CTA para montar combo personalizado.",
+    },
+  },
+};
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -291,6 +400,8 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [campaignPreference, setCampaignPreference] = useState("detox");
+  const [campaignFrequency, setCampaignFrequency] = useState("alta");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -378,6 +489,17 @@ function App() {
     [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
   );
 
+  const segmentedCustomers = useMemo(
+    () =>
+      crmCustomers.filter(
+        (customer) =>
+          customer.preference === campaignPreference && customer.frequency === campaignFrequency
+      ),
+    [campaignPreference, campaignFrequency]
+  );
+
+  const selectedCampaign = campaignLibrary[campaignPreference][campaignFrequency];
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -416,6 +538,9 @@ function App() {
           </li>
           <li>
             <a href="#calculadora">Calculadora nutricional</a>
+          </li>
+          <li>
+            <a href="#campanhas">Campanhas</a>
           </li>
           <li>
             <a href="#contato">Contato</a>
@@ -860,6 +985,75 @@ function App() {
               >
                 Iniciar atendimento no WhatsApp
               </a>
+            </aside>
+          </div>
+        </section>
+
+        <section id="campanhas" className="section crm-campaigns">
+          <div className="section-title">
+            <h3>Personalização de campanhas</h3>
+            <p>
+              Segmente clientes por preferências de produto e frequency of purchase para enviar
+              campanhas específicas automaticamente.
+            </p>
+          </div>
+
+          <div className="crm-layout">
+            <article className="crm-filters">
+              <label>
+                Preferência principal
+                <select
+                  value={campaignPreference}
+                  onChange={(event) => setCampaignPreference(event.target.value)}
+                >
+                  {campaignPreferenceOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Frequency of purchase
+                <select
+                  value={campaignFrequency}
+                  onChange={(event) => setCampaignFrequency(event.target.value)}
+                >
+                  {purchaseFrequencyOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <p className="crm-hint">
+                Segmento atual: <strong>{segmentedCustomers.length} clientes elegíveis</strong>.
+              </p>
+            </article>
+
+            <aside className="crm-results" aria-live="polite">
+              <h4>{selectedCampaign.title}</h4>
+              <p>{selectedCampaign.message}</p>
+
+              <h5>Clientes no segmento</h5>
+              {segmentedCustomers.length ? (
+                <ul>
+                  {segmentedCustomers.map((customer) => (
+                    <li key={customer.id}>
+                      <strong>{customer.name}</strong>
+                      <span>
+                        {customer.monthlyPurchases} pedidos/mês · Canal: {customer.channel}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Nenhum cliente nessa combinação no momento.</p>
+              )}
+
+              <button type="button">Enviar campanha para o segmento</button>
             </aside>
           </div>
         </section>
