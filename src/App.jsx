@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const featuredJuices = [
@@ -348,6 +348,47 @@ const juiceRecommendations = [
   },
 ];
 
+const customerReviews = [
+  {
+    id: 1,
+    name: "Camila T.",
+    location: "Vila Mariana",
+    rating: 5,
+    comment:
+      "Assino há 3 meses e a qualidade é sempre impecável. O suco chega gelado e com sabor de fruta de verdade.",
+  },
+  {
+    id: 2,
+    name: "Rafael M.",
+    location: "Pinheiros",
+    rating: 5,
+    comment:
+      "Comprei para o pós-treino e virei cliente fixo. Entrega rápida e atendimento super prestativo.",
+  },
+  {
+    id: 3,
+    name: "Juliana S.",
+    location: "Moema",
+    rating: 4,
+    comment:
+      "Gostei muito do combinador de sabores. Consegui montar opções leves para a semana inteira.",
+  },
+  {
+    id: 4,
+    name: "Eduardo L.",
+    location: "Brooklin",
+    rating: 5,
+    comment:
+      "Excelente custo-benefício nos combos. Minha equipe do escritório pede toda sexta-feira.",
+  },
+];
+
+const socialProofNotifications = [
+  "Ana, da Bela Vista, avaliou 5★ o Combo Vitalidade há 2 min.",
+  "+18 pedidos finalizados no último horário de almoço.",
+  "Pedro acabou de renovar a assinatura Detox Verde por mais 30 dias.",
+  "94% dos clientes recomendam a Casa dos Sucos para amigos e família.",
+];
 const socialLinks = [
   {
     id: "instagram",
@@ -498,6 +539,7 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [socialProofIndex, setSocialProofIndex] = useState(0);
   const [enabledChannels, setEnabledChannels] = useState(["email", "push"]);
   const [selectedSegment, setSelectedSegment] = useState("frequentes");
   const [campaignPreference, setCampaignPreference] = useState("detox");
@@ -589,6 +631,32 @@ function App() {
     [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
   );
 
+  const averageRating = useMemo(
+    () =>
+      customerReviews.reduce((total, review) => total + review.rating, 0) /
+      customerReviews.length,
+    []
+  );
+
+  const fiveStarPercentage = useMemo(() => {
+    const fiveStarReviews = customerReviews.filter((review) => review.rating === 5).length;
+    return Math.round((fiveStarReviews / customerReviews.length) * 100);
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setSocialProofIndex((current) => (current + 1) % socialProofNotifications.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const renderStars = (rating) =>
+    Array.from({ length: 5 }, (_, index) => (
+      <span key={`${rating}-${index}`} aria-hidden="true" className={index < rating ? "filled" : "empty"}>
+        ★
+      </span>
+    ));
   const activeSegment = audienceSegments.find((segment) => segment.id === selectedSegment);
 
   const visibleJourneys = useMemo(
@@ -664,6 +732,7 @@ function App() {
             <a href="#calculadora">Calculadora nutricional</a>
           </li>
           <li>
+            <a href="#reviews">Reviews</a>
             <a href="#redes-sociais">Redes sociais</a>
             <a href="#campanhas">Campanhas</a>
           </li>
@@ -1199,6 +1268,47 @@ function App() {
           </div>
         </section>
 
+        <section id="reviews" className="section reviews-social-proof">
+          <div className="section-title">
+            <h3>Reviews e prova social</h3>
+            <p>
+              Sistemas de avaliação por estrelas e comentários fortalecem confiança e são decisivos
+              para mais de 90% dos consumidores no momento de compra.
+            </p>
+          </div>
+
+          <div className="reviews-overview">
+            <article>
+              <h4>Média geral</h4>
+              <p className="rating-number">{averageRating.toFixed(1)} / 5</p>
+              <div className="stars" aria-label={`Avaliação média de ${averageRating.toFixed(1)} de 5`}>
+                {renderStars(Math.round(averageRating))}
+              </div>
+            </article>
+            <article>
+              <h4>Clientes satisfeitos</h4>
+              <p className="rating-number">{fiveStarPercentage}%</p>
+              <p className="rating-support">das avaliações recentes foram 5 estrelas.</p>
+            </article>
+            <article>
+              <h4>Total de avaliações</h4>
+              <p className="rating-number">{customerReviews.length * 47}+</p>
+              <p className="rating-support">comentários verificados neste trimestre.</p>
+            </article>
+          </div>
+
+          <div className="reviews-grid">
+            {customerReviews.map((review) => (
+              <article key={review.id} className="review-card">
+                <div className="stars" aria-label={`${review.rating} de 5 estrelas`}>
+                  {renderStars(review.rating)}
+                </div>
+                <p>{review.comment}</p>
+                <small>
+                  {review.name} · {review.location}
+                </small>
+              </article>
+            ))}
         <section id="redes-sociais" className="section social-hub">
           <div className="section-title">
             <h3>Integração com redes sociais</h3>
@@ -1326,6 +1436,11 @@ function App() {
           </div>
         </section>
       </main>
+
+      <aside className="social-proof-toast" aria-live="polite">
+        <strong>Agora mesmo</strong>
+        <p>{socialProofNotifications[socialProofIndex]}</p>
+      </aside>
 
       <footer id="contato" className="footer">
         <div>

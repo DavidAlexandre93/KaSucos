@@ -1022,6 +1022,7 @@ main {
   border-radius: 10px;
 }
 
+.reviews-social-proof {
 .social-hub {
   background: #fff;
   border: 1px solid #e2ece4;
@@ -1029,6 +1030,97 @@ main {
   padding: 24px;
 }
 
+.reviews-overview {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.reviews-overview article {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 14px;
+  background: #f6faf7;
+}
+
+.reviews-overview h4 {
+  margin: 0;
+  color: var(--green-900);
+}
+
+.rating-number {
+  margin: 8px 0 6px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--green-900);
+}
+
+.rating-support {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+  font-size: 1.2rem;
+}
+
+.stars .filled {
+  color: #f7a032;
+}
+
+.stars .empty {
+  color: #cad9ce;
+}
+
+.reviews-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.review-card {
+  background: #ffffff;
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.review-card p {
+  color: var(--text-600);
+  line-height: 1.45;
+}
+
+.review-card small {
+  color: var(--green-900);
+  font-weight: 600;
+}
+
+.social-proof-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  max-width: 320px;
+  background: #123320;
+  color: #fff;
+  border-radius: 12px;
+  border: 1px solid #2f6745;
+  padding: 12px 14px;
+  box-shadow: 0 12px 24px rgba(12, 32, 20, 0.28);
+}
+
+.social-proof-toast strong {
+  display: block;
+  color: #ffd9a0;
+  margin-bottom: 4px;
+}
+
+.social-proof-toast p {
+  margin: 0;
+  line-height: 1.45;
 .social-links {
   margin-top: 14px;
   display: grid;
@@ -1161,5 +1253,11 @@ main {
 
   .hero h2 {
     font-size: 1.6rem;
+  }
+
+  .social-proof-toast {
+    right: 10px;
+    left: 10px;
+    max-width: initial;
   }
 }
