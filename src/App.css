@@ -210,6 +210,150 @@ main {
   border: 1px solid #e2ece4;
 }
 
+.fast-checkout {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.checkout-progress {
+  margin-top: 14px;
+  background: #edf5ef;
+  border-radius: 999px;
+  height: 16px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #d5e5da;
+}
+
+.checkout-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #2b7a45, #4caf65);
+  transition: width 200ms ease-in-out;
+}
+
+.checkout-progress span {
+  position: absolute;
+  right: 10px;
+  top: -24px;
+  font-size: 13px;
+  color: var(--green-700);
+  font-weight: 700;
+}
+
+.checkout-steps {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.checkout-steps li {
+  border: 1px solid #d4e5d9;
+  background: #f6faf7;
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 600;
+  color: var(--text-600);
+}
+
+.checkout-steps li span {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+  background: #dbeadf;
+  color: var(--green-900);
+}
+
+.checkout-steps li.active {
+  border-color: #7ec38f;
+  background: #e9f7ec;
+  color: var(--green-900);
+}
+
+.checkout-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 16px;
+}
+
+.checkout-form,
+.checkout-summary {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.checkout-form {
+  display: grid;
+  gap: 12px;
+  background: #f6faf7;
+}
+
+.guest-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-900);
+  font-weight: 600;
+}
+
+.checkout-fields-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.checkout-fields-grid label {
+  display: grid;
+  gap: 6px;
+  color: var(--green-900);
+  font-weight: 600;
+}
+
+.checkout-fields-grid input,
+.checkout-fields-grid select {
+  border: 1px solid #b7d5bf;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.checkout-summary {
+  background: var(--green-900);
+  color: #fff;
+}
+
+.checkout-summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.checkout-summary li {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.checkout-total {
+  margin: 12px 0;
+  font-size: 1.1rem;
+}
+
 .benefits-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -653,6 +797,18 @@ main {
 
   .calculator-layout {
     grid-template-columns: 1fr;
+  }
+
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-steps {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
   }
 }
 
