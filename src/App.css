@@ -137,6 +137,60 @@ main {
   margin-top: 32px;
 }
 
+.brand-story {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.brand-story-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+}
+
+.brand-story-text,
+.brand-commitments article {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.brand-story-text {
+  background: #f6faf7;
+}
+
+.brand-story-text p {
+  margin: 0;
+  color: var(--text-600);
+  line-height: 1.55;
+}
+
+.brand-story-text p + p {
+  margin-top: 12px;
+}
+
+.brand-commitments {
+  display: grid;
+  gap: 10px;
+}
+
+.brand-commitments article {
+  background: #fff;
+}
+
+.brand-commitments h4 {
+  margin: 0 0 8px;
+  color: var(--green-900);
+}
+
+.brand-commitments p {
+  margin: 0;
+  color: var(--text-600);
+}
+
 .section-title h3 {
   margin-bottom: 8px;
   font-size: 1.7rem;
@@ -648,6 +702,10 @@ main {
   }
 
   .nutrition-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-story-layout {
     grid-template-columns: 1fr;
   }
 

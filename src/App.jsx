@@ -45,6 +45,27 @@ const benefits = [
   },
 ];
 
+const brandStory = {
+  origin:
+    "A Casa dos Sucos nasceu em uma pequena feira de bairro, quando nossa fundadora começou a preparar receitas naturais para ajudar a família a manter uma alimentação mais equilibrada no dia a dia.",
+  purpose:
+    "Hoje, nosso propósito é tornar escolhas saudáveis acessíveis, com sucos de verdade, feitos com ingredientes frescos, rastreáveis e selecionados com responsabilidade.",
+  commitments: [
+    {
+      title: "Compromisso com a saúde",
+      text: "Nossas combinações são livres de conservantes e sem açúcar adicionado, priorizando valor nutricional e segurança alimentar em cada lote.",
+    },
+    {
+      title: "Compromisso com a sustentabilidade",
+      text: "Utilizamos embalagens recicláveis, reaproveitamos subprodutos orgânicos e otimizamos rotas de entrega para reduzir emissões.",
+    },
+    {
+      title: "Compromisso com fornecedores locais",
+      text: "Trabalhamos com produtores da região, fortalecendo a economia local e garantindo frutas mais frescas, colhidas no tempo certo.",
+    },
+  ],
+};
+
 const refrigeratedDeliveryOptions = [
   {
     title: "Entrega refrigerada expressa",
@@ -338,6 +359,9 @@ function App() {
         <h1>Casa dos Sucos</h1>
         <ul>
           <li>
+            <a href="#historia-proposito">História e propósito</a>
+          </li>
+          <li>
             <a href="#catalogo">Catálogo</a>
           </li>
           <li>
@@ -385,6 +409,28 @@ function App() {
             <p>
               7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.
             </p>
+          </div>
+        </section>
+
+        <section id="historia-proposito" className="section brand-story">
+          <div className="section-title">
+            <h3>História da marca e propósito</h3>
+          </div>
+
+          <div className="brand-story-layout">
+            <article className="brand-story-text">
+              <p>{brandStory.origin}</p>
+              <p>{brandStory.purpose}</p>
+            </article>
+
+            <div className="brand-commitments">
+              {brandStory.commitments.map((commitment) => (
+                <article key={commitment.title}>
+                  <h4>{commitment.title}</h4>
+                  <p>{commitment.text}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
