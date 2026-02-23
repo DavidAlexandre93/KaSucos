@@ -1,0 +1,176 @@
+{
+  "Header": {
+    "title": "Consultoria para universitários e ensino técnico",
+    "paragraph": "Entre em contato para saber mais informações"
+  },
+  "About": {
+    "paragraph": "Sou engenheiro elétrico formado pela universidade federal do estado de São Paulo e licenciatura como professor de matemática.",
+    "Why": [
+      "Qualidade na entrega",
+      "Tempo de entrega",
+      "Garantia de pontuação",
+      "Acompanhamento academico"
+    ],
+    "Why2": [
+      "Equipe especializada",
+      "Vários alunos ja atendidos",
+      "Experiencia de mercado",
+      "Metodo ágil implementado"
+    ]
+  },
+  "Gallery": [
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/01-large.jpg",
+      "smallImage": "img/portfolio/01-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/02-large.jpg",
+      "smallImage": "img/portfolio/02-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/03-large.jpg",
+      "smallImage": "img/portfolio/03-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/04-large.jpg",
+      "smallImage": "img/portfolio/04-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/05-large.jpg",
+      "smallImage": "img/portfolio/05-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/06-large.jpg",
+      "smallImage": "img/portfolio/06-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/07-large.jpg",
+      "smallImage": "img/portfolio/07-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/08-large.jpg",
+      "smallImage": "img/portfolio/08-small.jpg"
+    },
+    {
+      "title": "Project Title",
+      "largeImage": "img/portfolio/09-large.jpg",
+      "smallImage": "img/portfolio/09-small.jpg"
+    }
+  ],
+  "Services": [
+    {
+      "icon": "fa fa-book",
+      "name": "Trabalhos academicos",
+      "text": "Trabalhos academicos periodicos feitos e entregues tempo."
+    },
+    {
+      "icon": "fa fa-pencil",
+      "name": "Provas academicas",
+      "text": "Realização de provas academicas de todos os tipos."
+    },
+    {
+      "icon": "fa fa-graduation-cap",
+      "name": "Garantia",
+      "text": "Garantia de pontuação necessária para provas academicas."
+    },
+    {
+      "icon": "fa fa-file-pdf-o",
+      "name": "Trabalhos de conclusão de curso",
+      "text": "Realização de trabalhos e formatação, acompanhamento e TCC`s."
+    },
+    {
+      "icon": "fa fa-font",
+      "name": "Padronização de trabalho",
+      "text": "Trabalho de TCC realizado no padrão ABNT."
+    },
+    {
+      "icon": "fa fa-eye",
+      "name": "Acompanhamento de portal",
+      "text": "Acompanhamento de portal do aluno para realizaçã de tarefas diárias."
+    }
+  ],
+  "Testimonials": [
+    {
+      "img": "img/testimonials/01.jpeg",
+      "text": "\"Meu trabalho foi realizado com extrema qualidade e no prazo.\"",
+      "name": "David Alexandre"
+    },
+    {
+      "img": "img/testimonials/01.jpeg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "name"
+    },
+    {
+      "img": "img/testimonials/01.jpeg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "name"
+    },
+    {
+      "img": "img/testimonials/01.jpeg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "name"
+    },
+    {
+      "img": "img/testimonials/01.jpeg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "name"
+    },
+    {
+      "img": "img/testimonials/01.jpeg",
+      "text": "\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis sed dapibus leo nec ornare diam sedasd commodo nibh ante facilisis bibendum dolor feugiat at.\"",
+      "name": "name"
+    }
+  ],
+  "Team": [
+    {
+      "img": "img/team/01.jpg",
+      "link": "https://wa.me/+5511962524903?text=Ol%C3%A1,%20Zero%20Reprova%C3%A7%C3%A3o.%20Eu%20vim%20pelo%20seu%20site,%20estou%20interessado%20em%20seus%20servi%C3%A7os",
+      "name": "Whatsapp",
+      "job": "Whatsapp"
+    },
+    {
+      "img": "img/team/02.jpg",
+      "link": "https://www.instagram.com/zeroreprovacao/",
+      "name": "Instagram",
+      "job": "Instagram"
+    }
+  ],
+  "Contact": {
+    "address": "São Paulo - Brasil ",
+    "phone": "+55 (11) 9 6252-4903",
+    "email": "zeroreprovacao@outlook.com",
+    "facebook": "fb.com",
+    "instagram": "https://www.instagram.com/zeroreprovacao/",
+    "whatsapp": "https://wa.me/+5511962524903?text=Ol%C3%A1,%20Zero%20Reprova%C3%A7%C3%A3o.%20Eu%20vim%20pelo%20seu%20site,%20estou%20interessado%20em%20seus%20servi%C3%A7os"
+  },
+  "Features": [
+    {
+      "icon": "fa fa-thumbs-o-up",
+      "title": "Garantia",
+      "text": "Aprovação garantida ou seu dinheiro devolta."
+    },
+    {
+      "icon": "fa fa-clock-o",
+      "title": "Portal do aluno",
+      "text": "Acompanhamento do portal do aluno e entrega em tempo."
+    },
+    {
+      "icon": "fa fa-group",
+      "title": "Equipe especializada",
+      "text": "Equipe especializada para cada àrea."
+    },
+    {
+      "icon": "fa fa-magic",
+      "title": "Padrões de projeto",
+      "text": "Seguinto todos os padrões de projeto ABNT."
+    }
+  ]
+}
