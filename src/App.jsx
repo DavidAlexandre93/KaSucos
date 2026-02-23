@@ -54,7 +54,7 @@ const juices = [
     price: "R$ 14,90",
     availability: "Disponível hoje",
     image:
-      "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=1200&q=70",
+      "/img/garrafinha.png",
     tag: "Detox",
   },
   {
@@ -64,7 +64,7 @@ const juices = [
     price: "R$ 13,90",
     availability: "Disponível hoje",
     image:
-      "https://images.unsplash.com/photo-1603569283847-aa295f0d016a?auto=format&fit=crop&w=1200&q=70",
+      "/img/garrafinha02.png",
     tag: "Imunidade",
   },
   {
@@ -74,7 +74,7 @@ const juices = [
     price: "R$ 12,90",
     availability: "Últimas unidades",
     image:
-      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=1200&q=70",
+      "/img/garrafinha03.png",
     tag: "Refrescante",
   },
   {
@@ -84,7 +84,7 @@ const juices = [
     price: "R$ 17,90",
     availability: "Disponível hoje",
     image:
-      "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=1200&q=70",
+      "/img/about.png",
     tag: "Energia",
   },
 ];
@@ -116,7 +116,7 @@ function App() {
       <header className="topbar">
         <div className="container topbar-inner">
           <a href="#inicio" className="brand">
-            <img src="/img/logotipo.png" alt="KaSucos" />
+            <img src="/img/logotipo.jpeg" alt="KaSucos" />
             <span>KaSucos</span>
           </a>
           <nav>
@@ -147,7 +147,7 @@ function App() {
             </div>
           </div>
           <div className="hero-card">
-            <img src="/img/logotipo.png" alt="Logo KaSucos" />
+            <img src="/img/banner.png" alt="Banner KaSucos" />
             <h2>KaSucos</h2>
             <p>O sabor da fruta, e o carinho de casa.</p>
           </div>
