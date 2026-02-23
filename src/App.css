@@ -223,7 +223,6 @@ main {
   border-radius: 12px;
 }
 
-
 .cold-delivery {
   background: #ffffff;
   padding: 24px;
@@ -274,16 +273,109 @@ main {
 
 .subscription {
   margin-top: 30px;
-  text-align: center;
   background: var(--green-900);
   color: #fff;
   border-radius: 16px;
-  padding: 34px 20px;
+  padding: 34px 24px;
 }
 
-.subscription .cta {
-  background: var(--orange-500);
+.subscription > h3,
+.subscription > p {
+  text-align: center;
+}
+
+.subscription-controls {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 16px;
+}
+
+.box-customizer,
+.subscription-status {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.box-customizer h4,
+.subscription-status h4 {
+  margin: 0;
+}
+
+.box-customizer p,
+.subscription-status p {
+  color: #ebf6ee;
+}
+
+.subscription-items-grid {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.subscription-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.subscription-item.selected {
+  background: rgba(247, 160, 50, 0.18);
+  border-color: rgba(247, 160, 50, 0.7);
+}
+
+.subscription-item input {
+  margin-top: 4px;
+}
+
+.subscription-item div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.subscription-item span {
+  color: #d8ecdd;
+  font-size: 14px;
+}
+
+.subscription-item small {
+  color: #fff7df;
+}
+
+.pause-btn {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.pause-btn.active {
+  background: #ffd9a0;
+  color: #573100;
+}
+
+.pause-btn.paused {
+  background: #ffffff;
+  color: var(--green-900);
+}
+
+.pause-feedback {
   margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.12);
+  line-height: 1.45;
 }
 
 .footer {
@@ -294,6 +386,12 @@ main {
   padding: 28px 7%;
   background: #10281a;
   color: #e3f0e7;
+}
+
+@media (max-width: 980px) {
+  .subscription-controls {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 800px) {

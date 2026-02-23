@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import "./App.css";
 
 const featuredJuices = [
@@ -65,21 +66,66 @@ const refrigeratedDeliveryOptions = [
   },
 ];
 
+const subscriptionOptions = [
+  { id: "detox", name: "Detox Verde", description: "Leve e funcional", price: 14.9 },
+  { id: "energia", name: "Vermelho Energético", description: "Pré-treino natural", price: 15.9 },
+  { id: "imunidade", name: "Laranja + Acerola", description: "Vitamina C em dobro", price: 12.9 },
+  { id: "digestivo", name: "Abacaxi + Hortelã", description: "Refrescância digestiva", price: 13.9 },
+  { id: "kids", name: "Maçã + Morango Kids", description: "Sem açúcar adicionado", price: 11.9 },
+];
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
 function App() {
+  const [selectedJuices, setSelectedJuices] = useState(["detox", "imunidade", "digestivo"]);
+  const [isSubscriptionPaused, setIsSubscriptionPaused] = useState(false);
+
+  const selectedItems = useMemo(
+    () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
+    [selectedJuices]
+  );
+
+  const estimatedMonthlyTotal = useMemo(
+    () => selectedItems.reduce((total, item) => total + item.price * 4, 0),
+    [selectedItems]
+  );
+
+  const toggleJuiceSelection = (juiceId) => {
+    setSelectedJuices((current) => {
+      if (current.includes(juiceId)) {
+        return current.filter((id) => id !== juiceId);
+      }
+      return [...current, juiceId];
+    });
+  };
+
   return (
     <div className="juice-page">
       <header className="topbar">
-        <p>Frete grátis acima de R$ 79 · Cupom de boas-vindas: <strong>SUCONOVO10</strong></p>
+        <p>
+          Frete grátis acima de R$ 79 · Cupom de boas-vindas: <strong>SUCONOVO10</strong>
+        </p>
       </header>
 
       <nav className="navbar">
         <h1>Casa dos Sucos</h1>
         <ul>
-          <li><a href="#catalogo">Catálogo</a></li>
-          <li><a href="#beneficios">Benefícios</a></li>
-          <li><a href="#entrega-refrigerada">Entrega refrigerada</a></li>
-          <li><a href="#assinatura">Assinatura</a></li>
-          <li><a href="#contato">Contato</a></li>
+          <li>
+            <a href="#catalogo">Catálogo</a>
+          </li>
+          <li>
+            <a href="#beneficios">Benefícios</a>
+          </li>
+          <li>
+            <a href="#entrega-refrigerada">Entrega refrigerada</a>
+          </li>
+          <li>
+            <a href="#assinatura">Assinatura</a>
+          </li>
+          <li>
+            <a href="#contato">Contato</a>
+          </li>
         </ul>
         <button className="cta">Pedir agora</button>
       </nav>
@@ -90,8 +136,8 @@ function App() {
             <p className="eyebrow">Loja online de sucos naturais</p>
             <h2>Sucos frescos para o seu dia, sem açúcar e sem conservantes.</h2>
             <p>
-              Inspirado em grandes lojas de sucos, nosso cardápio foi pensado para quem
-              busca praticidade, saúde e sabor em cada gole.
+              Inspirado em grandes lojas de sucos, nosso cardápio foi pensado para quem busca
+              praticidade, saúde e sabor em cada gole.
             </p>
             <div className="hero-actions">
               <button className="cta">Ver cardápio</button>
@@ -101,7 +147,9 @@ function App() {
           <div className="hero-highlight">
             <span>Destaque da semana</span>
             <h3>Combo Vitalidade</h3>
-            <p>7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.</p>
+            <p>
+              7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.
+            </p>
           </div>
         </section>
 
@@ -177,11 +225,63 @@ function App() {
         </section>
 
         <section id="assinatura" className="subscription">
-          <h3>Plano semanal de sucos</h3>
+          <h3>Assinatura ajustável</h3>
           <p>
-            Assine e receba kits personalizados de segunda a sábado com até 20% de desconto.
+            Monte sua caixa mensal com os sabores que preferir e altere a composição quando quiser,
+            sem burocracia.
           </p>
-          <button className="cta">Quero assinar</button>
+
+          <div className="subscription-controls">
+            <div className="box-customizer">
+              <h4>Escolha os itens da sua caixa</h4>
+              <p>Você pode adicionar ou remover sabores a qualquer momento.</p>
+              <div className="subscription-items-grid">
+                {subscriptionOptions.map((option) => {
+                  const isSelected = selectedJuices.includes(option.id);
+                  return (
+                    <label key={option.id} className={`subscription-item ${isSelected ? "selected" : ""}`}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => toggleJuiceSelection(option.id)}
+                      />
+                      <div>
+                        <strong>{option.name}</strong>
+                        <span>{option.description}</span>
+                        <small>{formatCurrency(option.price)} por garrafa</small>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <aside className="subscription-status" aria-live="polite">
+              <h4>Status da assinatura</h4>
+              <p>
+                <strong>Sabores selecionados:</strong> {selectedItems.length}
+              </p>
+              <p>
+                <strong>Estimativa mensal:</strong> {formatCurrency(estimatedMonthlyTotal)}
+              </p>
+              <p>
+                <strong>Entrega:</strong> segunda a sábado, no turno escolhido.
+              </p>
+
+              <button
+                className={`pause-btn ${isSubscriptionPaused ? "paused" : "active"}`}
+                onClick={() => setIsSubscriptionPaused((current) => !current)}
+              >
+                {isSubscriptionPaused ? "Retomar assinatura" : "Pausar assinatura"}
+              </button>
+
+              <p className="pause-feedback">
+                {isSubscriptionPaused
+                  ? "Assinatura pausada. Nenhuma entrega será cobrada até você retomar."
+                  : "Assinatura ativa. Você pode pausar quando quiser, com efeito imediato."}
+              </p>
+            </aside>
+          </div>
         </section>
       </main>
 
