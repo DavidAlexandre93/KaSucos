@@ -223,6 +223,44 @@ main {
   border-radius: 12px;
 }
 
+.sustainability {
+  background: #ffffff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.sustainability-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.sustainability-card {
+  background: #f4f9f6;
+  border: 1px solid #d7e8db;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.sustainability-card h4 {
+  margin: 0;
+  color: var(--green-900);
+}
+
+.sustainability-card p {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.sustainability-card small {
+  color: var(--green-700);
+  font-weight: 600;
+}
+
 .cold-delivery {
   background: #ffffff;
   padding: 24px;
