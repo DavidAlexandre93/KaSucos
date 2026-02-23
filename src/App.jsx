@@ -45,6 +45,24 @@ const benefits = [
   },
 ];
 
+const returnPolicySteps = [
+  {
+    title: "1) Solicite em até 7 dias",
+    description:
+      "Mudou de ideia? Você pode pedir troca ou devolução em até 7 dias corridos após o recebimento, direto pelo WhatsApp.",
+  },
+  {
+    title: "2) Resposta rápida em até 1 dia útil",
+    description:
+      "Nosso time confirma sua solicitação e envia as instruções de coleta ou postagem sem termos complicados.",
+  },
+  {
+    title: "3) Reembolso ou crédito em até 5 dias úteis",
+    description:
+      "Após a confirmação da devolução, você escolhe entre reembolso no mesmo meio de pagamento ou crédito para novo pedido.",
+  },
+];
+
 const refrigeratedDeliveryOptions = [
   {
     title: "Entrega refrigerada expressa",
@@ -344,6 +362,9 @@ function App() {
             <a href="#beneficios">Benefícios</a>
           </li>
           <li>
+            <a href="#trocas">Trocas e devoluções</a>
+          </li>
+          <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
           </li>
           <li>
@@ -426,6 +447,29 @@ function App() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section id="trocas" className="section return-policy">
+          <div className="section-title">
+            <h3>Política de troca e devolução transparente</h3>
+            <p>
+              Regras simples, prazos claros e sem letras miúdas para você comprar com confiança.
+            </p>
+          </div>
+
+          <div className="return-policy-grid">
+            {returnPolicySteps.map((step) => (
+              <article key={step.title} className="return-policy-card">
+                <h4>{step.title}</h4>
+                <p>{step.description}</p>
+              </article>
+            ))}
+          </div>
+
+          <p className="return-policy-note">
+            <strong>Sem burocracia:</strong> não exigimos justificativa para devolução no prazo legal,
+            e você acompanha cada etapa do processo com atualização por mensagem.
+          </p>
         </section>
 
         <section id="entrega-refrigerada" className="section cold-delivery">
