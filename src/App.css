@@ -120,6 +120,32 @@ main {
   margin-top: 16px;
 }
 
+.home-map-links {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid #dbeadf;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.home-map-links p {
+  margin: 0 0 8px;
+  font-weight: 700;
+  color: var(--green-900);
+}
+
+.home-map-links ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.home-map-links a {
+  color: var(--green-700);
+  font-weight: 600;
+}
+
 .hero-highlight {
   background: #fff;
   border-radius: 14px;
@@ -137,6 +163,7 @@ main {
   margin-top: 32px;
 }
 
+.about-page {
 .brand-story {
   background: #fff;
   border: 1px solid #e2ece4;
@@ -144,6 +171,49 @@ main {
   padding: 24px;
 }
 
+.about-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.about-card {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f7fbf8;
+}
+
+.about-card h4 {
+  margin: 0 0 10px;
+  color: var(--green-900);
+}
+
+.about-card p {
+  margin: 6px 0;
+  color: var(--text-600);
+}
+
+.about-card a {
+  color: var(--green-700);
+  font-weight: 600;
+}
+
+.about-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.about-card li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px dashed #cfe2d5;
+  padding-bottom: 6px;
 .brand-story-layout {
   margin-top: 14px;
   display: grid;
