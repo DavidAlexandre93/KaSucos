@@ -463,6 +463,138 @@ main {
   line-height: 1.45;
 }
 
+.marketing-automation {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.automation-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 16px;
+}
+
+.automation-panel,
+.automation-flow {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.automation-panel {
+  background: #f6faf7;
+}
+
+.automation-panel h4,
+.automation-flow h4 {
+  margin: 0 0 10px;
+}
+
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.channel-card {
+  border: 1px solid #cfe2d5;
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.channel-card.enabled {
+  border-color: #7ec38f;
+  background: #e9f7ec;
+}
+
+.channel-card div {
+  display: grid;
+  gap: 4px;
+}
+
+.channel-card small,
+.channel-card p {
+  color: var(--text-600);
+}
+
+.channel-card p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.segment-selector {
+  margin-top: 14px;
+  background: #fff;
+  border: 1px solid #d8e7dd;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.segment-selector p {
+  margin: 6px 0 0;
+  color: var(--text-600);
+}
+
+.segment-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.segment-buttons button {
+  border: 1px solid #b9d7c0;
+  background: #fff;
+  color: var(--green-900);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segment-buttons button.active {
+  background: #e8f5eb;
+  border-color: #7ec38f;
+}
+
+.automation-flow {
+  background: var(--green-900);
+  color: #fff;
+}
+
+.automation-flow ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.automation-flow li {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.automation-flow span,
+.automation-flow p {
+  color: #e4f3e8;
+}
+
+.automation-flow p {
+  margin: 4px 0 0;
+}
+
 .nutrition-chat {
   background: #fff;
   border: 1px solid #e2ece4;
@@ -648,6 +780,10 @@ main {
   }
 
   .nutrition-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .automation-layout {
     grid-template-columns: 1fr;
   }
 

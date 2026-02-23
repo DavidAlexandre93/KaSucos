@@ -176,6 +176,78 @@ const nutritionCalculatorGoals = [
   { id: "ganhar", label: "Ganho de energia muscular", targetCalories: 340, focus: "performance" },
 ];
 
+const marketingPlatforms = [
+  {
+    id: "email",
+    name: "E-mail",
+    provider: "Mailchimp",
+    description: "Fluxos para carrinho abandonado, pós-compra e campanhas sazonais.",
+  },
+  {
+    id: "sms",
+    name: "SMS",
+    provider: "Twilio",
+    description: "Lembretes curtos com cupom e links diretos para finalizar o pedido.",
+  },
+  {
+    id: "push",
+    name: "Push",
+    provider: "OneSignal",
+    description: "Notificações em tempo real com ofertas segmentadas por comportamento.",
+  },
+];
+
+const audienceSegments = [
+  {
+    id: "frequentes",
+    label: "Clientes frequentes",
+    profile: "Mais de 2 compras por mês",
+    incentive: "Cupom VIP de 15%",
+  },
+  {
+    id: "primeiraCompra",
+    label: "Primeira compra",
+    profile: "Primeiro pedido nos últimos 30 dias",
+    incentive: "Frete grátis na recompra",
+  },
+  {
+    id: "detox",
+    label: "Interesse em detox",
+    profile: "Produtos verdes e funcionais no carrinho",
+    incentive: "Combo detox com 10% off",
+  },
+];
+
+const automationJourneys = [
+  {
+    id: "abandonedCart",
+    title: "Carrinho abandonado",
+    objective: "Recuperar pedidos não finalizados",
+    delay: "30 min após abandono",
+    channels: ["email", "sms", "push"],
+    message:
+      "Você deixou produtos frescos no carrinho. Finalize agora e ganhe 10% com o cupom VOLTE10.",
+  },
+  {
+    id: "postPurchase",
+    title: "Pós-compra",
+    objective: "Aumentar retenção e recompra",
+    delay: "2 dias após a entrega",
+    channels: ["email", "push"],
+    message:
+      "Como foi sua experiência? Avalie o pedido e receba recomendações personalizadas para a próxima semana.",
+  },
+  {
+    id: "segmentedOffers",
+    title: "Ofertas segmentadas",
+    objective: "Promover combos alinhados ao perfil",
+    delay: "1x por semana",
+    channels: ["email", "sms", "push"],
+    message:
+      "Selecionamos ofertas para seu perfil. Aproveite combos com validade curta e prioridade de entrega.",
+  },
+];
+
 const juiceRecommendations = [
   {
     id: "detox-matinal",
@@ -239,6 +311,8 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [enabledChannels, setEnabledChannels] = useState(["email", "push"]);
+  const [selectedSegment, setSelectedSegment] = useState("frequentes");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -326,6 +400,28 @@ function App() {
     [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
   );
 
+  const activeSegment = audienceSegments.find((segment) => segment.id === selectedSegment);
+
+  const visibleJourneys = useMemo(
+    () =>
+      automationJourneys.filter((journey) =>
+        journey.channels.some((channel) => enabledChannels.includes(channel))
+      ),
+    [enabledChannels]
+  );
+
+  const toggleChannel = (channelId) => {
+    setEnabledChannels((current) => {
+      if (current.includes(channelId)) {
+        if (current.length === 1) {
+          return current;
+        }
+        return current.filter((id) => id !== channelId);
+      }
+      return [...current, channelId];
+    });
+  };
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -354,6 +450,9 @@ function App() {
           </li>
           <li>
             <a href="#consultoria">Consultoria</a>
+          </li>
+          <li>
+            <a href="#automacao-marketing">Automação de marketing</a>
           </li>
           <li>
             <a href="#calculadora">Calculadora nutricional</a>
@@ -577,6 +676,91 @@ function App() {
                   ? "Assinatura pausada. Nenhuma entrega será cobrada até você retomar."
                   : "Assinatura ativa. Você pode pausar quando quiser, com efeito imediato."}
               </p>
+            </aside>
+          </div>
+        </section>
+
+        <section id="automacao-marketing" className="section marketing-automation">
+          <div className="section-title">
+            <h3>Automação de marketing</h3>
+            <p>
+              Integrações com plataformas de e-mail, SMS e push para recuperar carrinhos
+              abandonados, engajar no pós-compra e ativar ofertas segmentadas.
+            </p>
+          </div>
+
+          <div className="automation-layout">
+            <article className="automation-panel">
+              <h4>Plataformas conectadas</h4>
+              <div className="channel-grid">
+                {marketingPlatforms.map((platform) => {
+                  const isEnabled = enabledChannels.includes(platform.id);
+                  return (
+                    <label
+                      key={platform.id}
+                      className={`channel-card ${isEnabled ? "enabled" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isEnabled}
+                        onChange={() => toggleChannel(platform.id)}
+                      />
+                      <div>
+                        <strong>{platform.name}</strong>
+                        <small>Provider: {platform.provider}</small>
+                        <p>{platform.description}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="segment-selector">
+                <h4>Segmentação de público</h4>
+                <div className="segment-buttons">
+                  {audienceSegments.map((segment) => (
+                    <button
+                      key={segment.id}
+                      className={selectedSegment === segment.id ? "active" : ""}
+                      onClick={() => setSelectedSegment(segment.id)}
+                    >
+                      {segment.label}
+                    </button>
+                  ))}
+                </div>
+                <p>
+                  <strong>Perfil:</strong> {activeSegment?.profile}
+                </p>
+                <p>
+                  <strong>Incentivo padrão:</strong> {activeSegment?.incentive}
+                </p>
+              </div>
+            </article>
+
+            <aside className="automation-flow" aria-live="polite">
+              <h4>Fluxos ativos ({visibleJourneys.length})</h4>
+              {visibleJourneys.length ? (
+                <ul>
+                  {visibleJourneys.map((journey) => (
+                    <li key={journey.id}>
+                      <strong>{journey.title}</strong>
+                      <span>{journey.objective}</span>
+                      <span>
+                        <b>Disparo:</b> {journey.delay}
+                      </span>
+                      <span>
+                        <b>Canais:</b>{" "}
+                        {journey.channels
+                          .filter((channel) => enabledChannels.includes(channel))
+                          .join(", ")}
+                      </span>
+                      <p>{journey.message}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Ative ao menos um canal para configurar automações.</p>
+              )}
             </aside>
           </div>
         </section>
