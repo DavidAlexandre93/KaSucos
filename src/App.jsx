@@ -671,6 +671,15 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [isGuestCheckout, setIsGuestCheckout] = useState(true);
+  const [checkoutForm, setCheckoutForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    zipCode: "",
+    paymentMethod: "pix",
+    password: "",
+  });
   const [inventoryItems, setInventoryItems] = useState(inventoryProducts);
 
   const updateInventory = (productId, field, amount) => {
@@ -820,6 +829,25 @@ function App() {
     [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
   );
 
+  const checkoutRequiredFields = ["fullName", "email", "phone", "zipCode", "paymentMethod"];
+
+  const checkoutCompletedFields = checkoutRequiredFields.filter(
+    (field) => checkoutForm[field].trim().length
+  ).length;
+
+  const checkoutProgress = Math.round((checkoutCompletedFields / checkoutRequiredFields.length) * 100);
+
+  const checkoutSteps = ["Carrinho", "Dados", "Pagamento", "Confirmação"];
+
+  const currentCheckoutStep =
+    checkoutProgress < 25 ? 0 : checkoutProgress < 65 ? 1 : checkoutProgress < 100 ? 2 : 3;
+
+  const updateCheckoutField = (field, value) => {
+    setCheckoutForm((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
   const highlightedPaymentMethod = useMemo(
     () => paymentMethods.find((method) => method.id === selectedPaymentMethod),
     [selectedPaymentMethod]
@@ -906,6 +934,7 @@ function App() {
             <a href="#beneficios">Benefícios</a>
           </li>
           <li>
+            <a href="#checkout-rapido">Checkout rápido</a>
             <a href="#trocas">Trocas e devoluções</a>
             <a href="#sustentabilidade">Sustentabilidade</a>
           </li>
@@ -1076,6 +1105,144 @@ function App() {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section id="checkout-rapido" className="section fast-checkout">
+          <div className="section-title">
+            <h3>Checkout rápido e seguro</h3>
+            <p>
+              Finalize em uma única página com poucos campos, barra de progresso e compra como
+              convidado para reduzir atrito no carrinho.
+            </p>
+          </div>
+
+          <div className="checkout-progress" aria-label="Progresso do checkout">
+            <div className="checkout-progress-bar" style={{ width: `${checkoutProgress}%` }} />
+            <span>{checkoutProgress}% concluído</span>
+          </div>
+
+          <ol className="checkout-steps" aria-label="Etapas do checkout">
+            {checkoutSteps.map((step, index) => (
+              <li key={step} className={index <= currentCheckoutStep ? "active" : ""}>
+                <span>{index + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+
+          <div className="checkout-layout">
+            <form className="checkout-form" onSubmit={(event) => event.preventDefault()}>
+              <h4>Dados para entrega</h4>
+
+              <label className="guest-toggle">
+                <input
+                  type="checkbox"
+                  checked={isGuestCheckout}
+                  onChange={(event) => setIsGuestCheckout(event.target.checked)}
+                />
+                Comprar como convidado (sem criar conta)
+              </label>
+
+              <div className="checkout-fields-grid">
+                <label>
+                  Nome completo
+                  <input
+                    type="text"
+                    value={checkoutForm.fullName}
+                    onChange={(event) => updateCheckoutField("fullName", event.target.value)}
+                    placeholder="Seu nome"
+                    required
+                  />
+                </label>
+
+                <label>
+                  E-mail
+                  <input
+                    type="email"
+                    value={checkoutForm.email}
+                    onChange={(event) => updateCheckoutField("email", event.target.value)}
+                    placeholder="voce@email.com"
+                    required
+                  />
+                </label>
+
+                <label>
+                  Celular
+                  <input
+                    type="tel"
+                    value={checkoutForm.phone}
+                    onChange={(event) => updateCheckoutField("phone", event.target.value)}
+                    placeholder="(11) 99999-9999"
+                    required
+                  />
+                </label>
+
+                <label>
+                  CEP
+                  <input
+                    type="text"
+                    value={checkoutForm.zipCode}
+                    onChange={(event) => updateCheckoutField("zipCode", event.target.value)}
+                    placeholder="00000-000"
+                    required
+                  />
+                </label>
+
+                <label>
+                  Pagamento
+                  <select
+                    value={checkoutForm.paymentMethod}
+                    onChange={(event) => updateCheckoutField("paymentMethod", event.target.value)}
+                  >
+                    <option value="pix">Pix</option>
+                    <option value="cartao">Cartão</option>
+                    <option value="carteira">Carteira digital</option>
+                  </select>
+                </label>
+
+                {!isGuestCheckout && (
+                  <label>
+                    Criar senha
+                    <input
+                      type="password"
+                      minLength={6}
+                      value={checkoutForm.password}
+                      onChange={(event) => updateCheckoutField("password", event.target.value)}
+                      placeholder="Mínimo de 6 caracteres"
+                    />
+                  </label>
+                )}
+              </div>
+
+              <button className="cta" type="submit">
+                Finalizar pedido com segurança
+              </button>
+            </form>
+
+            <aside className="checkout-summary" aria-live="polite">
+              <h4>Resumo do pedido</h4>
+              <ul>
+                <li>
+                  <span>2x Suco Verde Detox</span>
+                  <strong>R$ 29,80</strong>
+                </li>
+                <li>
+                  <span>1x Vermelho Energético</span>
+                  <strong>R$ 15,90</strong>
+                </li>
+                <li>
+                  <span>Frete</span>
+                  <strong>Grátis</strong>
+                </li>
+              </ul>
+              <p className="checkout-total">
+                Total: <strong>R$ 45,70</strong>
+              </p>
+              <p>
+                Ambiente protegido com criptografia SSL e validação antifraude em tempo real.
+              </p>
+            </aside>
           </div>
         </section>
 
