@@ -628,6 +628,115 @@ main {
   border-radius: 10px;
 }
 
+.support-center {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.support-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.support-card {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f6faf7;
+}
+
+.support-card h4 {
+  margin: 0 0 8px;
+  color: var(--green-900);
+}
+
+.live-chat-card p {
+  color: var(--text-600);
+}
+
+.faq-list {
+  display: grid;
+  gap: 8px;
+}
+
+.faq-item {
+  text-align: left;
+  border: 1px solid #cce2d2;
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
+  cursor: pointer;
+  display: grid;
+  gap: 6px;
+}
+
+.faq-item strong {
+  color: var(--text-900);
+}
+
+.faq-item span {
+  color: var(--text-600);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.faq-item.active {
+  border-color: #7ec38f;
+  background: #e9f7ec;
+}
+
+.contact-channels ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.contact-channels li {
+  color: var(--text-600);
+}
+
+.tracking-card label {
+  display: grid;
+  gap: 6px;
+  color: var(--green-900);
+  font-weight: 600;
+}
+
+.tracking-card input {
+  border: 1px solid #b7d5bf;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.tracking-result {
+  margin-top: 12px;
+  background: #fff;
+  border: 1px solid #cde3d3;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.tracking-result p {
+  margin: 0 0 6px;
+  color: var(--text-600);
+}
+
+.tracking-warning {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff5e8;
+  color: #7a4a02;
+  border: 1px solid #ffd7a1;
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
@@ -652,6 +761,10 @@ main {
   }
 
   .calculator-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .support-layout {
     grid-template-columns: 1fr;
   }
 }

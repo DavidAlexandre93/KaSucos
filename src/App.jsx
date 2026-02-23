@@ -224,6 +224,51 @@ const juiceRecommendations = [
   },
 ];
 
+const supportFaqs = [
+  {
+    id: "prazo-entrega",
+    question: "Qual é o prazo de entrega dos pedidos?",
+    answer:
+      "Pedidos expressos chegam em 30 a 45 minutos. Você também pode escolher entrega programada para o mesmo turno.",
+  },
+  {
+    id: "conservacao",
+    question: "Como conservar os sucos após receber?",
+    answer:
+      "Mantenha refrigerado entre 2°C e 6°C e consuma em até 24h para melhor sabor, frescor e valor nutricional.",
+  },
+  {
+    id: "assinatura",
+    question: "Posso pausar ou alterar minha assinatura?",
+    answer:
+      "Sim. Você pode pausar, retomar ou editar os sabores da assinatura a qualquer momento no painel do cliente.",
+  },
+  {
+    id: "pagamento",
+    question: "Quais formas de pagamento são aceitas?",
+    answer:
+      "Aceitamos Pix, cartão de crédito, débito e carteiras digitais. Para empresas, também emitimos cobrança faturada.",
+  },
+];
+
+const orderTrackingMock = {
+  CSC1024: {
+    status: "Em rota de entrega",
+    eta: "18 min",
+    detail: "Motoboy saiu do centro de distribuição às 14:22.",
+  },
+  CSC2048: {
+    status: "Separando pedido",
+    eta: "35 min",
+    detail: "Estamos finalizando o empacotamento refrigerado do seu combo.",
+  },
+  CSC4096: {
+    status: "Pedido entregue",
+    eta: "Concluído",
+    detail: "Entrega realizada com sucesso às 12:07.",
+  },
+};
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -239,6 +284,8 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [activeFaq, setActiveFaq] = useState(supportFaqs[0].id);
+  const [trackingCode, setTrackingCode] = useState("CSC1024");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -326,6 +373,8 @@ function App() {
     [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
   );
 
+  const trackingResult = orderTrackingMock[trackingCode.trim().toUpperCase()];
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -360,6 +409,9 @@ function App() {
           </li>
           <li>
             <a href="#contato">Contato</a>
+          </li>
+          <li>
+            <a href="#suporte">Suporte</a>
           </li>
         </ul>
         <button className="cta">Pedir agora</button>
@@ -701,6 +753,97 @@ function App() {
                 Iniciar atendimento no WhatsApp
               </a>
             </aside>
+          </div>
+        </section>
+
+        <section id="suporte" className="section support-center">
+          <div className="section-title">
+            <h3>Chat ao vivo e suporte multicanal</h3>
+            <p>
+              Resolva dúvidas em tempo real e receba orientação durante a compra com canais
+              integrados: FAQ, chat, e-mail, telefone e rastreio de pedidos.
+            </p>
+          </div>
+
+          <div className="support-layout">
+            <article className="support-card live-chat-card">
+              <h4>Atendimento ao vivo</h4>
+              <p>
+                Nosso time está online todos os dias, das 8h às 22h, para ajudar com catálogo,
+                combos, assinatura e fechamento de pedidos.
+              </p>
+              <a
+                className="chat-cta"
+                href="https://wa.me/5511999991212?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20comprar%20na%20Casa%20dos%20Sucos."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Iniciar chat ao vivo
+              </a>
+            </article>
+
+            <article className="support-card faq-card">
+              <h4>FAQ rápido</h4>
+              <div className="faq-list">
+                {supportFaqs.map((faq) => {
+                  const isActive = activeFaq === faq.id;
+                  return (
+                    <button
+                      key={faq.id}
+                      className={`faq-item ${isActive ? "active" : ""}`}
+                      onClick={() => setActiveFaq(faq.id)}
+                    >
+                      <strong>{faq.question}</strong>
+                      {isActive && <span>{faq.answer}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </article>
+
+            <article className="support-card contact-channels">
+              <h4>Outros canais</h4>
+              <ul>
+                <li>
+                  <strong>E-mail:</strong> atendimento@casadossucos.com.br
+                </li>
+                <li>
+                  <strong>Telefone:</strong> (11) 4000-1234
+                </li>
+                <li>
+                  <strong>WhatsApp:</strong> (11) 99999-1212
+                </li>
+              </ul>
+            </article>
+
+            <article className="support-card tracking-card" aria-live="polite">
+              <h4>Rastreio de pedido</h4>
+              <label>
+                Código do pedido
+                <input
+                  type="text"
+                  value={trackingCode}
+                  onChange={(event) => setTrackingCode(event.target.value)}
+                  placeholder="Ex: CSC1024"
+                />
+              </label>
+
+              {trackingResult ? (
+                <div className="tracking-result">
+                  <p>
+                    <strong>Status:</strong> {trackingResult.status}
+                  </p>
+                  <p>
+                    <strong>Previsão:</strong> {trackingResult.eta}
+                  </p>
+                  <p>{trackingResult.detail}</p>
+                </div>
+              ) : (
+                <p className="tracking-warning">
+                  Código não encontrado. Verifique o número do pedido ou fale com nosso suporte.
+                </p>
+              )}
+            </article>
           </div>
         </section>
       </main>
