@@ -1,14 +1,28 @@
-import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
-const featuredJuices = [
+const juices = [
   {
+    id: "verde-detox",
     name: "Suco Verde Detox",
-    description: "Couve, limão, maçã e gengibre. Refrescante e rico em fibras.",
-    price: "R$ 14,90",
-    badge: "Mais pedido",
+    portion: "300 ml",
+    ingredients: ["Couve", "Maçã verde", "Limão", "Gengibre", "Água de coco"],
+    nutrition: {
+      calories: 92,
+      carbs: "20 g",
+      proteins: "2 g",
+      fats: "0,6 g",
+      fibers: "4,5 g",
+      sodium: "22 mg",
+    },
+    allergens: "Pode conter traços de aipo e castanhas (ambiente compartilhado).",
+    benefits: [
+      "Apoio ao funcionamento intestinal por ser rico em fibras.",
+      "Alta densidade de vitamina C e compostos antioxidantes.",
+      "Sensação de leveza para iniciar o dia.",
+    ],
   },
   {
+    id: "laranja-acerola",
     name: "Laranja com Acerola",
     description: "Vitamina C em dobro para reforçar sua rotina com sabor.",
     price: "R$ 12,90",
@@ -220,283 +234,42 @@ const paymentMethods = [
     description: "Opção sem cartão para quem prefere pagar à vista.",
     detail: "Compensação em até 1 dia útil e confirmação automática do pedido.",
     tags: ["Sem cartão", "À vista"],
-  },
-  {
-    id: "pix",
-    title: "Pix",
-    description: "Pagamento instantâneo com QR Code e chave Copia e Cola.",
-    detail: "Desconto extra de 5% em compras avulsas.",
-    tags: ["Instantâneo", "24/7", "QR Code"],
-  },
-  {
-    id: "wallets",
-    title: "Carteiras digitais",
-    description: "Finalize com Apple Pay ou Google Pay em poucos toques.",
-    detail: "Checkout com biometria, sem digitar dados do cartão.",
-    tags: ["Apple Pay", "Google Pay"],
-  },
-  {
-    id: "bnpl",
-    title: "Buy now, pay later",
-    description: "Compre agora e pague em parcelas quinzenais sem burocracia.",
-    detail: "Ideal para incluir mais clientes com limite reduzido no cartão.",
-    tags: ["Aprovação rápida", "Parcelas quinzenais"],
-  },
-];
-
-const flavorIngredients = {
-  frutas: [
-    {
-      id: "banana",
-      name: "Banana",
-      calories: 89,
-      benefits: ["Fonte de potássio", "Energia rápida"],
+    portion: "300 ml",
+    ingredients: ["Laranja", "Acerola", "Cenoura", "Água filtrada"],
+    nutrition: {
+      calories: 108,
+      carbs: "24 g",
+      proteins: "1,8 g",
+      fats: "0,4 g",
+      fibers: "3,1 g",
+      sodium: "14 mg",
     },
-    {
-      id: "morango",
-      name: "Morango",
-      calories: 32,
-      benefits: ["Rico em vitamina C", "Ação antioxidante"],
+    allergens: "Não contém alergênicos adicionados. Naturalmente sem lactose e sem glúten.",
+    benefits: [
+      "Reforço de vitamina C para a imunidade.",
+      "Carotenoides da cenoura que contribuem para saúde da pele.",
+      "Boa opção para hidratação com sabor cítrico.",
+    ],
+  },
+  {
+    id: "vermelho-energetico",
+    name: "Vermelho Energético",
+    portion: "300 ml",
+    ingredients: ["Beterraba", "Morango", "Maçã", "Chia", "Água de coco"],
+    nutrition: {
+      calories: 124,
+      carbs: "25 g",
+      proteins: "2,7 g",
+      fats: "2,1 g",
+      fibers: "5,2 g",
+      sodium: "28 mg",
     },
-    {
-      id: "abacaxi",
-      name: "Abacaxi",
-      calories: 50,
-      benefits: ["Auxilia na digestão", "Hidratação natural"],
-    },
-  ],
-  vegetais: [
-    {
-      id: "couve",
-      name: "Couve",
-      calories: 35,
-      benefits: ["Alto teor de fibras", "Rico em ferro"],
-    },
-    {
-      id: "cenoura",
-      name: "Cenoura",
-      calories: 41,
-      benefits: ["Fonte de vitamina A", "Contribui para a saúde da pele"],
-    },
-    {
-      id: "beterraba",
-      name: "Beterraba",
-      calories: 43,
-      benefits: ["Apoia a circulação", "Pré-treino natural"],
-    },
-  ],
-  superalimentos: [
-    {
-      id: "chia",
-      name: "Chia",
-      calories: 49,
-      benefits: ["Ômega-3 vegetal", "Promove saciedade"],
-    },
-    {
-      id: "gengibre",
-      name: "Gengibre",
-      calories: 16,
-      benefits: ["Ação anti-inflamatória", "Estimula a digestão"],
-    },
-    {
-      id: "spirulina",
-      name: "Spirulina",
-      calories: 20,
-      benefits: ["Proteína vegetal", "Apoia a imunidade"],
-    },
-  ],
-};
-
-const ingredientGroups = [
-  { id: "frutas", label: "Frutas" },
-  { id: "vegetais", label: "Vegetais" },
-  { id: "superalimentos", label: "Superalimentos" },
-];
-
-const nutritionistSpecialties = [
-  {
-    id: "detox",
-    label: "Plano detox",
-    message:
-      "Para um detox equilibrado, alterne sucos verdes com bases cítricas e mantenha ingestão de água ao longo do dia.",
-  },
-  {
-    id: "emagrecimento",
-    label: "Controle de calorias",
-    message:
-      "Priorize combinações com vegetais de baixo índice glicêmico e acrescente fibras para aumentar saciedade.",
-  },
-  {
-    id: "energia",
-    label: "Energia e performance",
-    message:
-      "Antes do treino, use frutas com carboidratos naturais e um ingrediente anti-inflamatório, como gengibre.",
-  },
-  {
-    id: "imunidade",
-    label: "Reforço da imunidade",
-    message:
-      "Combine frutas ricas em vitamina C com superalimentos em doses moderadas para potencializar micronutrientes.",
-  },
-];
-
-const nutritionCalculatorGoals = [
-  { id: "emagrecer", label: "Emagrecimento", targetCalories: 220, focus: "detox" },
-  { id: "manter", label: "Manutenção", targetCalories: 280, focus: "equilibrado" },
-  { id: "ganhar", label: "Ganho de energia muscular", targetCalories: 340, focus: "performance" },
-];
-
-const marketingPlatforms = [
-  {
-    id: "email",
-    name: "E-mail",
-    provider: "Mailchimp",
-    description: "Fluxos para carrinho abandonado, pós-compra e campanhas sazonais.",
-  },
-  {
-    id: "sms",
-    name: "SMS",
-    provider: "Twilio",
-    description: "Lembretes curtos com cupom e links diretos para finalizar o pedido.",
-  },
-  {
-    id: "push",
-    name: "Push",
-    provider: "OneSignal",
-    description: "Notificações em tempo real com ofertas segmentadas por comportamento.",
-  },
-];
-
-const audienceSegments = [
-  {
-    id: "frequentes",
-    label: "Clientes frequentes",
-    profile: "Mais de 2 compras por mês",
-    incentive: "Cupom VIP de 15%",
-  },
-  {
-    id: "primeiraCompra",
-    label: "Primeira compra",
-    profile: "Primeiro pedido nos últimos 30 dias",
-    incentive: "Frete grátis na recompra",
-  },
-  {
-    id: "detox",
-    label: "Interesse em detox",
-    profile: "Produtos verdes e funcionais no carrinho",
-    incentive: "Combo detox com 10% off",
-  },
-];
-
-const automationJourneys = [
-  {
-    id: "abandonedCart",
-    title: "Carrinho abandonado",
-    objective: "Recuperar pedidos não finalizados",
-    delay: "30 min após abandono",
-    channels: ["email", "sms", "push"],
-    message:
-      "Você deixou produtos frescos no carrinho. Finalize agora e ganhe 10% com o cupom VOLTE10.",
-  },
-  {
-    id: "postPurchase",
-    title: "Pós-compra",
-    objective: "Aumentar retenção e recompra",
-    delay: "2 dias após a entrega",
-    channels: ["email", "push"],
-    message:
-      "Como foi sua experiência? Avalie o pedido e receba recomendações personalizadas para a próxima semana.",
-  },
-  {
-    id: "segmentedOffers",
-    title: "Ofertas segmentadas",
-    objective: "Promover combos alinhados ao perfil",
-    delay: "1x por semana",
-    channels: ["email", "sms", "push"],
-    message:
-      "Selecionamos ofertas para seu perfil. Aproveite combos com validade curta e prioridade de entrega.",
-  },
-];
-
-const juiceRecommendations = [
-  {
-    id: "detox-matinal",
-    name: "Detox Matinal",
-    calories: 180,
-    period: "manha",
-    goals: ["emagrecer", "manter"],
-    tags: ["detox", "equilibrado"],
-    description: "Couve, pepino, maçã verde e limão para começar o dia com leveza.",
-  },
-  {
-    id: "citricos-imunidade",
-    name: "Cítrico de Imunidade",
-    calories: 210,
-    period: "manha",
-    goals: ["manter"],
-    tags: ["equilibrado"],
-    description: "Laranja, acerola e gengibre com alta vitamina C e refrescância.",
-  },
-  {
-    id: "pos-treino",
-    name: "Pós-treino Recuperação",
-    calories: 320,
-    period: "posTreino",
-    goals: ["ganhar", "manter"],
-    tags: ["performance"],
-    description: "Beterraba, morango, banana e água de coco para reposição rápida.",
-  },
-  {
-    id: "pre-treino",
-    name: "Pré-treino Natural",
-    calories: 300,
-    period: "preTreino",
-    goals: ["ganhar", "manter"],
-    tags: ["performance"],
-    description: "Abacaxi, cenoura e gengibre para energia progressiva antes da atividade.",
-  },
-  {
-    id: "noturno-funcional",
-    name: "Noturno Funcional",
-    calories: 230,
-    period: "noite",
-    goals: ["emagrecer", "manter"],
-    tags: ["detox", "equilibrado"],
-    description: "Maracujá, couve e hortelã para hidratação e leve digestão no fim do dia.",
-  },
-];
-
-const inventoryProducts = [
-  { id: "detox", name: "Suco Verde Detox", onlineStock: 18, physicalStock: 20 },
-  { id: "energia", name: "Vermelho Energético", onlineStock: 10, physicalStock: 9 },
-  { id: "imunidade", name: "Laranja com Acerola", onlineStock: 14, physicalStock: 14 },
-  { id: "digestivo", name: "Abacaxi com Hortelã", onlineStock: 7, physicalStock: 5 },
-];
-
-const supportFaqs = [
-  {
-    id: "prazo-entrega",
-    question: "Qual é o prazo de entrega dos pedidos?",
-    answer:
-      "Pedidos expressos chegam em 30 a 45 minutos. Você também pode escolher entrega programada para o mesmo turno.",
-  },
-  {
-    id: "conservacao",
-    question: "Como conservar os sucos após receber?",
-    answer:
-      "Mantenha refrigerado entre 2°C e 6°C e consuma em até 24h para melhor sabor, frescor e valor nutricional.",
-  },
-  {
-    id: "assinatura",
-    question: "Posso pausar ou alterar minha assinatura?",
-    answer:
-      "Sim. Você pode pausar, retomar ou editar os sabores da assinatura a qualquer momento no painel do cliente.",
-  },
-  {
-    id: "pagamento",
-    question: "Quais formas de pagamento são aceitas?",
-    answer:
-      "Aceitamos Pix, cartão de crédito, débito e carteiras digitais. Para empresas, também emitimos cobrança faturada.",
+    allergens: "Pode conter traços de castanhas e amendoim (linha de produção compartilhada).",
+    benefits: [
+      "Fonte natural de nitratos da beterraba para performance.",
+      "Combinação antioxidante de morango e maçã.",
+      "Maior saciedade pelo teor de fibras e chia.",
+    ],
   },
 ];
 
@@ -967,125 +740,75 @@ function App() {
 
   const selectedCampaign = campaignLibrary[campaignPreference][campaignFrequency];
 
+function App() {
   return (
-    <div className="juice-page">
-      <header className="topbar">
+    <div className="app">
+      <header className="hero">
+        <p className="eyebrow">Casa dos Sucos · Transparência Nutricional</p>
+        <h1>Informações nutricionais completas de cada suco</h1>
         <p>
-          Frete grátis acima de R$ 79 · Cupom de boas-vindas: <strong>SUCONOVO10</strong>
+          Veja ingredientes, tabela nutricional, alergênicos e benefícios para escolher com
+          confiança o suco ideal para sua rotina.
         </p>
       </header>
 
-      <nav className="navbar">
-        <h1>Casa dos Sucos</h1>
-        <ul>
-          <li>
-            <a href="#sobre">Sobre</a>
-            <a href="#historia-proposito">História e propósito</a>
-          </li>
-          <li>
-            <a href="#catalogo">Catálogo</a>
-          </li>
-          <li>
-            <a href="#beneficios">Benefícios</a>
-          </li>
-          <li>
-            <a href="#checkout-rapido">Checkout rápido</a>
-            <a href="#trocas">Trocas e devoluções</a>
-            <a href="#sustentabilidade">Sustentabilidade</a>
-          </li>
-          <li>
-            <a href="#entrega-refrigerada">Entrega refrigerada</a>
-          </li>
-          <li>
-            <a href="#estoque">Estoque e logística</a>
-          </li>
-          <li>
-            <a href="#combinador">Combinador</a>
-          </li>
-          <li>
-            <a href="#assinatura">Assinatura</a>
-          </li>
-          <li>
-            <a href="#pagamentos">Pagamentos</a>
-          </li>
-          <li>
-            <a href="#consultoria">Consultoria</a>
-          </li>
-          <li>
-            <a href="#seguranca">Segurança</a>
-            <a href="#automacao-marketing">Automação de marketing</a>
-          </li>
-          <li>
-            <a href="#calculadora">Calculadora nutricional</a>
-          </li>
-          <li>
-            <a href="#reviews">Reviews</a>
-            <a href="#redes-sociais">Redes sociais</a>
-            <a href="#campanhas">Campanhas</a>
-          </li>
-          <li>
-            <a href="#contato">Contato</a>
-          </li>
-          <li>
-            <a href="#suporte">Suporte</a>
-          </li>
-        </ul>
-        <button className="cta">Pedir agora</button>
-      </nav>
+      <main className="juice-grid" aria-label="Informações nutricionais dos sucos">
+        {juices.map((juice) => (
+          <article key={juice.id} className="juice-card">
+            <h2>{juice.name}</h2>
+            <p className="portion">Porção: {juice.portion}</p>
 
-      <main>
-        <section className="hero">
-          <div>
-            <p className="eyebrow">Loja online de sucos naturais</p>
-            <h2>Sucos frescos para o seu dia, sem açúcar e sem conservantes.</h2>
-            <p>
-              Inspirado em grandes lojas de sucos, nosso cardápio foi pensado para quem busca
-              praticidade, saúde e sabor em cada gole.
-            </p>
-            <div className="hero-actions">
-              <button className="cta">Ver cardápio</button>
-              <button className="ghost">Montar combo</button>
-            </div>
-
-            <div className="home-map-links" aria-label="Mapa rápido da homepage">
-              <p>Atalhos úteis:</p>
+            <section>
+              <h3>Ingredientes</h3>
               <ul>
-                {aboutQuickLinks.map((link) => (
-                  <li key={link.id}>
-                    <a href={link.target}>{link.label}</a>
-                  </li>
+                {juice.ingredients.map((ingredient) => (
+                  <li key={ingredient}>{ingredient}</li>
                 ))}
               </ul>
-            </div>
-          </div>
-          <div className="hero-highlight">
-            <span>Destaque da semana</span>
-            <h3>Combo Vitalidade</h3>
-            <p>
-              7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.
-            </p>
-          </div>
-        </section>
+            </section>
 
-        <section id="sobre" className="section about-page">
-          <div className="section-title">
-            <h3>Sobre a Casa dos Sucos</h3>
-            <p>
-              Conforme recomendado pelo Toast POS, reunimos em um só lugar os dados essenciais de
-              horário, localização e contato para facilitar sua decisão de compra e transmitir mais
-              confiança.
-            </p>
-          </div>
+            <section>
+              <h3>Tabela nutricional (por porção)</h3>
+              <table>
+                <tbody>
+                  <tr>
+                    <th>Valor energético</th>
+                    <td>{juice.nutrition.calories} kcal</td>
+                  </tr>
+                  <tr>
+                    <th>Carboidratos</th>
+                    <td>{juice.nutrition.carbs}</td>
+                  </tr>
+                  <tr>
+                    <th>Proteínas</th>
+                    <td>{juice.nutrition.proteins}</td>
+                  </tr>
+                  <tr>
+                    <th>Gorduras totais</th>
+                    <td>{juice.nutrition.fats}</td>
+                  </tr>
+                  <tr>
+                    <th>Fibras alimentares</th>
+                    <td>{juice.nutrition.fibers}</td>
+                  </tr>
+                  <tr>
+                    <th>Sódio</th>
+                    <td>{juice.nutrition.sodium}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
 
-          <div className="about-grid">
-            <article id="sobre-horarios" className="about-card">
-              <h4>Horários de funcionamento</h4>
+            <section>
+              <h3>Alergênicos</h3>
+              <p>{juice.allergens}</p>
+            </section>
+
+            <section>
+              <h3>Benefícios</h3>
               <ul>
-                {businessHours.map((item) => (
-                  <li key={item.day}>
-                    <span>{item.day}</span>
-                    <strong>{item.time}</strong>
-                  </li>
+                {juice.benefits.map((benefit) => (
+                  <li key={benefit}>{benefit}</li>
                 ))}
               </ul>
             </article>
@@ -1201,118 +924,103 @@ function App() {
                 />
                 Comprar como convidado (sem criar conta)
               </label>
+            </section>
+          </article>
+        ))}
+      </main>
+    </div>
+import { useMemo, useState } from "react";
+import "./App.css";
 
-              <div className="checkout-fields-grid">
-                <label>
-                  Nome completo
-                  <input
-                    type="text"
-                    value={checkoutForm.fullName}
-                    onChange={(event) => updateCheckoutField("fullName", event.target.value)}
-                    placeholder="Seu nome"
-                    required
-                  />
-                </label>
+const catalog = [
+  { id: "detox-verde", name: "Suco Verde Detox", category: "detox", description: "Couve, maçã e gengibre para desinchar com sabor.", price: 14.9 },
+  { id: "vermelho-energetico", name: "Vermelho Energético", category: "energia", description: "Beterraba, morango e limão para pré-treino natural.", price: 15.9 },
+  { id: "laranja-acerola", name: "Laranja + Acerola", category: "imunidade", description: "Dose reforçada de vitamina C para o dia a dia.", price: 12.9 },
+  { id: "abacaxi-hortela", name: "Abacaxi + Hortelã", category: "digestivo", description: "Refrescância leve para acompanhar refeições.", price: 13.9 },
+  { id: "maca-morango-kids", name: "Maçã + Morango Kids", category: "kids", description: "Sem açúcar adicionado, sabor aprovado pela criançada.", price: 11.9 },
+  { id: "shot-imunidade", name: "Shot Imunidade", category: "shots", description: "Gengibre, cúrcuma e limão em dose concentrada.", price: 9.9 },
+];
 
-                <label>
-                  E-mail
-                  <input
-                    type="email"
-                    value={checkoutForm.email}
-                    onChange={(event) => updateCheckoutField("email", event.target.value)}
-                    placeholder="voce@email.com"
-                    required
-                  />
-                </label>
+const purchaseSeed = ["detox-verde", "laranja-acerola", "laranja-acerola", "abacaxi-hortela"];
 
-                <label>
-                  Celular
-                  <input
-                    type="tel"
-                    value={checkoutForm.phone}
-                    onChange={(event) => updateCheckoutField("phone", event.target.value)}
-                    placeholder="(11) 99999-9999"
-                    required
-                  />
-                </label>
+function formatPrice(value) {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+}
 
-                <label>
-                  CEP
-                  <input
-                    type="text"
-                    value={checkoutForm.zipCode}
-                    onChange={(event) => updateCheckoutField("zipCode", event.target.value)}
-                    placeholder="00000-000"
-                    required
-                  />
-                </label>
+function App() {
+  const [recentlyViewed, setRecentlyViewed] = useState([]);
+  const [purchaseHistory, setPurchaseHistory] = useState(purchaseSeed);
 
-                <label>
-                  Pagamento
-                  <select
-                    value={checkoutForm.paymentMethod}
-                    onChange={(event) => updateCheckoutField("paymentMethod", event.target.value)}
-                  >
-                    <option value="pix">Pix</option>
-                    <option value="cartao">Cartão</option>
-                    <option value="carteira">Carteira digital</option>
-                  </select>
-                </label>
+  const categoryAffinity = useMemo(() => {
+    return purchaseHistory.reduce((acc, productId) => {
+      const product = catalog.find((item) => item.id === productId);
+      if (!product) return acc;
+      acc[product.category] = (acc[product.category] ?? 0) + 1;
+      return acc;
+    }, {});
+  }, [purchaseHistory]);
 
-                {!isGuestCheckout && (
-                  <label>
-                    Criar senha
-                    <input
-                      type="password"
-                      minLength={6}
-                      value={checkoutForm.password}
-                      onChange={(event) => updateCheckoutField("password", event.target.value)}
-                      placeholder="Mínimo de 6 caracteres"
-                    />
-                  </label>
-                )}
-              </div>
+  const recommendations = useMemo(() => {
+    return catalog
+      .filter((product) => !purchaseHistory.includes(product.id))
+      .sort((a, b) => (categoryAffinity[b.category] ?? 0) - (categoryAffinity[a.category] ?? 0))
+      .slice(0, 3);
+  }, [categoryAffinity, purchaseHistory]);
 
-              <button className="cta" type="submit">
-                Finalizar pedido com segurança
-              </button>
-            </form>
+  const personalizedMessage = useMemo(() => {
+    if (!Object.keys(categoryAffinity).length) {
+      return "Experimente nossos combos iniciais e descubra novos sabores naturais.";
+    }
 
-            <aside className="checkout-summary" aria-live="polite">
-              <h4>Resumo do pedido</h4>
-              <ul>
-                <li>
-                  <span>2x Suco Verde Detox</span>
-                  <strong>R$ 29,80</strong>
-                </li>
-                <li>
-                  <span>1x Vermelho Energético</span>
-                  <strong>R$ 15,90</strong>
-                </li>
-                <li>
-                  <span>Frete</span>
-                  <strong>Grátis</strong>
-                </li>
-              </ul>
-              <p className="checkout-total">
-                Total: <strong>R$ 45,70</strong>
-              </p>
-              <p>
-                Ambiente protegido com criptografia SSL e validação antifraude em tempo real.
-              </p>
-            </aside>
-          </div>
-        </section>
+    const favoriteCategory = Object.entries(categoryAffinity).sort((a, b) => b[1] - a[1])[0][0];
+    const map = {
+      detox: "Percebemos que você gosta de opções detox. Selecionamos combinações leves para continuar sua rotina.",
+      energia: "Seu histórico mostra preferência por energia natural. Aqui vão sugestões para manter o ritmo.",
+      imunidade: "Montamos recomendações com foco em imunidade, alinhadas ao seu histórico de compras.",
+      digestivo: "Selecionamos opções digestivas para combinar com os sabores que você mais compra.",
+      kids: "Temos novidades para o público kids com base nas escolhas anteriores da sua família.",
+      shots: "Reforçamos a seção de shots funcionais com base no seu consumo recente.",
+    };
 
-        <section id="beneficios" className="section alt">
-          <div className="section-title">
-            <h3>Por que comprar com a Casa dos Sucos?</h3>
-          </div>
-          <div className="benefits-grid">
-            {benefits.map((item) => (
-              <article key={item.title}>
-                <h4>{item.title}</h4>
-                <p>{item.text}</p>
+    return map[favoriteCategory] ?? "Selecionamos ofertas personalizadas com base nas suas compras anteriores.";
+  }, [categoryAffinity]);
+
+  function handleViewProduct(productId) {
+    setRecentlyViewed((prev) => {
+      const next = [productId, ...prev.filter((id) => id !== productId)];
+      return next.slice(0, 4);
+    });
+  }
+
+  function handleBuyProduct(productId) {
+    setPurchaseHistory((prev) => [...prev, productId]);
+    handleViewProduct(productId);
+  }
+
+  return (
+    <div className="page">
+      <header className="hero">
+        <p className="eyebrow">Personalização baseada em histórico</p>
+        <h1>Casa dos Sucos • Experiência personalizada para aumentar conversão e fidelidade</h1>
+        <p>{personalizedMessage}</p>
+      </header>
+
+      <main>
+        <section>
+          <h2>Catálogo</h2>
+          <div className="grid">
+            {catalog.map((product) => (
+              <article key={product.id} className="card">
+                <span className="tag">{product.category}</span>
+                <h3>{product.name}</h3>
+                <p>{product.description}</p>
+                <strong>{formatPrice(product.price)}</strong>
+                <div className="actions">
+                  <button onClick={() => handleViewProduct(product.id)}>Ver detalhes</button>
+                  <button className="primary" onClick={() => handleBuyProduct(product.id)}>
+                    Comprar
+                  </button>
+                </div>
               </article>
             ))}
           </div>
@@ -1359,164 +1067,145 @@ function App() {
               </article>
             ))}
           </div>
+        <section>
+          <h2>Vistos recentemente</h2>
+          {recentlyViewed.length === 0 ? (
+            <p className="muted">Ainda não há itens vistos nesta sessão.</p>
+          ) : (
+            <ul className="list">
+              {recentlyViewed.map((id) => {
+                const product = catalog.find((item) => item.id === id);
+                if (!product) return null;
+                return <li key={id}>{product.name}</li>;
+              })}
+            </ul>
+          )}
         </section>
 
-        <section id="entrega-refrigerada" className="section cold-delivery">
-          <div className="section-title">
-            <h3>Opções de entrega refrigerada</h3>
-            <p>
-              Escolha a modalidade ideal e acompanhe o tempo de transporte para manter seu suco
-              com frescor e segurança até a entrega.
-            </p>
-          </div>
-
-          <div className="delivery-grid">
-            {refrigeratedDeliveryOptions.map((option) => (
-              <article key={option.title} className="delivery-card">
-                <h4>{option.title}</h4>
-                <p>
-                  <strong>Tempo de transporte:</strong> {option.transportTime}
-                </p>
-                <p>
-                  <strong>Cuidados de conservação:</strong> {option.care}
-                </p>
-                <small>{option.note}</small>
-              </article>
-            ))}
-          </div>
-
-          <aside className="perishability-alert" role="alert" aria-live="polite">
-            <strong>Alerta de perecibilidade:</strong> nossos sucos são 100% naturais e devem ser
-            mantidos refrigerados entre 2°C e 6°C. Após o recebimento, consuma em até 24h para
-            preservar sabor, nutrientes e segurança alimentar.
-          </aside>
-        </section>
-
-        <section id="estoque" className="section inventory-sync">
-          <div className="section-title">
-            <h3>Gestão de estoque e logística</h3>
-            <p>
-              Sincronize o estoque da loja online com o estoque físico para bloquear vendas de itens
-              indisponíveis e reduzir rupturas na operação.
-            </p>
-          </div>
-
-          <div className="inventory-summary" aria-live="polite">
-            <p>
-              <strong>Estoque online total:</strong> {inventorySummary.totalOnline} unidades
-            </p>
-            <p>
-              <strong>Estoque físico total:</strong> {inventorySummary.totalPhysical} unidades
-            </p>
-            <p>
-              <strong>Divergências detectadas:</strong> {inventorySummary.divergenceCount}
-            </p>
-            <button onClick={syncAllStock}>Sincronizar tudo agora</button>
-          </div>
-
-          <div className="inventory-grid">
-            {inventoryItems.map((item) => {
-              const hasDivergence = item.onlineStock !== item.physicalStock;
-              const saleBlocked = item.physicalStock <= 0 || item.onlineStock > item.physicalStock;
-
-              return (
-                <article key={item.id} className={`inventory-card ${saleBlocked ? "blocked" : ""}`}>
-                  <h4>{item.name}</h4>
-                  <p>
-                    <strong>Online:</strong> {item.onlineStock} · <strong>Físico:</strong> {item.physicalStock}
-                  </p>
-
-                  <div className="inventory-actions">
-                    <button onClick={() => updateInventory(item.id, "onlineStock", -1)}>
-                      Pedido online -1
-                    </button>
-                    <button onClick={() => updateInventory(item.id, "physicalStock", -1)}>
-                      Baixa física -1
-                    </button>
-                    <button onClick={() => updateInventory(item.id, "physicalStock", 1)}>
-                      Reposição +1
-                    </button>
-                  </div>
-
-                  <div className="inventory-status">
-                    <span className={hasDivergence ? "warning" : "ok"}>
-                      {hasDivergence ? "Divergência detectada" : "Estoque sincronizado"}
-                    </span>
-                    <span className={saleBlocked ? "blocked" : "ok"}>
-                      {saleBlocked ? "Venda online bloqueada" : "Venda online liberada"}
-                    </span>
-                  </div>
-
-                  <button className="sync-btn" onClick={() => syncProductStock(item.id)}>
-                    Sincronizar item
-                  </button>
-                </article>
-              );
-            })}
-          </div>
-        </section>
-
-        <section id="combinador" className="section flavor-combiner">
-          <div className="section-title">
-            <h3>Combinador de sabores</h3>
-            <p>
-              Selecione frutas, vegetais e superalimentos para criar sua bebida personalizada.
-              As calorias e os benefícios são atualizados em tempo real.
-            </p>
-          </div>
-
-          <div className="combiner-layout">
-            <div className="combiner-groups">
-              {ingredientGroups.map((group) => (
-                <article key={group.id} className="combiner-group">
-                  <h4>{group.label}</h4>
-                  <div className="combiner-options">
-                    {flavorIngredients[group.id].map((ingredient) => {
-                      const isSelected = selectedIngredients[group.id].includes(ingredient.id);
-                      return (
-                        <label
-                          key={ingredient.id}
-                          className={`ingredient-option ${isSelected ? "selected" : ""}`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleIngredient(group.id, ingredient.id)}
-                          />
-                          <div>
-                            <strong>{ingredient.name}</strong>
-                            <span>{ingredient.calories} kcal por porção</span>
-                          </div>
-                        </label>
-                      );
-                    })}
-                  </div>
+        <section>
+          <h2>Recomendações com base em compras anteriores</h2>
+          {recommendations.length === 0 ? (
+            <p className="muted">Você já comprou todo o catálogo atual. Em breve teremos novidades para você.</p>
+          ) : (
+            <div className="grid">
+              {recommendations.map((product) => (
+                <article key={product.id} className="card recommendation">
+                  <span className="tag">Match com seu perfil</span>
+                  <h3>{product.name}</h3>
+                  <p>{product.description}</p>
+                  <strong>{formatPrice(product.price)}</strong>
                 </article>
               ))}
             </div>
-
-            <aside className="combiner-summary" aria-live="polite">
-              <h4>Resumo da bebida</h4>
-              <p>
-                <strong>Ingredientes selecionados:</strong> {selectedFlavorItems.length}
-              </p>
-              <p>
-                <strong>Calorias estimadas:</strong> {estimatedCalories} kcal
-              </p>
-
-              <h5>Benefícios em destaque</h5>
-              {liveBenefits.length ? (
-                <ul>
-                  {liveBenefits.map((benefit) => (
-                    <li key={benefit}>{benefit}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p>Selecione ingredientes para visualizar os benefícios.</p>
-              )}
-            </aside>
-          </div>
+          )}
         </section>
+      </main>
+    </div>
+const products = [
+  {
+    id: "detox-verde",
+    name: "Suco Verde Detox",
+    category: "detox",
+    price: 14.9,
+    salesCount: 142,
+    description: "Couve, maçã verde, pepino e gengibre.",
+    complementaryIds: ["shot-imunidade", "mix-castanhas"],
+    similarCheaperIds: ["citrico-refresh"],
+  },
+  {
+    id: "vermelho-energetico",
+    name: "Suco Vermelho Energético",
+    category: "energia",
+    price: 16.9,
+    salesCount: 125,
+    description: "Beterraba, morango e água de coco.",
+    complementaryIds: ["barra-proteina", "shot-imunidade"],
+    similarCheaperIds: ["citrico-refresh"],
+  },
+  {
+    id: "citrico-refresh",
+    name: "Cítrico Refresh",
+    category: "energia",
+    price: 12.9,
+    salesCount: 118,
+    description: "Laranja, acerola e limão-siciliano.",
+    complementaryIds: ["mix-castanhas"],
+    similarCheaperIds: [],
+  },
+  {
+    id: "shot-imunidade",
+    name: "Shot de Imunidade",
+    category: "shot",
+    price: 7.9,
+    salesCount: 210,
+    description: "Gengibre, cúrcuma, limão e própolis.",
+    complementaryIds: [],
+    similarCheaperIds: [],
+  },
+  {
+    id: "mix-castanhas",
+    name: "Mix de Castanhas",
+    category: "snack",
+    price: 9.5,
+    salesCount: 96,
+    description: "Snack natural para acompanhar seu suco.",
+    complementaryIds: [],
+    similarCheaperIds: [],
+  },
+  {
+    id: "barra-proteina",
+    name: "Barra de Proteína",
+    category: "snack",
+    price: 8.9,
+    salesCount: 88,
+    description: "Cacau, aveia e proteína vegetal.",
+    complementaryIds: [],
+    similarCheaperIds: [],
+  },
+];
+
+const formatBRL = (value) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+
+function App() {
+  const [selectedProductId, setSelectedProductId] = useState(products[0].id);
+  const [cartIds, setCartIds] = useState([products[0].id]);
+
+  const catalogById = useMemo(
+    () => Object.fromEntries(products.map((product) => [product.id, product])),
+    []
+  );
+
+  const selectedProduct = catalogById[selectedProductId];
+
+  const alsoBought = useMemo(() => {
+    if (!selectedProduct) return [];
+
+    const listed = selectedProduct.complementaryIds
+      .map((id) => catalogById[id])
+      .filter(Boolean)
+      .sort((a, b) => b.salesCount - a.salesCount);
+
+    return listed;
+  }, [selectedProduct, catalogById]);
+
+  const similarCheaper = useMemo(() => {
+    if (!selectedProduct) return [];
+
+    const explicit = selectedProduct.similarCheaperIds.map((id) => catalogById[id]).filter(Boolean);
+
+    const inferred = products
+      .filter(
+        (product) =>
+          product.id !== selectedProduct.id &&
+          product.category === selectedProduct.category &&
+          product.price < selectedProduct.price
+      )
+      .sort((a, b) => a.price - b.price);
+
+    const merged = [...explicit, ...inferred];
+    return Array.from(new Map(merged.map((product) => [product.id, product])).values());
+  }, [selectedProduct, catalogById]);
 
         <section id="assinatura" className="subscription">
           <h3>Assinatura ajustável</h3>
@@ -1596,172 +1285,74 @@ function App() {
                 <strong>Recorrência:</strong> {selectedRecurringPlan.deliveriesPerMonth} entregas mensais
                 com reposição automática.
               </p>
+  const cartItems = cartIds.map((id) => catalogById[id]).filter(Boolean);
+  const cartTotal = cartItems.reduce((sum, item) => sum + item.price, 0);
 
+  const addToCart = (productId) => {
+    setCartIds((current) => [...current, productId]);
+  };
+
+  return (
+    <main className="page">
+      <header>
+        <h1>Casa dos Sucos</h1>
+        <p>Sistema de recomendações para aumentar ticket médio com up-selling e cross-selling.</p>
+      </header>
+
+      <section className="grid">
+        <article className="panel">
+          <h2>Catálogo</h2>
+          <div className="catalog">
+            {products.map((product) => (
               <button
-                className={`pause-btn ${isSubscriptionPaused ? "paused" : "active"}`}
-                onClick={() => setIsSubscriptionPaused((current) => !current)}
+                key={product.id}
+                className={`product-card ${selectedProductId === product.id ? "active" : ""}`}
+                onClick={() => setSelectedProductId(product.id)}
+                type="button"
               >
-                {isSubscriptionPaused ? "Retomar assinatura" : "Pausar assinatura"}
+                <strong>{product.name}</strong>
+                <span>{product.description}</span>
+                <b>{formatBRL(product.price)}</b>
               </button>
-
-              <p className="pause-feedback">
-                {isSubscriptionPaused
-                  ? "Assinatura pausada. Nenhuma entrega será cobrada até você retomar."
-                  : "Assinatura ativa. Você pode pausar quando quiser, com efeito imediato."}
-              </p>
-            </aside>
+            ))}
           </div>
-        </section>
+        </article>
 
-        <section id="automacao-marketing" className="section marketing-automation">
-          <div className="section-title">
-            <h3>Automação de marketing</h3>
-            <p>
-              Integrações com plataformas de e-mail, SMS e push para recuperar carrinhos
-              abandonados, engajar no pós-compra e ativar ofertas segmentadas.
-            </p>
-          </div>
+        <article className="panel">
+          <h2>Produto selecionado</h2>
+          <p className="selected-name">{selectedProduct.name}</p>
+          <p>{selectedProduct.description}</p>
+          <p className="price">{formatBRL(selectedProduct.price)}</p>
+          <button type="button" className="action" onClick={() => addToCart(selectedProduct.id)}>
+            Adicionar ao carrinho
+          </button>
 
-          <div className="automation-layout">
-            <article className="automation-panel">
-              <h4>Plataformas conectadas</h4>
-              <div className="channel-grid">
-                {marketingPlatforms.map((platform) => {
-                  const isEnabled = enabledChannels.includes(platform.id);
-                  return (
-                    <label
-                      key={platform.id}
-                      className={`channel-card ${isEnabled ? "enabled" : ""}`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isEnabled}
-                        onChange={() => toggleChannel(platform.id)}
-                      />
-                      <div>
-                        <strong>{platform.name}</strong>
-                        <small>Provider: {platform.provider}</small>
-                        <p>{platform.description}</p>
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-
-              <div className="segment-selector">
-                <h4>Segmentação de público</h4>
-                <div className="segment-buttons">
-                  {audienceSegments.map((segment) => (
-                    <button
-                      key={segment.id}
-                      className={selectedSegment === segment.id ? "active" : ""}
-                      onClick={() => setSelectedSegment(segment.id)}
-                    >
-                      {segment.label}
-                    </button>
-                  ))}
-                </div>
-                <p>
-                  <strong>Perfil:</strong> {activeSegment?.profile}
-                </p>
-                <p>
-                  <strong>Incentivo padrão:</strong> {activeSegment?.incentive}
-                </p>
-              </div>
-            </article>
-
-            <aside className="automation-flow" aria-live="polite">
-              <h4>Fluxos ativos ({visibleJourneys.length})</h4>
-              {visibleJourneys.length ? (
-                <ul>
-                  {visibleJourneys.map((journey) => (
-                    <li key={journey.id}>
-                      <strong>{journey.title}</strong>
-                      <span>{journey.objective}</span>
-                      <span>
-                        <b>Disparo:</b> {journey.delay}
-                      </span>
-                      <span>
-                        <b>Canais:</b>{" "}
-                        {journey.channels
-                          .filter((channel) => enabledChannels.includes(channel))
-                          .join(", ")}
-                      </span>
-                      <p>{journey.message}</p>
-                    </li>
-                  ))}
-                </ul>
+          <div className="recommendations">
+            <section>
+              <h3>Quem comprou este produto também comprou</h3>
+              {alsoBought.length === 0 ? (
+                <p className="empty">Sem combinações no momento.</p>
               ) : (
-                <p>Ative ao menos um canal para configurar automações.</p>
-              )}
-            </aside>
-          </div>
-        </section>
-
-        <section id="calculadora" className="section nutrition-calculator">
-          <div className="section-title">
-            <h3>Calculadora nutricional</h3>
-            <p>
-              Informe seu gasto calórico e objetivo para receber sugestões de sucos compatíveis
-              com sua rotina.
-            </p>
-          </div>
-
-          <div className="calculator-layout">
-            <article className="calculator-form">
-              <label>
-                Gasto calórico diário estimado (kcal)
-                <input
-                  type="number"
-                  min="1200"
-                  max="5000"
-                  step="50"
-                  value={dailyCalorieBurn}
-                  onChange={(event) => setDailyCalorieBurn(Number(event.target.value) || 0)}
-                />
-              </label>
-
-              <label>
-                Objetivo
-                <select value={calculatorGoal} onChange={(event) => setCalculatorGoal(event.target.value)}>
-                  {nutritionCalculatorGoals.map((goal) => (
-                    <option key={goal.id} value={goal.id}>
-                      {goal.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                Momento de consumo
-                <select
-                  value={consumptionPeriod}
-                  onChange={(event) => setConsumptionPeriod(event.target.value)}
-                >
-                  <option value="manha">Manhã</option>
-                  <option value="preTreino">Pré-treino</option>
-                  <option value="posTreino">Pós-treino</option>
-                  <option value="noite">Noite</option>
-                </select>
-              </label>
-
-              <p className="calculator-hint">
-                Faixa ideal estimada para você: <strong>{calorieRange.min} a {calorieRange.max} kcal</strong>{" "}
-                por suco.
-              </p>
-            </article>
-
-            <aside className="calculator-results" aria-live="polite">
-              <h4>Sugestões compatíveis</h4>
-              {compatibleRecommendations.length ? (
                 <ul>
-                  {compatibleRecommendations.map((juice) => (
-                    <li key={juice.id}>
-                      <strong>{juice.name}</strong>
-                      <span>{juice.calories} kcal · {juice.description}</span>
+                  {alsoBought.map((item) => (
+                    <li key={item.id}>
+                      <div>
+                        <strong>{item.name}</strong>
+                        <span>{formatBRL(item.price)}</span>
+                      </div>
+                      <button type="button" onClick={() => addToCart(item.id)}>
+                        + Adicionar
+                      </button>
                     </li>
                   ))}
                 </ul>
+              )}
+            </section>
+
+            <section>
+              <h3>Produtos semelhantes mais baratos</h3>
+              {similarCheaper.length === 0 ? (
+                <p className="empty">Não há versão mais econômica para este item.</p>
               ) : (
                 <p>
                   Não encontramos sucos com esse perfil no momento. Ajuste o gasto calórico ou o
@@ -2138,41 +1729,39 @@ function App() {
               <h5>Clientes no segmento</h5>
               {segmentedCustomers.length ? (
                 <ul>
-                  {segmentedCustomers.map((customer) => (
-                    <li key={customer.id}>
-                      <strong>{customer.name}</strong>
-                      <span>
-                        {customer.monthlyPurchases} pedidos/mês · Canal: {customer.channel}
-                      </span>
+                  {similarCheaper.map((item) => (
+                    <li key={item.id}>
+                      <div>
+                        <strong>{item.name}</strong>
+                        <span>
+                          {formatBRL(item.price)} (economize {formatBRL(selectedProduct.price - item.price)})
+                        </span>
+                      </div>
+                      <button type="button" onClick={() => setSelectedProductId(item.id)}>
+                        Ver opção
+                      </button>
                     </li>
                   ))}
                 </ul>
-              ) : (
-                <p>Nenhum cliente nessa combinação no momento.</p>
               )}
-
-              <button type="button">Enviar campanha para o segmento</button>
-            </aside>
+            </section>
           </div>
-        </section>
-      </main>
+        </article>
 
-      <aside className="social-proof-toast" aria-live="polite">
-        <strong>Agora mesmo</strong>
-        <p>{socialProofNotifications[socialProofIndex]}</p>
-      </aside>
-
-      <footer id="contato" className="footer">
-        <div>
-          <h4>Casa dos Sucos</h4>
-          <p>Rua das Frutas, 245 · São Paulo, SP</p>
-        </div>
-        <div>
-          <p>WhatsApp: (11) 99999-1212</p>
-          <p>Email: atendimento@casadossucos.com.br</p>
-        </div>
-      </footer>
-    </div>
+        <article className="panel cart">
+          <h2>Carrinho</h2>
+          <p>Itens: {cartItems.length}</p>
+          <p>Total: {formatBRL(cartTotal)}</p>
+          <ul>
+            {cartItems.map((item, index) => (
+              <li key={`${item.id}-${index}`}>
+                {item.name} — {formatBRL(item.price)}
+              </li>
+            ))}
+          </ul>
+        </article>
+      </section>
+    </main>
   );
 }
 
