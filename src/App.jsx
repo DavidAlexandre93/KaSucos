@@ -45,6 +45,39 @@ const benefits = [
   },
 ];
 
+const securityBadges = [
+  {
+    title: "SSL/TLS Ativo",
+    description: "Todo o checkout usa HTTPS com criptografia ponta a ponta.",
+    icon: "🔒",
+  },
+  {
+    title: "Pagamento protegido",
+    description: "Transações monitoradas com validação antifraude em tempo real.",
+    icon: "🛡️",
+  },
+  {
+    title: "LGPD e dados seguros",
+    description: "Coletamos apenas dados essenciais e com transparência de uso.",
+    icon: "✅",
+  },
+];
+
+const trustPolicies = [
+  {
+    title: "Política de privacidade",
+    summary: "Saiba quais dados coletamos e como protegemos suas informações pessoais.",
+    details:
+      "Utilizamos seus dados apenas para processamento de pedidos, entrega e suporte. Não comercializamos informações pessoais e você pode solicitar atualização ou exclusão dos dados a qualquer momento.",
+  },
+  {
+    title: "Política de devolução",
+    summary: "Processo simples para troca ou reembolso em caso de divergência no pedido.",
+    details:
+      "Se houver qualquer problema de qualidade, avaria ou item incorreto, você pode solicitar devolução em até 7 dias corridos. Após análise, oferecemos reenvio do produto ou estorno integral do valor pago.",
+  },
+];
+
 const refrigeratedDeliveryOptions = [
   {
     title: "Entrega refrigerada expressa",
@@ -354,6 +387,9 @@ function App() {
           </li>
           <li>
             <a href="#consultoria">Consultoria</a>
+          </li>
+          <li>
+            <a href="#seguranca">Segurança</a>
           </li>
           <li>
             <a href="#calculadora">Calculadora nutricional</a>
@@ -701,6 +737,42 @@ function App() {
                 Iniciar atendimento no WhatsApp
               </a>
             </aside>
+          </div>
+        </section>
+
+        <section id="seguranca" className="section trust-section">
+          <div className="section-title">
+            <h3>Segurança e transparência para comprar com confiança</h3>
+            <p>
+              Nosso site utiliza SSL, exibe selos de proteção e publica políticas claras de
+              privacidade e devolução para que você tenha previsibilidade em toda a jornada.
+            </p>
+          </div>
+
+          <div className="trust-badges" aria-label="Selos de segurança">
+            {securityBadges.map((badge) => (
+              <article key={badge.title} className="trust-badge">
+                <span className="badge-icon" aria-hidden="true">
+                  {badge.icon}
+                </span>
+                <div>
+                  <h4>{badge.title}</h4>
+                  <p>{badge.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="policy-grid">
+            {trustPolicies.map((policy) => (
+              <details key={policy.title} className="policy-card">
+                <summary>
+                  <strong>{policy.title}</strong>
+                  <span>{policy.summary}</span>
+                </summary>
+                <p>{policy.details}</p>
+              </details>
+            ))}
           </div>
         </section>
       </main>
