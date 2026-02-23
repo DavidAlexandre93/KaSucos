@@ -416,6 +416,13 @@ const juiceRecommendations = [
   },
 ];
 
+const inventoryProducts = [
+  { id: "detox", name: "Suco Verde Detox", onlineStock: 18, physicalStock: 20 },
+  { id: "energia", name: "Vermelho Energético", onlineStock: 10, physicalStock: 9 },
+  { id: "imunidade", name: "Laranja com Acerola", onlineStock: 14, physicalStock: 14 },
+  { id: "digestivo", name: "Abacaxi com Hortelã", onlineStock: 7, physicalStock: 5 },
+];
+
 const supportFaqs = [
   {
     id: "prazo-entrega",
@@ -649,6 +656,60 @@ function App() {
   const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
+  const [inventoryItems, setInventoryItems] = useState(inventoryProducts);
+
+  const updateInventory = (productId, field, amount) => {
+    setInventoryItems((current) =>
+      current.map((item) => {
+        if (item.id !== productId) {
+          return item;
+        }
+
+        const nextValue = Math.max(0, item[field] + amount);
+        return {
+          ...item,
+          [field]: nextValue,
+        };
+      })
+    );
+  };
+
+  const syncProductStock = (productId) => {
+    setInventoryItems((current) =>
+      current.map((item) => {
+        if (item.id !== productId) {
+          return item;
+        }
+
+        const synchronizedStock = Math.min(item.onlineStock, item.physicalStock);
+        return {
+          ...item,
+          onlineStock: synchronizedStock,
+        };
+      })
+    );
+  };
+
+  const syncAllStock = () => {
+    setInventoryItems((current) =>
+      current.map((item) => ({
+        ...item,
+        onlineStock: Math.min(item.onlineStock, item.physicalStock),
+      }))
+    );
+  };
+
+  const inventorySummary = useMemo(() => {
+    const totalOnline = inventoryItems.reduce((total, item) => total + item.onlineStock, 0);
+    const totalPhysical = inventoryItems.reduce((total, item) => total + item.physicalStock, 0);
+    const divergenceCount = inventoryItems.filter((item) => item.onlineStock !== item.physicalStock).length;
+
+    return {
+      totalOnline,
+      totalPhysical,
+      divergenceCount,
+    };
+  }, [inventoryItems]);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("credit");
   const [activeFaq, setActiveFaq] = useState(supportFaqs[0].id);
   const [trackingCode, setTrackingCode] = useState("CSC1024");
@@ -834,6 +895,9 @@ function App() {
           </li>
           <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
+          </li>
+          <li>
+            <a href="#estoque">Estoque e logística</a>
           </li>
           <li>
             <a href="#combinador">Combinador</a>
@@ -1062,6 +1126,70 @@ function App() {
             mantidos refrigerados entre 2°C e 6°C. Após o recebimento, consuma em até 24h para
             preservar sabor, nutrientes e segurança alimentar.
           </aside>
+        </section>
+
+        <section id="estoque" className="section inventory-sync">
+          <div className="section-title">
+            <h3>Gestão de estoque e logística</h3>
+            <p>
+              Sincronize o estoque da loja online com o estoque físico para bloquear vendas de itens
+              indisponíveis e reduzir rupturas na operação.
+            </p>
+          </div>
+
+          <div className="inventory-summary" aria-live="polite">
+            <p>
+              <strong>Estoque online total:</strong> {inventorySummary.totalOnline} unidades
+            </p>
+            <p>
+              <strong>Estoque físico total:</strong> {inventorySummary.totalPhysical} unidades
+            </p>
+            <p>
+              <strong>Divergências detectadas:</strong> {inventorySummary.divergenceCount}
+            </p>
+            <button onClick={syncAllStock}>Sincronizar tudo agora</button>
+          </div>
+
+          <div className="inventory-grid">
+            {inventoryItems.map((item) => {
+              const hasDivergence = item.onlineStock !== item.physicalStock;
+              const saleBlocked = item.physicalStock <= 0 || item.onlineStock > item.physicalStock;
+
+              return (
+                <article key={item.id} className={`inventory-card ${saleBlocked ? "blocked" : ""}`}>
+                  <h4>{item.name}</h4>
+                  <p>
+                    <strong>Online:</strong> {item.onlineStock} · <strong>Físico:</strong> {item.physicalStock}
+                  </p>
+
+                  <div className="inventory-actions">
+                    <button onClick={() => updateInventory(item.id, "onlineStock", -1)}>
+                      Pedido online -1
+                    </button>
+                    <button onClick={() => updateInventory(item.id, "physicalStock", -1)}>
+                      Baixa física -1
+                    </button>
+                    <button onClick={() => updateInventory(item.id, "physicalStock", 1)}>
+                      Reposição +1
+                    </button>
+                  </div>
+
+                  <div className="inventory-status">
+                    <span className={hasDivergence ? "warning" : "ok"}>
+                      {hasDivergence ? "Divergência detectada" : "Estoque sincronizado"}
+                    </span>
+                    <span className={saleBlocked ? "blocked" : "ok"}>
+                      {saleBlocked ? "Venda online bloqueada" : "Venda online liberada"}
+                    </span>
+                  </div>
+
+                  <button className="sync-btn" onClick={() => syncProductStock(item.id)}>
+                    Sincronizar item
+                  </button>
+                </article>
+              );
+            })}
+          </div>
         </section>
 
         <section id="combinador" className="section flavor-combiner">
