@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const featuredJuices = [
@@ -42,6 +42,58 @@ const benefits = [
   {
     title: "Combos promocionais",
     text: "Monte kits semanais e economize em pedidos recorrentes.",
+  },
+];
+
+const aboutQuickLinks = [
+  { id: "horarios", label: "Horários de funcionamento", target: "#sobre-horarios" },
+  { id: "localizacao", label: "Como chegar", target: "#sobre-localizacao" },
+  { id: "contato", label: "Canais de contato", target: "#sobre-contato" },
+];
+
+const businessHours = [
+  { day: "Segunda a sexta", time: "08h às 20h" },
+  { day: "Sábado", time: "09h às 18h" },
+  { day: "Domingo", time: "09h às 14h" },
+  { day: "Feriados", time: "10h às 14h" },
+const brandStory = {
+  origin:
+    "A Casa dos Sucos nasceu em uma pequena feira de bairro, quando nossa fundadora começou a preparar receitas naturais para ajudar a família a manter uma alimentação mais equilibrada no dia a dia.",
+  purpose:
+    "Hoje, nosso propósito é tornar escolhas saudáveis acessíveis, com sucos de verdade, feitos com ingredientes frescos, rastreáveis e selecionados com responsabilidade.",
+  commitments: [
+    {
+      title: "Compromisso com a saúde",
+      text: "Nossas combinações são livres de conservantes e sem açúcar adicionado, priorizando valor nutricional e segurança alimentar em cada lote.",
+    },
+    {
+      title: "Compromisso com a sustentabilidade",
+      text: "Utilizamos embalagens recicláveis, reaproveitamos subprodutos orgânicos e otimizamos rotas de entrega para reduzir emissões.",
+    },
+    {
+      title: "Compromisso com fornecedores locais",
+      text: "Trabalhamos com produtores da região, fortalecendo a economia local e garantindo frutas mais frescas, colhidas no tempo certo.",
+    },
+  ],
+};
+const sustainabilityInitiatives = [
+  {
+    title: "Embalagens recicláveis",
+    description:
+      "Nossas garrafas e tampas são 100% recicláveis, com instruções de descarte no rótulo para facilitar a coleta seletiva.",
+    metric: "92% dos pedidos já usam embalagem reciclável",
+  },
+  {
+    title: "Ingredientes orgânicos selecionados",
+    description:
+      "Priorizamos frutas, vegetais e superalimentos de produtores orgânicos parceiros, reduzindo uso de agrotóxicos.",
+    metric: "Mais de 70% do cardápio com base orgânica",
+  },
+  {
+    title: "Política de redução de plástico",
+    description:
+      "Retiramos canudos plásticos, adotamos lacres de menor gramatura e incentivamos retornáveis para assinantes.",
+    metric: "Meta de reduzir 35% do plástico virgem até 2026",
   },
 ];
 
@@ -214,6 +266,78 @@ const nutritionCalculatorGoals = [
   { id: "ganhar", label: "Ganho de energia muscular", targetCalories: 340, focus: "performance" },
 ];
 
+const marketingPlatforms = [
+  {
+    id: "email",
+    name: "E-mail",
+    provider: "Mailchimp",
+    description: "Fluxos para carrinho abandonado, pós-compra e campanhas sazonais.",
+  },
+  {
+    id: "sms",
+    name: "SMS",
+    provider: "Twilio",
+    description: "Lembretes curtos com cupom e links diretos para finalizar o pedido.",
+  },
+  {
+    id: "push",
+    name: "Push",
+    provider: "OneSignal",
+    description: "Notificações em tempo real com ofertas segmentadas por comportamento.",
+  },
+];
+
+const audienceSegments = [
+  {
+    id: "frequentes",
+    label: "Clientes frequentes",
+    profile: "Mais de 2 compras por mês",
+    incentive: "Cupom VIP de 15%",
+  },
+  {
+    id: "primeiraCompra",
+    label: "Primeira compra",
+    profile: "Primeiro pedido nos últimos 30 dias",
+    incentive: "Frete grátis na recompra",
+  },
+  {
+    id: "detox",
+    label: "Interesse em detox",
+    profile: "Produtos verdes e funcionais no carrinho",
+    incentive: "Combo detox com 10% off",
+  },
+];
+
+const automationJourneys = [
+  {
+    id: "abandonedCart",
+    title: "Carrinho abandonado",
+    objective: "Recuperar pedidos não finalizados",
+    delay: "30 min após abandono",
+    channels: ["email", "sms", "push"],
+    message:
+      "Você deixou produtos frescos no carrinho. Finalize agora e ganhe 10% com o cupom VOLTE10.",
+  },
+  {
+    id: "postPurchase",
+    title: "Pós-compra",
+    objective: "Aumentar retenção e recompra",
+    delay: "2 dias após a entrega",
+    channels: ["email", "push"],
+    message:
+      "Como foi sua experiência? Avalie o pedido e receba recomendações personalizadas para a próxima semana.",
+  },
+  {
+    id: "segmentedOffers",
+    title: "Ofertas segmentadas",
+    objective: "Promover combos alinhados ao perfil",
+    delay: "1x por semana",
+    channels: ["email", "sms", "push"],
+    message:
+      "Selecionamos ofertas para seu perfil. Aproveite combos com validade curta e prioridade de entrega.",
+  },
+];
+
 const juiceRecommendations = [
   {
     id: "detox-matinal",
@@ -262,6 +386,224 @@ const juiceRecommendations = [
   },
 ];
 
+const supportFaqs = [
+  {
+    id: "prazo-entrega",
+    question: "Qual é o prazo de entrega dos pedidos?",
+    answer:
+      "Pedidos expressos chegam em 30 a 45 minutos. Você também pode escolher entrega programada para o mesmo turno.",
+  },
+  {
+    id: "conservacao",
+    question: "Como conservar os sucos após receber?",
+    answer:
+      "Mantenha refrigerado entre 2°C e 6°C e consuma em até 24h para melhor sabor, frescor e valor nutricional.",
+  },
+  {
+    id: "assinatura",
+    question: "Posso pausar ou alterar minha assinatura?",
+    answer:
+      "Sim. Você pode pausar, retomar ou editar os sabores da assinatura a qualquer momento no painel do cliente.",
+  },
+  {
+    id: "pagamento",
+    question: "Quais formas de pagamento são aceitas?",
+    answer:
+      "Aceitamos Pix, cartão de crédito, débito e carteiras digitais. Para empresas, também emitimos cobrança faturada.",
+  },
+];
+
+const orderTrackingMock = {
+  CSC1024: {
+    status: "Em rota de entrega",
+    eta: "18 min",
+    detail: "Motoboy saiu do centro de distribuição às 14:22.",
+  },
+  CSC2048: {
+    status: "Separando pedido",
+    eta: "35 min",
+    detail: "Estamos finalizando o empacotamento refrigerado do seu combo.",
+  },
+  CSC4096: {
+    status: "Pedido entregue",
+    eta: "Concluído",
+    detail: "Entrega realizada com sucesso às 12:07.",
+const customerReviews = [
+  {
+    id: 1,
+    name: "Camila T.",
+    location: "Vila Mariana",
+    rating: 5,
+    comment:
+      "Assino há 3 meses e a qualidade é sempre impecável. O suco chega gelado e com sabor de fruta de verdade.",
+  },
+  {
+    id: 2,
+    name: "Rafael M.",
+    location: "Pinheiros",
+    rating: 5,
+    comment:
+      "Comprei para o pós-treino e virei cliente fixo. Entrega rápida e atendimento super prestativo.",
+  },
+  {
+    id: 3,
+    name: "Juliana S.",
+    location: "Moema",
+    rating: 4,
+    comment:
+      "Gostei muito do combinador de sabores. Consegui montar opções leves para a semana inteira.",
+  },
+  {
+    id: 4,
+    name: "Eduardo L.",
+    location: "Brooklin",
+    rating: 5,
+    comment:
+      "Excelente custo-benefício nos combos. Minha equipe do escritório pede toda sexta-feira.",
+  },
+];
+
+const socialProofNotifications = [
+  "Ana, da Bela Vista, avaliou 5★ o Combo Vitalidade há 2 min.",
+  "+18 pedidos finalizados no último horário de almoço.",
+  "Pedro acabou de renovar a assinatura Detox Verde por mais 30 dias.",
+  "94% dos clientes recomendam a Casa dos Sucos para amigos e família.",
+];
+const socialLinks = [
+  {
+    id: "instagram",
+    name: "Instagram",
+    handle: "@casadossucos",
+    href: "https://www.instagram.com/",
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    handle: "/casadossucos",
+    href: "https://www.facebook.com/",
+  },
+  {
+    id: "whatsapp",
+    name: "WhatsApp",
+    handle: "(11) 99999-1212",
+    href: "https://wa.me/5511999991212",
+  },
+];
+
+const customerPhotoTips = [
+  "Marque @casadossucos e use a hashtag #MeuSucoCasaDosSucos.",
+  "Publique seu momento com o suco e conte qual sabor pediu.",
+  "As melhores fotos da semana aparecem em nossos stories com cupom surpresa.",
+];
+const campaignPreferenceOptions = [
+  { id: "detox", label: "Sucos detox" },
+  { id: "energetico", label: "Sucos energéticos" },
+  { id: "semLactose", label: "Sem lactose" },
+];
+
+const purchaseFrequencyOptions = [
+  { id: "alta", label: "Alta (2+ pedidos por semana)", minPurchases: 8 },
+  { id: "media", label: "Média (1 pedido por semana)", minPurchases: 4 },
+  { id: "baixa", label: "Baixa (até 3 pedidos por mês)", minPurchases: 1 },
+];
+
+const crmCustomers = [
+  {
+    id: "cliente-01",
+    name: "Mariana Oliveira",
+    preference: "detox",
+    frequency: "alta",
+    monthlyPurchases: 10,
+    channel: "WhatsApp",
+  },
+  {
+    id: "cliente-02",
+    name: "Lucas Mendes",
+    preference: "energetico",
+    frequency: "media",
+    monthlyPurchases: 5,
+    channel: "E-mail",
+  },
+  {
+    id: "cliente-03",
+    name: "Carla Nogueira",
+    preference: "semLactose",
+    frequency: "media",
+    monthlyPurchases: 4,
+    channel: "WhatsApp",
+  },
+  {
+    id: "cliente-04",
+    name: "Felipe Santos",
+    preference: "detox",
+    frequency: "baixa",
+    monthlyPurchases: 2,
+    channel: "Push app",
+  },
+  {
+    id: "cliente-05",
+    name: "Aline Rocha",
+    preference: "energetico",
+    frequency: "alta",
+    monthlyPurchases: 9,
+    channel: "WhatsApp",
+  },
+];
+
+const campaignLibrary = {
+  detox: {
+    alta: {
+      title: "VIP Detox da Semana",
+      message:
+        "Ofereça upgrade para kit 10x detox com 15% OFF e entrega refrigerada prioritária para manter recorrência.",
+    },
+    media: {
+      title: "Rotina Detox 2x1",
+      message:
+        "Envie cupom de recompra com validade de 5 dias para converter pedidos quinzenais em semanais.",
+    },
+    baixa: {
+      title: "Volte ao Detox",
+      message:
+        "Dispare campanha de reativação com frete grátis + sugestão de plano de 3 dias para retomar o hábito.",
+    },
+  },
+  energetico: {
+    alta: {
+      title: "Pré-treino Premium",
+      message:
+        "Campanha com combos energéticos + shot de gengibre como brinde para clientes de alta frequência.",
+    },
+    media: {
+      title: "Energia no Meio da Semana",
+      message:
+        "Incentive o 2º pedido da semana com desconto progressivo em sucos vermelhos e cítricos energéticos.",
+    },
+    baixa: {
+      title: "Retorno Energia Natural",
+      message:
+        "Oferta de primeira recomposição do mês com 20% OFF em kits pré e pós-treino.",
+    },
+  },
+  semLactose: {
+    alta: {
+      title: "Clube Zero Lactose",
+      message:
+        "Envie campanhas exclusivas com lançamentos sem lactose e pontos extras no programa de fidelidade.",
+    },
+    media: {
+      title: "Semana Leve Sem Lactose",
+      message:
+        "Sugira assinatura quinzenal com preço fechado e comunicação focada em digestibilidade.",
+    },
+    baixa: {
+      title: "Reativação Sem Lactose",
+      message:
+        "Dispare cupom de retomada com recomendação de sabores suaves e CTA para montar combo personalizado.",
+    },
+  },
+};
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -278,6 +620,13 @@ function App() {
   const [calculatorGoal, setCalculatorGoal] = useState("manter");
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("credit");
+  const [activeFaq, setActiveFaq] = useState(supportFaqs[0].id);
+  const [trackingCode, setTrackingCode] = useState("CSC1024");
+  const [socialProofIndex, setSocialProofIndex] = useState(0);
+  const [enabledChannels, setEnabledChannels] = useState(["email", "push"]);
+  const [selectedSegment, setSelectedSegment] = useState("frequentes");
+  const [campaignPreference, setCampaignPreference] = useState("detox");
+  const [campaignFrequency, setCampaignFrequency] = useState("alta");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -370,6 +719,65 @@ function App() {
     [selectedPaymentMethod]
   );
 
+  const trackingResult = orderTrackingMock[trackingCode.trim().toUpperCase()];
+  const averageRating = useMemo(
+    () =>
+      customerReviews.reduce((total, review) => total + review.rating, 0) /
+      customerReviews.length,
+    []
+  );
+
+  const fiveStarPercentage = useMemo(() => {
+    const fiveStarReviews = customerReviews.filter((review) => review.rating === 5).length;
+    return Math.round((fiveStarReviews / customerReviews.length) * 100);
+  }, []);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setSocialProofIndex((current) => (current + 1) % socialProofNotifications.length);
+    }, 4000);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const renderStars = (rating) =>
+    Array.from({ length: 5 }, (_, index) => (
+      <span key={`${rating}-${index}`} aria-hidden="true" className={index < rating ? "filled" : "empty"}>
+        ★
+      </span>
+    ));
+  const activeSegment = audienceSegments.find((segment) => segment.id === selectedSegment);
+
+  const visibleJourneys = useMemo(
+    () =>
+      automationJourneys.filter((journey) =>
+        journey.channels.some((channel) => enabledChannels.includes(channel))
+      ),
+    [enabledChannels]
+  );
+
+  const toggleChannel = (channelId) => {
+    setEnabledChannels((current) => {
+      if (current.includes(channelId)) {
+        if (current.length === 1) {
+          return current;
+        }
+        return current.filter((id) => id !== channelId);
+      }
+      return [...current, channelId];
+    });
+  };
+  const segmentedCustomers = useMemo(
+    () =>
+      crmCustomers.filter(
+        (customer) =>
+          customer.preference === campaignPreference && customer.frequency === campaignFrequency
+      ),
+    [campaignPreference, campaignFrequency]
+  );
+
+  const selectedCampaign = campaignLibrary[campaignPreference][campaignFrequency];
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -382,10 +790,17 @@ function App() {
         <h1>Casa dos Sucos</h1>
         <ul>
           <li>
+            <a href="#sobre">Sobre</a>
+            <a href="#historia-proposito">História e propósito</a>
+          </li>
+          <li>
             <a href="#catalogo">Catálogo</a>
           </li>
           <li>
             <a href="#beneficios">Benefícios</a>
+          </li>
+          <li>
+            <a href="#sustentabilidade">Sustentabilidade</a>
           </li>
           <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
@@ -403,10 +818,21 @@ function App() {
             <a href="#consultoria">Consultoria</a>
           </li>
           <li>
+            <a href="#automacao-marketing">Automação de marketing</a>
+          </li>
+          <li>
             <a href="#calculadora">Calculadora nutricional</a>
           </li>
           <li>
+            <a href="#reviews">Reviews</a>
+            <a href="#redes-sociais">Redes sociais</a>
+            <a href="#campanhas">Campanhas</a>
+          </li>
+          <li>
             <a href="#contato">Contato</a>
+          </li>
+          <li>
+            <a href="#suporte">Suporte</a>
           </li>
         </ul>
         <button className="cta">Pedir agora</button>
@@ -425,6 +851,17 @@ function App() {
               <button className="cta">Ver cardápio</button>
               <button className="ghost">Montar combo</button>
             </div>
+
+            <div className="home-map-links" aria-label="Mapa rápido da homepage">
+              <p>Atalhos úteis:</p>
+              <ul>
+                {aboutQuickLinks.map((link) => (
+                  <li key={link.id}>
+                    <a href={link.target}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className="hero-highlight">
             <span>Destaque da semana</span>
@@ -432,6 +869,76 @@ function App() {
             <p>
               7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.
             </p>
+          </div>
+        </section>
+
+        <section id="sobre" className="section about-page">
+          <div className="section-title">
+            <h3>Sobre a Casa dos Sucos</h3>
+            <p>
+              Conforme recomendado pelo Toast POS, reunimos em um só lugar os dados essenciais de
+              horário, localização e contato para facilitar sua decisão de compra e transmitir mais
+              confiança.
+            </p>
+          </div>
+
+          <div className="about-grid">
+            <article id="sobre-horarios" className="about-card">
+              <h4>Horários de funcionamento</h4>
+              <ul>
+                {businessHours.map((item) => (
+                  <li key={item.day}>
+                    <span>{item.day}</span>
+                    <strong>{item.time}</strong>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article id="sobre-localizacao" className="about-card">
+              <h4>Localização</h4>
+              <p>Rua das Frutas, 245 · Vila Mariana · São Paulo, SP</p>
+              <p>Próximo à estação Ana Rosa e com retirada rápida no balcão.</p>
+              <a
+                href="https://maps.google.com/?q=Rua+das+Frutas+245+Sao+Paulo"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ver no mapa
+              </a>
+            </article>
+
+            <article id="sobre-contato" className="about-card">
+              <h4>Contato</h4>
+              <p>
+                WhatsApp: <a href="https://wa.me/5511999991212">(11) 99999-1212</a>
+              </p>
+              <p>
+                E-mail: <a href="mailto:atendimento@casadossucos.com.br">atendimento@casadossucos.com.br</a>
+              </p>
+              <p>
+                Instagram: <a href="https://instagram.com/casadossucos">@casadossucos</a>
+              </p>
+            </article>
+        <section id="historia-proposito" className="section brand-story">
+          <div className="section-title">
+            <h3>História da marca e propósito</h3>
+          </div>
+
+          <div className="brand-story-layout">
+            <article className="brand-story-text">
+              <p>{brandStory.origin}</p>
+              <p>{brandStory.purpose}</p>
+            </article>
+
+            <div className="brand-commitments">
+              {brandStory.commitments.map((commitment) => (
+                <article key={commitment.title}>
+                  <h4>{commitment.title}</h4>
+                  <p>{commitment.text}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -470,6 +977,26 @@ function App() {
               <article key={item.title}>
                 <h4>{item.title}</h4>
                 <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="sustentabilidade" className="section sustainability">
+          <div className="section-title">
+            <h3>Sustentabilidade e embalagens</h3>
+            <p>
+              Transparência sobre reciclagem, ingredientes orgânicos e redução de plástico para
+              consumidores conscientes.
+            </p>
+          </div>
+
+          <div className="sustainability-grid">
+            {sustainabilityInitiatives.map((initiative) => (
+              <article key={initiative.title} className="sustainability-card">
+                <h4>{initiative.title}</h4>
+                <p>{initiative.description}</p>
+                <small>{initiative.metric}</small>
               </article>
             ))}
           </div>
@@ -624,6 +1151,91 @@ function App() {
                   ? "Assinatura pausada. Nenhuma entrega será cobrada até você retomar."
                   : "Assinatura ativa. Você pode pausar quando quiser, com efeito imediato."}
               </p>
+            </aside>
+          </div>
+        </section>
+
+        <section id="automacao-marketing" className="section marketing-automation">
+          <div className="section-title">
+            <h3>Automação de marketing</h3>
+            <p>
+              Integrações com plataformas de e-mail, SMS e push para recuperar carrinhos
+              abandonados, engajar no pós-compra e ativar ofertas segmentadas.
+            </p>
+          </div>
+
+          <div className="automation-layout">
+            <article className="automation-panel">
+              <h4>Plataformas conectadas</h4>
+              <div className="channel-grid">
+                {marketingPlatforms.map((platform) => {
+                  const isEnabled = enabledChannels.includes(platform.id);
+                  return (
+                    <label
+                      key={platform.id}
+                      className={`channel-card ${isEnabled ? "enabled" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isEnabled}
+                        onChange={() => toggleChannel(platform.id)}
+                      />
+                      <div>
+                        <strong>{platform.name}</strong>
+                        <small>Provider: {platform.provider}</small>
+                        <p>{platform.description}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="segment-selector">
+                <h4>Segmentação de público</h4>
+                <div className="segment-buttons">
+                  {audienceSegments.map((segment) => (
+                    <button
+                      key={segment.id}
+                      className={selectedSegment === segment.id ? "active" : ""}
+                      onClick={() => setSelectedSegment(segment.id)}
+                    >
+                      {segment.label}
+                    </button>
+                  ))}
+                </div>
+                <p>
+                  <strong>Perfil:</strong> {activeSegment?.profile}
+                </p>
+                <p>
+                  <strong>Incentivo padrão:</strong> {activeSegment?.incentive}
+                </p>
+              </div>
+            </article>
+
+            <aside className="automation-flow" aria-live="polite">
+              <h4>Fluxos ativos ({visibleJourneys.length})</h4>
+              {visibleJourneys.length ? (
+                <ul>
+                  {visibleJourneys.map((journey) => (
+                    <li key={journey.id}>
+                      <strong>{journey.title}</strong>
+                      <span>{journey.objective}</span>
+                      <span>
+                        <b>Disparo:</b> {journey.delay}
+                      </span>
+                      <span>
+                        <b>Canais:</b>{" "}
+                        {journey.channels
+                          .filter((channel) => enabledChannels.includes(channel))
+                          .join(", ")}
+                      </span>
+                      <p>{journey.message}</p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Ative ao menos um canal para configurar automações.</p>
+              )}
             </aside>
           </div>
         </section>
@@ -785,7 +1397,268 @@ function App() {
             </aside>
           </div>
         </section>
+
+        <section id="suporte" className="section support-center">
+          <div className="section-title">
+            <h3>Chat ao vivo e suporte multicanal</h3>
+            <p>
+              Resolva dúvidas em tempo real e receba orientação durante a compra com canais
+              integrados: FAQ, chat, e-mail, telefone e rastreio de pedidos.
+            </p>
+          </div>
+
+          <div className="support-layout">
+            <article className="support-card live-chat-card">
+              <h4>Atendimento ao vivo</h4>
+              <p>
+                Nosso time está online todos os dias, das 8h às 22h, para ajudar com catálogo,
+                combos, assinatura e fechamento de pedidos.
+              </p>
+              <a
+                className="chat-cta"
+                href="https://wa.me/5511999991212?text=Ol%C3%A1!%20Preciso%20de%20ajuda%20para%20comprar%20na%20Casa%20dos%20Sucos."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Iniciar chat ao vivo
+              </a>
+            </article>
+
+            <article className="support-card faq-card">
+              <h4>FAQ rápido</h4>
+              <div className="faq-list">
+                {supportFaqs.map((faq) => {
+                  const isActive = activeFaq === faq.id;
+                  return (
+                    <button
+                      key={faq.id}
+                      className={`faq-item ${isActive ? "active" : ""}`}
+                      onClick={() => setActiveFaq(faq.id)}
+                    >
+                      <strong>{faq.question}</strong>
+                      {isActive && <span>{faq.answer}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </article>
+
+            <article className="support-card contact-channels">
+              <h4>Outros canais</h4>
+              <ul>
+                <li>
+                  <strong>E-mail:</strong> atendimento@casadossucos.com.br
+                </li>
+                <li>
+                  <strong>Telefone:</strong> (11) 4000-1234
+                </li>
+                <li>
+                  <strong>WhatsApp:</strong> (11) 99999-1212
+                </li>
+              </ul>
+            </article>
+
+            <article className="support-card tracking-card" aria-live="polite">
+              <h4>Rastreio de pedido</h4>
+              <label>
+                Código do pedido
+                <input
+                  type="text"
+                  value={trackingCode}
+                  onChange={(event) => setTrackingCode(event.target.value)}
+                  placeholder="Ex: CSC1024"
+                />
+              </label>
+
+              {trackingResult ? (
+                <div className="tracking-result">
+                  <p>
+                    <strong>Status:</strong> {trackingResult.status}
+                  </p>
+                  <p>
+                    <strong>Previsão:</strong> {trackingResult.eta}
+                  </p>
+                  <p>{trackingResult.detail}</p>
+                </div>
+              ) : (
+                <p className="tracking-warning">
+                  Código não encontrado. Verifique o número do pedido ou fale com nosso suporte.
+                </p>
+              )}
+            </article>
+        <section id="reviews" className="section reviews-social-proof">
+          <div className="section-title">
+            <h3>Reviews e prova social</h3>
+            <p>
+              Sistemas de avaliação por estrelas e comentários fortalecem confiança e são decisivos
+              para mais de 90% dos consumidores no momento de compra.
+            </p>
+          </div>
+
+          <div className="reviews-overview">
+            <article>
+              <h4>Média geral</h4>
+              <p className="rating-number">{averageRating.toFixed(1)} / 5</p>
+              <div className="stars" aria-label={`Avaliação média de ${averageRating.toFixed(1)} de 5`}>
+                {renderStars(Math.round(averageRating))}
+              </div>
+            </article>
+            <article>
+              <h4>Clientes satisfeitos</h4>
+              <p className="rating-number">{fiveStarPercentage}%</p>
+              <p className="rating-support">das avaliações recentes foram 5 estrelas.</p>
+            </article>
+            <article>
+              <h4>Total de avaliações</h4>
+              <p className="rating-number">{customerReviews.length * 47}+</p>
+              <p className="rating-support">comentários verificados neste trimestre.</p>
+            </article>
+          </div>
+
+          <div className="reviews-grid">
+            {customerReviews.map((review) => (
+              <article key={review.id} className="review-card">
+                <div className="stars" aria-label={`${review.rating} de 5 estrelas`}>
+                  {renderStars(review.rating)}
+                </div>
+                <p>{review.comment}</p>
+                <small>
+                  {review.name} · {review.location}
+                </small>
+              </article>
+            ))}
+        <section id="redes-sociais" className="section social-hub">
+          <div className="section-title">
+            <h3>Integração com redes sociais</h3>
+            <p>
+              Acompanhe nossos perfis, veja atualizações em tempo real e compartilhe suas fotos com
+              a comunidade Casa dos Sucos.
+            </p>
+          </div>
+
+          <div className="social-links" aria-label="Links para perfis sociais">
+            {socialLinks.map((profile) => (
+              <a key={profile.id} href={profile.href} target="_blank" rel="noreferrer">
+                <strong>{profile.name}</strong>
+                <span>{profile.handle}</span>
+              </a>
+            ))}
+          </div>
+
+          <div className="social-plugins">
+            <article>
+              <h4>Feed do Instagram</h4>
+              <p>Confira os bastidores e lançamentos direto do nosso perfil.</p>
+              <iframe
+                src="https://www.instagram.com/casadossucos/embed"
+                title="Plugin Instagram Casa dos Sucos"
+                loading="lazy"
+                allowTransparency="true"
+              />
+            </article>
+
+            <article>
+              <h4>Comunidade no Facebook</h4>
+              <p>Acompanhe novidades, promoções e conteúdo exclusivo da página.</p>
+              <iframe
+                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcasadossucos&tabs=timeline&width=500&height=340&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+                title="Plugin Facebook Casa dos Sucos"
+                loading="lazy"
+                allow="encrypted-media"
+              />
+            </article>
+          </div>
+
+          <aside className="photo-sharing">
+            <h4>Compartilhe sua foto e ganhe destaque</h4>
+            <ul>
+              {customerPhotoTips.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
+            <a
+              className="cta"
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Quero compartilhar minha foto
+            </a>
+          </aside>
+        <section id="campanhas" className="section crm-campaigns">
+          <div className="section-title">
+            <h3>Personalização de campanhas</h3>
+            <p>
+              Segmente clientes por preferências de produto e frequency of purchase para enviar
+              campanhas específicas automaticamente.
+            </p>
+          </div>
+
+          <div className="crm-layout">
+            <article className="crm-filters">
+              <label>
+                Preferência principal
+                <select
+                  value={campaignPreference}
+                  onChange={(event) => setCampaignPreference(event.target.value)}
+                >
+                  {campaignPreferenceOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Frequency of purchase
+                <select
+                  value={campaignFrequency}
+                  onChange={(event) => setCampaignFrequency(event.target.value)}
+                >
+                  {purchaseFrequencyOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <p className="crm-hint">
+                Segmento atual: <strong>{segmentedCustomers.length} clientes elegíveis</strong>.
+              </p>
+            </article>
+
+            <aside className="crm-results" aria-live="polite">
+              <h4>{selectedCampaign.title}</h4>
+              <p>{selectedCampaign.message}</p>
+
+              <h5>Clientes no segmento</h5>
+              {segmentedCustomers.length ? (
+                <ul>
+                  {segmentedCustomers.map((customer) => (
+                    <li key={customer.id}>
+                      <strong>{customer.name}</strong>
+                      <span>
+                        {customer.monthlyPurchases} pedidos/mês · Canal: {customer.channel}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Nenhum cliente nessa combinação no momento.</p>
+              )}
+
+              <button type="button">Enviar campanha para o segmento</button>
+            </aside>
+          </div>
+        </section>
       </main>
+
+      <aside className="social-proof-toast" aria-live="polite">
+        <strong>Agora mesmo</strong>
+        <p>{socialProofNotifications[socialProofIndex]}</p>
+      </aside>
 
       <footer id="contato" className="footer">
         <div>
