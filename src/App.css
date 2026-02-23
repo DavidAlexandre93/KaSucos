@@ -327,6 +327,82 @@ main {
   color: var(--green-900);
 }
 
+
+.catalog-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.catalog-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--green-900);
+}
+
+.catalog-filters select,
+.catalog-filters input[type="range"] {
+  width: 100%;
+}
+
+.filter-chips button {
+  border: 1px solid #cfe2d5;
+  background: #eef6f1;
+  color: var(--green-900);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter-chips button.active {
+  background: #2b7a45;
+  color: #fff;
+  border-color: #2b7a45;
+}
+
+.product-card.selected {
+  border-color: #2b7a45;
+  box-shadow: 0 0 0 2px #d9eedf;
+}
+
+.product-meta {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #4d6f59;
+}
+
+.catalog-empty {
+  margin-top: 14px;
+  color: #7c3d3d;
+}
+
+.catalog-recommendations {
+  margin-top: 20px;
+  background: #f8fbf9;
+  border: 1px solid #dce9df;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.recommendation-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.recommendation-columns h5 {
+  margin: 0 0 10px;
+}
+
+.recommendation-columns ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
 .alt {
   background: #fff;
   padding: 24px;
@@ -1414,6 +1490,10 @@ main {
 }
 
 .trust-badge p {
+  margin: 0;
+  color: var(--text-600);
+}
+
 .support-layout {
   margin-top: 14px;
   display: grid;
@@ -1514,6 +1594,8 @@ main {
   background: #fff5e8;
   color: #7a4a02;
   border: 1px solid #ffd7a1;
+}
+
 .reviews-overview {
   margin-top: 14px;
   display: grid;
@@ -1555,6 +1637,10 @@ main {
 .policy-card {
   background: #fcfffd;
   border: 1px solid #d8e8dc;
+  border-radius: 12px;
+  padding: 12px;
+}
+
 .stars {
   display: flex;
   gap: 2px;
@@ -1601,6 +1687,8 @@ main {
   margin: 10px 0 0;
   color: var(--text-600);
   line-height: 1.45;
+}
+
 .review-card p {
   color: var(--text-600);
   line-height: 1.45;
@@ -1633,6 +1721,8 @@ main {
 .social-proof-toast p {
   margin: 0;
   line-height: 1.45;
+}
+
 .social-links {
   margin-top: 14px;
   display: grid;
@@ -1733,8 +1823,8 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .payments-layout {
-  .automation-layout {
+  .payments-layout,
+  .automation-layout,
   .brand-story-layout {
     grid-template-columns: 1fr;
   }
@@ -1754,8 +1844,8 @@ main {
   .checkout-steps {
     grid-template-columns: repeat(2, minmax(120px, 1fr));
   }
-  .support-layout {
-  .social-plugins {
+  .support-layout,
+  .social-plugins,
   .crm-layout {
     grid-template-columns: 1fr;
   }
