@@ -45,6 +45,19 @@ const benefits = [
   },
 ];
 
+const aboutQuickLinks = [
+  { id: "horarios", label: "Horários de funcionamento", target: "#sobre-horarios" },
+  { id: "localizacao", label: "Como chegar", target: "#sobre-localizacao" },
+  { id: "contato", label: "Canais de contato", target: "#sobre-contato" },
+];
+
+const businessHours = [
+  { day: "Segunda a sexta", time: "08h às 20h" },
+  { day: "Sábado", time: "09h às 18h" },
+  { day: "Domingo", time: "09h às 14h" },
+  { day: "Feriados", time: "10h às 14h" },
+];
+
 const refrigeratedDeliveryOptions = [
   {
     title: "Entrega refrigerada expressa",
@@ -338,6 +351,9 @@ function App() {
         <h1>Casa dos Sucos</h1>
         <ul>
           <li>
+            <a href="#sobre">Sobre</a>
+          </li>
+          <li>
             <a href="#catalogo">Catálogo</a>
           </li>
           <li>
@@ -378,6 +394,17 @@ function App() {
               <button className="cta">Ver cardápio</button>
               <button className="ghost">Montar combo</button>
             </div>
+
+            <div className="home-map-links" aria-label="Mapa rápido da homepage">
+              <p>Atalhos úteis:</p>
+              <ul>
+                {aboutQuickLinks.map((link) => (
+                  <li key={link.id}>
+                    <a href={link.target}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className="hero-highlight">
             <span>Destaque da semana</span>
@@ -385,6 +412,57 @@ function App() {
             <p>
               7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.
             </p>
+          </div>
+        </section>
+
+        <section id="sobre" className="section about-page">
+          <div className="section-title">
+            <h3>Sobre a Casa dos Sucos</h3>
+            <p>
+              Conforme recomendado pelo Toast POS, reunimos em um só lugar os dados essenciais de
+              horário, localização e contato para facilitar sua decisão de compra e transmitir mais
+              confiança.
+            </p>
+          </div>
+
+          <div className="about-grid">
+            <article id="sobre-horarios" className="about-card">
+              <h4>Horários de funcionamento</h4>
+              <ul>
+                {businessHours.map((item) => (
+                  <li key={item.day}>
+                    <span>{item.day}</span>
+                    <strong>{item.time}</strong>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article id="sobre-localizacao" className="about-card">
+              <h4>Localização</h4>
+              <p>Rua das Frutas, 245 · Vila Mariana · São Paulo, SP</p>
+              <p>Próximo à estação Ana Rosa e com retirada rápida no balcão.</p>
+              <a
+                href="https://maps.google.com/?q=Rua+das+Frutas+245+Sao+Paulo"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ver no mapa
+              </a>
+            </article>
+
+            <article id="sobre-contato" className="about-card">
+              <h4>Contato</h4>
+              <p>
+                WhatsApp: <a href="https://wa.me/5511999991212">(11) 99999-1212</a>
+              </p>
+              <p>
+                E-mail: <a href="mailto:atendimento@casadossucos.com.br">atendimento@casadossucos.com.br</a>
+              </p>
+              <p>
+                Instagram: <a href="https://instagram.com/casadossucos">@casadossucos</a>
+              </p>
+            </article>
           </div>
         </section>
 
