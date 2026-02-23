@@ -56,6 +56,45 @@ const businessHours = [
   { day: "Sábado", time: "09h às 18h" },
   { day: "Domingo", time: "09h às 14h" },
   { day: "Feriados", time: "10h às 14h" },
+const brandStory = {
+  origin:
+    "A Casa dos Sucos nasceu em uma pequena feira de bairro, quando nossa fundadora começou a preparar receitas naturais para ajudar a família a manter uma alimentação mais equilibrada no dia a dia.",
+  purpose:
+    "Hoje, nosso propósito é tornar escolhas saudáveis acessíveis, com sucos de verdade, feitos com ingredientes frescos, rastreáveis e selecionados com responsabilidade.",
+  commitments: [
+    {
+      title: "Compromisso com a saúde",
+      text: "Nossas combinações são livres de conservantes e sem açúcar adicionado, priorizando valor nutricional e segurança alimentar em cada lote.",
+    },
+    {
+      title: "Compromisso com a sustentabilidade",
+      text: "Utilizamos embalagens recicláveis, reaproveitamos subprodutos orgânicos e otimizamos rotas de entrega para reduzir emissões.",
+    },
+    {
+      title: "Compromisso com fornecedores locais",
+      text: "Trabalhamos com produtores da região, fortalecendo a economia local e garantindo frutas mais frescas, colhidas no tempo certo.",
+    },
+  ],
+};
+const sustainabilityInitiatives = [
+  {
+    title: "Embalagens recicláveis",
+    description:
+      "Nossas garrafas e tampas são 100% recicláveis, com instruções de descarte no rótulo para facilitar a coleta seletiva.",
+    metric: "92% dos pedidos já usam embalagem reciclável",
+  },
+  {
+    title: "Ingredientes orgânicos selecionados",
+    description:
+      "Priorizamos frutas, vegetais e superalimentos de produtores orgânicos parceiros, reduzindo uso de agrotóxicos.",
+    metric: "Mais de 70% do cardápio com base orgânica",
+  },
+  {
+    title: "Política de redução de plástico",
+    description:
+      "Retiramos canudos plásticos, adotamos lacres de menor gramatura e incentivamos retornáveis para assinantes.",
+    metric: "Meta de reduzir 35% do plástico virgem até 2026",
+  },
 ];
 
 const refrigeratedDeliveryOptions = [
@@ -352,12 +391,16 @@ function App() {
         <ul>
           <li>
             <a href="#sobre">Sobre</a>
+            <a href="#historia-proposito">História e propósito</a>
           </li>
           <li>
             <a href="#catalogo">Catálogo</a>
           </li>
           <li>
             <a href="#beneficios">Benefícios</a>
+          </li>
+          <li>
+            <a href="#sustentabilidade">Sustentabilidade</a>
           </li>
           <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
@@ -463,6 +506,25 @@ function App() {
                 Instagram: <a href="https://instagram.com/casadossucos">@casadossucos</a>
               </p>
             </article>
+        <section id="historia-proposito" className="section brand-story">
+          <div className="section-title">
+            <h3>História da marca e propósito</h3>
+          </div>
+
+          <div className="brand-story-layout">
+            <article className="brand-story-text">
+              <p>{brandStory.origin}</p>
+              <p>{brandStory.purpose}</p>
+            </article>
+
+            <div className="brand-commitments">
+              {brandStory.commitments.map((commitment) => (
+                <article key={commitment.title}>
+                  <h4>{commitment.title}</h4>
+                  <p>{commitment.text}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -501,6 +563,26 @@ function App() {
               <article key={item.title}>
                 <h4>{item.title}</h4>
                 <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="sustentabilidade" className="section sustainability">
+          <div className="section-title">
+            <h3>Sustentabilidade e embalagens</h3>
+            <p>
+              Transparência sobre reciclagem, ingredientes orgânicos e redução de plástico para
+              consumidores conscientes.
+            </p>
+          </div>
+
+          <div className="sustainability-grid">
+            {sustainabilityInitiatives.map((initiative) => (
+              <article key={initiative.title} className="sustainability-card">
+                <h4>{initiative.title}</h4>
+                <p>{initiative.description}</p>
+                <small>{initiative.metric}</small>
               </article>
             ))}
           </div>

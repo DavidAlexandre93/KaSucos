@@ -164,6 +164,7 @@ main {
 }
 
 .about-page {
+.brand-story {
   background: #fff;
   border: 1px solid #e2ece4;
   border-radius: 16px;
@@ -213,6 +214,51 @@ main {
   gap: 12px;
   border-bottom: 1px dashed #cfe2d5;
   padding-bottom: 6px;
+.brand-story-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+}
+
+.brand-story-text,
+.brand-commitments article {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.brand-story-text {
+  background: #f6faf7;
+}
+
+.brand-story-text p {
+  margin: 0;
+  color: var(--text-600);
+  line-height: 1.55;
+}
+
+.brand-story-text p + p {
+  margin-top: 12px;
+}
+
+.brand-commitments {
+  display: grid;
+  gap: 10px;
+}
+
+.brand-commitments article {
+  background: #fff;
+}
+
+.brand-commitments h4 {
+  margin: 0 0 8px;
+  color: var(--green-900);
+}
+
+.brand-commitments p {
+  margin: 0;
+  color: var(--text-600);
 }
 
 .section-title h3 {
@@ -299,6 +345,44 @@ main {
   background: #f3f8f4;
   padding: 16px;
   border-radius: 12px;
+}
+
+.sustainability {
+  background: #ffffff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.sustainability-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.sustainability-card {
+  background: #f4f9f6;
+  border: 1px solid #d7e8db;
+  border-radius: 12px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+}
+
+.sustainability-card h4 {
+  margin: 0;
+  color: var(--green-900);
+}
+
+.sustainability-card p {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.sustainability-card small {
+  color: var(--green-700);
+  font-weight: 600;
 }
 
 .cold-delivery {
@@ -726,6 +810,10 @@ main {
   }
 
   .nutrition-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-story-layout {
     grid-template-columns: 1fr;
   }
 
