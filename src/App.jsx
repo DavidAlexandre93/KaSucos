@@ -44,6 +44,27 @@ const benefits = [
   },
 ];
 
+const refrigeratedDeliveryOptions = [
+  {
+    title: "Entrega refrigerada expressa",
+    transportTime: "30 a 45 min",
+    care: "Bolsa térmica lacrada + gelo reciclável para manter entre 2°C e 6°C.",
+    note: "Ideal para consumo imediato.",
+  },
+  {
+    title: "Entrega refrigerada programada",
+    transportTime: "Até 2h no mesmo turno",
+    care: "Caixa térmica com monitoramento de temperatura e proteção contra luz solar.",
+    note: "Perfeita para pedidos em grupo e assinaturas.",
+  },
+  {
+    title: "Entrega regional com cadeia fria",
+    transportTime: "2h a 4h",
+    care: "Veículo climatizado e embalagem com barreira térmica reforçada.",
+    note: "Recomendado para kits semanais maiores.",
+  },
+];
+
 function App() {
   return (
     <div className="juice-page">
@@ -56,6 +77,7 @@ function App() {
         <ul>
           <li><a href="#catalogo">Catálogo</a></li>
           <li><a href="#beneficios">Benefícios</a></li>
+          <li><a href="#entrega-refrigerada">Entrega refrigerada</a></li>
           <li><a href="#assinatura">Assinatura</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
@@ -121,6 +143,37 @@ function App() {
               </article>
             ))}
           </div>
+        </section>
+
+        <section id="entrega-refrigerada" className="section cold-delivery">
+          <div className="section-title">
+            <h3>Opções de entrega refrigerada</h3>
+            <p>
+              Escolha a modalidade ideal e acompanhe o tempo de transporte para manter seu suco
+              com frescor e segurança até a entrega.
+            </p>
+          </div>
+
+          <div className="delivery-grid">
+            {refrigeratedDeliveryOptions.map((option) => (
+              <article key={option.title} className="delivery-card">
+                <h4>{option.title}</h4>
+                <p>
+                  <strong>Tempo de transporte:</strong> {option.transportTime}
+                </p>
+                <p>
+                  <strong>Cuidados de conservação:</strong> {option.care}
+                </p>
+                <small>{option.note}</small>
+              </article>
+            ))}
+          </div>
+
+          <aside className="perishability-alert" role="alert" aria-live="polite">
+            <strong>Alerta de perecibilidade:</strong> nossos sucos são 100% naturais e devem ser
+            mantidos refrigerados entre 2°C e 6°C. Após o recebimento, consuma em até 24h para
+            preservar sabor, nutrientes e segurança alimentar.
+          </aside>
         </section>
 
         <section id="assinatura" className="subscription">
