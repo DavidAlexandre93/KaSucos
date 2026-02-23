@@ -1,341 +1,192 @@
-import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
-const initialCatalog = [
+const juices = [
   {
-    id: "suco-verde-detox-300ml",
-    name: "Suco Verde Detox",
-    category: "Detox",
-    description:
-      "Couve, maçã verde, limão e gengibre prensados a frio para uma rotina leve.",
-    price: 14.9,
-    stock: 32,
+    name: "Verde Vital",
+    volume: "300 ml",
+    description: "Couve, maçã verde, limão e gengibre prensados a frio.",
+    price: "R$ 14,90",
     image:
       "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=1200&q=70",
+    tag: "Detox",
   },
   {
-    id: "laranja-acerola-imunidade-300ml",
-    name: "Laranja + Acerola",
-    category: "Imunidade",
-    description:
-      "Blend rico em vitamina C, com sabor cítrico equilibrado e sem açúcar adicionado.",
-    price: 12.9,
-    stock: 18,
+    name: "Laranja Imune",
+    volume: "300 ml",
+    description: "Laranja, acerola e cúrcuma para reforçar sua rotina.",
+    price: "R$ 13,90",
     image:
       "https://images.unsplash.com/photo-1603569283847-aa295f0d016a?auto=format&fit=crop&w=1200&q=70",
+    tag: "Imunidade",
   },
   {
-    id: "abacaxi-hortela-refresh-300ml",
-    name: "Abacaxi com Hortelã",
-    category: "Refrescante",
-    description:
-      "Suco tropical refrescante para dias quentes, com aroma natural de hortelã.",
-    price: 13.5,
-    stock: 26,
+    name: "Abacaxi Fresh",
+    volume: "300 ml",
+    description: "Abacaxi com hortelã, refrescante e sem açúcar.",
+    price: "R$ 12,90",
     image:
       "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=1200&q=70",
+    tag: "Refrescante",
   },
   {
-    id: "vermelho-energia-beterraba-500ml",
-    name: "Vermelho Energia",
-    category: "Energia",
-    description:
-      "Beterraba, maçã e frutas vermelhas para pré-treino e mais disposição.",
-    price: 16.9,
-    stock: 11,
+    name: "Vermelho Power",
+    volume: "500 ml",
+    description: "Beterraba, maçã e frutas vermelhas para mais energia.",
+    price: "R$ 17,90",
     image:
       "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=1200&q=70",
+    tag: "Energia",
   },
 ];
 
-const storageKey = "kasucos:catalog";
-
-const currency = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-});
+const combos = [
+  {
+    title: "Combo Semana Leve",
+    detail: "7 sucos de 300 ml",
+    price: "R$ 89,90",
+  },
+  {
+    title: "Combo Performance",
+    detail: "10 sucos + 2 shots funcionais",
+    price: "R$ 129,90",
+    highlight: true,
+  },
+  {
+    title: "Combo Família",
+    detail: "14 sucos variados",
+    price: "R$ 169,90",
+  },
+];
 
 function App() {
-  const [catalog, setCatalog] = useState(() => {
-    const saved = localStorage.getItem(storageKey);
-    return saved ? JSON.parse(saved) : initialCatalog;
-  });
-  const [query, setQuery] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("Todos");
-  const [sortBy, setSortBy] = useState("relevance");
-  const [selectedId, setSelectedId] = useState("");
-  const [editingId, setEditingId] = useState("");
-
-  useEffect(() => {
-    localStorage.setItem(storageKey, JSON.stringify(catalog));
-  }, [catalog]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const fromUrl = params.get("produto");
-    if (fromUrl && catalog.some((product) => product.id === fromUrl)) {
-      setSelectedId(fromUrl);
-      return;
-    }
-
-    if (!selectedId && catalog.length > 0) {
-      setSelectedId(catalog[0].id);
-    }
-  }, [catalog, selectedId]);
-
-  useEffect(() => {
-    if (!selectedId) return;
-    const selected = catalog.find((item) => item.id === selectedId);
-    if (!selected) return;
-
-    const url = new URL(window.location.href);
-    url.searchParams.set("produto", selectedId);
-    window.history.replaceState({}, "", url);
-
-    document.title = `${selected.name} | KaSucos`;
-  }, [selectedId, catalog]);
-
-  const categories = useMemo(() => {
-    const unique = new Set(catalog.map((item) => item.category));
-    return ["Todos", ...Array.from(unique)];
-  }, [catalog]);
-
-  const suggestions = useMemo(() => {
-    if (!query.trim()) return [];
-    return catalog
-      .filter((item) => item.name.toLowerCase().includes(query.toLowerCase()))
-      .slice(0, 5);
-  }, [catalog, query]);
-
-  const filteredCatalog = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-
-    const result = catalog.filter((item) => {
-      const categoryMatch = categoryFilter === "Todos" || item.category === categoryFilter;
-      const searchMatch =
-        !normalized ||
-        item.name.toLowerCase().includes(normalized) ||
-        item.description.toLowerCase().includes(normalized);
-
-      return categoryMatch && searchMatch;
-    });
-
-    if (sortBy === "price-asc") {
-      return [...result].sort((a, b) => a.price - b.price);
-    }
-
-    if (sortBy === "price-desc") {
-      return [...result].sort((a, b) => b.price - a.price);
-    }
-
-    if (sortBy === "stock") {
-      return [...result].sort((a, b) => b.stock - a.stock);
-    }
-
-    return result;
-  }, [catalog, categoryFilter, query, sortBy]);
-
-  const selectedProduct = catalog.find((item) => item.id === selectedId);
-  const editingProduct = catalog.find((item) => item.id === editingId) || null;
-
-  const updateProduct = (field, value) => {
-    setCatalog((current) =>
-      current.map((item) => (item.id === editingId ? { ...item, [field]: value } : item)),
-    );
-  };
-
   return (
-    <div className="page">
-      <a className="skip-link" href="#catalogo">
-        Pular para o conteúdo principal
-      </a>
-
-      <header className="hero" id="inicio">
-        <p className="eyebrow">KaSucos • e-commerce mobile-first</p>
-        <h1>Catálogo com SEO, velocidade e navegação clara</h1>
-        <p>
-          Gestão simples de produtos, busca avançada com auto-sugestão, layout responsivo,
-          acessibilidade e identidade visual consistente para aumentar conversão.
-        </p>
+    <div className="site">
+      <header className="topbar">
+        <div className="container topbar-inner">
+          <a href="#inicio" className="brand">
+            <img src="/img/logotipo.png" alt="KaSucos" />
+            <span>KaSucos</span>
+          </a>
+          <nav>
+            <a href="#catalogo">Sucos</a>
+            <a href="#combos">Combos</a>
+            <a href="#beneficios">Benefícios</a>
+            <a href="#contato">Contato</a>
+          </nav>
+        </div>
       </header>
 
-      <nav className="main-nav" aria-label="Navegação principal">
-        <a href="#catalogo">Catálogo</a>
-        <a href="#pesquisa">Busca avançada</a>
-        <a href="#gestao">Gestão de conteúdo</a>
-      </nav>
-
-      <div className="breadcrumbs" aria-label="Breadcrumb">
-        <span>Home</span>
-        <span aria-hidden="true">/</span>
-        <span>Catálogo</span>
-        {selectedProduct ? (
-          <>
-            <span aria-hidden="true">/</span>
-            <span>{selectedProduct.name}</span>
-          </>
-        ) : null}
-      </div>
-
-      <main className="layout" id="catalogo">
-        <section className="card" id="pesquisa" aria-labelledby="busca-title">
-          <h2 id="busca-title">Barra de pesquisa avançada</h2>
-          <p className="helper">Preenchimento automático, filtros por categoria e ordenação.</p>
-
-          <div className="controls">
-            <div>
-              <label htmlFor="search">Buscar produto</label>
-              <input
-                id="search"
-                list="product-suggestions"
-                type="search"
-                value={query}
-                placeholder="Ex: detox, acerola..."
-                onChange={(event) => setQuery(event.target.value)}
-              />
-              <datalist id="product-suggestions">
-                {suggestions.map((item) => (
-                  <option key={item.id} value={item.name} />
-                ))}
-              </datalist>
-            </div>
-
-            <div>
-              <label htmlFor="category">Categoria</label>
-              <select
-                id="category"
-                value={categoryFilter}
-                onChange={(event) => setCategoryFilter(event.target.value)}
-              >
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="sort">Ordenar por</label>
-              <select id="sort" value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-                <option value="relevance">Relevância</option>
-                <option value="price-asc">Menor preço</option>
-                <option value="price-desc">Maior preço</option>
-                <option value="stock">Maior estoque</option>
-              </select>
+      <section id="inicio" className="hero">
+        <div className="container hero-grid">
+          <div>
+            <p className="chip">Entrega no mesmo dia*</p>
+            <h1>Os sucos mais frescos para sua rotina saudável.</h1>
+            <p>
+              Produção artesanal, frutas selecionadas e blends funcionais para seu dia render mais.
+            </p>
+            <div className="hero-actions">
+              <a href="#catalogo" className="btn-primary">
+                Comprar agora
+              </a>
+              <a href="#combos" className="btn-ghost">
+                Ver combos
+              </a>
             </div>
           </div>
+          <div className="hero-card">
+            <img src="/img/logotipo.png" alt="Logo KaSucos" />
+            <h2>KaSucos</h2>
+            <p>O sabor da fruta, e o carinho de casa.</p>
+          </div>
+        </div>
+      </section>
 
-          <ul className="product-list" aria-live="polite">
-            {filteredCatalog.map((item) => (
-              <li key={item.id}>
-                <button type="button" onClick={() => setSelectedId(item.id)} className="product-link">
-                  <strong>{item.name}</strong>
-                  <span>{item.category}</span>
-                  <span>{currency.format(item.price)}</span>
-                </button>
-              </li>
+      <section id="catalogo" className="section">
+        <div className="container">
+          <h2 className="section-title">Sucos em destaque</h2>
+          <div className="grid cards">
+            {juices.map((juice) => (
+              <article key={juice.name} className="card">
+                <img src={juice.image} alt={juice.name} loading="lazy" />
+                <div className="card-body">
+                  <span className="tag">{juice.tag}</span>
+                  <h3>{juice.name}</h3>
+                  <p>{juice.description}</p>
+                  <div className="card-footer">
+                    <strong>{juice.price}</strong>
+                    <span>{juice.volume}</span>
+                  </div>
+                </div>
+              </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="combos" className="section soft">
+        <div className="container">
+          <h2 className="section-title">Combos para economizar</h2>
+          <div className="grid combos">
+            {combos.map((combo) => (
+              <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>
+                {combo.highlight ? <span className="badge">Mais pedido</span> : null}
+                <h3>{combo.title}</h3>
+                <p>{combo.detail}</p>
+                <strong>{combo.price}</strong>
+                <button type="button">Quero este</button>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="beneficios" className="section">
+        <div className="container benefits">
+          <h2 className="section-title">Por que escolher a KaSucos?</h2>
+          <ul>
+            <li>Sem adição de açúcar e sem conservantes.</li>
+            <li>Produção diária com frutas frescas.</li>
+            <li>Entrega refrigerada para manter qualidade.</li>
+            <li>Atendimento humanizado pelo WhatsApp.</li>
           </ul>
-        </section>
+        </div>
+      </section>
 
-        <section className="card product-detail" aria-labelledby="detalhes-title">
-          <h2 id="detalhes-title">Detalhes do produto</h2>
-          {selectedProduct ? (
-            <article>
-              <img
-                src={selectedProduct.image}
-                alt={selectedProduct.name}
-                loading="lazy"
-                width="640"
-                height="360"
-              />
-              <h3>{selectedProduct.name}</h3>
-              <p>{selectedProduct.description}</p>
-              <p>
-                <strong>Preço:</strong> {currency.format(selectedProduct.price)}
-              </p>
-              <p>
-                <strong>Estoque:</strong> {selectedProduct.stock} unidades
-              </p>
-              <p>
-                <strong>URL amigável:</strong> <code>/catalogo/{selectedProduct.id}</code>
-              </p>
-            </article>
-          ) : (
-            <p>Selecione um produto para visualizar.</p>
-          )}
-        </section>
+      <section className="section testimonials">
+        <div className="container">
+          <h2 className="section-title">Quem já provou aprova</h2>
+          <div className="grid reviews">
+            <blockquote>
+              “Sabor incrível e entrega rápida. O Verde Vital virou meu favorito!”
+              <cite>— Juliana R.</cite>
+            </blockquote>
+            <blockquote>
+              “Os combos valem muito a pena, qualidade impecável.”
+              <cite>— Marcos A.</cite>
+            </blockquote>
+            <blockquote>
+              “Atendimento excelente e sucos realmente naturais.”
+              <cite>— Camila P.</cite>
+            </blockquote>
+          </div>
+        </div>
+      </section>
 
-        <section className="card" id="gestao" aria-labelledby="gestao-title">
-          <h2 id="gestao-title">Gestão de produtos e conteúdo</h2>
-          <p className="helper">Edite descrição, preço, imagem e estoque sem sair da página.</p>
+      <section id="contato" className="section cta">
+        <div className="container cta-box">
+          <h2>Faça seu pedido agora</h2>
+          <p>Peça pelo WhatsApp e receba seus sucos geladinhos na sua casa.</p>
+          <a className="btn-primary" href="https://wa.me/5500000000000" target="_blank" rel="noreferrer">
+            Falar no WhatsApp
+          </a>
+        </div>
+      </section>
 
-          <label htmlFor="edit-product">Produto para editar</label>
-          <select
-            id="edit-product"
-            value={editingId}
-            onChange={(event) => setEditingId(event.target.value)}
-          >
-            <option value="">Selecione...</option>
-            {catalog.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
-
-          {editingProduct ? (
-            <form className="edit-form" onSubmit={(event) => event.preventDefault()}>
-              <label htmlFor="description">Descrição</label>
-              <textarea
-                id="description"
-                value={editingProduct.description}
-                onChange={(event) => updateProduct("description", event.target.value)}
-                rows={4}
-              />
-
-              <label htmlFor="price">Preço</label>
-              <input
-                id="price"
-                type="number"
-                min="0"
-                step="0.1"
-                value={editingProduct.price}
-                onChange={(event) => updateProduct("price", Number(event.target.value))}
-              />
-
-              <label htmlFor="stock">Estoque</label>
-              <input
-                id="stock"
-                type="number"
-                min="0"
-                value={editingProduct.stock}
-                onChange={(event) => updateProduct("stock", Number(event.target.value))}
-              />
-
-              <label htmlFor="image">URL da imagem</label>
-              <input
-                id="image"
-                type="url"
-                value={editingProduct.image}
-                onChange={(event) => updateProduct("image", event.target.value)}
-              />
-            </form>
-          ) : (
-            <p>Selecione um produto para ativar a edição.</p>
-          )}
-        </section>
-      </main>
-
-      <footer className="card footer">
-        <h2>Boas práticas implementadas</h2>
-        <ul>
-          <li>Layout responsivo com foco em uso mobile e botões grandes para toque.</li>
-          <li>Contraste de cores alto, tipografia legível e navegação por teclado.</li>
-          <li>Imagens com compressão via parâmetros e lazy-loading para desempenho.</li>
-          <li>Conteúdo original e semântico para reforço de SEO.</li>
-        </ul>
+      <footer className="footer">
+        <div className="container footer-inner">
+          <p>© {new Date().getFullYear()} KaSucos. Todos os direitos reservados.</p>
+          <span>*Consulte áreas de entrega.</span>
+        </div>
       </footer>
     </div>
   );
