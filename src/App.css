@@ -470,6 +470,87 @@ main {
   padding: 24px;
 }
 
+.nutrition-calculator {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.calculator-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+}
+
+.calculator-form,
+.calculator-results {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.calculator-form {
+  background: #f6faf7;
+  display: grid;
+  gap: 12px;
+}
+
+.calculator-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--green-900);
+  font-weight: 600;
+}
+
+.calculator-form input,
+.calculator-form select {
+  border: 1px solid #b7d5bf;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.calculator-hint {
+  margin: 0;
+  background: #e8f5eb;
+  border: 1px dashed #9dc9aa;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.calculator-results {
+  background: var(--green-900);
+  color: #fff;
+}
+
+.calculator-results h4 {
+  margin: 0 0 10px;
+}
+
+.calculator-results ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.calculator-results li {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 4px;
+}
+
+.calculator-results span,
+.calculator-results p {
+  color: #e4f3e8;
+}
+
 .nutrition-layout {
   margin-top: 14px;
   display: grid;
@@ -567,6 +648,10 @@ main {
   }
 
   .nutrition-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .calculator-layout {
     grid-template-columns: 1fr;
   }
 }

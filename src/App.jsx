@@ -170,6 +170,60 @@ const nutritionistSpecialties = [
   },
 ];
 
+const nutritionCalculatorGoals = [
+  { id: "emagrecer", label: "Emagrecimento", targetCalories: 220, focus: "detox" },
+  { id: "manter", label: "Manutenção", targetCalories: 280, focus: "equilibrado" },
+  { id: "ganhar", label: "Ganho de energia muscular", targetCalories: 340, focus: "performance" },
+];
+
+const juiceRecommendations = [
+  {
+    id: "detox-matinal",
+    name: "Detox Matinal",
+    calories: 180,
+    period: "manha",
+    goals: ["emagrecer", "manter"],
+    tags: ["detox", "equilibrado"],
+    description: "Couve, pepino, maçã verde e limão para começar o dia com leveza.",
+  },
+  {
+    id: "citricos-imunidade",
+    name: "Cítrico de Imunidade",
+    calories: 210,
+    period: "manha",
+    goals: ["manter"],
+    tags: ["equilibrado"],
+    description: "Laranja, acerola e gengibre com alta vitamina C e refrescância.",
+  },
+  {
+    id: "pos-treino",
+    name: "Pós-treino Recuperação",
+    calories: 320,
+    period: "posTreino",
+    goals: ["ganhar", "manter"],
+    tags: ["performance"],
+    description: "Beterraba, morango, banana e água de coco para reposição rápida.",
+  },
+  {
+    id: "pre-treino",
+    name: "Pré-treino Natural",
+    calories: 300,
+    period: "preTreino",
+    goals: ["ganhar", "manter"],
+    tags: ["performance"],
+    description: "Abacaxi, cenoura e gengibre para energia progressiva antes da atividade.",
+  },
+  {
+    id: "noturno-funcional",
+    name: "Noturno Funcional",
+    calories: 230,
+    period: "noite",
+    goals: ["emagrecer", "manter"],
+    tags: ["detox", "equilibrado"],
+    description: "Maracujá, couve e hortelã para hidratação e leve digestão no fim do dia.",
+  },
+];
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -182,6 +236,9 @@ function App() {
     superalimentos: ["gengibre"],
   });
   const [selectedNutritionGoal, setSelectedNutritionGoal] = useState("detox");
+  const [dailyCalorieBurn, setDailyCalorieBurn] = useState(2100);
+  const [calculatorGoal, setCalculatorGoal] = useState("manter");
+  const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -240,6 +297,35 @@ function App() {
     (specialty) => specialty.id === selectedNutritionGoal
   );
 
+  const selectedCalculatorGoal = nutritionCalculatorGoals.find((goal) => goal.id === calculatorGoal);
+
+  const calorieRange = useMemo(() => {
+    const baseCalories = selectedCalculatorGoal?.targetCalories ?? 280;
+    const adjustment = Math.round((dailyCalorieBurn - 2000) / 25);
+    const center = Math.max(150, baseCalories + adjustment);
+
+    return {
+      min: Math.max(120, center - 70),
+      max: center + 70,
+    };
+  }, [dailyCalorieBurn, selectedCalculatorGoal]);
+
+  const compatibleRecommendations = useMemo(
+    () =>
+      juiceRecommendations.filter((juice) => {
+        const matchesGoal = juice.goals.includes(calculatorGoal);
+        const matchesPeriod = juice.period === consumptionPeriod;
+        const matchesFocus = selectedCalculatorGoal
+          ? juice.tags.includes(selectedCalculatorGoal.focus)
+          : true;
+        const matchesCalories =
+          juice.calories >= calorieRange.min && juice.calories <= calorieRange.max;
+
+        return matchesGoal && matchesPeriod && matchesFocus && matchesCalories;
+      }),
+    [calculatorGoal, consumptionPeriod, selectedCalculatorGoal, calorieRange]
+  );
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -268,6 +354,9 @@ function App() {
           </li>
           <li>
             <a href="#consultoria">Consultoria</a>
+          </li>
+          <li>
+            <a href="#calculadora">Calculadora nutricional</a>
           </li>
           <li>
             <a href="#contato">Contato</a>
@@ -488,6 +577,80 @@ function App() {
                   ? "Assinatura pausada. Nenhuma entrega será cobrada até você retomar."
                   : "Assinatura ativa. Você pode pausar quando quiser, com efeito imediato."}
               </p>
+            </aside>
+          </div>
+        </section>
+
+        <section id="calculadora" className="section nutrition-calculator">
+          <div className="section-title">
+            <h3>Calculadora nutricional</h3>
+            <p>
+              Informe seu gasto calórico e objetivo para receber sugestões de sucos compatíveis
+              com sua rotina.
+            </p>
+          </div>
+
+          <div className="calculator-layout">
+            <article className="calculator-form">
+              <label>
+                Gasto calórico diário estimado (kcal)
+                <input
+                  type="number"
+                  min="1200"
+                  max="5000"
+                  step="50"
+                  value={dailyCalorieBurn}
+                  onChange={(event) => setDailyCalorieBurn(Number(event.target.value) || 0)}
+                />
+              </label>
+
+              <label>
+                Objetivo
+                <select value={calculatorGoal} onChange={(event) => setCalculatorGoal(event.target.value)}>
+                  {nutritionCalculatorGoals.map((goal) => (
+                    <option key={goal.id} value={goal.id}>
+                      {goal.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Momento de consumo
+                <select
+                  value={consumptionPeriod}
+                  onChange={(event) => setConsumptionPeriod(event.target.value)}
+                >
+                  <option value="manha">Manhã</option>
+                  <option value="preTreino">Pré-treino</option>
+                  <option value="posTreino">Pós-treino</option>
+                  <option value="noite">Noite</option>
+                </select>
+              </label>
+
+              <p className="calculator-hint">
+                Faixa ideal estimada para você: <strong>{calorieRange.min} a {calorieRange.max} kcal</strong>{" "}
+                por suco.
+              </p>
+            </article>
+
+            <aside className="calculator-results" aria-live="polite">
+              <h4>Sugestões compatíveis</h4>
+              {compatibleRecommendations.length ? (
+                <ul>
+                  {compatibleRecommendations.map((juice) => (
+                    <li key={juice.id}>
+                      <strong>{juice.name}</strong>
+                      <span>{juice.calories} kcal · {juice.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>
+                  Não encontramos sucos com esse perfil no momento. Ajuste o gasto calórico ou o
+                  objetivo para ampliar as combinações.
+                </p>
+              )}
             </aside>
           </div>
         </section>
