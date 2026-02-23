@@ -60,6 +60,9 @@ const returnPolicySteps = [
     title: "3) Reembolso ou crédito em até 5 dias úteis",
     description:
       "Após a confirmação da devolução, você escolhe entre reembolso no mesmo meio de pagamento ou crédito para novo pedido.",
+  },
+];
+
 const securityBadges = [
   {
     title: "SSL/TLS Ativo",
@@ -90,6 +93,9 @@ const trustPolicies = [
     summary: "Processo simples para troca ou reembolso em caso de divergência no pedido.",
     details:
       "Se houver qualquer problema de qualidade, avaria ou item incorreto, você pode solicitar devolução em até 7 dias corridos. Após análise, oferecemos reenvio do produto ou estorno integral do valor pago.",
+  },
+];
+
 const aboutQuickLinks = [
   { id: "horarios", label: "Horários de funcionamento", target: "#sobre-horarios" },
   { id: "localizacao", label: "Como chegar", target: "#sobre-localizacao" },
@@ -101,6 +107,8 @@ const businessHours = [
   { day: "Sábado", time: "09h às 18h" },
   { day: "Domingo", time: "09h às 14h" },
   { day: "Feriados", time: "10h às 14h" },
+];
+
 const brandStory = {
   origin:
     "A Casa dos Sucos nasceu em uma pequena feira de bairro, quando nossa fundadora começou a preparar receitas naturais para ajudar a família a manter uma alimentação mais equilibrada no dia a dia.",
@@ -169,6 +177,33 @@ const subscriptionOptions = [
   { id: "imunidade", name: "Laranja + Acerola", description: "Vitamina C em dobro", price: 12.9 },
   { id: "digestivo", name: "Abacaxi + Hortelã", description: "Refrescância digestiva", price: 13.9 },
   { id: "kids", name: "Maçã + Morango Kids", description: "Sem açúcar adicionado", price: 11.9 },
+];
+
+const recurringPlans = [
+  {
+    id: "quinzenal-flex",
+    name: "Plano Quinzenal Flex",
+    deliveriesPerMonth: 2,
+    bottlesPerDelivery: 6,
+    discount: 0.06,
+    audience: "Ideal para quem está começando a criar rotina saudável.",
+  },
+  {
+    id: "mensal-classico",
+    name: "Plano Mensal Clássico",
+    deliveriesPerMonth: 4,
+    bottlesPerDelivery: 8,
+    discount: 0.1,
+    audience: "Perfeito para consumo recorrente com reposição semanal.",
+  },
+  {
+    id: "semanal-pro",
+    name: "Plano Semanal Pro",
+    deliveriesPerMonth: 8,
+    bottlesPerDelivery: 10,
+    discount: 0.15,
+    audience: "Feito para famílias ou clientes com consumo diário de sucos.",
+  },
 ];
 
 const paymentMethods = [
@@ -480,6 +515,9 @@ const orderTrackingMock = {
     status: "Pedido entregue",
     eta: "Concluído",
     detail: "Entrega realizada com sucesso às 12:07.",
+  },
+};
+
 const customerReviews = [
   {
     id: 1,
@@ -661,6 +699,7 @@ const formatCurrency = (value) =>
 
 function App() {
   const [selectedJuices, setSelectedJuices] = useState(["detox", "imunidade", "digestivo"]);
+  const [selectedRecurringPlanId, setSelectedRecurringPlanId] = useState("mensal-classico");
   const [isSubscriptionPaused, setIsSubscriptionPaused] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState({
     frutas: ["abacaxi"],
@@ -748,9 +787,25 @@ function App() {
     [selectedJuices]
   );
 
+  const selectedRecurringPlan = useMemo(
+    () => recurringPlans.find((plan) => plan.id === selectedRecurringPlanId) ?? recurringPlans[1],
+    [selectedRecurringPlanId]
+  );
+
   const estimatedMonthlyTotal = useMemo(
-    () => selectedItems.reduce((total, item) => total + item.price * 4, 0),
-    [selectedItems]
+    () => {
+      const selectedAveragePrice = selectedItems.length
+        ? selectedItems.reduce((total, item) => total + item.price, 0) / selectedItems.length
+        : 0;
+
+      const grossTotal =
+        selectedAveragePrice *
+        selectedRecurringPlan.bottlesPerDelivery *
+        selectedRecurringPlan.deliveriesPerMonth;
+
+      return grossTotal * (1 - selectedRecurringPlan.discount);
+    },
+    [selectedItems, selectedRecurringPlan]
   );
 
   const selectedFlavorItems = useMemo(
@@ -1060,6 +1115,9 @@ function App() {
                 Instagram: <a href="https://instagram.com/casadossucos">@casadossucos</a>
               </p>
             </article>
+          </div>
+        </section>
+
         <section id="historia-proposito" className="section brand-story">
           <div className="section-title">
             <h3>História da marca e propósito</h3>
@@ -1281,6 +1339,8 @@ function App() {
             <strong>Sem burocracia:</strong> não exigimos justificativa para devolução no prazo legal,
             e você acompanha cada etapa do processo com atualização por mensagem.
           </p>
+        </section>
+
         <section id="sustentabilidade" className="section sustainability">
           <div className="section-title">
             <h3>Sustentabilidade e embalagens</h3>
@@ -1461,12 +1521,40 @@ function App() {
         <section id="assinatura" className="subscription">
           <h3>Assinatura ajustável</h3>
           <p>
-            Monte sua caixa mensal com os sabores que preferir e altere a composição quando quiser,
-            sem burocracia.
+            Monte seu plano recorrente com os sabores que preferir e altere a composição quando
+            quiser, sem burocracia. Segundo tendência destacada pela E-commerce Brasil, o modelo de
+            assinatura fortalece a fidelização para produtos com consumo mensal.
           </p>
 
           <div className="subscription-controls">
             <div className="box-customizer">
+              <h4>Escolha seu plano recorrente</h4>
+              <div className="recurring-plan-grid">
+                {recurringPlans.map((plan) => {
+                  const isCurrent = plan.id === selectedRecurringPlan.id;
+
+                  return (
+                    <label key={plan.id} className={`recurring-plan ${isCurrent ? "selected" : ""}`}>
+                      <input
+                        type="radio"
+                        name="recurring-plan"
+                        checked={isCurrent}
+                        onChange={() => setSelectedRecurringPlanId(plan.id)}
+                      />
+                      <div>
+                        <strong>{plan.name}</strong>
+                        <span>
+                          {plan.deliveriesPerMonth} entregas/mês · {plan.bottlesPerDelivery} garrafas por
+                          entrega
+                        </span>
+                        <small>{Math.round(plan.discount * 100)}% OFF em relação ao avulso</small>
+                        <p>{plan.audience}</p>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
               <h4>Escolha os itens da sua caixa</h4>
               <p>Você pode adicionar ou remover sabores a qualquer momento.</p>
               <div className="subscription-items-grid">
@@ -1496,10 +1584,17 @@ function App() {
                 <strong>Sabores selecionados:</strong> {selectedItems.length}
               </p>
               <p>
+                <strong>Plano ativo:</strong> {selectedRecurringPlan.name}
+              </p>
+              <p>
                 <strong>Estimativa mensal:</strong> {formatCurrency(estimatedMonthlyTotal)}
               </p>
               <p>
                 <strong>Entrega:</strong> segunda a sábado, no turno escolhido.
+              </p>
+              <p>
+                <strong>Recorrência:</strong> {selectedRecurringPlan.deliveriesPerMonth} entregas mensais
+                com reposição automática.
               </p>
 
               <button
@@ -1795,6 +1890,8 @@ function App() {
               </details>
             ))}
           </div>
+        </section>
+
         <section id="suporte" className="section support-center">
           <div className="section-title">
             <h3>Chat ao vivo e suporte multicanal</h3>
@@ -1883,6 +1980,9 @@ function App() {
                 </p>
               )}
             </article>
+          </div>
+        </section>
+
         <section id="reviews" className="section reviews-social-proof">
           <div className="section-title">
             <h3>Reviews e prova social</h3>
@@ -1924,6 +2024,9 @@ function App() {
                 </small>
               </article>
             ))}
+          </div>
+        </section>
+
         <section id="redes-sociais" className="section social-hub">
           <div className="section-title">
             <h3>Integração com redes sociais</h3>
@@ -1982,6 +2085,8 @@ function App() {
               Quero compartilhar minha foto
             </a>
           </aside>
+        </section>
+
         <section id="campanhas" className="section crm-campaigns">
           <div className="section-title">
             <h3>Personalização de campanhas</h3>

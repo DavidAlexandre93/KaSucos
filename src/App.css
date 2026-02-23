@@ -163,7 +163,7 @@ main {
   margin-top: 32px;
 }
 
-.about-page {
+.about-page,
 .brand-story {
   background: #fff;
   border: 1px solid #e2ece4;
@@ -214,6 +214,8 @@ main {
   gap: 12px;
   border-bottom: 1px dashed #cfe2d5;
   padding-bottom: 6px;
+}
+
 .brand-story-layout {
   margin-top: 14px;
   display: grid;
@@ -491,16 +493,16 @@ main {
   border-radius: 12px;
 }
 
-.return-policy {
-  background: #fff;
+.return-policy,
 .sustainability {
+  background: #fff;
   background: #ffffff;
   border: 1px solid #e2ece4;
   border-radius: 16px;
   padding: 24px;
 }
 
-.return-policy-grid {
+.return-policy-grid,
 .sustainability-grid {
   margin-top: 16px;
   display: grid;
@@ -533,6 +535,8 @@ main {
   border-radius: 12px;
   padding: 12px 14px;
   color: #1d4a2e;
+}
+
 .sustainability-card {
   background: #f4f9f6;
   border: 1px solid #d7e8db;
@@ -838,6 +842,49 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   gap: 10px;
+}
+
+.recurring-plan-grid {
+  margin: 10px 0 18px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.recurring-plan {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.recurring-plan.selected {
+  background: rgba(140, 230, 168, 0.16);
+  border-color: rgba(140, 230, 168, 0.65);
+}
+
+.recurring-plan input {
+  margin-top: 4px;
+}
+
+.recurring-plan div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recurring-plan span,
+.recurring-plan p {
+  color: #d8ecdd;
+  font-size: 14px;
+  margin: 0;
+}
+
+.recurring-plan small {
+  color: #fff7df;
 }
 
 .subscription-item {
@@ -1376,9 +1423,9 @@ main {
   border-radius: 10px;
 }
 
-.trust-section {
-.support-center {
-.reviews-social-proof {
+.trust-section,
+.support-center,
+.reviews-social-proof,
 .social-hub {
   background: #fff;
   border: 1px solid #e2ece4;
@@ -1414,6 +1461,10 @@ main {
 }
 
 .trust-badge p {
+  margin: 0;
+  color: var(--text-600);
+}
+
 .support-layout {
   margin-top: 14px;
   display: grid;
@@ -1514,6 +1565,8 @@ main {
   background: #fff5e8;
   color: #7a4a02;
   border: 1px solid #ffd7a1;
+}
+
 .reviews-overview {
   margin-top: 14px;
   display: grid;
@@ -1555,6 +1608,10 @@ main {
 .policy-card {
   background: #fcfffd;
   border: 1px solid #d8e8dc;
+  border-radius: 12px;
+  padding: 14px;
+}
+
 .stars {
   display: flex;
   gap: 2px;
@@ -1601,6 +1658,8 @@ main {
   margin: 10px 0 0;
   color: var(--text-600);
   line-height: 1.45;
+}
+
 .review-card p {
   color: var(--text-600);
   line-height: 1.45;
@@ -1633,6 +1692,8 @@ main {
 .social-proof-toast p {
   margin: 0;
   line-height: 1.45;
+}
+
 .social-links {
   margin-top: 14px;
   display: grid;
@@ -1733,31 +1794,20 @@ main {
     grid-template-columns: 1fr;
   }
 
-  .payments-layout {
-  .automation-layout {
-  .brand-story-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .calculator-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .checkout-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .checkout-fields-grid {
+  .payments-layout,
+  .automation-layout,
+  .brand-story-layout,
+  .calculator-layout,
+  .checkout-layout,
+  .checkout-fields-grid,
+  .support-layout,
+  .social-plugins,
+  .crm-layout {
     grid-template-columns: 1fr;
   }
 
   .checkout-steps {
     grid-template-columns: repeat(2, minmax(120px, 1fr));
-  }
-  .support-layout {
-  .social-plugins {
-  .crm-layout {
-    grid-template-columns: 1fr;
   }
 }
 
