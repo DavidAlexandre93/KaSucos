@@ -347,6 +347,8 @@ main {
   border-radius: 12px;
 }
 
+.return-policy {
+  background: #fff;
 .sustainability {
   background: #ffffff;
   border: 1px solid #e2ece4;
@@ -354,6 +356,7 @@ main {
   padding: 24px;
 }
 
+.return-policy-grid {
 .sustainability-grid {
   margin-top: 16px;
   display: grid;
@@ -361,6 +364,31 @@ main {
   gap: 14px;
 }
 
+.return-policy-card {
+  background: #f6faf7;
+  border: 1px solid #d7e8db;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.return-policy-card h4 {
+  margin: 0 0 8px;
+  color: var(--green-900);
+}
+
+.return-policy-card p {
+  margin: 0;
+  color: var(--text-600);
+  line-height: 1.5;
+}
+
+.return-policy-note {
+  margin-top: 14px;
+  background: #e8f5eb;
+  border: 1px dashed #8ec49c;
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #1d4a2e;
 .sustainability-card {
   background: #f4f9f6;
   border: 1px solid #d7e8db;
