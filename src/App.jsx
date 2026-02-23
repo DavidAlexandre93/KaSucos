@@ -143,6 +143,33 @@ const ingredientGroups = [
   { id: "superalimentos", label: "Superalimentos" },
 ];
 
+const nutritionistSpecialties = [
+  {
+    id: "detox",
+    label: "Plano detox",
+    message:
+      "Para um detox equilibrado, alterne sucos verdes com bases cítricas e mantenha ingestão de água ao longo do dia.",
+  },
+  {
+    id: "emagrecimento",
+    label: "Controle de calorias",
+    message:
+      "Priorize combinações com vegetais de baixo índice glicêmico e acrescente fibras para aumentar saciedade.",
+  },
+  {
+    id: "energia",
+    label: "Energia e performance",
+    message:
+      "Antes do treino, use frutas com carboidratos naturais e um ingrediente anti-inflamatório, como gengibre.",
+  },
+  {
+    id: "imunidade",
+    label: "Reforço da imunidade",
+    message:
+      "Combine frutas ricas em vitamina C com superalimentos em doses moderadas para potencializar micronutrientes.",
+  },
+];
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -154,6 +181,7 @@ function App() {
     vegetais: ["couve"],
     superalimentos: ["gengibre"],
   });
+  const [selectedNutritionGoal, setSelectedNutritionGoal] = useState("detox");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -208,6 +236,10 @@ function App() {
     });
   };
 
+  const selectedSpecialty = nutritionistSpecialties.find(
+    (specialty) => specialty.id === selectedNutritionGoal
+  );
+
   return (
     <div className="juice-page">
       <header className="topbar">
@@ -233,6 +265,9 @@ function App() {
           </li>
           <li>
             <a href="#assinatura">Assinatura</a>
+          </li>
+          <li>
+            <a href="#consultoria">Consultoria</a>
           </li>
           <li>
             <a href="#contato">Contato</a>
@@ -453,6 +488,55 @@ function App() {
                   ? "Assinatura pausada. Nenhuma entrega será cobrada até você retomar."
                   : "Assinatura ativa. Você pode pausar quando quiser, com efeito imediato."}
               </p>
+            </aside>
+          </div>
+        </section>
+
+        <section id="consultoria" className="section nutrition-chat">
+          <div className="section-title">
+            <h3>Consultoria com nutricionista</h3>
+            <p>
+              Converse com nossa equipe para ajustar combinações de sabores e montar planos detox
+              personalizados para sua rotina.
+            </p>
+          </div>
+
+          <div className="nutrition-layout">
+            <article className="nutrition-goals">
+              <h4>Qual sua prioridade hoje?</h4>
+              <div className="goal-options">
+                {nutritionistSpecialties.map((specialty) => (
+                  <button
+                    key={specialty.id}
+                    className={selectedNutritionGoal === specialty.id ? "active" : ""}
+                    onClick={() => setSelectedNutritionGoal(specialty.id)}
+                  >
+                    {specialty.label}
+                  </button>
+                ))}
+              </div>
+              <p className="goal-description">
+                A nutricionista analisa o objetivo escolhido e recomenda combinações com frutas,
+                vegetais e superalimentos compatíveis com seu perfil.
+              </p>
+            </article>
+
+            <aside className="nutrition-chat-card" aria-live="polite">
+              <h4>Chat nutricional</h4>
+              <div className="chat-message user">
+                Quero uma sugestão para <strong>{selectedSpecialty?.label.toLowerCase()}</strong>.
+              </div>
+              <div className="chat-message specialist">
+                <strong>Nutricionista:</strong> {selectedSpecialty?.message}
+              </div>
+              <a
+                className="chat-cta"
+                href="https://wa.me/5511999991212?text=Ol%C3%A1!%20Gostaria%20de%20falar%20com%20a%20nutricionista%20sobre%20combina%C3%A7%C3%B5es%20de%20sabores%20e%20plano%20detox."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Iniciar atendimento no WhatsApp
+              </a>
             </aside>
           </div>
         </section>

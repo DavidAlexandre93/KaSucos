@@ -463,6 +463,90 @@ main {
   line-height: 1.45;
 }
 
+.nutrition-chat {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.nutrition-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 16px;
+}
+
+.nutrition-goals,
+.nutrition-chat-card {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.nutrition-goals {
+  background: #f6faf7;
+}
+
+.goal-options {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.goal-options button {
+  border: 1px solid #b9d7c0;
+  background: #fff;
+  color: var(--green-900);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.goal-options button.active {
+  background: #e8f5eb;
+  border-color: #7ec38f;
+}
+
+.goal-description {
+  color: var(--text-600);
+  margin: 14px 0 0;
+}
+
+.nutrition-chat-card {
+  background: var(--green-900);
+  color: #fff;
+}
+
+.chat-message {
+  border-radius: 10px;
+  padding: 12px;
+  line-height: 1.45;
+}
+
+.chat-message.user {
+  background: rgba(255, 255, 255, 0.15);
+  margin-bottom: 10px;
+}
+
+.chat-message.specialist {
+  background: #fff;
+  color: #1f3328;
+}
+
+.chat-cta {
+  margin-top: 14px;
+  display: inline-block;
+  background: #ffd9a0;
+  color: #573100;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
@@ -479,6 +563,10 @@ main {
   }
 
   .combiner-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .nutrition-layout {
     grid-template-columns: 1fr;
   }
 }
