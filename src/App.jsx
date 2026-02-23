@@ -224,6 +224,33 @@ const juiceRecommendations = [
   },
 ];
 
+const socialLinks = [
+  {
+    id: "instagram",
+    name: "Instagram",
+    handle: "@casadossucos",
+    href: "https://www.instagram.com/",
+  },
+  {
+    id: "facebook",
+    name: "Facebook",
+    handle: "/casadossucos",
+    href: "https://www.facebook.com/",
+  },
+  {
+    id: "whatsapp",
+    name: "WhatsApp",
+    handle: "(11) 99999-1212",
+    href: "https://wa.me/5511999991212",
+  },
+];
+
+const customerPhotoTips = [
+  "Marque @casadossucos e use a hashtag #MeuSucoCasaDosSucos.",
+  "Publique seu momento com o suco e conte qual sabor pediu.",
+  "As melhores fotos da semana aparecem em nossos stories com cupom surpresa.",
+];
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -357,6 +384,9 @@ function App() {
           </li>
           <li>
             <a href="#calculadora">Calculadora nutricional</a>
+          </li>
+          <li>
+            <a href="#redes-sociais">Redes sociais</a>
           </li>
           <li>
             <a href="#contato">Contato</a>
@@ -702,6 +732,66 @@ function App() {
               </a>
             </aside>
           </div>
+        </section>
+
+        <section id="redes-sociais" className="section social-hub">
+          <div className="section-title">
+            <h3>Integração com redes sociais</h3>
+            <p>
+              Acompanhe nossos perfis, veja atualizações em tempo real e compartilhe suas fotos com
+              a comunidade Casa dos Sucos.
+            </p>
+          </div>
+
+          <div className="social-links" aria-label="Links para perfis sociais">
+            {socialLinks.map((profile) => (
+              <a key={profile.id} href={profile.href} target="_blank" rel="noreferrer">
+                <strong>{profile.name}</strong>
+                <span>{profile.handle}</span>
+              </a>
+            ))}
+          </div>
+
+          <div className="social-plugins">
+            <article>
+              <h4>Feed do Instagram</h4>
+              <p>Confira os bastidores e lançamentos direto do nosso perfil.</p>
+              <iframe
+                src="https://www.instagram.com/casadossucos/embed"
+                title="Plugin Instagram Casa dos Sucos"
+                loading="lazy"
+                allowTransparency="true"
+              />
+            </article>
+
+            <article>
+              <h4>Comunidade no Facebook</h4>
+              <p>Acompanhe novidades, promoções e conteúdo exclusivo da página.</p>
+              <iframe
+                src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fcasadossucos&tabs=timeline&width=500&height=340&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+                title="Plugin Facebook Casa dos Sucos"
+                loading="lazy"
+                allow="encrypted-media"
+              />
+            </article>
+          </div>
+
+          <aside className="photo-sharing">
+            <h4>Compartilhe sua foto e ganhe destaque</h4>
+            <ul>
+              {customerPhotoTips.map((tip) => (
+                <li key={tip}>{tip}</li>
+              ))}
+            </ul>
+            <a
+              className="cta"
+              href="https://www.instagram.com/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Quero compartilhar minha foto
+            </a>
+          </aside>
         </section>
       </main>
 
