@@ -764,6 +764,83 @@ main {
   padding: 24px;
 }
 
+.payments {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.payments-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+}
+
+.payment-methods-list {
+  display: grid;
+  gap: 10px;
+}
+
+.payment-methods-list button {
+  text-align: left;
+  border: 1px solid #d6e7db;
+  background: #f6faf7;
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.payment-methods-list button strong {
+  color: var(--green-900);
+}
+
+.payment-methods-list button span {
+  color: var(--text-600);
+}
+
+.payment-methods-list button.selected {
+  border-color: #7ec38f;
+  background: #e9f7ec;
+}
+
+.payment-method-highlight {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--green-900);
+  color: #fff;
+}
+
+.payment-method-highlight h4 {
+  margin: 0 0 8px;
+}
+
+.payment-method-highlight p {
+  margin: 0;
+  color: #dff1e4;
+}
+
+.payment-method-highlight ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.payment-method-highlight li {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
 .nutrition-calculator {
   background: #fff;
   border: 1px solid #e2ece4;
@@ -1322,6 +1399,7 @@ main {
     grid-template-columns: 1fr;
   }
 
+  .payments-layout {
   .automation-layout {
   .brand-story-layout {
     grid-template-columns: 1fr;
