@@ -1,18 +1,268 @@
-@media screen and (max-width: 400px) {
-  #features {
-    padding: 20px;
-    width: 111%;
-  }
-  #about,
-  #services,
-  #testimonials,
-  #team,
-  #contact,
-  #footer {
-    width: 111%;
+:root {
+  --green-900: #1c5c37;
+  --green-700: #2b7a45;
+  --green-100: #eef8f0;
+  --orange-500: #f7a032;
+  --text-900: #1d2a24;
+  --text-600: #5d6c64;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f8faf9;
+  color: var(--text-900);
+}
+
+.juice-page {
+  min-height: 100vh;
+}
+
+.topbar {
+  text-align: center;
+  background: var(--green-900);
+  color: #fff;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 7%;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid #e6efe8;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: var(--green-900);
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  gap: 18px;
+  padding: 0;
+  margin: 0;
+}
+
+.navbar a {
+  color: var(--text-900);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cta,
+.ghost,
+.product-card button {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cta {
+  background: var(--green-700);
+  color: #fff;
+}
+
+.ghost {
+  background: #fff;
+  color: var(--green-700);
+  border: 1px solid var(--green-700);
+}
+
+main {
+  padding: 24px 7% 56px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 22px;
+  padding: 34px;
+  background: linear-gradient(120deg, #ffffff, var(--green-100));
+  border-radius: 18px;
+  border: 1px solid #e5efe7;
+}
+
+.eyebrow {
+  color: var(--green-700);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.hero h2 {
+  margin: 6px 0 12px;
+  font-size: 2.1rem;
+  max-width: 650px;
+}
+
+.hero p {
+  color: var(--text-600);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.hero-highlight {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid #d7e8db;
+  box-shadow: 0 12px 28px rgba(30, 62, 40, 0.08);
+}
+
+.hero-highlight span {
+  color: var(--orange-500);
+  font-weight: 700;
+}
+
+.section {
+  margin-top: 32px;
+}
+
+.section-title h3 {
+  margin-bottom: 8px;
+  font-size: 1.7rem;
+}
+
+.section-title p {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 20px;
+}
+
+.chips span {
+  background: #e7f3ea;
+  color: var(--green-900);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.product-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #dfeadf;
+}
+
+.product-card small {
+  color: var(--orange-500);
+  font-weight: 700;
+}
+
+.product-card h4 {
+  margin: 8px 0;
+  font-size: 1.1rem;
+}
+
+.product-card p {
+  margin: 0;
+  color: var(--text-600);
+}
+
+.price-row {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-card button {
+  background: #f0f6f1;
+  color: var(--green-900);
+}
+
+.alt {
+  background: #fff;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid #e2ece4;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.benefits-grid article {
+  background: #f3f8f4;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.subscription {
+  margin-top: 30px;
+  text-align: center;
+  background: var(--green-900);
+  color: #fff;
+  border-radius: 16px;
+  padding: 34px 20px;
+}
+
+.subscription .cta {
+  background: var(--orange-500);
+  margin-top: 10px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 28px 7%;
+  background: #10281a;
+  color: #e3f0e7;
+}
+
+@media (max-width: 800px) {
+  .navbar {
+    flex-wrap: wrap;
   }
 
-  #portfolio {
-    width: 110%;
+  .navbar ul {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+
+  .hero h2 {
+    font-size: 1.6rem;
   }
 }
