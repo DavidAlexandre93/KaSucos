@@ -18,6 +18,20 @@ import "./App.css";
 
 const juices = [
   {
+    id: "detox-verde-300",
+    name: "Suco Verde Detox",
+    description: "Couve, limão, maçã e gengibre. Refrescante e rico em fibras.",
+    category: "detox",
+    tags: ["detox", "vegano", "sem açúcar"],
+    size: 300,
+    priceValue: 14.9,
+    price: "R$ 14,90",
+    badge: "Mais pedido",
+    similarTo: ["abacaxi-hortela-300"],
+    complementary: ["shot-imunidade-60"],
+  },
+  {
+    id: "laranja-acerola-300",
     id: "verde-detox",
     name: "Suco Verde Detox",
     portion: "300 ml",
@@ -41,20 +55,79 @@ const juices = [
     id: "laranja-acerola",
     name: "Laranja com Acerola",
     description: "Vitamina C em dobro para reforçar sua rotina com sabor.",
+    category: "energizante",
+    tags: ["energizante", "vegano", "sem açúcar"],
+    size: 300,
+    priceValue: 12.9,
     price: "R$ 12,90",
     badge: "Imunidade",
+    similarTo: ["vermelho-energetico-500"],
+    complementary: ["mix-castanhas-40"],
   },
   {
+    id: "abacaxi-hortela-300",
     name: "Abacaxi com Hortelã",
     description: "Combinação clássica tropical, leve e super aromática.",
+    category: "detox",
+    tags: ["detox", "vegano", "sem açúcar"],
+    size: 300,
+    priceValue: 13.9,
     price: "R$ 13,90",
     badge: "Natural",
+    similarTo: ["detox-verde-300"],
+    complementary: ["sanduiche-vegano"],
   },
   {
+    id: "vermelho-energetico-500",
     name: "Vermelho Energético",
     description: "Beterraba, morango e maçã para energia antes do treino.",
+    category: "energizante",
+    tags: ["energizante", "vegano"],
+    size: 500,
+    priceValue: 15.9,
     price: "R$ 15,90",
     badge: "Pré-treino",
+    similarTo: ["laranja-acerola-300"],
+    complementary: ["barra-proteica-cacau"],
+  },
+  {
+    id: "smoothie-amendoas-400",
+    name: "Smoothie de Amêndoas",
+    description: "Banana, aveia e pasta de amêndoas com textura cremosa.",
+    category: "energizante",
+    tags: ["energizante", "sem açúcar", "vegano"],
+    size: 400,
+    priceValue: 18.9,
+    price: "R$ 18,90",
+    badge: "Alta saciedade",
+    similarTo: ["vermelho-energetico-500"],
+    complementary: ["mix-castanhas-40"],
+  },
+  {
+    id: "shot-imunidade-60",
+    name: "Shot Imunidade",
+    description: "Cúrcuma, gengibre e limão em dose concentrada.",
+    category: "detox",
+    tags: ["detox", "vegano", "sem açúcar"],
+    size: 60,
+    priceValue: 8.9,
+    price: "R$ 8,90",
+    badge: "Dose rápida",
+    similarTo: ["detox-verde-300"],
+    complementary: ["laranja-acerola-300"],
+  },
+  {
+    id: "coco-proteico-500",
+    name: "Coco Proteico",
+    description: "Água de coco, banana e proteína vegetal para recuperação.",
+    category: "energizante",
+    tags: ["energizante", "vegano", "sem açúcar"],
+    size: 500,
+    priceValue: 19.9,
+    price: "R$ 19,90",
+    badge: "Pós-treino",
+    similarTo: ["smoothie-amendoas-400"],
+    complementary: ["barra-proteica-cacau"],
   },
 ];
 
@@ -453,6 +526,68 @@ function App() {
   const [selectedSegment, setSelectedSegment] = useState("frequentes");
   const [campaignPreference, setCampaignPreference] = useState("detox");
   const [campaignFrequency, setCampaignFrequency] = useState("alta");
+  const [catalogFilters, setCatalogFilters] = useState({
+    category: "todos",
+    size: "todos",
+    maxPrice: 25,
+    tags: [],
+  });
+  const [selectedCatalogProductId, setSelectedCatalogProductId] = useState(featuredJuices[0].id);
+
+
+  const toggleCatalogTag = (tag) => {
+    setCatalogFilters((current) => {
+      const hasTag = current.tags.includes(tag);
+      return {
+        ...current,
+        tags: hasTag ? current.tags.filter((item) => item !== tag) : [...current.tags, tag],
+      };
+    });
+  };
+
+  const filteredCatalogProducts = useMemo(
+    () =>
+      featuredJuices.filter((juice) => {
+        const matchesCategory =
+          catalogFilters.category === "todos" || juice.category === catalogFilters.category;
+        const matchesSize =
+          catalogFilters.size === "todos" || juice.size === Number(catalogFilters.size);
+        const matchesPrice = juice.priceValue <= catalogFilters.maxPrice;
+        const matchesTags = catalogFilters.tags.every((tag) => juice.tags.includes(tag));
+
+        return matchesCategory && matchesSize && matchesPrice && matchesTags;
+      }),
+    [catalogFilters]
+  );
+
+  useEffect(() => {
+    if (
+      selectedCatalogProductId &&
+      !filteredCatalogProducts.some((item) => item.id === selectedCatalogProductId)
+    ) {
+      setSelectedCatalogProductId(filteredCatalogProducts[0]?.id ?? null);
+    }
+  }, [filteredCatalogProducts, selectedCatalogProductId]);
+
+  const selectedCatalogProduct = useMemo(
+    () => featuredJuices.find((item) => item.id === selectedCatalogProductId) ?? null,
+    [selectedCatalogProductId]
+  );
+
+  const catalogRecommendations = useMemo(() => {
+    if (!selectedCatalogProduct) {
+      return { similar: [], complementary: [] };
+    }
+
+    const mapById = new Map(featuredJuices.map((item) => [item.id, item]));
+
+    return {
+      similar: selectedCatalogProduct.similarTo.map((id) => mapById.get(id)).filter(Boolean),
+      complementary: selectedCatalogProduct
+        .complementary.map((id) => mapById.get(id))
+        .filter(Boolean),
+    };
+  }, [selectedCatalogProduct]);
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -649,25 +784,117 @@ function App() {
             <h3>Conheça nossas categorias</h3>
             <p>Escolha por objetivo e monte seu carrinho em poucos cliques.</p>
           </div>
-          <div className="chips">
-            {categories.map((category) => (
-              <span key={category}>{category}</span>
+
+          <div className="catalog-filters">
+            <label>
+              Categoria
+              <select
+                value={catalogFilters.category}
+                onChange={(event) =>
+                  setCatalogFilters((current) => ({ ...current, category: event.target.value }))
+                }
+              >
+                <option value="todos">Todas</option>
+                <option value="detox">Detox</option>
+                <option value="energizante">Energizante</option>
+              </select>
+            </label>
+
+            <label>
+              Tamanho
+              <select
+                value={catalogFilters.size}
+                onChange={(event) =>
+                  setCatalogFilters((current) => ({ ...current, size: event.target.value }))
+                }
+              >
+                <option value="todos">Todos</option>
+                <option value="60">60ml</option>
+                <option value="300">300ml</option>
+                <option value="400">400ml</option>
+                <option value="500">500ml</option>
+              </select>
+            </label>
+
+            <label>
+              Preço máximo: {formatCurrency(catalogFilters.maxPrice)}
+              <input
+                type="range"
+                min="8"
+                max="25"
+                step="1"
+                value={catalogFilters.maxPrice}
+                onChange={(event) =>
+                  setCatalogFilters((current) => ({ ...current, maxPrice: Number(event.target.value) }))
+                }
+              />
+            </label>
+          </div>
+
+          <div className="chips filter-chips">
+            {["detox", "energizante", "sem açúcar", "vegano"].map((tag) => (
+              <button
+                type="button"
+                key={tag}
+                className={catalogFilters.tags.includes(tag) ? "active" : ""}
+                onClick={() => toggleCatalogTag(tag)}
+              >
+                {tag}
+              </button>
             ))}
           </div>
 
           <div className="product-grid">
-            {featuredJuices.map((juice) => (
-              <article key={juice.name} className="product-card">
+            {filteredCatalogProducts.map((juice) => (
+              <article
+                key={juice.id}
+                className={`product-card ${selectedCatalogProductId === juice.id ? "selected" : ""}`}
+              >
                 <small>{juice.badge}</small>
                 <h4>{juice.name}</h4>
                 <p>{juice.description}</p>
+                <p className="product-meta">{juice.size}ml · {juice.tags.join(" · ")}</p>
                 <div className="price-row">
                   <strong>{juice.price}</strong>
-                  <button>Adicionar</button>
+                  <button type="button" onClick={() => setSelectedCatalogProductId(juice.id)}>
+                    Comparar
+                  </button>
                 </div>
               </article>
             ))}
           </div>
+
+          {!filteredCatalogProducts.length && (
+            <p className="catalog-empty">Nenhum produto encontrado para os filtros selecionados.</p>
+          )}
+
+          {selectedCatalogProduct && (
+            <div className="catalog-recommendations">
+              <h4>Produtos similares e complementares para {selectedCatalogProduct.name}</h4>
+              <div className="recommendation-columns">
+                <article>
+                  <h5>Similares</h5>
+                  <ul>
+                    {catalogRecommendations.similar.map((item) => (
+                      <li key={item.id}>
+                        <strong>{item.name}</strong> — {item.price}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+                <article>
+                  <h5>Complementares</h5>
+                  <ul>
+                    {catalogRecommendations.complementary.map((item) => (
+                      <li key={item.id}>
+                        <strong>{item.name}</strong> — {item.price}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </div>
+            </div>
+          )}
         </section>
 
         <section id="checkout-rapido" className="section fast-checkout">
