@@ -601,6 +601,106 @@ main {
   color: #fff;
 }
 
+.crm-campaigns {
+  background: #fff;
+  border: 1px solid #e2ece4;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.crm-layout {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+}
+
+.crm-filters,
+.crm-results {
+  border: 1px solid #d9e9de;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.crm-filters {
+  background: #f6faf7;
+  display: grid;
+  gap: 12px;
+}
+
+.crm-filters label {
+  display: grid;
+  gap: 6px;
+  color: var(--green-900);
+  font-weight: 600;
+}
+
+.crm-filters select {
+  border: 1px solid #b7d5bf;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 15px;
+}
+
+.crm-hint {
+  margin: 0;
+  background: #e8f5eb;
+  border: 1px dashed #9dc9aa;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.crm-results {
+  background: var(--green-900);
+  color: #fff;
+}
+
+.crm-results h4 {
+  margin: 0;
+}
+
+.crm-results p {
+  color: #e4f3e8;
+}
+
+.crm-results h5 {
+  margin: 14px 0 8px;
+}
+
+.crm-results ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.crm-results li {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  display: grid;
+  gap: 3px;
+}
+
+.crm-results span {
+  color: #d4e8da;
+  font-size: 14px;
+}
+
+.crm-results button {
+  margin-top: 14px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-weight: 700;
+  background: #ffd9a0;
+  color: #573100;
+  cursor: pointer;
+}
+
 .chat-message {
   border-radius: 10px;
   padding: 12px;
@@ -652,6 +752,10 @@ main {
   }
 
   .calculator-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .crm-layout {
     grid-template-columns: 1fr;
   }
 }
