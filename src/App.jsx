@@ -45,6 +45,58 @@ const benefits = [
   },
 ];
 
+const aboutQuickLinks = [
+  { id: "horarios", label: "Horários de funcionamento", target: "#sobre-horarios" },
+  { id: "localizacao", label: "Como chegar", target: "#sobre-localizacao" },
+  { id: "contato", label: "Canais de contato", target: "#sobre-contato" },
+];
+
+const businessHours = [
+  { day: "Segunda a sexta", time: "08h às 20h" },
+  { day: "Sábado", time: "09h às 18h" },
+  { day: "Domingo", time: "09h às 14h" },
+  { day: "Feriados", time: "10h às 14h" },
+const brandStory = {
+  origin:
+    "A Casa dos Sucos nasceu em uma pequena feira de bairro, quando nossa fundadora começou a preparar receitas naturais para ajudar a família a manter uma alimentação mais equilibrada no dia a dia.",
+  purpose:
+    "Hoje, nosso propósito é tornar escolhas saudáveis acessíveis, com sucos de verdade, feitos com ingredientes frescos, rastreáveis e selecionados com responsabilidade.",
+  commitments: [
+    {
+      title: "Compromisso com a saúde",
+      text: "Nossas combinações são livres de conservantes e sem açúcar adicionado, priorizando valor nutricional e segurança alimentar em cada lote.",
+    },
+    {
+      title: "Compromisso com a sustentabilidade",
+      text: "Utilizamos embalagens recicláveis, reaproveitamos subprodutos orgânicos e otimizamos rotas de entrega para reduzir emissões.",
+    },
+    {
+      title: "Compromisso com fornecedores locais",
+      text: "Trabalhamos com produtores da região, fortalecendo a economia local e garantindo frutas mais frescas, colhidas no tempo certo.",
+    },
+  ],
+};
+const sustainabilityInitiatives = [
+  {
+    title: "Embalagens recicláveis",
+    description:
+      "Nossas garrafas e tampas são 100% recicláveis, com instruções de descarte no rótulo para facilitar a coleta seletiva.",
+    metric: "92% dos pedidos já usam embalagem reciclável",
+  },
+  {
+    title: "Ingredientes orgânicos selecionados",
+    description:
+      "Priorizamos frutas, vegetais e superalimentos de produtores orgânicos parceiros, reduzindo uso de agrotóxicos.",
+    metric: "Mais de 70% do cardápio com base orgânica",
+  },
+  {
+    title: "Política de redução de plástico",
+    description:
+      "Retiramos canudos plásticos, adotamos lacres de menor gramatura e incentivamos retornáveis para assinantes.",
+    metric: "Meta de reduzir 35% do plástico virgem até 2026",
+  },
+];
+
 const refrigeratedDeliveryOptions = [
   {
     title: "Entrega refrigerada expressa",
@@ -296,6 +348,115 @@ const juiceRecommendations = [
   },
 ];
 
+const campaignPreferenceOptions = [
+  { id: "detox", label: "Sucos detox" },
+  { id: "energetico", label: "Sucos energéticos" },
+  { id: "semLactose", label: "Sem lactose" },
+];
+
+const purchaseFrequencyOptions = [
+  { id: "alta", label: "Alta (2+ pedidos por semana)", minPurchases: 8 },
+  { id: "media", label: "Média (1 pedido por semana)", minPurchases: 4 },
+  { id: "baixa", label: "Baixa (até 3 pedidos por mês)", minPurchases: 1 },
+];
+
+const crmCustomers = [
+  {
+    id: "cliente-01",
+    name: "Mariana Oliveira",
+    preference: "detox",
+    frequency: "alta",
+    monthlyPurchases: 10,
+    channel: "WhatsApp",
+  },
+  {
+    id: "cliente-02",
+    name: "Lucas Mendes",
+    preference: "energetico",
+    frequency: "media",
+    monthlyPurchases: 5,
+    channel: "E-mail",
+  },
+  {
+    id: "cliente-03",
+    name: "Carla Nogueira",
+    preference: "semLactose",
+    frequency: "media",
+    monthlyPurchases: 4,
+    channel: "WhatsApp",
+  },
+  {
+    id: "cliente-04",
+    name: "Felipe Santos",
+    preference: "detox",
+    frequency: "baixa",
+    monthlyPurchases: 2,
+    channel: "Push app",
+  },
+  {
+    id: "cliente-05",
+    name: "Aline Rocha",
+    preference: "energetico",
+    frequency: "alta",
+    monthlyPurchases: 9,
+    channel: "WhatsApp",
+  },
+];
+
+const campaignLibrary = {
+  detox: {
+    alta: {
+      title: "VIP Detox da Semana",
+      message:
+        "Ofereça upgrade para kit 10x detox com 15% OFF e entrega refrigerada prioritária para manter recorrência.",
+    },
+    media: {
+      title: "Rotina Detox 2x1",
+      message:
+        "Envie cupom de recompra com validade de 5 dias para converter pedidos quinzenais em semanais.",
+    },
+    baixa: {
+      title: "Volte ao Detox",
+      message:
+        "Dispare campanha de reativação com frete grátis + sugestão de plano de 3 dias para retomar o hábito.",
+    },
+  },
+  energetico: {
+    alta: {
+      title: "Pré-treino Premium",
+      message:
+        "Campanha com combos energéticos + shot de gengibre como brinde para clientes de alta frequência.",
+    },
+    media: {
+      title: "Energia no Meio da Semana",
+      message:
+        "Incentive o 2º pedido da semana com desconto progressivo em sucos vermelhos e cítricos energéticos.",
+    },
+    baixa: {
+      title: "Retorno Energia Natural",
+      message:
+        "Oferta de primeira recomposição do mês com 20% OFF em kits pré e pós-treino.",
+    },
+  },
+  semLactose: {
+    alta: {
+      title: "Clube Zero Lactose",
+      message:
+        "Envie campanhas exclusivas com lançamentos sem lactose e pontos extras no programa de fidelidade.",
+    },
+    media: {
+      title: "Semana Leve Sem Lactose",
+      message:
+        "Sugira assinatura quinzenal com preço fechado e comunicação focada em digestibilidade.",
+    },
+    baixa: {
+      title: "Reativação Sem Lactose",
+      message:
+        "Dispare cupom de retomada com recomendação de sabores suaves e CTA para montar combo personalizado.",
+    },
+  },
+};
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 
@@ -313,6 +474,8 @@ function App() {
   const [consumptionPeriod, setConsumptionPeriod] = useState("manha");
   const [enabledChannels, setEnabledChannels] = useState(["email", "push"]);
   const [selectedSegment, setSelectedSegment] = useState("frequentes");
+  const [campaignPreference, setCampaignPreference] = useState("detox");
+  const [campaignFrequency, setCampaignFrequency] = useState("alta");
 
   const selectedItems = useMemo(
     () => subscriptionOptions.filter((option) => selectedJuices.includes(option.id)),
@@ -421,6 +584,16 @@ function App() {
       return [...current, channelId];
     });
   };
+  const segmentedCustomers = useMemo(
+    () =>
+      crmCustomers.filter(
+        (customer) =>
+          customer.preference === campaignPreference && customer.frequency === campaignFrequency
+      ),
+    [campaignPreference, campaignFrequency]
+  );
+
+  const selectedCampaign = campaignLibrary[campaignPreference][campaignFrequency];
 
   return (
     <div className="juice-page">
@@ -434,10 +607,17 @@ function App() {
         <h1>Casa dos Sucos</h1>
         <ul>
           <li>
+            <a href="#sobre">Sobre</a>
+            <a href="#historia-proposito">História e propósito</a>
+          </li>
+          <li>
             <a href="#catalogo">Catálogo</a>
           </li>
           <li>
             <a href="#beneficios">Benefícios</a>
+          </li>
+          <li>
+            <a href="#sustentabilidade">Sustentabilidade</a>
           </li>
           <li>
             <a href="#entrega-refrigerada">Entrega refrigerada</a>
@@ -456,6 +636,9 @@ function App() {
           </li>
           <li>
             <a href="#calculadora">Calculadora nutricional</a>
+          </li>
+          <li>
+            <a href="#campanhas">Campanhas</a>
           </li>
           <li>
             <a href="#contato">Contato</a>
@@ -477,6 +660,17 @@ function App() {
               <button className="cta">Ver cardápio</button>
               <button className="ghost">Montar combo</button>
             </div>
+
+            <div className="home-map-links" aria-label="Mapa rápido da homepage">
+              <p>Atalhos úteis:</p>
+              <ul>
+                {aboutQuickLinks.map((link) => (
+                  <li key={link.id}>
+                    <a href={link.target}>{link.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className="hero-highlight">
             <span>Destaque da semana</span>
@@ -484,6 +678,76 @@ function App() {
             <p>
               7 sucos funcionais + 3 shots detox por <strong>R$ 99,90</strong>.
             </p>
+          </div>
+        </section>
+
+        <section id="sobre" className="section about-page">
+          <div className="section-title">
+            <h3>Sobre a Casa dos Sucos</h3>
+            <p>
+              Conforme recomendado pelo Toast POS, reunimos em um só lugar os dados essenciais de
+              horário, localização e contato para facilitar sua decisão de compra e transmitir mais
+              confiança.
+            </p>
+          </div>
+
+          <div className="about-grid">
+            <article id="sobre-horarios" className="about-card">
+              <h4>Horários de funcionamento</h4>
+              <ul>
+                {businessHours.map((item) => (
+                  <li key={item.day}>
+                    <span>{item.day}</span>
+                    <strong>{item.time}</strong>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article id="sobre-localizacao" className="about-card">
+              <h4>Localização</h4>
+              <p>Rua das Frutas, 245 · Vila Mariana · São Paulo, SP</p>
+              <p>Próximo à estação Ana Rosa e com retirada rápida no balcão.</p>
+              <a
+                href="https://maps.google.com/?q=Rua+das+Frutas+245+Sao+Paulo"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Ver no mapa
+              </a>
+            </article>
+
+            <article id="sobre-contato" className="about-card">
+              <h4>Contato</h4>
+              <p>
+                WhatsApp: <a href="https://wa.me/5511999991212">(11) 99999-1212</a>
+              </p>
+              <p>
+                E-mail: <a href="mailto:atendimento@casadossucos.com.br">atendimento@casadossucos.com.br</a>
+              </p>
+              <p>
+                Instagram: <a href="https://instagram.com/casadossucos">@casadossucos</a>
+              </p>
+            </article>
+        <section id="historia-proposito" className="section brand-story">
+          <div className="section-title">
+            <h3>História da marca e propósito</h3>
+          </div>
+
+          <div className="brand-story-layout">
+            <article className="brand-story-text">
+              <p>{brandStory.origin}</p>
+              <p>{brandStory.purpose}</p>
+            </article>
+
+            <div className="brand-commitments">
+              {brandStory.commitments.map((commitment) => (
+                <article key={commitment.title}>
+                  <h4>{commitment.title}</h4>
+                  <p>{commitment.text}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -522,6 +786,26 @@ function App() {
               <article key={item.title}>
                 <h4>{item.title}</h4>
                 <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="sustentabilidade" className="section sustainability">
+          <div className="section-title">
+            <h3>Sustentabilidade e embalagens</h3>
+            <p>
+              Transparência sobre reciclagem, ingredientes orgânicos e redução de plástico para
+              consumidores conscientes.
+            </p>
+          </div>
+
+          <div className="sustainability-grid">
+            {sustainabilityInitiatives.map((initiative) => (
+              <article key={initiative.title} className="sustainability-card">
+                <h4>{initiative.title}</h4>
+                <p>{initiative.description}</p>
+                <small>{initiative.metric}</small>
               </article>
             ))}
           </div>
@@ -884,6 +1168,75 @@ function App() {
               >
                 Iniciar atendimento no WhatsApp
               </a>
+            </aside>
+          </div>
+        </section>
+
+        <section id="campanhas" className="section crm-campaigns">
+          <div className="section-title">
+            <h3>Personalização de campanhas</h3>
+            <p>
+              Segmente clientes por preferências de produto e frequency of purchase para enviar
+              campanhas específicas automaticamente.
+            </p>
+          </div>
+
+          <div className="crm-layout">
+            <article className="crm-filters">
+              <label>
+                Preferência principal
+                <select
+                  value={campaignPreference}
+                  onChange={(event) => setCampaignPreference(event.target.value)}
+                >
+                  {campaignPreferenceOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                Frequency of purchase
+                <select
+                  value={campaignFrequency}
+                  onChange={(event) => setCampaignFrequency(event.target.value)}
+                >
+                  {purchaseFrequencyOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <p className="crm-hint">
+                Segmento atual: <strong>{segmentedCustomers.length} clientes elegíveis</strong>.
+              </p>
+            </article>
+
+            <aside className="crm-results" aria-live="polite">
+              <h4>{selectedCampaign.title}</h4>
+              <p>{selectedCampaign.message}</p>
+
+              <h5>Clientes no segmento</h5>
+              {segmentedCustomers.length ? (
+                <ul>
+                  {segmentedCustomers.map((customer) => (
+                    <li key={customer.id}>
+                      <strong>{customer.name}</strong>
+                      <span>
+                        {customer.monthlyPurchases} pedidos/mês · Canal: {customer.channel}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>Nenhum cliente nessa combinação no momento.</p>
+              )}
+
+              <button type="button">Enviar campanha para o segmento</button>
             </aside>
           </div>
         </section>
