@@ -428,24 +428,22 @@ body.splash-lock {
 
 
 .basket-button {
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.16);
+  border: 0;
+  background: transparent;
   color: #fff;
-  border-radius: 999px;
-  width: 62px;
-  height: 62px;
+  width: 46px;
+  height: 46px;
   margin-left: auto;
-  font-weight: 700;
+  padding: 0;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 22px rgba(24, 5, 52, 0.24);
 }
 
 .basket-button-icon {
-  width: 36px;
-  height: 36px;
+  width: 46px;
+  height: 46px;
   display: inline-flex;
 }
 
@@ -2025,8 +2023,8 @@ body.site-party-mode::after {
   }
 
   .basket-button {
-    width: 52px;
-    height: 52px;
+    width: 42px;
+    height: 42px;
   }
 
   .language-switcher button {
