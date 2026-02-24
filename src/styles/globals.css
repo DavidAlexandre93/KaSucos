@@ -1028,12 +1028,6 @@ body.splash-lock {
   padding: 18px;
   display: grid;
   gap: 8px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.combo:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 30px rgba(59, 21, 117, 0.14);
 }
 
 .combo.highlight {
