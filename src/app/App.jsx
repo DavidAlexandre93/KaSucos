@@ -11,11 +11,13 @@ import { Header } from "../components/layout/Header";
 import { ScrollArtLayer } from "../components/layout/ScrollArtLayer";
 import { DepoimentosSection } from "../components/sections/DepoimentosSection";
 import { TemasSection } from "../components/sections/TemasSection";
+import { DicasInformacoesSection } from "../components/sections/DicasInformacoesSection";
 import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
 import { useFunEffects } from "../hooks/useFunEffects";
 import { temas } from "../data/temasData";
 import { useLanguage } from "../hooks/useLanguage";
 import { themeNames, translations } from "../i18n/translations";
+import { dicasBlogData } from "../data/dicasBlogData";
 
 export default function App() {
   const [temaSelecionado, setTemaSelecionado] = useState("roxo");
@@ -65,6 +67,7 @@ export default function App() {
         />
         <CombosSection combos={combos} language={language} labels={t.combos} />
         <BeneficiosSection benefits={t.benefits} />
+        <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.pt} />
         <DepoimentosSection testimonials={t.testimonials} />
         <ContatoSection contact={t.contact} pedido={pedido} />
       </main>

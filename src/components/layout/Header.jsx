@@ -22,6 +22,7 @@ export function Header({ language, onLanguageChange, labels, basketLabels, total
             <a href="#monte-seu-suco">{labels.buildYourJuice}</a>
             <a href="#combos">{labels.combos}</a>
             <a href="#beneficios">{labels.benefits}</a>
+            <a href="#dicas">{labels.tipsInfo}</a>
             <a href="#onde-nos-encontrar">{labels.findUs}</a>
             <a href="#contato">{labels.contact}</a>
           </nav>

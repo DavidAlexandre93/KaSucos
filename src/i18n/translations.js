@@ -1,5 +1,6 @@
 export const translations = {
   pt: {
+    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", tipsInfo: "Dicas e Informações", contact: "Contato" },
     nav: { juices: "Sucos", buildYourJuice: "Monte seu Suco", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
     nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", findUs: "Onde nos encontrar", contact: "Contato" },
     hero: {
@@ -58,6 +59,7 @@ export const translations = {
     footer: { rights: "Todos os direitos reservados.", delivery: "*Consulte áreas de entrega." },
   },
   en: {
+    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", tipsInfo: "Tips & Info", contact: "Contact" },
     nav: { juices: "Juices", buildYourJuice: "Build your Juice", combos: "Combos", benefits: "Benefits", contact: "Contact" },
     nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", findUs: "Where to find us", contact: "Contact" },
     hero: {
@@ -113,6 +115,7 @@ export const translations = {
     footer: { rights: "All rights reserved.", delivery: "*Check delivery areas." },
   },
   es: {
+    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", tipsInfo: "Consejos e Información", contact: "Contacto" },
     nav: { juices: "Jugos", buildYourJuice: "Arma tu Jugo", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
     nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", findUs: "Dónde encontrarnos", contact: "Contacto" },
     hero: {
@@ -168,6 +171,7 @@ export const translations = {
     footer: { rights: "Todos los derechos reservados.", delivery: "*Consulta áreas de entrega." },
   },
   fr: {
+    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", tipsInfo: "Conseils & Infos", contact: "Contact" },
     nav: { juices: "Jus", buildYourJuice: "Composez votre Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
     nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", findUs: "Où nous trouver", contact: "Contact" },
     hero: {
