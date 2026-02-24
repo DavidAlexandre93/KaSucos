@@ -37,7 +37,7 @@ export function InicioSection({ hero }) {
         .fromTo(title, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.56 }, "<+0.12")
         .fromTo(description, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.52 }, "<+0.1")
         .fromTo(actions, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.46 }, "<+0.08")
-        .fromTo(card, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.62 }, "<");
+        .fromTo(card, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.62 }, "<");
 
       if (sectionRef.current && card) {
         ScrollTrigger.create({
@@ -45,7 +45,7 @@ export function InicioSection({ hero }) {
           start: "top top",
           end: "bottom bottom",
           onUpdate: ({ progress }) => {
-            const offset = -18 + progress * 36;
+            const offset = Math.round(-18 + progress * 36);
             gsap.set(card, { "--hero-parallax": `${offset}px` });
 
             spillStreams.forEach((stream, index) => {
