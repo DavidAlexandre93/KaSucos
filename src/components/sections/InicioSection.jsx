@@ -25,11 +25,14 @@ export function InicioSection({ hero }) {
       const actions = selector(".hero-actions")[0];
       const card = selector(".hero-card")[0];
       const showcase = selector(".hero-showcase")[0];
-      const spillStreams = selector(".hero-stream-fill");
-      const jars = selector(".hero-showcase-jar");
-      const jarImages = selector(".hero-showcase-jar img");
+      const spillStreams = selector(".hero-pour-stream");
+      const jar = selector(".hero-pouring-jar")[0];
+      const jarLiquid = selector(".hero-jar-liquid")[0];
+      const jarWave = selector(".hero-jar-liquid-wave")[0];
       const jarGloss = selector(".hero-jar-gloss");
-      const jarLiquids = selector(".hero-jar-liquid");
+      const jarBubbles = selector(".hero-jar-bubble");
+      const splashDrops = selector(".hero-droplet");
+      const infoCards = selector(".hero-info-card");
 
       gsap
         .timeline({ defaults: { ease: "power3.out" } })
@@ -57,13 +60,13 @@ export function InicioSection({ hero }) {
               });
             });
 
-            jars.forEach((jar, index) => {
+            if (jar) {
               gsap.to(jar, {
-                rotate: -11 - progress * 11 - index * 3,
-                yPercent: -1 - progress * 7,
+                rotate: -18 - progress * 12,
+                yPercent: -1 - progress * 8,
                 duration: 0.25,
               });
-            });
+            }
           },
         });
       }
@@ -91,35 +94,81 @@ export function InicioSection({ hero }) {
         gsap.to(showcase, { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "power3.out" });
       }
 
-      jars.forEach((jar, index) => {
+      if (jar) {
         gsap.to(jar, {
-          yPercent: index % 2 === 0 ? -2.8 : -2,
-          rotate: index % 2 === 0 ? -2.2 : -1.4,
-          duration: 1.8 + index * 0.25,
+          yPercent: -2.8,
+          rotate: -22,
+          duration: 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
         });
-      });
+      }
 
-      jarImages.forEach((image, index) => {
-        gsap.to(image, {
-          yPercent: index % 2 === 0 ? -1.4 : -1,
-          rotate: -14 - index * 1.1,
-          duration: 1.6 + index * 0.22,
+      if (jarLiquid) {
+        gsap.to(jarLiquid, {
+          "--liquid-wave": "14px",
+          opacity: 0.88,
+          duration: 1.8,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
         });
-      });
+      }
 
-      jarLiquids.forEach((liquid, index) => {
-        gsap.to(liquid, {
-          "--liquid-wave": `${10 + index * 4}px`,
-          opacity: 0.65 + index * 0.08,
-          duration: 1.3 + index * 0.2,
+      if (jarWave) {
+        gsap.to(jarWave, {
+          yPercent: -6,
+          duration: 1.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
         });
-      });
+      }
 
       jarGloss.forEach((gloss, index) => {
         gsap.to(gloss, {
           "--gloss-shift": `${16 + index * 8}px`,
-          opacity: 0.5,
-          duration: 1.5 + index * 0.18,
+          opacity: 0.72,
+          duration: 1.6 + index * 0.24,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      });
+
+      jarBubbles.forEach((bubble, index) => {
+        gsap.to(bubble, {
+          yPercent: -40 - index * 30,
+          opacity: 0.2,
+          duration: 1.2 + index * 0.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: index * 0.3,
+        });
+      });
+
+      splashDrops.forEach((drop, index) => {
+        gsap.to(drop, {
+          yPercent: 180,
+          xPercent: index % 2 === 0 ? -28 : 28,
+          opacity: 0,
+          duration: 0.95 + index * 0.07,
+          repeat: -1,
+          repeatDelay: index * 0.08,
+          ease: "power1.in",
+          delay: index * 0.15,
+        });
+      });
+
+      infoCards.forEach((cardItem, index) => {
+        gsap.to(cardItem, {
+          yPercent: index % 2 === 0 ? -8 : 8,
+          duration: 2 + index * 0.35,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
         });
       });
 
@@ -154,26 +203,76 @@ export function InicioSection({ hero }) {
           <p>{hero.slogan}</p>
 
           <motion.div className="hero-showcase" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
-            <img className="hero-showcase-logo" src="/img/logotipo.jpeg" alt="Logo KaSucos na cesta de sucos" />
+            <div className="hero-showcase-glow" aria-hidden="true" />
 
-            <div className="hero-showcase-basket" aria-hidden="true">
-              <img className="hero-showcase-bottle hero-showcase-bottle--left" src="/img/garrafinha.png" alt="" loading="lazy" />
-              <img className="hero-showcase-bottle hero-showcase-bottle--middle" src="/img/garrafinha02.png" alt="" loading="lazy" />
-              <img className="hero-showcase-bottle hero-showcase-bottle--right" src="/img/garrafinha03.png" alt="" loading="lazy" />
+            <div className="hero-showcase-stage" aria-hidden="true">
+              <div className="hero-pouring-jar">
+                <svg className="hero-jar-svg" viewBox="0 0 190 220" role="presentation" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="jarGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(255,255,255,0.78)" />
+                      <stop offset="55%" stopColor="rgba(225,208,255,0.35)" />
+                      <stop offset="100%" stopColor="rgba(173,139,232,0.22)" />
+                    </linearGradient>
+                    <linearGradient id="jarStroke" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(255,255,255,0.85)" />
+                      <stop offset="100%" stopColor="rgba(214,188,255,0.55)" />
+                    </linearGradient>
+                    <linearGradient id="juiceFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#ffe486" />
+                      <stop offset="45%" stopColor="#ffb73a" />
+                      <stop offset="100%" stopColor="#f06728" />
+                    </linearGradient>
+                    <clipPath id="jarLiquidMask">
+                      <path d="M56 74h92v118c0 12-8 18-20 18H79c-14 0-23-8-23-21V74Z" />
+                    </clipPath>
+                  </defs>
+
+                  <rect className="hero-jar-cap" x="112" y="13" width="52" height="24" rx="10" />
+                  <rect className="hero-jar-neck" x="114" y="34" width="44" height="30" rx="12" />
+
+                  <path
+                    className="hero-jar-handle"
+                    d="M46 110c0-21 14-36 34-36h8v16h-8c-11 0-18 8-18 20v35c0 12 7 20 18 20h8v16h-8c-20 0-34-15-34-36z"
+                  />
+
+                  <path
+                    className="hero-jar-body"
+                    d="M60 64h90v126c0 17-12 26-28 26H82c-17 0-28-11-28-28V64c0-7 4-12 6-12z"
+                  />
+
+                  <g clipPath="url(#jarLiquidMask)">
+                    <path className="hero-jar-liquid" d="M54 116c26-16 54 9 92-8v110H54Z" />
+                    <path className="hero-jar-liquid-wave" d="M54 115c28 13 43-11 64-8 12 2 20 8 28 12v20H54Z" />
+                    <circle className="hero-jar-bubble" cx="94" cy="136" r="4" />
+                    <circle className="hero-jar-bubble hero-jar-bubble--two" cx="112" cy="150" r="3" />
+                  </g>
+
+                  <path className="hero-jar-gloss" d="M80 82c4-2 10-2 12 2v96c-2 6-9 7-12 2z" />
+                  <path className="hero-jar-gloss hero-jar-gloss--soft" d="M101 88c3-1 7-1 9 2v68c-2 4-6 5-9 1z" />
+                </svg>
+              </div>
+
+              <div className="hero-pour-stream hero-pour-stream--main" />
+              <div className="hero-pour-stream hero-pour-stream--mist" />
+
+              <div className="hero-pool" />
+
+              <div className="hero-splash" aria-hidden="true">
+                {Array.from({ length: 7 }).map((_, index) => (
+                  <span key={`drop-${index}`} className="hero-droplet" />
+                ))}
+              </div>
             </div>
 
-            <motion.div className="hero-showcase-jar hero-showcase-jar--top" aria-hidden="true" whileHover={{ y: -4, rotate: -2 }} transition={{ duration: 0.26 }}>
-              <img src="/img/garrafinha02.png" alt="" loading="lazy" />
-              <span className="hero-jar-liquid hero-jar-liquid--gold" />
-              <span className="hero-jar-gloss" />
-              <span className="hero-stream-fill hero-stream-fill--gold" />
+            <motion.div className="hero-info-card hero-info-card--left" whileHover={{ scale: 1.04, y: -4 }} transition={{ duration: 0.24 }}>
+              <strong>Prensado a frio</strong>
+              <span>Preserva nutrientes e mantém o sabor natural.</span>
             </motion.div>
 
-            <motion.div className="hero-showcase-jar hero-showcase-jar--bottom" aria-hidden="true" whileHover={{ y: -3, rotate: -1.5 }} transition={{ duration: 0.26 }}>
-              <img src="/img/garrafinha03.png" alt="" loading="lazy" />
-              <span className="hero-jar-liquid hero-jar-liquid--red" />
-              <span className="hero-jar-gloss" />
-              <span className="hero-stream-fill hero-stream-fill--red" />
+            <motion.div className="hero-info-card hero-info-card--right" whileHover={{ scale: 1.04, y: -4 }} transition={{ duration: 0.24 }}>
+              <strong>0% conservantes</strong>
+              <span>Produção diária com frutas selecionadas.</span>
             </motion.div>
           </motion.div>
         </motion.div>

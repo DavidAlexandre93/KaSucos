@@ -709,148 +709,207 @@ body.splash-lock {
 .hero-showcase {
   margin-top: 18px;
   position: relative;
-  min-height: 260px;
+  min-height: 280px;
   border-radius: 18px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 20% 15%, rgba(255, 204, 33, 0.35), transparent 40%),
-    radial-gradient(circle at 80% 10%, rgba(255, 95, 162, 0.28), transparent 38%),
-    linear-gradient(160deg, rgba(59, 21, 117, 0.92), rgba(95, 39, 178, 0.84));
+    radial-gradient(circle at 20% 15%, rgba(255, 204, 33, 0.5), transparent 46%),
+    radial-gradient(circle at 80% 10%, rgba(255, 95, 162, 0.34), transparent 38%),
+    radial-gradient(circle at 50% 110%, rgba(95, 197, 45, 0.24), transparent 38%),
+    linear-gradient(160deg, rgba(59, 21, 117, 0.96), rgba(95, 39, 178, 0.88));
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2);
   transform-style: preserve-3d;
   transform: perspective(900px) rotateX(var(--showcase-rot-x, 0deg)) rotateY(var(--showcase-rot-y, 0deg)) translate3d(var(--showcase-shift-x, 0px), var(--showcase-shift-y, 0px), 0);
 }
 
-.hero-showcase-logo {
+.hero-showcase-glow {
   position: absolute;
-  left: 12px;
-  top: 14px;
-  width: 92px;
-  height: 92px;
-  border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.86);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+  inset: 0;
+  background:
+    radial-gradient(circle at 68% 40%, rgba(255, 214, 88, 0.34), transparent 38%),
+    radial-gradient(circle at 61% 74%, rgba(255, 95, 162, 0.22), transparent 34%);
+  mix-blend-mode: screen;
 }
 
-.hero-showcase-basket {
+.hero-showcase-stage {
   position: absolute;
-  left: 22px;
-  bottom: 18px;
-  width: 156px;
-  height: 88px;
-  border-radius: 30px 30px 45px 45px;
-  border: 2px solid rgba(255, 255, 255, 0.32);
-  background: linear-gradient(180deg, rgba(206, 117, 41, 0.88), rgba(138, 70, 20, 0.95));
-  box-shadow: 0 16px 30px rgba(31, 10, 53, 0.34);
+  inset: 0;
 }
 
-.hero-showcase-bottle {
+.hero-pouring-jar {
   position: absolute;
-  width: 54px;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.35));
+  right: 24px;
+  top: 4px;
+  width: 176px;
+  height: 198px;
+  transform: rotate(-20deg);
+  filter: drop-shadow(0 22px 22px rgba(0, 0, 0, 0.32));
 }
 
-.hero-showcase-bottle--left {
-  left: 8px;
-  top: -38px;
-  transform: rotate(-12deg);
-}
-
-.hero-showcase-bottle--middle {
-  left: 48px;
-  top: -48px;
-}
-
-.hero-showcase-bottle--right {
-  left: 96px;
-  top: -36px;
-  transform: rotate(10deg);
-}
-
-.hero-showcase-jar {
-  position: absolute;
-  width: 120px;
-  pointer-events: none;
-  transform-style: preserve-3d;
-  animation: heroJarFloat 3.6s ease-in-out infinite;
-}
-
-.hero-showcase-jar img {
+.hero-jar-svg {
   width: 100%;
-  transform: rotate(-14deg);
-  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.34));
+  height: 100%;
+  overflow: visible;
 }
 
-.hero-showcase-jar--top {
-  right: 2px;
-  top: 8px;
+.hero-jar-cap {
+  fill: #6d31c3;
+  stroke: rgba(255, 255, 255, 0.44);
+  stroke-width: 2;
 }
 
-.hero-showcase-jar--bottom {
-  right: 20px;
-  top: 104px;
-  animation-delay: 0.75s;
+.hero-jar-neck {
+  fill: rgba(244, 235, 255, 0.4);
+  stroke: rgba(255, 255, 255, 0.58);
+  stroke-width: 2;
+}
+
+.hero-jar-handle {
+  fill: rgba(231, 217, 255, 0.28);
+  stroke: rgba(239, 227, 255, 0.64);
+  stroke-width: 2;
+}
+
+.hero-jar-body {
+  fill: url(#jarGlass);
+  stroke: url(#jarStroke);
+  stroke-width: 2;
 }
 
 .hero-jar-liquid {
-  position: absolute;
-  left: 18%;
-  top: 41%;
-  width: 54%;
-  height: 44%;
-  border-radius: 28% 34% 40% 45%;
-  opacity: 0.52;
-  filter: blur(0.2px);
-  --liquid-wave: 6px;
-  transform: translateY(calc(var(--liquid-wave) * 0.4)) rotate(-10deg);
-  animation: heroLiquidSlosh 2.3s ease-in-out infinite;
+  fill: url(#juiceFill);
+  opacity: 0.9;
+  --liquid-wave: 8px;
+  transform: translateY(calc(var(--liquid-wave) * 0.35));
 }
 
-.hero-jar-liquid--gold {
-  background: linear-gradient(180deg, rgba(255, 224, 126, 0.72), rgba(255, 142, 30, 0.78));
+.hero-jar-liquid-wave {
+  fill: rgba(255, 242, 191, 0.62);
+  mix-blend-mode: screen;
 }
 
-.hero-jar-liquid--red {
-  background: linear-gradient(180deg, rgba(255, 147, 174, 0.72), rgba(211, 49, 126, 0.78));
+.hero-jar-bubble {
+  fill: rgba(255, 255, 255, 0.8);
+  opacity: 0.65;
+}
+
+.hero-jar-bubble--two {
+  opacity: 0.45;
 }
 
 .hero-jar-gloss {
-  position: absolute;
-  left: 26%;
-  top: 18%;
-  width: 16%;
-  height: 62%;
-  border-radius: 999px;
   --gloss-shift: 0px;
-  transform: translateX(var(--gloss-shift)) rotate(-9deg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
-  mix-blend-mode: screen;
-  opacity: 0.35;
-  animation: heroGlossSweep 2.5s ease-in-out infinite;
+  transform: translateX(var(--gloss-shift));
+  fill: rgba(255, 255, 255, 0.55);
+  opacity: 0.45;
 }
 
-.hero-stream-fill {
+.hero-jar-gloss--soft {
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+.hero-pour-stream {
   position: absolute;
-  left: 35%;
-  top: 68%;
-  width: 24px;
-  height: 132px;
+  left: 68%;
+  top: 32%;
+  width: 22px;
+  height: 168px;
   border-radius: 999px;
   transform-origin: top center;
-  opacity: 0.35;
+  opacity: 0.45;
   --fill-scale: 0.25;
-  transform: scaleY(var(--fill-scale)) rotate(-8deg);
+  transform: scaleY(var(--fill-scale)) rotate(18deg);
 }
 
-.hero-stream-fill--gold {
+.hero-pour-stream--main {
   background: linear-gradient(180deg, rgba(255, 214, 88, 0.96), rgba(255, 145, 31, 0.92));
   box-shadow: 0 10px 18px rgba(255, 145, 31, 0.35);
 }
 
-.hero-stream-fill--red {
-  background: linear-gradient(180deg, rgba(255, 130, 160, 0.95), rgba(211, 49, 126, 0.92));
-  box-shadow: 0 10px 18px rgba(211, 49, 126, 0.35);
+.hero-pour-stream--mist {
+  width: 12px;
+  height: 150px;
+  left: 67%;
+  top: 35%;
+  background: linear-gradient(180deg, rgba(255, 232, 178, 0.64), rgba(255, 142, 30, 0.32));
+  filter: blur(1.1px);
+}
+
+.hero-pool {
+  position: absolute;
+  right: 28px;
+  bottom: 22px;
+  width: 160px;
+  height: 54px;
+  border-radius: 48% 52% 45% 55%;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(255, 232, 178, 0.68), transparent 36%),
+    linear-gradient(140deg, rgba(255, 186, 88, 0.92), rgba(255, 95, 162, 0.76));
+  box-shadow:
+    0 14px 20px rgba(41, 16, 72, 0.4),
+    inset 0 5px 8px rgba(255, 255, 255, 0.28);
+}
+
+.hero-splash {
+  position: absolute;
+  right: 44px;
+  bottom: 62px;
+  width: 120px;
+  height: 80px;
+}
+
+.hero-droplet {
+  position: absolute;
+  width: 12px;
+  height: 18px;
+  border-radius: 50% 50% 56% 44%;
+  background: linear-gradient(180deg, rgba(255, 229, 124, 0.95), rgba(255, 142, 30, 0.95));
+  box-shadow: 0 6px 10px rgba(31, 8, 49, 0.28);
+}
+
+.hero-droplet:nth-child(1) { left: 12%; top: 36%; }
+.hero-droplet:nth-child(2) { left: 24%; top: 12%; width: 9px; height: 14px; }
+.hero-droplet:nth-child(3) { left: 38%; top: 26%; width: 10px; height: 16px; }
+.hero-droplet:nth-child(4) { left: 52%; top: 8%; width: 8px; height: 12px; }
+.hero-droplet:nth-child(5) { left: 64%; top: 30%; }
+.hero-droplet:nth-child(6) { left: 76%; top: 18%; width: 9px; height: 14px; }
+.hero-droplet:nth-child(7) { left: 88%; top: 32%; width: 10px; height: 15px; }
+
+.hero-info-card {
+  position: absolute;
+  width: 150px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(8px);
+  text-align: left;
+  box-shadow: 0 10px 20px rgba(20, 7, 37, 0.24);
+}
+
+.hero-info-card strong {
+  display: block;
+  color: #fff3c9;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.hero-info-card span {
+  display: block;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.hero-info-card--left {
+  left: 12px;
+  bottom: 16px;
+}
+
+.hero-info-card--right {
+  left: 18px;
+  top: 18px;
 }
 
 @keyframes heroJarFloat {
@@ -2063,50 +2122,26 @@ body.site-party-mode::after {
     min-height: 220px;
   }
 
-  .hero-showcase-logo {
-    width: 72px;
-    height: 72px;
+  .hero-pouring-jar {
+    right: 30px;
+    width: 112px;
+    height: 138px;
   }
 
-  .hero-showcase-basket {
-    width: 130px;
-    height: 78px;
-    left: 14px;
-    bottom: 14px;
+  .hero-pour-stream {
+    left: 66%;
+    height: 132px;
   }
 
-  .hero-showcase-bottle {
-    width: 44px;
+  .hero-pool {
+    width: 128px;
+    height: 42px;
+    right: 18px;
   }
 
-  .hero-showcase-bottle--left {
-    left: 6px;
-    top: -30px;
-  }
-
-  .hero-showcase-bottle--middle {
-    left: 40px;
-    top: -38px;
-  }
-
-  .hero-showcase-bottle--right {
-    left: 78px;
-    top: -29px;
-  }
-
-  .hero-showcase-jar {
-    width: 92px;
-  }
-
-  .hero-showcase-jar--bottom {
-    top: 94px;
-    right: 12px;
-  }
-
-  .hero-stream-fill {
-    width: 18px;
-    height: 96px;
-    left: 36%;
+  .hero-info-card {
+    width: 128px;
+    padding: 10px;
   }
 }
 
