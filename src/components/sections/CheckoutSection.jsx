@@ -11,12 +11,11 @@ export function CheckoutSection({ checkout, total }) {
       const box = selector(".cta-box")[0];
       const fields = selector(".checkout-form label");
       const totalRow = selector(".checkout-total")[0];
-      const button = selector(".checkout-action")[0];
 
-      gsap.set([box, ...fields, totalRow, button], { opacity: 0, y: 22 });
+      gsap.set([box, ...fields, totalRow], { opacity: 0, y: 22 });
       gsap.to(box, { opacity: 1, y: 0, duration: 0.55 });
       gsap.to(fields, { opacity: 1, y: 0, duration: 0.42, stagger: 0.07 });
-      gsap.to([totalRow, button], { opacity: 1, y: 0, duration: 0.45, stagger: 0.08 });
+      gsap.to(totalRow, { opacity: 1, y: 0, duration: 0.45 });
     },
     { scope: sectionRef, dependencies: [checkout.title, total] },
   );
@@ -55,17 +54,6 @@ export function CheckoutSection({ checkout, total }) {
         <motion.p className="checkout-total" whileHover={{ scale: 1.01 }}>
           {checkout.totalLabel} <strong>{total}</strong>
         </motion.p>
-
-        <motion.a
-          className="btn-primary checkout-action"
-          href="https://wa.me/5500000000000"
-          target="_blank"
-          rel="noreferrer"
-          whileHover={{ scale: 1.03, y: -2 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          {checkout.cta}
-        </motion.a>
       </motion.div>
     </section>
   );
