@@ -1,5 +1,7 @@
+import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useGSAP } from "../../lib/useGSAP";
 
 const LANGUAGE_OPTIONS = [
   { code: "en", countryCode: "us", label: "English" },
@@ -62,16 +64,16 @@ const COMPACT_NAV_LABELS = {
 export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 720) {
-        setIsMobileMenuOpen(false);
-      }
-    };
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    mm.add("(min-width: 721px)", () => {
+      setIsMobileMenuOpen(false);
+      return undefined;
+    });
+
+    return () => mm.revert();
+  }, { dependencies: [] });
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const navLabels = {

@@ -1,6 +1,10 @@
 import { useRef } from "react";
+import gsap from "../../lib/gsap";
+import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { useGSAP } from "../../lib/useGSAP";
 import { scrollArtLayers } from "../../constants/scrollArtLayers";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
@@ -20,47 +24,45 @@ export function ScrollArtLayer() {
       if (!root) return undefined;
 
       const layers = Array.from(root.querySelectorAll(".scroll-art-item"));
-      let ticking = false;
 
-      const render = () => {
-        const doc = document.documentElement;
-        const scrollable = doc.scrollHeight - window.innerHeight;
-        const progress = scrollable > 0 ? clamp(window.scrollY / scrollable, 0, 1) : 0;
-
+      const render = (progress) => {
         layers.forEach((element, index) => {
           const layer = scrollArtLayers[index];
           if (!layer) return;
           const visibility = getRangeVisibility(progress, layer.start, layer.end);
           const phase = clamp((progress - layer.start) / (layer.end - layer.start || 1), 0, 1);
 
-          element.style.transform = `translate3d(${layer.baseX}%, ${layer.baseY + (1 - phase) * 7}%, 0) rotate(${layer.tilt}deg) scale(${layer.scale})`;
+          gsap.set(element, {
+            xPercent: layer.baseX,
+            yPercent: layer.baseY + (1 - phase) * 7,
+            rotate: layer.tilt,
+            scale: layer.scale,
+            force3D: true,
+          });
 
           const spill = element.querySelector(".scroll-art-image--spill");
           const stream = element.querySelector(".scroll-art-stream");
           const jar = element.querySelector(".scroll-art-image--jar");
 
-          if (spill) spill.style.opacity = String(visibility * 0.35);
-          if (stream) stream.style.opacity = String(visibility);
-          if (jar) jar.style.opacity = String(visibility);
+          if (spill) gsap.set(spill, { opacity: visibility * 0.35 });
+          if (stream) gsap.set(stream, { opacity: visibility });
+          if (jar) gsap.set(jar, { opacity: visibility });
         });
-
-        ticking = false;
       };
 
-      const onScroll = () => {
-        if (ticking) return;
-        ticking = true;
-        window.requestAnimationFrame(render);
-      };
+      render(0);
 
-      render();
-      window.addEventListener("scroll", onScroll, { passive: true });
-      window.addEventListener("resize", onScroll);
+      ScrollTrigger.create({
+        trigger: document.documentElement,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: true,
+        onUpdate: ({ progress }) => {
+          render(progress);
+        },
+      });
 
-      return () => {
-        window.removeEventListener("scroll", onScroll);
-        window.removeEventListener("resize", onScroll);
-      };
+      return undefined;
     },
     { scope: rootRef },
   );

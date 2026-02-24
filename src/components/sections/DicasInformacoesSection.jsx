@@ -1,5 +1,9 @@
 import { useMemo, useRef, useState } from "react";
+import gsap from "../../lib/gsap";
+import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { useGSAP } from "../../lib/useGSAP";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const STORAGE_KEY = "kasucos-blog-likes";
 
@@ -30,32 +34,25 @@ export function DicasInformacoesSection({ blog }) {
       const header = selector(".tips-header")[0];
       const cards = selector(".tip-post");
 
-      const observer = new IntersectionObserver(
-        ([entry], obs) => {
-          if (!entry.isIntersecting) return;
+      gsap.set([header, ...cards], { opacity: 0, y: 18 });
+      gsap.set(cards, { y: 22, scale: 0.98 });
 
-          header?.animate([{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "translateY(0)" }], {
-            duration: 450,
-            easing: "ease-out",
-            fill: "forwards",
-          });
-
-          cards.forEach((card, index) => {
-            card.animate([{ opacity: 0, transform: "translateY(22px) scale(0.98)" }, { opacity: 1, transform: "translateY(0) scale(1)" }], {
-              duration: 500,
-              delay: 90 * index,
-              easing: "cubic-bezier(.2,.8,.2,1)",
-              fill: "forwards",
-            });
-          });
-
-          obs.disconnect();
+      let hasPlayed = false;
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: ({ progress }) => {
+          if (hasPlayed || progress < 0.15) return;
+          hasPlayed = true;
+          gsap
+            .timeline()
+            .to(header, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" })
+            .to(cards, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out", stagger: 0.09 });
         },
-        { threshold: 0.22 },
-      );
+      });
 
-      observer.observe(sectionRef.current);
-      return () => observer.disconnect();
+      return undefined;
     },
     { scope: sectionRef, dependencies: [posts.length] },
   );
