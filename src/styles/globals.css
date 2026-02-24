@@ -483,7 +483,6 @@ body.splash-lock {
 .card,
 .combo,
 .tip-post,
-.theme-option,
 .fruit-chip,
 .reviews blockquote {
   --tilt-x: 0deg;
@@ -923,6 +922,7 @@ body.splash-lock {
   border-radius: 10px;
 }
 
+
 .typing-caret {
   width: 2px;
   height: 1em;
@@ -931,39 +931,9 @@ body.splash-lock {
   animation: typingCaretBlink 0.7s steps(1, end) infinite;
 }
 
-.theme-section {
-  padding-top: 2px;
-}
-
 .theme-text {
   margin: 0 0 14px;
   color: var(--muted);
-}
-
-.theme-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.theme-option {
-  border: 1px solid rgba(95, 39, 178, 0.2);
-  background: rgba(255, 255, 255, 0.75);
-  color: var(--purple-900);
-  border-radius: 999px;
-  font-weight: 700;
-  padding: 10px 14px;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.theme-option:hover {
-  transform: translateY(-2px);
-}
-
-.theme-option.active {
-  border-color: var(--green-500);
-  box-shadow: 0 10px 22px rgba(117, 203, 47, 0.23);
 }
 
 .soft {

@@ -10,12 +10,10 @@ import { Footer } from "../components/layout/Footer";
 import { Header } from "../components/layout/Header";
 import { ScrollArtLayer } from "../components/layout/ScrollArtLayer";
 import { DepoimentosSection } from "../components/sections/DepoimentosSection";
-import { TemasSection } from "../components/sections/TemasSection";
 import { DicasInformacoesSection } from "../components/sections/DicasInformacoesSection";
 import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
-import { temas } from "../data/temasData";
 import { useLanguage } from "../hooks/useLanguage";
-import { themeNames, translations } from "../i18n/translations";
+import { translations } from "../i18n/translations";
 import { CartSection } from "../components/sections/CartSection";
 import { CheckoutSection } from "../components/sections/CheckoutSection";
 import { dicasBlogData } from "../data/dicasBlogData";
@@ -28,9 +26,20 @@ const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace("."
 const formatBRL = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
 
+const DEFAULT_THEME_COLORS = {
+  "--purple-900": "#3b1575",
+  "--purple-700": "#5f27b2",
+  "--purple-100": "#f2ebff",
+  "--green-500": "#75cb2f",
+  "--yellow-400": "#ffcc21",
+  "--orange-500": "#ff8e1e",
+  "--text": "#2d184f",
+  "--muted": "#5f4b88",
+  "--bg-base": "#f7f2ff",
+};
+
 export default function App() {
   const siteRef = useRef(null);
-  const [temaSelecionado, setTemaSelecionado] = useState("roxo");
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -46,7 +55,7 @@ export default function App() {
   useGSAP(
     ({ selector }) => {
       const floatingTargets = selector(".card img, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
-      const tiltCards = selector(".card, .combo, .tip-post, .theme-option, .fruit-chip, .reviews blockquote");
+      const tiltCards = selector(".card, .combo, .tip-post, .fruit-chip, .reviews blockquote");
 
       const onPointerMove = (event) => {
         const x = Math.round((event.clientX / window.innerWidth) * 100);
@@ -159,7 +168,7 @@ export default function App() {
   };
 
   return (
-    <div className="site" style={temas[temaSelecionado].colors} ref={siteRef}>
+    <div className="site" style={DEFAULT_THEME_COLORS} ref={siteRef}>
       {showSplash ? <SplashScreen onComplete={() => setShowSplash(false)} /> : null}
       <ScrollArtLayer />
       <Header
@@ -171,16 +180,6 @@ export default function App() {
       <main>
         <MotionSection>
           <InicioSection hero={t.hero} />
-        </MotionSection>
-        <MotionSection delay={0.04}>
-          <TemasSection
-            temas={temas}
-            temaSelecionado={temaSelecionado}
-            onTemaChange={setTemaSelecionado}
-            title={t.theme.title}
-            description={t.theme.description}
-            themeNames={themeNames[language]}
-          />
         </MotionSection>
         <MotionSection delay={0.06}>
           <SucosSection
