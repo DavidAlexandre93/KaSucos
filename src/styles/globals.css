@@ -283,18 +283,72 @@ body.splash-lock {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   color: var(--white);
   font-weight: 700;
   text-decoration: none;
 }
 
 .brand img {
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  border: 3px solid rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 0 0 3px rgba(255, 204, 33, 0.3),
+    0 8px 24px rgba(0, 0, 0, 0.25);
+  animation: logoSparkle 1.15s ease-in-out infinite;
+}
+
+.brand span {
+  font-family: "Brush Script MT", "Segoe Script", "Comic Sans MS", cursive;
+  font-size: clamp(1.9rem, 2.2vw, 2.3rem);
+  letter-spacing: 0.03em;
+  line-height: 0.9;
+  font-weight: 700;
+  background: linear-gradient(95deg, #fff8c9 5%, #ffffff 35%, #ffcc21 66%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 2px 7px rgba(26, 8, 60, 0.38),
+    0 0 14px rgba(255, 255, 255, 0.45);
+  animation: brandTextFloat 2.4s ease-in-out infinite;
+}
+
+@keyframes logoSparkle {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+
+  45% {
+    transform: scale(1.09);
+    filter: brightness(1.34) saturate(1.2);
+  }
+
+  55% {
+    transform: scale(1.05);
+    filter: brightness(0.96);
+  }
+}
+
+@keyframes brandTextFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+    text-shadow:
+      0 2px 7px rgba(26, 8, 60, 0.38),
+      0 0 14px rgba(255, 255, 255, 0.45);
+  }
+
+  50% {
+    transform: translateY(-2px) rotate(-1deg);
+    text-shadow:
+      0 5px 15px rgba(26, 8, 60, 0.45),
+      0 0 22px rgba(255, 204, 33, 0.5);
+  }
 }
 
 .topbar nav {
@@ -1697,7 +1751,13 @@ body.site-party-mode::after {
   }
 
   .brand span {
-    display: none;
+    display: inline;
+    font-size: clamp(1.6rem, 8vw, 2rem);
+  }
+
+  .brand img {
+    width: 62px;
+    height: 62px;
   }
 
   .menu-toggle {
