@@ -1370,18 +1370,36 @@ body.splash-lock {
 }
 
 .builder-limit {
-  margin: 14px 0 8px;
+  margin: 0;
   color: var(--wine-500);
   font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .builder-result {
   background: rgba(255, 255, 255, 0.82);
   border: 1px dashed rgba(95, 197, 45, 0.6);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   color: var(--text);
   font-weight: 700;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.builder-feedback {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 16px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(246, 238, 255, 0.75));
+  border: 1px solid rgba(95, 39, 178, 0.14);
+  display: grid;
+  gap: 10px;
+}
+
+.builder-add-button {
+  margin-top: 14px;
 }
 
 @media (max-width: 760px) {
