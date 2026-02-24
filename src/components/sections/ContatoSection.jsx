@@ -1,4 +1,4 @@
-export function ContactSection() {
+export function ContatoSection() {
   return (
     <section id="contato" className="section cta">
       <div className="container cta-box">

@@ -1,4 +1,4 @@
-export function BenefitsSection() {
+export function BeneficiosSection() {
   return (
     <section id="beneficios" className="section">
       <div className="container benefits">

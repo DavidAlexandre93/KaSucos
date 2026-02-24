@@ -1,4 +1,4 @@
-export function HeroSection() {
+export function InicioSection() {
   return (
     <section id="inicio" className="hero">
       <div className="container hero-grid">

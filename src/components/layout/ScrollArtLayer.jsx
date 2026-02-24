@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { scrollArtLayers } from "../constants/scrollArtLayers";
-import { useScrollProgress } from "../hooks/useScrollProgress";
+import { scrollArtLayers } from "../../constants/scrollArtLayers";
+import { useScrollProgress } from "../../hooks/useScrollProgress";
 
 function getRangeVisibility(progress, start, end) {
   if (progress < start || progress > end) return 0;
