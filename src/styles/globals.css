@@ -190,6 +190,55 @@ body {
   background: rgba(255, 204, 33, 0.2);
 }
 
+
+.basket-slot {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.28);
+  display: inline-flex;
+  align-items: center;
+}
+
+.basket-summary {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.basket-summary:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.basket-summary-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.basket-summary-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--yellow-400);
+  color: #4d3400;
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+}
+
 .hero {
   padding: 70px 0 56px;
 }
@@ -413,6 +462,23 @@ body {
 .card-footer strong {
   color: var(--wine-500);
 }
+
+.add-juice-button {
+  margin-top: 12px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(95, 197, 45, 0.2);
+  color: #2f5f12;
+}
+
+.add-juice-button:hover {
+  background: rgba(95, 197, 45, 0.3);
+}
+
 
 .combos {
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -675,7 +741,14 @@ body::before {
 
   .topbar-right {
     margin-left: auto;
+    gap: 8px;
   }
+
+  .basket-slot {
+    margin-left: 6px;
+    padding-left: 8px;
+  }
+
 
   .cards {
     grid-template-columns: 1fr;
