@@ -1,6 +1,6 @@
 export const translations = {
   pt: {
-    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
+    nav: { juices: "Sucos", buildYourJuice: "Monte seu Suco", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
     hero: {
       chip: "Entrega no mesmo dia*",
       title: "Os sucos mais frescos para sua rotina saudável.",
@@ -15,6 +15,14 @@ export const translations = {
       description: "Todas as opções usam a paleta da logo KaSucos.",
     },
     juices: { title: "Sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades" },
+    customJuice: {
+      title: "Monte seu Suco",
+      description: "Escolha até duas frutas para criar sua combinação perfeita.",
+      fruits: ["Acerola", "Laranja", "Abacaxi", "Limão", "Maracujá", "Morango"],
+      limitMessage: "Limite de combinação: 2 frutas.",
+      resultPlaceholder: "Selecione 2 frutas para ver sua mistura.",
+      resultReady: "Seu suco personalizado: {combo}",
+    },
     combos: { title: "Combos para economizar", mostOrdered: "Mais pedido", action: "Quero este" },
     benefits: {
       title: "Por que escolher a KaSucos?",
@@ -41,7 +49,7 @@ export const translations = {
     footer: { rights: "Todos os direitos reservados.", delivery: "*Consulte áreas de entrega." },
   },
   en: {
-    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", contact: "Contact" },
+    nav: { juices: "Juices", buildYourJuice: "Build your Juice", combos: "Combos", benefits: "Benefits", contact: "Contact" },
     hero: {
       chip: "Same-day delivery*",
       title: "The freshest juices for your healthy routine.",
@@ -53,6 +61,14 @@ export const translations = {
     },
     theme: { title: "Choose your experience colors", description: "All options use KaSucos logo palette." },
     juices: { title: "Juices available for sale", availableToday: "Available today", lastUnits: "Last units" },
+    customJuice: {
+      title: "Build your Juice",
+      description: "Choose up to two fruits to create your perfect blend.",
+      fruits: ["Acerola", "Orange", "Pineapple", "Lemon", "Passion Fruit", "Strawberry"],
+      limitMessage: "Combination limit: 2 fruits.",
+      resultPlaceholder: "Select 2 fruits to preview your blend.",
+      resultReady: "Your custom juice: {combo}",
+    },
     combos: { title: "Combos to save more", mostOrdered: "Most ordered", action: "I want this" },
     benefits: {
       title: "Why choose KaSucos?",
@@ -79,7 +95,7 @@ export const translations = {
     footer: { rights: "All rights reserved.", delivery: "*Check delivery areas." },
   },
   es: {
-    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
+    nav: { juices: "Jugos", buildYourJuice: "Arma tu Jugo", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
     hero: {
       chip: "Entrega el mismo día*",
       title: "Los jugos más frescos para tu rutina saludable.",
@@ -91,6 +107,14 @@ export const translations = {
     },
     theme: { title: "Elige los colores de tu experiencia", description: "Todas las opciones usan la paleta del logo KaSucos." },
     juices: { title: "Jugos disponibles para la venta", availableToday: "Disponible hoy", lastUnits: "Últimas unidades" },
+    customJuice: {
+      title: "Arma tu Jugo",
+      description: "Elige hasta dos frutas para crear tu combinación perfecta.",
+      fruits: ["Acerola", "Naranja", "Piña", "Limón", "Maracuyá", "Fresa"],
+      limitMessage: "Límite de combinación: 2 frutas.",
+      resultPlaceholder: "Selecciona 2 frutas para ver tu mezcla.",
+      resultReady: "Tu jugo personalizado: {combo}",
+    },
     combos: { title: "Combos para ahorrar", mostOrdered: "Más pedido", action: "Quiero este" },
     benefits: {
       title: "¿Por qué elegir KaSucos?",
@@ -117,7 +141,7 @@ export const translations = {
     footer: { rights: "Todos los derechos reservados.", delivery: "*Consulta áreas de entrega." },
   },
   fr: {
-    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
+    nav: { juices: "Jus", buildYourJuice: "Composez votre Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
     hero: {
       chip: "Livraison le jour même*",
       title: "Les jus les plus frais pour votre routine saine.",
@@ -129,6 +153,14 @@ export const translations = {
     },
     theme: { title: "Choisissez les couleurs de votre expérience", description: "Toutes les options utilisent la palette du logo KaSucos." },
     juices: { title: "Jus disponibles à la vente", availableToday: "Disponible aujourd'hui", lastUnits: "Dernières unités" },
+    customJuice: {
+      title: "Composez votre Jus",
+      description: "Choisissez jusqu'à deux fruits pour créer votre mélange parfait.",
+      fruits: ["Acérola", "Orange", "Ananas", "Citron", "Fruit de la passion", "Fraise"],
+      limitMessage: "Limite de combinaison : 2 fruits.",
+      resultPlaceholder: "Sélectionnez 2 fruits pour voir votre mélange.",
+      resultReady: "Votre jus personnalisé : {combo}",
+    },
     combos: { title: "Combos pour économiser", mostOrdered: "Le plus demandé", action: "Je le veux" },
     benefits: {
       title: "Pourquoi choisir KaSucos ?",
