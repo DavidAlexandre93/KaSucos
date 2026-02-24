@@ -1384,15 +1384,62 @@ body.splash-lock {
   margin: 0;
   display: grid;
   gap: 10px;
-  padding-left: 18px;
+  padding-left: 0;
+}
+
+.benefits-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #315f08;
+  background: rgba(117, 203, 47, 0.22);
+}
+
+.benefits-subtitle {
+  margin: -4px 0 18px;
+  max-width: 640px;
+  color: var(--muted);
 }
 
 .benefits-list li {
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(95, 39, 178, 0.12);
   border-radius: 12px;
-  padding: 10px 12px;
-  list-style-position: inside;
+  padding: 12px 14px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.benefit-check {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #2f5f12;
+  font-weight: 700;
+  background: rgba(117, 203, 47, 0.25);
+}
+
+.benefits-cta {
+  margin-top: 16px;
+  width: fit-content;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--purple-900), var(--wine-500));
+  box-shadow: 0 14px 30px rgba(59, 21, 117, 0.28);
 }
 
 .tips-info-section {
