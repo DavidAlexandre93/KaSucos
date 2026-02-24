@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BeneficiosSection } from "../components/sections/BeneficiosSection";
 import { SucosSection } from "../components/sections/SucosSection";
 import { sucos } from "../data/sucosData";
@@ -21,12 +21,15 @@ import { CheckoutSection } from "../components/sections/CheckoutSection";
 import { dicasBlogData } from "../data/dicasBlogData";
 import { MotionSection } from "../components/ui/MotionPrimitives";
 import { SplashScreen } from "../components/layout/SplashScreen";
+import { useGSAP } from "../lib/useGSAP";
+import gsap from "../lib/gsap";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
 
 export default function App() {
+  const siteRef = useRef(null);
   const [temaSelecionado, setTemaSelecionado] = useState("roxo");
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
@@ -39,6 +42,24 @@ export default function App() {
     document.body.classList.toggle("splash-lock", showSplash);
     return () => document.body.classList.remove("splash-lock");
   }, [showSplash]);
+
+  useGSAP(
+    () => {
+      const onPointerMove = (event) => {
+        const x = Math.round((event.clientX / window.innerWidth) * 100);
+        const y = Math.round((event.clientY / window.innerHeight) * 100);
+        gsap.to(document.documentElement, {
+          "--cursor-x": `${x}%`,
+          "--cursor-y": `${y}%`,
+          duration: 0.3,
+        });
+      };
+
+      window.addEventListener("pointermove", onPointerMove, { passive: true });
+      return () => window.removeEventListener("pointermove", onPointerMove);
+    },
+    { scope: siteRef, dependencies: [] },
+  );
 
 
   const addItem = (product, typeLabel) => {
@@ -83,7 +104,7 @@ export default function App() {
   };
 
   return (
-    <div className="site" style={temas[temaSelecionado].colors}>
+    <div className="site" style={temas[temaSelecionado].colors} ref={siteRef}>
       {showSplash ? <SplashScreen onComplete={() => setShowSplash(false)} /> : null}
       <ScrollArtLayer />
       <Header
