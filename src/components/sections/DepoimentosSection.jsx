@@ -2,7 +2,7 @@ const AUTHORS = ["Juliana R.", "Marcos A.", "Camila P."];
 
 export function DepoimentosSection({ testimonials }) {
   return (
-    <section className="section testimonials">
+    <section id="depoimentos" className="section testimonials">
       <div className="container">
         <h2 className="section-title">{testimonials.title}</h2>
         <div className="grid reviews">
