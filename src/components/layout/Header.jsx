@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 const LANGUAGE_OPTIONS = [
   { code: "en", countryCode: "us", label: "English" },
   { code: "pt", countryCode: "br", label: "Português" },
@@ -57,6 +59,20 @@ const COMPACT_NAV_LABELS = {
 };
 
 export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 720) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const navLabels = {
     home: labels.home ?? "Início",
     themes: labels.themes ?? "Temas",
@@ -94,6 +110,31 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
         </a>
 
         <div className="topbar-right">
+          <button
+            type="button"
+            className={`menu-toggle ${isMobileMenuOpen ? "active" : ""}`}
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="primary-navigation"
+            aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <nav
+            id="primary-navigation"
+            className={isMobileMenuOpen ? "open" : ""}
+            aria-label={labels.title ?? "Main navigation"}
+          >
+            <a href="#catalogo" onClick={closeMobileMenu}>{labels.juices}</a>
+            <a href="#monte-seu-suco" onClick={closeMobileMenu}>{labels.buildYourJuice}</a>
+            <a href="#combos" onClick={closeMobileMenu}>{labels.combos}</a>
+            <a href="#beneficios" onClick={closeMobileMenu}>{labels.benefits}</a>
+            <a href="#dicas" onClick={closeMobileMenu}>{labels.tipsInfo}</a>
+            <a href="#onde-nos-encontrar" onClick={closeMobileMenu}>{labels.findUs}</a>
+            <a href="#contato" onClick={closeMobileMenu}>{labels.contact}</a>
           <nav aria-label={labels.title ?? "Main navigation"}>
             {menuItems.map((item) => (
               <a key={item.key} href={item.href} title={navLabels[item.key]}>
