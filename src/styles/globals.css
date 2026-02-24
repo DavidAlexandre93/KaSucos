@@ -1587,11 +1587,6 @@ body.splash-lock {
   gap: 8px;
 }
 
-.tips-total-likes {
-  margin: 8px 0 0;
-  color: var(--purple-900);
-  font-weight: 700;
-}
 
 .tip-post-image {
   width: 100%;
