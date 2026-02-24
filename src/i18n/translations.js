@@ -1,6 +1,6 @@
 export const translations = {
   pt: {
-    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
+    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", tipsInfo: "Dicas e Informações", contact: "Contato" },
     hero: {
       chip: "Entrega no mesmo dia*",
       title: "Os sucos mais frescos para sua rotina saudável.",
@@ -41,7 +41,7 @@ export const translations = {
     footer: { rights: "Todos os direitos reservados.", delivery: "*Consulte áreas de entrega." },
   },
   en: {
-    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", contact: "Contact" },
+    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", tipsInfo: "Tips & Info", contact: "Contact" },
     hero: {
       chip: "Same-day delivery*",
       title: "The freshest juices for your healthy routine.",
@@ -79,7 +79,7 @@ export const translations = {
     footer: { rights: "All rights reserved.", delivery: "*Check delivery areas." },
   },
   es: {
-    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
+    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", tipsInfo: "Consejos e Información", contact: "Contacto" },
     hero: {
       chip: "Entrega el mismo día*",
       title: "Los jugos más frescos para tu rutina saludable.",
@@ -117,7 +117,7 @@ export const translations = {
     footer: { rights: "Todos los derechos reservados.", delivery: "*Consulta áreas de entrega." },
   },
   fr: {
-    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
+    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", tipsInfo: "Conseils & Infos", contact: "Contact" },
     hero: {
       chip: "Livraison le jour même*",
       title: "Les jus les plus frais pour votre routine saine.",

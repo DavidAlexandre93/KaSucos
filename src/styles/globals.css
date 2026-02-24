@@ -461,6 +461,84 @@ body {
   padding-left: 18px;
 }
 
+.tips-info-section {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 235, 255, 0.88));
+}
+
+.tips-header {
+  margin-bottom: 16px;
+}
+
+.tips-blog-list {
+  display: grid;
+  gap: 14px;
+}
+
+.tip-post {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(95, 39, 178, 0.16);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 22px rgba(59, 21, 117, 0.1);
+}
+
+.tip-category {
+  display: inline-block;
+  background: rgba(95, 197, 45, 0.2);
+  color: #315f08;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.tip-post h3 {
+  margin: 8px 0;
+}
+
+.tip-summary {
+  margin: 0;
+  color: var(--muted);
+}
+
+.tip-post ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.tips-total-likes {
+  margin: 8px 0 0;
+  color: var(--purple-900);
+  font-weight: 700;
+}
+
+.tip-post-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.tip-like-button {
+  margin-top: 12px;
+  border: 1px solid rgba(95, 39, 178, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--purple-900);
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tip-like-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 21, 117, 0.15);
+}
+
 .testimonials {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(221, 248, 191, 0.72), rgba(242, 235, 255, 0.94));
 }

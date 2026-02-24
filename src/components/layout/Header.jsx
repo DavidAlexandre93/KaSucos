@@ -19,6 +19,7 @@ export function Header({ language, onLanguageChange, labels }) {
             <a href="#catalogo">{labels.juices}</a>
             <a href="#combos">{labels.combos}</a>
             <a href="#beneficios">{labels.benefits}</a>
+            <a href="#dicas">{labels.tipsInfo}</a>
             <a href="#contato">{labels.contact}</a>
           </nav>
 
