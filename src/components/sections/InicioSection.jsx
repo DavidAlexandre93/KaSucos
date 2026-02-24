@@ -1,7 +1,11 @@
 import { useRef } from "react";
+import gsap from "../../lib/gsap";
+import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 import { buttonMotion, cardMotion } from "../ui/MotionPrimitives";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const prefersReducedMotion =
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -19,53 +23,27 @@ export function InicioSection({ hero }) {
       const actions = selector(".hero-actions")[0];
       const card = selector(".hero-card")[0];
 
-      const entranceAnimations = [
-        chip?.animate([{ opacity: 0, transform: "translateY(16px) scale(0.96)" }, { opacity: 1, transform: "translateY(0) scale(1)" }], {
-          duration: 460,
-          easing: "cubic-bezier(.22,.61,.36,1)",
-          fill: "forwards",
-        }),
-        title?.animate([{ opacity: 0, transform: "translateY(24px)" }, { opacity: 1, transform: "translateY(0)" }], {
-          duration: 560,
-          delay: 120,
-          easing: "cubic-bezier(.22,.61,.36,1)",
-          fill: "forwards",
-        }),
-        description?.animate([{ opacity: 0, transform: "translateY(24px)" }, { opacity: 1, transform: "translateY(0)" }], {
-          duration: 520,
-          delay: 220,
-          easing: "cubic-bezier(.22,.61,.36,1)",
-          fill: "forwards",
-        }),
-        actions?.animate([{ opacity: 0, transform: "translateY(18px)" }, { opacity: 1, transform: "translateY(0)" }], {
-          duration: 460,
-          delay: 300,
-          easing: "cubic-bezier(.22,.61,.36,1)",
-          fill: "forwards",
-        }),
-        card?.animate([{ opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0)" }], {
-          duration: 620,
-          delay: 180,
-          easing: "cubic-bezier(.2,.8,.2,1)",
-          fill: "forwards",
-        }),
-      ].filter(Boolean);
+      gsap
+        .timeline({ defaults: { ease: "power3.out" } })
+        .fromTo(chip, { opacity: 0, y: 16, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.46 })
+        .fromTo(title, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.56 }, "<+0.12")
+        .fromTo(description, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.52 }, "<+0.1")
+        .fromTo(actions, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.46 }, "<+0.08")
+        .fromTo(card, { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.62 }, "<");
 
-      const onScroll = () => {
-        if (!sectionRef.current || !card) return;
-        const bounds = sectionRef.current.getBoundingClientRect();
-        const distanceFromCenter = (bounds.top + bounds.height * 0.5 - window.innerHeight * 0.5) / window.innerHeight;
-        const offset = Math.max(-18, Math.min(18, -distanceFromCenter * 22));
-        card.style.setProperty("--hero-parallax", `${offset}px`);
-      };
+      if (sectionRef.current && card) {
+        ScrollTrigger.create({
+          trigger: sectionRef.current,
+          start: "top top",
+          end: "bottom bottom",
+          onUpdate: ({ progress }) => {
+            const offset = -18 + progress * 36;
+            gsap.set(card, { "--hero-parallax": `${offset}px` });
+          },
+        });
+      }
 
-      onScroll();
-      window.addEventListener("scroll", onScroll, { passive: true });
-
-      return () => {
-        entranceAnimations.forEach((animation) => animation.cancel());
-        window.removeEventListener("scroll", onScroll);
-      };
+      return undefined;
     },
     { scope: sectionRef, dependencies: [hero.title] },
   );
