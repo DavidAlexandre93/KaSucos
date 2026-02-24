@@ -1,3 +1,6 @@
+import { motion } from "../../lib/motion";
+import { buttonMotion } from "../ui/MotionPrimitives";
+
 export function TemasSection({
   temas,
   temaSelecionado,
@@ -13,14 +16,15 @@ export function TemasSection({
         <p className="theme-text">{description}</p>
         <div className="theme-options">
           {Object.entries(temas).map(([key]) => (
-            <button
+            <motion.button
               key={key}
               type="button"
               className={`theme-option ${temaSelecionado === key ? "active" : ""}`}
               onClick={() => onTemaChange(key)}
+              {...buttonMotion}
             >
               <span>{themeNames[key]}</span>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
