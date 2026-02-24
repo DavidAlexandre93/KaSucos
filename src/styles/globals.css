@@ -292,7 +292,7 @@ body.splash-lock {
   text-decoration: none;
 }
 
-.brand img {
+.brand-logo {
   width: 112px;
   height: 112px;
   border-radius: 50%;
@@ -303,19 +303,10 @@ body.splash-lock {
   animation: logoSparkle 1.15s ease-in-out infinite;
 }
 
-.brand span {
-  font-family: "Brush Script MT", "Segoe Script", "Comic Sans MS", cursive;
-  font-size: clamp(2.8rem, 4.5vw, 4rem);
-  letter-spacing: 0.03em;
-  line-height: 0.9;
-  font-weight: 700;
-  background: linear-gradient(94deg, #fcee5c 0%, #ffbe27 24%, #ff5334 50%, #41c63f 74%, #8ce95a 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow:
-    0 3px 8px rgba(48, 9, 12, 0.38),
-    0 0 14px rgba(255, 253, 200, 0.34);
+.brand-wordmark {
+  width: clamp(180px, 22vw, 280px);
+  height: auto;
+  filter: drop-shadow(0 4px 10px rgba(40, 13, 85, 0.34));
   animation: brandTextFloat 2.4s ease-in-out infinite;
 }
 
@@ -1968,12 +1959,12 @@ body.site-party-mode::after {
     position: relative;
   }
 
-  .brand span {
-    display: inline;
-    font-size: clamp(2rem, 8vw, 2.6rem);
+  .brand-wordmark {
+    display: inline-block;
+    width: clamp(150px, 42vw, 220px);
   }
 
-  .brand img {
+  .brand-logo {
     width: 88px;
     height: 88px;
   }
