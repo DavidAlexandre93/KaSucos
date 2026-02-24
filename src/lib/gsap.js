@@ -27,8 +27,15 @@ function applyStyle(target, key, value) {
   target.style[key] = typeof value === "number" && key !== "opacity" ? `${value}px` : String(value);
 }
 
+function toTargetArray(targets) {
+  if (!targets) return [];
+  if (Array.isArray(targets)) return targets.filter(Boolean);
+  if (typeof targets.length === "number" && typeof targets !== "string") return Array.from(targets).filter(Boolean);
+  return [targets].filter(Boolean);
+}
+
 function animate(targets, fromVars, toVars = {}) {
-  const items = Array.isArray(targets) ? targets.filter(Boolean) : [targets].filter(Boolean);
+  const items = toTargetArray(targets);
   const durationMs = (toVars.duration ?? 0.3) * 1000;
   const staggerMs = (toVars.stagger ?? 0) * 1000;
 
@@ -89,12 +96,13 @@ const gsap = {
     return { revert: () => undefined };
   },
   set: (targets, vars) => {
-    const items = Array.isArray(targets) ? targets : [targets];
-    items.filter(Boolean).forEach((target) => {
+    const items = toTargetArray(targets);
+    items.forEach((target) => {
       Object.entries(vars).forEach(([key, value]) => applyStyle(target, key, value));
     });
   },
   to: (targets, vars) => animate(targets, null, vars),
+  fromTo: (targets, fromVars, toVars) => animate(targets, fromVars, toVars),
   timeline: () => new Timeline(),
   matchMedia: () => {
     const disposers = [];
