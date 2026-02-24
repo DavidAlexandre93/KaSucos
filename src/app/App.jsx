@@ -90,7 +90,6 @@ export default function App() {
         language={language}
         onLanguageChange={setLanguage}
         labels={t.nav}
-        basketCount={totalItems}
         onBasketClick={openCart}
       />
       <main>
