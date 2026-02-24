@@ -1,14 +1,15 @@
 :root {
-  --purple-900: #3b1575;
-  --purple-700: #5f27b2;
-  --purple-100: #f2ebff;
-  --green-500: #75cb2f;
-  --yellow-400: #ffcc21;
-  --orange-500: #ff8e1e;
-  --text: #2d184f;
-  --muted: #5f4b88;
+  --purple-900: #1f6f43;
+  --purple-700: #2f8e57;
+  --purple-100: #e8f8ee;
+  --green-500: #44a05a;
+  --yellow-400: #ffd23f;
+  --orange-500: #ff8f1f;
+  --wine-500: #8c1d40;
+  --text: #214a30;
+  --muted: #5b3f33;
   --white: #ffffff;
-  --bg-base: #f7f2ff;
+  --bg-base: #fff8ef;
 }
 
 * {
@@ -26,8 +27,9 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top right, #fff9db, transparent 33%),
-    radial-gradient(circle at bottom left, #ebffd8, transparent 33%),
+    radial-gradient(circle at top right, #ffe8bf, transparent 34%),
+    radial-gradient(circle at bottom left, #dcf8e5, transparent 35%),
+    radial-gradient(circle at 50% 100%, #ffe8a3, transparent 40%),
     var(--bg-base);
 }
 
@@ -44,7 +46,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(59, 21, 117, 0.95);
+  background: rgba(31, 111, 67, 0.95);
   backdrop-filter: blur(8px);
 }
 
@@ -78,7 +80,7 @@ body {
 }
 
 .topbar nav a {
-  color: #eee8ff;
+  color: #fff7de;
   text-decoration: none;
   font-weight: 600;
 }
@@ -139,17 +141,17 @@ body {
 }
 
 .btn-ghost {
-  background: var(--purple-100);
-  color: var(--purple-900);
+  background: #fff1cd;
+  color: var(--wine-500);
 }
 
 .hero-card {
   background: var(--white);
-  border: 2px solid #dfd0ff;
+  border: 2px solid #b8e7c8;
   border-radius: 16px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 18px 40px rgba(77, 29, 141, 0.16);
+  box-shadow: 0 18px 40px rgba(49, 120, 72, 0.18);
 }
 
 .hero-card img {
@@ -191,7 +193,7 @@ body {
 }
 
 .theme-option {
-  border: 2px solid #d9ccf5;
+  border: 2px solid #ffd59a;
   background: var(--white);
   color: var(--purple-900);
   border-radius: 999px;
@@ -206,7 +208,7 @@ body {
 }
 
 .soft {
-  background: #f2ebff7a;
+  background: #fff2db99;
 }
 
 .grid {
@@ -220,7 +222,7 @@ body {
 
 .card {
   background: var(--white);
-  border: 1px solid #e1d4fc;
+  border: 1px solid #f8c9a2;
   border-radius: 14px;
   overflow: hidden;
 }
@@ -270,7 +272,7 @@ body {
 }
 
 .card-footer strong {
-  color: var(--purple-700);
+  color: var(--wine-500);
 }
 
 .combos {
@@ -279,7 +281,7 @@ body {
 
 .combo {
   background: var(--white);
-  border: 2px solid #dccbff;
+  border: 2px solid #ffd59f;
   border-radius: 16px;
   padding: 18px;
   display: grid;
@@ -315,7 +317,7 @@ body {
 }
 
 .testimonials {
-  background: linear-gradient(180deg, #ffffff, #f3ecff);
+  background: linear-gradient(180deg, #ffffff, #fff0dc);
 }
 
 .reviews {
@@ -325,7 +327,7 @@ body {
 blockquote {
   margin: 0;
   background: var(--white);
-  border: 1px solid #ddd0f7;
+  border: 1px solid #f6c59f;
   border-radius: 12px;
   padding: 14px;
   color: var(--muted);
@@ -340,7 +342,7 @@ blockquote cite {
 }
 
 .cta-box {
-  background: var(--purple-900);
+  background: linear-gradient(135deg, var(--purple-900), var(--wine-500));
   color: var(--white);
   border-radius: 16px;
   padding: 24px;
@@ -348,12 +350,12 @@ blockquote cite {
 }
 
 .cta-box p {
-  color: #e5d6ff;
+  color: #ffe7ad;
 }
 
 .footer {
-  background: #2f115f;
-  color: #d8c7ff;
+  background: #5b0f2e;
+  color: #ffd57f;
   padding: 18px 0;
 }
 
