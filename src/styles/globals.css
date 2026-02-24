@@ -38,6 +38,106 @@ body {
     var(--bg-base);
 }
 
+body.splash-lock {
+  overflow: hidden;
+}
+
+.splash-root {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  pointer-events: none;
+}
+
+.splash-screen {
+  --reveal-x: 58%;
+  --reveal-y: 44%;
+  --reveal-size: 0px;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 180, 210, 0.42), transparent 36%),
+    radial-gradient(circle at 80% 80%, rgba(255, 229, 124, 0.22), transparent 40%),
+    linear-gradient(120deg, #d9298d, #892f9f 50%, #4a1583);
+  -webkit-mask: radial-gradient(circle at var(--reveal-x) var(--reveal-y), transparent var(--reveal-size), #000 calc(var(--reveal-size) + 2px));
+  mask: radial-gradient(circle at var(--reveal-x) var(--reveal-y), transparent var(--reveal-size), #000 calc(var(--reveal-size) + 2px));
+}
+
+.splash-juice-wave {
+  position: absolute;
+  width: 120%;
+  height: 38vh;
+  left: -10%;
+  border-radius: 0 0 48% 52%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.splash-juice-wave--one {
+  top: -14vh;
+  transform: rotate(-3deg);
+}
+
+.splash-juice-wave--two {
+  bottom: -16vh;
+  transform: rotate(4deg);
+  opacity: 0.6;
+}
+
+.splash-sipper {
+  position: absolute;
+  left: 57%;
+  top: 38%;
+  width: 180px;
+  height: 240px;
+}
+
+.splash-head,
+.splash-body,
+.splash-arm,
+.splash-straw {
+  position: absolute;
+  display: block;
+}
+
+.splash-head {
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  right: 36px;
+  top: 0;
+  background: linear-gradient(170deg, #ffd6b0, #ffb48a);
+}
+
+.splash-body {
+  width: 124px;
+  height: 134px;
+  bottom: 0;
+  right: 0;
+  border-radius: 45% 40% 24% 35%;
+  background: linear-gradient(160deg, #f9f5ff, #decaf8);
+}
+
+.splash-arm {
+  width: 78px;
+  height: 18px;
+  border-radius: 999px;
+  right: 54px;
+  top: 82px;
+  background: linear-gradient(170deg, #ffd6b0, #ffb48a);
+  transform: rotate(-24deg);
+}
+
+.splash-straw {
+  width: 11px;
+  height: 120px;
+  right: 120px;
+  top: 20px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #9eff6d, #5fc52d);
+  transform: rotate(26deg);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+}
+
 .site {
   min-height: 100vh;
   transition: background-color 0.45s ease, color 0.45s ease;

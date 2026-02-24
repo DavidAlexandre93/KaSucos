@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BeneficiosSection } from "../components/sections/BeneficiosSection";
 import { SucosSection } from "../components/sections/SucosSection";
 import { sucos } from "../data/sucosData";
@@ -20,6 +20,7 @@ import { CartSection } from "../components/sections/CartSection";
 import { CheckoutSection } from "../components/sections/CheckoutSection";
 import { dicasBlogData } from "../data/dicasBlogData";
 import { MotionSection } from "../components/ui/MotionPrimitives";
+import { SplashScreen } from "../components/layout/SplashScreen";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
@@ -30,8 +31,14 @@ export default function App() {
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
+
+  useEffect(() => {
+    document.body.classList.toggle("splash-lock", showSplash);
+    return () => document.body.classList.remove("splash-lock");
+  }, [showSplash]);
 
 
   const addItem = (product, typeLabel) => {
@@ -77,6 +84,7 @@ export default function App() {
 
   return (
     <div className="site" style={temas[temaSelecionado].colors}>
+      {showSplash ? <SplashScreen onComplete={() => setShowSplash(false)} /> : null}
       <ScrollArtLayer />
       <Header
         language={language}
