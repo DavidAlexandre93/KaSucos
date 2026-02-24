@@ -483,7 +483,6 @@ body.splash-lock {
   color: #fff;
   width: 46px;
   height: 46px;
-  margin-left: auto;
   padding: 0;
   cursor: pointer;
   display: flex;
@@ -569,14 +568,15 @@ body.splash-lock {
   display: flex;
   align-items: center;
   gap: 6px;
+  margin-left: auto;
 }
 
 .language-switcher button {
   border: 1px solid rgba(255, 255, 255, 0.28);
   background: rgba(255, 255, 255, 0.14);
   border-radius: 999px;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -594,8 +594,8 @@ body.splash-lock {
 }
 
 .language-flag {
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   object-fit: cover;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
@@ -2115,6 +2115,7 @@ body.site-party-mode::after {
   .language-switcher {
     flex-wrap: wrap;
     justify-content: flex-end;
+    margin-left: auto;
   }
 
   .cards {
@@ -2226,8 +2227,8 @@ body.site-party-mode::after {
   }
 
   .language-switcher button {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
   }
 
   .basket-slot {
