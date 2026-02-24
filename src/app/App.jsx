@@ -145,6 +145,7 @@ export default function App() {
 
   const openCart = () => {
     setShowCart(true);
+    setShowCheckout(true);
     setTimeout(() => {
       document.getElementById("cesta")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
@@ -191,7 +192,10 @@ export default function App() {
           />
         </MotionSection>
         <MotionSection delay={0.08}>
-          <MonteSeuSucoSection content={t.customJuice} />
+          <MonteSeuSucoSection
+            content={t.customJuice}
+            onAddCustomJuice={(customJuice) => addItem(customJuice, t.cart.custom)}
+          />
         </MotionSection>
         <MotionSection delay={0.1}>
           <CombosSection combos={combos} language={language} labels={t.combos} onAddCombo={(combo) => addItem(combo, t.cart.combo)} />

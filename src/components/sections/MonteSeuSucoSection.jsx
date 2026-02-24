@@ -34,7 +34,7 @@ const normalizeFruitKey = (value) =>
     .replace(/[^\w\s-]/g, "")
     .toLowerCase();
 
-export function MonteSeuSucoSection({ content }) {
+export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
   const sectionRef = useRef(null);
   const [selectedFruits, setSelectedFruits] = useState([]);
 
@@ -73,6 +73,15 @@ export function MonteSeuSucoSection({ content }) {
     if (selectedFruits.length < MAX_COMBINATIONS) {
       setSelectedFruits([...selectedFruits, fruit]);
     }
+  };
+
+  const handleAddCustomJuice = () => {
+    if (!canCreate) return;
+
+    onAddCustomJuice?.({
+      title: selectedFruits.join(" + "),
+      price: content.price,
+    });
   };
 
   useGSAP(
@@ -166,6 +175,17 @@ export function MonteSeuSucoSection({ content }) {
         <div className="builder-result" aria-live="polite">
           {resultText}
         </div>
+
+        <motion.button
+          type="button"
+          className="btn-primary"
+          disabled={!canCreate}
+          onClick={handleAddCustomJuice}
+          whileHover={{ y: -2, scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          {content.addToBasket}
+        </motion.button>
       </div>
     </section>
   );

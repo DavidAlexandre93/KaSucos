@@ -50,18 +50,6 @@ export function CheckoutSection({ checkout, total }) {
             </select>
           </motion.label>
 
-          <motion.label whileHover={{ x: 2 }}>
-            <span>{checkout.paymentLabel}</span>
-            <select defaultValue="" name="pagamento">
-              <option value="" disabled>
-                {checkout.chooseOption}
-              </option>
-              <option value="pix">Pix</option>
-              <option value="dinheiro">{checkout.paymentOptions.cash}</option>
-              <option value="debito">{checkout.paymentOptions.debit}</option>
-              <option value="credito">{checkout.paymentOptions.credit}</option>
-            </select>
-          </motion.label>
         </form>
 
         <motion.p className="checkout-total" whileHover={{ scale: 1.01 }}>
