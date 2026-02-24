@@ -1,11 +1,12 @@
 import { motion } from "../../lib/motion";
 import { buttonMotion, cardMotion } from "../ui/MotionPrimitives";
+import { TypingText } from "../ui/TypingText";
 
 export function SucosSection({ sucos, language, title, labels, onAddJuice }) {
   return (
     <section id="catalogo" className="section">
       <div className="container">
-        <h2 className="section-title">{title}</h2>
+        <TypingText className="section-title" text={title} highlight />
         <div className="grid cards">
           {sucos.map((suco) => (
             <motion.article key={suco.name} className="card" {...cardMotion}>

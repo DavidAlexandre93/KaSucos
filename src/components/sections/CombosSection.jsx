@@ -1,11 +1,12 @@
 import { motion } from "../../lib/motion";
 import { buttonMotion, cardMotion } from "../ui/MotionPrimitives";
+import { TypingText } from "../ui/TypingText";
 
 export function CombosSection({ combos, language, labels, onAddCombo }) {
   return (
     <section id="combos" className="section soft">
       <div className="container">
-        <h2 className="section-title">{labels.title}</h2>
+        <TypingText className="section-title" text={labels.title} highlight />
         <div className="grid combos">
           {combos.map((combo) => (
             <motion.article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`} {...cardMotion}>
