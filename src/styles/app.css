@@ -203,7 +203,7 @@ body {
 
 .btn-primary,
 .combo button {
-  background: linear-gradient(130deg, var(--orange-500), var(--yellow-400), var(--green-300));
+  background: var(--orange-500);
   color: #402900;
 }
 
