@@ -4,7 +4,6 @@ export const dicasBlogData = {
     sectionDescription:
       "Um espaço com orientações práticas para conservar melhor os sucos e facilitar o dia a dia. Para adicionar, editar ou remover conteúdo, basta atualizar a lista de posts abaixo.",
     likeButtonLabel: "Joia",
-    totalLikesLabel: "Total de joias",
     posts: [
       {
         id: "armazenamento-correto",
@@ -52,7 +51,6 @@ export const dicasBlogData = {
     sectionDescription:
       "A practical space to help you store juices better and simplify your routine. To add, edit, or remove content, just update the posts list below.",
     likeButtonLabel: "Thumbs up",
-    totalLikesLabel: "Total thumbs up",
     posts: [
       {
         id: "proper-storage",
@@ -87,7 +85,6 @@ export const dicasBlogData = {
     sectionDescription:
       "Un espacio práctico para conservar mejor tus jugos y facilitar tu rutina. Para agregar, editar o eliminar contenido, solo actualiza la lista de posts.",
     likeButtonLabel: "Me gusta",
-    totalLikesLabel: "Total de me gusta",
     posts: [
       {
         id: "almacenamiento-correcto",
@@ -109,7 +106,6 @@ export const dicasBlogData = {
     sectionDescription:
       "Un espace pratique pour mieux conserver vos jus au quotidien. Pour ajouter, modifier ou supprimer du contenu, mettez simplement à jour la liste des articles.",
     likeButtonLabel: "J'aime",
-    totalLikesLabel: "Total des j'aime",
     posts: [
       {
         id: "stockage-correct",

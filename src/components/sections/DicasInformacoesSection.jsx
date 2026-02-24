@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import gsap from "../../lib/gsap";
 import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { useGSAP } from "../../lib/useGSAP";
@@ -58,10 +58,6 @@ export function DicasInformacoesSection({ blog }) {
     { scope: sectionRef, dependencies: [posts.length] },
   );
 
-  const totalLikes = useMemo(
-    () => Object.values(likesByPost).reduce((acc, value) => acc + value, 0),
-    [likesByPost],
-  );
 
   if (!posts.length) {
     return null;
@@ -84,7 +80,6 @@ export function DicasInformacoesSection({ blog }) {
         <header className="tips-header">
           <h2 className="section-title">{blog.sectionTitle}</h2>
           <p className="theme-text">{blog.sectionDescription}</p>
-          <p className="tips-total-likes">👍 {blog.totalLikesLabel}: {totalLikes}</p>
         </header>
 
         <div className="tips-blog-list">
@@ -99,8 +94,16 @@ export function DicasInformacoesSection({ blog }) {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <motion.button type="button" className="tip-like-button" onClick={() => handleLike(post.id)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-                👍 {blog.likeButtonLabel}: {likesByPost[post.id] ?? 0}
+              <motion.button
+                type="button"
+                className="tip-like-button"
+                onClick={() => handleLike(post.id)}
+                whileHover={{ y: -2, scale: 1.05 }}
+                whileTap={{ scale: 0.94 }}
+                aria-label={`${blog.likeButtonLabel}: ${likesByPost[post.id] ?? 0}`}
+                title={`${blog.likeButtonLabel}: ${likesByPost[post.id] ?? 0}`}
+              >
+                <span aria-hidden="true">👍</span>
               </motion.button>
             </motion.article>
           ))}

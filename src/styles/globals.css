@@ -358,29 +358,47 @@ body.splash-lock {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 7px;
-  max-width: min(720px, 100%);
+  align-items: center;
+  gap: 12px;
+  max-width: min(820px, 100%);
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 16px 34px rgba(24, 9, 59, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .topbar nav a {
-  color: #fdf3ff;
+  color: rgba(255, 255, 255, 0.94);
   text-decoration: none;
-  font-weight: 600;
-  font-size: 0.78rem;
-  letter-spacing: 0.01em;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 700;
+  font-size: 0.98rem;
+  letter-spacing: 0.015em;
+  border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 999px;
-  padding: 5px 8px;
+  padding: 11px 16px;
   line-height: 1;
   white-space: nowrap;
-  transition: transform 0.25s ease, color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+  backdrop-filter: blur(8px);
+  transition:
+    transform 0.28s ease,
+    color 0.28s ease,
+    border-color 0.28s ease,
+    background 0.28s ease,
+    box-shadow 0.28s ease;
 }
 
 .topbar nav a:hover {
-  color: var(--yellow-400);
-  border-color: rgba(255, 204, 33, 0.55);
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateY(-1px);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.62);
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.14));
+  box-shadow:
+    0 10px 24px rgba(24, 9, 59, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  transform: translateY(-2px);
 }
 
 
@@ -428,21 +446,22 @@ body.splash-lock {
 
 
 .basket-button {
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.16);
+  border: 0;
+  background: transparent;
   color: #fff;
-  border-radius: 999px;
-  padding: 8px 12px;
-  font-weight: 700;
+  width: 46px;
+  height: 46px;
+  margin-left: auto;
+  padding: 0;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
 }
 
 .basket-button-icon {
-  width: 22px;
-  height: 22px;
+  width: 46px;
+  height: 46px;
   display: inline-flex;
 }
 
@@ -465,7 +484,6 @@ body.splash-lock {
 .card,
 .combo,
 .tip-post,
-.theme-option,
 .fruit-chip,
 .reviews blockquote {
   --tilt-x: 0deg;
@@ -709,148 +727,103 @@ body.splash-lock {
 .hero-showcase {
   margin-top: 18px;
   position: relative;
-  min-height: 260px;
+  min-height: 280px;
   border-radius: 18px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 20% 15%, rgba(255, 204, 33, 0.35), transparent 40%),
-    radial-gradient(circle at 80% 10%, rgba(255, 95, 162, 0.28), transparent 38%),
-    linear-gradient(160deg, rgba(59, 21, 117, 0.92), rgba(95, 39, 178, 0.84));
+    radial-gradient(circle at 20% 15%, rgba(255, 204, 33, 0.5), transparent 46%),
+    radial-gradient(circle at 80% 10%, rgba(255, 95, 162, 0.34), transparent 38%),
+    radial-gradient(circle at 50% 110%, rgba(95, 197, 45, 0.24), transparent 38%),
+    linear-gradient(160deg, rgba(59, 21, 117, 0.96), rgba(95, 39, 178, 0.88));
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2);
   transform-style: preserve-3d;
   transform: perspective(900px) rotateX(var(--showcase-rot-x, 0deg)) rotateY(var(--showcase-rot-y, 0deg)) translate3d(var(--showcase-shift-x, 0px), var(--showcase-shift-y, 0px), 0);
 }
 
-.hero-showcase-logo {
+.hero-showcase-glow {
   position: absolute;
-  left: 12px;
-  top: 14px;
-  width: 92px;
-  height: 92px;
-  border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.86);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-}
-
-.hero-showcase-basket {
-  position: absolute;
-  left: 22px;
-  bottom: 18px;
-  width: 156px;
-  height: 88px;
-  border-radius: 30px 30px 45px 45px;
-  border: 2px solid rgba(255, 255, 255, 0.32);
-  background: linear-gradient(180deg, rgba(206, 117, 41, 0.88), rgba(138, 70, 20, 0.95));
-  box-shadow: 0 16px 30px rgba(31, 10, 53, 0.34);
-}
-
-.hero-showcase-bottle {
-  position: absolute;
-  width: 54px;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.35));
-}
-
-.hero-showcase-bottle--left {
-  left: 8px;
-  top: -38px;
-  transform: rotate(-12deg);
-}
-
-.hero-showcase-bottle--middle {
-  left: 48px;
-  top: -48px;
-}
-
-.hero-showcase-bottle--right {
-  left: 96px;
-  top: -36px;
-  transform: rotate(10deg);
-}
-
-.hero-showcase-jar {
-  position: absolute;
-  width: 120px;
-  pointer-events: none;
-  transform-style: preserve-3d;
-  animation: heroJarFloat 3.6s ease-in-out infinite;
-}
-
-.hero-showcase-jar img {
-  width: 100%;
-  transform: rotate(-14deg);
-  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.34));
-}
-
-.hero-showcase-jar--top {
-  right: 2px;
-  top: 8px;
-}
-
-.hero-showcase-jar--bottom {
-  right: 20px;
-  top: 104px;
-  animation-delay: 0.75s;
-}
-
-.hero-jar-liquid {
-  position: absolute;
-  left: 18%;
-  top: 41%;
-  width: 54%;
-  height: 44%;
-  border-radius: 28% 34% 40% 45%;
-  opacity: 0.52;
-  filter: blur(0.2px);
-  --liquid-wave: 6px;
-  transform: translateY(calc(var(--liquid-wave) * 0.4)) rotate(-10deg);
-  animation: heroLiquidSlosh 2.3s ease-in-out infinite;
-}
-
-.hero-jar-liquid--gold {
-  background: linear-gradient(180deg, rgba(255, 224, 126, 0.72), rgba(255, 142, 30, 0.78));
-}
-
-.hero-jar-liquid--red {
-  background: linear-gradient(180deg, rgba(255, 147, 174, 0.72), rgba(211, 49, 126, 0.78));
-}
-
-.hero-jar-gloss {
-  position: absolute;
-  left: 26%;
-  top: 18%;
-  width: 16%;
-  height: 62%;
-  border-radius: 999px;
-  --gloss-shift: 0px;
-  transform: translateX(var(--gloss-shift)) rotate(-9deg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+  inset: 0;
+  background:
+    radial-gradient(circle at 68% 40%, rgba(255, 214, 88, 0.34), transparent 38%),
+    radial-gradient(circle at 61% 74%, rgba(255, 95, 162, 0.22), transparent 34%);
   mix-blend-mode: screen;
-  opacity: 0.35;
-  animation: heroGlossSweep 2.5s ease-in-out infinite;
 }
 
-.hero-stream-fill {
+.hero-showcase-stage {
   position: absolute;
-  left: 35%;
-  top: 68%;
-  width: 24px;
-  height: 132px;
-  border-radius: 999px;
-  transform-origin: top center;
-  opacity: 0.35;
-  --fill-scale: 0.25;
-  transform: scaleY(var(--fill-scale)) rotate(-8deg);
+  inset: 0;
 }
 
-.hero-stream-fill--gold {
-  background: linear-gradient(180deg, rgba(255, 214, 88, 0.96), rgba(255, 145, 31, 0.92));
-  box-shadow: 0 10px 18px rgba(255, 145, 31, 0.35);
+.hero-pouring-jar {
+  position: absolute;
+  right: -10px;
+  top: -26px;
+  width: 340px;
+  max-width: 82%;
+  transform: rotate(-6deg);
+  transform-origin: 76% 36%;
 }
 
-.hero-stream-fill--red {
-  background: linear-gradient(180deg, rgba(255, 130, 160, 0.95), rgba(211, 49, 126, 0.92));
-  box-shadow: 0 10px 18px rgba(211, 49, 126, 0.35);
+.hero-jar-image {
+  width: 100%;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 20px 24px rgba(9, 5, 32, 0.42));
+}
+
+.hero-stream-aura {
+  position: absolute;
+  left: 12%;
+  top: 44%;
+  width: 56%;
+  height: 46%;
+  border-radius: 60% 40% 48% 52%;
+  background:
+    radial-gradient(circle at 20% 26%, rgba(255, 206, 86, 0.24), transparent 56%),
+    radial-gradient(circle at 34% 86%, rgba(255, 141, 27, 0.36), transparent 58%);
+  filter: blur(4px);
+  opacity: 0.55;
+  --fill-scale: 0.7;
+  transform-origin: center bottom;
+  transform: scaleY(var(--fill-scale));
+}
+
+.hero-info-card {
+  position: absolute;
+  width: 150px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(8px);
+  text-align: left;
+  box-shadow: 0 10px 20px rgba(20, 7, 37, 0.24);
+}
+
+.hero-info-card strong {
+  display: block;
+  color: #fff3c9;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.hero-info-card span {
+  display: block;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.hero-info-card--left {
+  left: 12px;
+  bottom: 16px;
+}
+
+.hero-info-card--right {
+  left: 18px;
+  top: 18px;
 }
 
 @keyframes heroJarFloat {
@@ -905,6 +878,7 @@ body.splash-lock {
   border-radius: 10px;
 }
 
+
 .typing-caret {
   width: 2px;
   height: 1em;
@@ -913,39 +887,9 @@ body.splash-lock {
   animation: typingCaretBlink 0.7s steps(1, end) infinite;
 }
 
-.theme-section {
-  padding-top: 2px;
-}
-
 .theme-text {
   margin: 0 0 14px;
   color: var(--muted);
-}
-
-.theme-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.theme-option {
-  border: 1px solid rgba(95, 39, 178, 0.2);
-  background: rgba(255, 255, 255, 0.75);
-  color: var(--purple-900);
-  border-radius: 999px;
-  font-weight: 700;
-  padding: 10px 14px;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.theme-option:hover {
-  transform: translateY(-2px);
-}
-
-.theme-option.active {
-  border-color: var(--green-500);
-  box-shadow: 0 10px 22px rgba(117, 203, 47, 0.23);
 }
 
 .soft {
@@ -1102,6 +1046,48 @@ body.splash-lock {
   margin: 0;
 }
 
+.combo-math {
+  display: grid;
+  gap: 8px;
+}
+
+.combo-bottles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.combo-bottle {
+  width: 10px;
+  height: 22px;
+  border-radius: 4px 4px 6px 6px;
+  background: linear-gradient(180deg, #ffd85b 0%, #ff9e2c 90%);
+  box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.35);
+  position: relative;
+}
+
+.combo-bottle::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 2px;
+  width: 6px;
+  height: 4px;
+  border-radius: 2px 2px 0 0;
+  background: #6f5f95;
+}
+
+.combo-bottle.bonus {
+  background: linear-gradient(180deg, #84e760 0%, #58bf36 90%);
+}
+
+.combo-equation {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3f2e62;
+}
+
 
 .builder-description {
   margin: 0 0 12px;
@@ -1165,6 +1151,32 @@ body.splash-lock {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.16));
 }
 
+.juice-drop-zone {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: -130px;
+  height: 150px;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.fruit-drop {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 50%;
+  box-shadow:
+    0 8px 16px rgba(55, 20, 96, 0.25),
+    inset 0 1px 3px rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+}
+
 .juice-glass-highlight {
   position: absolute;
   top: 18px;
@@ -1211,6 +1223,9 @@ body.splash-lock {
   transition: background 0.3s ease, top 0.28s ease;
   z-index: 2;
   overflow: hidden;
+  box-shadow:
+    inset 0 10px 20px rgba(255, 255, 255, 0.22),
+    inset 0 -16px 20px rgba(80, 34, 8, 0.09);
 }
 
 .juice-wave {
@@ -1221,6 +1236,15 @@ body.splash-lock {
   height: 24px;
   border-radius: 50%;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.1));
+}
+
+.juice-liquid-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.32), transparent 42%),
+    radial-gradient(circle at 78% 85%, rgba(255, 255, 255, 0.12), transparent 45%);
+  mix-blend-mode: soft-light;
 }
 
 .juice-bubble {
@@ -1393,15 +1417,62 @@ body.splash-lock {
   margin: 0;
   display: grid;
   gap: 10px;
-  padding-left: 18px;
+  padding-left: 0;
+}
+
+.benefits-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #315f08;
+  background: rgba(117, 203, 47, 0.22);
+}
+
+.benefits-subtitle {
+  margin: -4px 0 18px;
+  max-width: 640px;
+  color: var(--muted);
 }
 
 .benefits-list li {
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(95, 39, 178, 0.12);
   border-radius: 12px;
-  padding: 10px 12px;
-  list-style-position: inside;
+  padding: 12px 14px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.benefit-check {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #2f5f12;
+  font-weight: 700;
+  background: rgba(117, 203, 47, 0.25);
+}
+
+.benefits-cta {
+  margin-top: 16px;
+  width: fit-content;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  border-radius: 12px;
+  font-weight: 700;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--purple-900), var(--wine-500));
+  box-shadow: 0 14px 30px rgba(59, 21, 117, 0.28);
 }
 
 .tips-info-section {
@@ -1451,11 +1522,6 @@ body.splash-lock {
   gap: 8px;
 }
 
-.tips-total-likes {
-  margin: 8px 0 0;
-  color: var(--purple-900);
-  font-weight: 700;
-}
 
 .tip-post-image {
   width: 100%;
@@ -1467,19 +1533,21 @@ body.splash-lock {
 
 .tip-like-button {
   margin-top: 12px;
-  border: 1px solid rgba(95, 39, 178, 0.2);
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--purple-900);
-  border-radius: 999px;
-  font-weight: 700;
-  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 24px;
+  line-height: 1;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .tip-like-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(59, 21, 117, 0.15);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .testimonials {
@@ -1542,6 +1610,51 @@ blockquote cite {
   color: var(--text);
   padding: 10px 12px;
   font: inherit;
+}
+
+
+.contact-form {
+  margin: 18px auto;
+  width: min(540px, 100%);
+  display: grid;
+  gap: 12px;
+  text-align: left;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.btn-secondary {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .contact-grid {
@@ -1910,12 +2023,13 @@ body.site-party-mode::after {
   }
 
   .topbar nav {
-    gap: 12px;
-    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px;
   }
 
   .topbar nav a {
-    font-size: 0.88rem;
+    font-size: 0.92rem;
+    padding: 9px 14px;
   }
 
   .topbar-right {
@@ -2000,12 +2114,13 @@ body.site-party-mode::after {
     left: 0;
     display: none;
     flex-direction: column;
-    gap: 2px;
+    align-items: stretch;
+    gap: 8px;
     padding: 8px;
-    border-radius: 14px;
-    background: rgba(59, 21, 117, 0.96);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 14px 32px rgba(25, 8, 55, 0.35);
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(59, 21, 117, 0.96), rgba(95, 39, 178, 0.94));
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    box-shadow: 0 18px 36px rgba(25, 8, 55, 0.4);
     z-index: 40;
   }
 
@@ -2014,9 +2129,10 @@ body.site-party-mode::after {
   }
 
   .topbar nav a {
-    font-size: 0.95rem;
-    padding: 10px 12px;
-    border-radius: 10px;
+    font-size: 1rem;
+    padding: 12px 14px;
+    border-radius: 12px;
+    text-align: center;
   }
 
   .topbar nav a:hover {
@@ -2031,8 +2147,8 @@ body.site-party-mode::after {
   }
 
   .basket-button {
-    padding: 8px 10px;
-    font-size: 0.85rem;
+    width: 42px;
+    height: 42px;
   }
 
   .language-switcher button {
@@ -2072,50 +2188,22 @@ body.site-party-mode::after {
     min-height: 220px;
   }
 
-  .hero-showcase-logo {
-    width: 72px;
-    height: 72px;
+  .hero-pouring-jar {
+    right: -14px;
+    top: -8px;
+    width: 290px;
   }
 
-  .hero-showcase-basket {
-    width: 130px;
-    height: 78px;
-    left: 14px;
-    bottom: 14px;
+  .hero-stream-aura {
+    width: 60%;
+    height: 40%;
+    left: 8%;
+    top: 48%;
   }
 
-  .hero-showcase-bottle {
-    width: 44px;
-  }
-
-  .hero-showcase-bottle--left {
-    left: 6px;
-    top: -30px;
-  }
-
-  .hero-showcase-bottle--middle {
-    left: 40px;
-    top: -38px;
-  }
-
-  .hero-showcase-bottle--right {
-    left: 78px;
-    top: -29px;
-  }
-
-  .hero-showcase-jar {
-    width: 92px;
-  }
-
-  .hero-showcase-jar--bottom {
-    top: 94px;
-    right: 12px;
-  }
-
-  .hero-stream-fill {
-    width: 18px;
-    height: 96px;
-    left: 36%;
+  .hero-info-card {
+    width: 128px;
+    padding: 10px;
   }
 }
 

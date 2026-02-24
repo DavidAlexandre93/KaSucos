@@ -7,6 +7,10 @@ export function ContatoSection({ contact }) {
   const mapsQuery = encodeURIComponent(contact.address);
   const sectionRef = useRef(null);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
+
   useGSAP(
     ({ selector }) => {
       const cta = selector(".cta-box")[0];
@@ -25,6 +29,45 @@ export function ContatoSection({ contact }) {
         <motion.div className="cta-box" whileHover={{ scale: 1.01, y: -4 }}>
           <h2>{contact.title}</h2>
           <p>{contact.description}</p>
+          <form
+            className="contact-form"
+            aria-label={contact.formLabel ?? "Formulário de contato"}
+            onSubmit={handleSubmit}
+          >
+            <label>
+              {contact.nameLabel ?? "Nome"}
+              <input
+                type="text"
+                name="name"
+                placeholder={contact.namePlaceholder ?? "Seu nome"}
+                required
+              />
+            </label>
+
+            <label>
+              {contact.emailLabel ?? "E-mail"}
+              <input
+                type="email"
+                name="email"
+                placeholder={contact.emailPlaceholder ?? "voce@email.com"}
+                required
+              />
+            </label>
+
+            <label>
+              {contact.messageLabel ?? "Mensagem"}
+              <textarea
+                name="message"
+                rows={4}
+                placeholder={contact.messagePlaceholder ?? "Como podemos ajudar?"}
+                required
+              />
+            </label>
+
+            <button type="submit" className="btn-secondary">
+              {contact.sendLabel ?? "Enviar mensagem"}
+            </button>
+          </form>
           <motion.a
             className="btn-primary"
             href="https://wa.me/5500000000000"

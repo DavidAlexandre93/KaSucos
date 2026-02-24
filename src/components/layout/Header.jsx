@@ -1,6 +1,6 @@
 import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "../../lib/useGSAP";
 
 const LANGUAGE_OPTIONS = [
@@ -55,6 +55,7 @@ const COMPACT_NAV_LABELS = {
 
 export function Header({ language, onLanguageChange, labels, onBasketClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navRef = useRef(null);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -66,6 +67,19 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
 
     return () => mm.revert();
   }, { dependencies: [] });
+
+  useGSAP(() => {
+    const navItems = navRef.current?.querySelectorAll("a");
+    if (!navItems?.length) return undefined;
+
+    gsap.fromTo(
+      navItems,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power2.out" },
+    );
+
+    return undefined;
+  }, { dependencies: [isMobileMenuOpen] });
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const navLabels = {
@@ -116,6 +130,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
 
           <nav
             id="primary-navigation"
+            ref={navRef}
             className={isMobileMenuOpen ? "open" : ""}
             aria-label={labels.title ?? "Main navigation"}
           >
@@ -125,25 +140,6 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
               </a>
             ))}
           </nav>
-
-          <motion.button
-            type="button"
-            className="basket-button"
-            onClick={onBasketClick}
-            aria-label={labels.basket ?? "Cesta"}
-            whileHover={{ y: -2, scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            <span className="basket-button-icon" aria-hidden="true">
-              <svg viewBox="0 0 64 64" role="img" focusable="false">
-                <path d="M23 17a2 2 0 0 1-1.79-2.9l6-12a2 2 0 1 1 3.58 1.8l-6 12A2 2 0 0 1 23 17zm18 0a2 2 0 0 1-1.79-1.1l-6-12a2 2 0 1 1 3.58-1.8l6 12A2 2 0 0 1 41 17z" fill="#0b2379" />
-                <rect x="4" y="16" width="56" height="16" rx="4" fill="#f52a2f" />
-                <path d="M11 32h42l-4.7 25.9A4 4 0 0 1 44.36 61H19.64a4 4 0 0 1-3.94-3.1z" fill="#ff8a2c" />
-                <rect x="16" y="21" width="32" height="2.6" rx="1.3" fill="#0b2379" />
-                <path d="M24.3 52.4a1.6 1.6 0 0 1-1.58-1.35l-1.9-13.3a1.6 1.6 0 1 1 3.17-.46l1.9 13.3a1.6 1.6 0 0 1-1.59 1.81zm7.7 0a1.6 1.6 0 0 1-1.6-1.6V37.4a1.6 1.6 0 1 1 3.2 0v13.4a1.6 1.6 0 0 1-1.6 1.6zm7.7 0a1.6 1.6 0 0 1-1.59-1.81l1.9-13.3a1.6 1.6 0 1 1 3.17.46l-1.9 13.3a1.6 1.6 0 0 1-1.58 1.35z" fill="#0b2379" />
-              </svg>
-            </span>
-          </motion.button>
 
           <div className="language-switcher" aria-label="Language selector">
             {LANGUAGE_OPTIONS.map((option) => (
@@ -169,6 +165,25 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
               </motion.button>
             ))}
           </div>
+
+          <motion.button
+            type="button"
+            className="basket-button"
+            onClick={onBasketClick}
+            aria-label={labels.basket ?? "Cesta"}
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <span className="basket-button-icon" aria-hidden="true">
+              <svg viewBox="0 0 64 64" role="img" focusable="false">
+                <path d="M23 17a2 2 0 0 1-1.79-2.9l6-12a2 2 0 1 1 3.58 1.8l-6 12A2 2 0 0 1 23 17zm18 0a2 2 0 0 1-1.79-1.1l-6-12a2 2 0 1 1 3.58-1.8l6 12A2 2 0 0 1 41 17z" fill="#0b2379" />
+                <rect x="4" y="16" width="56" height="16" rx="4" fill="#f52a2f" />
+                <path d="M11 32h42l-4.7 25.9A4 4 0 0 1 44.36 61H19.64a4 4 0 0 1-3.94-3.1z" fill="#ff8a2c" />
+                <rect x="16" y="21" width="32" height="2.6" rx="1.3" fill="#0b2379" />
+                <path d="M24.3 52.4a1.6 1.6 0 0 1-1.58-1.35l-1.9-13.3a1.6 1.6 0 1 1 3.17-.46l1.9 13.3a1.6 1.6 0 0 1-1.59 1.81zm7.7 0a1.6 1.6 0 0 1-1.6-1.6V37.4a1.6 1.6 0 1 1 3.2 0v13.4a1.6 1.6 0 0 1-1.6 1.6zm7.7 0a1.6 1.6 0 0 1-1.59-1.81l1.9-13.3a1.6 1.6 0 1 1 3.17.46l-1.9 13.3a1.6 1.6 0 0 1-1.58 1.35z" fill="#0b2379" />
+              </svg>
+            </span>
+          </motion.button>
         </div>
       </div>
     </header>
