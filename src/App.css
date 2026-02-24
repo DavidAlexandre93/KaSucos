@@ -1,14 +1,16 @@
 :root {
-  --purple-900: #3b1575;
-  --purple-700: #5f27b2;
-  --purple-100: #f2ebff;
-  --green-500: #75cb2f;
-  --yellow-400: #ffcc21;
-  --orange-500: #ff8e1e;
-  --text: #2d184f;
-  --muted: #5f4b88;
+  --purple-900: #1f6a2d;
+  --purple-700: #2f8f43;
+  --purple-100: #ebf8ee;
+  --green-500: #55a630;
+  --yellow-400: #ffcf33;
+  --orange-500: #f78c2f;
+  --wine-700: #7a1f3d;
+  --wine-100: #f9e6ed;
+  --text: #214e2c;
+  --muted: #5f3a48;
   --white: #ffffff;
-  --bg-base: #f7f2ff;
+  --bg-base: #fff9ef;
 }
 
 * {
@@ -26,8 +28,9 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top right, #fff9db, transparent 33%),
-    radial-gradient(circle at bottom left, #ebffd8, transparent 33%),
+    radial-gradient(circle at top right, #ffe6a8, transparent 35%),
+    radial-gradient(circle at bottom left, #e5f8d4, transparent 38%),
+    radial-gradient(circle at center right, #f9e6ed, transparent 42%),
     var(--bg-base);
 }
 
@@ -44,7 +47,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(59, 21, 117, 0.95);
+  background: rgba(31, 106, 45, 0.95);
   backdrop-filter: blur(8px);
 }
 
@@ -78,7 +81,7 @@ body {
 }
 
 .topbar nav a {
-  color: #eee8ff;
+  color: #f7ffe6;
   text-decoration: none;
   font-weight: 600;
 }
@@ -98,7 +101,7 @@ body {
   display: inline-block;
   margin: 0;
   background: var(--yellow-400);
-  color: #4b2d00;
+  color: #5b3300;
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 999px;
@@ -135,21 +138,21 @@ body {
 .btn-primary,
 .combo button {
   background: linear-gradient(130deg, var(--orange-500), var(--yellow-400));
-  color: #402900;
+  color: #5d3000;
 }
 
 .btn-ghost {
-  background: var(--purple-100);
-  color: var(--purple-900);
+  background: var(--wine-100);
+  color: var(--wine-700);
 }
 
 .hero-card {
   background: var(--white);
-  border: 2px solid #dfd0ff;
+  border: 2px solid #d5efdd;
   border-radius: 16px;
   padding: 20px;
   text-align: center;
-  box-shadow: 0 18px 40px rgba(77, 29, 141, 0.16);
+  box-shadow: 0 18px 40px rgba(122, 31, 61, 0.14);
 }
 
 .hero-card img {
@@ -191,7 +194,7 @@ body {
 }
 
 .theme-option {
-  border: 2px solid #d9ccf5;
+  border: 2px solid #d0ead7;
   background: var(--white);
   color: var(--purple-900);
   border-radius: 999px;
@@ -206,7 +209,7 @@ body {
 }
 
 .soft {
-  background: #f2ebff7a;
+  background: #fff2dc;
 }
 
 .grid {
@@ -220,7 +223,7 @@ body {
 
 .card {
   background: var(--white);
-  border: 1px solid #e1d4fc;
+  border: 1px solid #f0dec0;
   border-radius: 14px;
   overflow: hidden;
 }
@@ -239,8 +242,8 @@ body {
   display: inline-block;
   font-size: 12px;
   font-weight: 700;
-  background: #e9ffd8;
-  color: #315f08;
+  background: #fff0c2;
+  color: #7a1f3d;
   border-radius: 999px;
   padding: 4px 9px;
 }
@@ -270,7 +273,7 @@ body {
 }
 
 .card-footer strong {
-  color: var(--purple-700);
+  color: var(--wine-700);
 }
 
 .combos {
@@ -279,7 +282,7 @@ body {
 
 .combo {
   background: var(--white);
-  border: 2px solid #dccbff;
+  border: 2px solid #f2d7a6;
   border-radius: 16px;
   padding: 18px;
   display: grid;
@@ -315,7 +318,7 @@ body {
 }
 
 .testimonials {
-  background: linear-gradient(180deg, #ffffff, #f3ecff);
+  background: linear-gradient(180deg, #ffffff, #fff3db);
 }
 
 .reviews {
@@ -325,7 +328,7 @@ body {
 blockquote {
   margin: 0;
   background: var(--white);
-  border: 1px solid #ddd0f7;
+  border: 1px solid #f2d7a6;
   border-radius: 12px;
   padding: 14px;
   color: var(--muted);
@@ -340,7 +343,7 @@ blockquote cite {
 }
 
 .cta-box {
-  background: var(--purple-900);
+  background: linear-gradient(135deg, var(--purple-900), var(--wine-700));
   color: var(--white);
   border-radius: 16px;
   padding: 24px;
@@ -348,12 +351,12 @@ blockquote cite {
 }
 
 .cta-box p {
-  color: #e5d6ff;
+  color: #ffe8b8;
 }
 
 .footer {
-  background: #2f115f;
-  color: #d8c7ff;
+  background: #1b5d2a;
+  color: #ffe4ac;
   padding: 18px 0;
 }
 
