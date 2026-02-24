@@ -11,6 +11,7 @@ import { Header } from "../components/layout/Header";
 import { ScrollArtLayer } from "../components/layout/ScrollArtLayer";
 import { DepoimentosSection } from "../components/sections/DepoimentosSection";
 import { TemasSection } from "../components/sections/TemasSection";
+import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
 import { useFunEffects } from "../hooks/useFunEffects";
 import { temas } from "../data/temasData";
 import { useLanguage } from "../hooks/useLanguage";
@@ -52,6 +53,8 @@ export default function App() {
           description={t.theme.description}
           themeNames={themeNames[language]}
         />
+        <SucosSection sucos={sucos} language={language} title={t.juices.title} labels={t.juices} />
+        <MonteSeuSucoSection content={t.customJuice} />
         <SucosSection
           sucos={sucos}
           language={language}

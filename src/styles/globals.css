@@ -520,6 +520,125 @@ body {
   margin: 0;
 }
 
+
+.builder-description {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.juice-preview {
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+}
+
+.juice-cup {
+  position: relative;
+  width: 170px;
+  height: 230px;
+  border: 3px solid rgba(255, 255, 255, 0.65);
+  border-radius: 28px 28px 38px 38px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px rgba(95, 39, 178, 0.12), 0 18px 24px rgba(59, 21, 117, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.juice-lid {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 135px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 2;
+}
+
+.juice-liquid {
+  position: absolute;
+  inset: 38px 8px 8px;
+  border-radius: 18px 18px 30px 30px;
+  transition: background 0.3s ease;
+}
+
+.cup-logo {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 115px;
+  text-align: center;
+  border-radius: 999px;
+  background: rgba(59, 21, 117, 0.88);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  z-index: 3;
+}
+
+.builder-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fruit-chip {
+  border: 1px solid rgba(95, 39, 178, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  color: var(--purple-900);
+  font-weight: 700;
+  padding: 8px 14px 8px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-cup {
+  width: 24px;
+  height: 30px;
+  border-radius: 8px 8px 10px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.35);
+  padding: 2px;
+}
+
+.mini-cup-liquid {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px 6px 8px 8px;
+}
+
+.fruit-chip.active {
+  border-color: var(--green-500);
+  background: rgba(168, 232, 111, 0.35);
+}
+
+.fruit-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.builder-limit {
+  margin: 14px 0 8px;
+  color: var(--wine-500);
+  font-weight: 700;
+}
+
+.builder-result {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px dashed rgba(95, 197, 45, 0.6);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-weight: 700;
+}
+
 .benefits ul {
   margin: 0;
   display: grid;
