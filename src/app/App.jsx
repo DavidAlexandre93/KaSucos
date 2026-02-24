@@ -144,17 +144,6 @@ export default function App() {
     { scope: siteRef, dependencies: [] },
   );
 
-  if (showSplash) {
-    return (
-      <SplashScreen
-        onComplete={() => {
-          markSplashAsSeen();
-          setShowSplash(false);
-        }}
-      />
-    );
-  }
-
   const addItem = (product, typeLabel) => {
     setCartItems((current) => {
       const id = product.title || product.name;
@@ -201,6 +190,17 @@ export default function App() {
       document.getElementById("finalizar")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
   };
+
+  if (showSplash) {
+    return (
+      <SplashScreen
+        onComplete={() => {
+          markSplashAsSeen();
+          setShowSplash(false);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="site" style={DEFAULT_THEME_COLORS} ref={siteRef}>
