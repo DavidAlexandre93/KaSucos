@@ -252,6 +252,55 @@ body {
   background: rgba(255, 204, 33, 0.2);
 }
 
+
+.basket-slot {
+  margin-left: 8px;
+  padding-left: 12px;
+  border-left: 1px solid rgba(255, 255, 255, 0.28);
+  display: inline-flex;
+  align-items: center;
+}
+
+.basket-summary {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.basket-summary:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.basket-summary-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.basket-summary-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--yellow-400);
+  color: #4d3400;
+  font-size: 11px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+}
+
 .hero {
   padding: 70px 0 56px;
 }
@@ -476,6 +525,23 @@ body {
   color: var(--wine-500);
 }
 
+.add-juice-button {
+  margin-top: 12px;
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  background: rgba(95, 197, 45, 0.2);
+  color: #2f5f12;
+}
+
+.add-juice-button:hover {
+  background: rgba(95, 197, 45, 0.3);
+}
+
+
 .combos {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -516,11 +582,208 @@ body {
   margin: 0;
 }
 
+
+.builder-description {
+  margin: 0 0 12px;
+  color: var(--muted);
+}
+
+.juice-preview {
+  display: grid;
+  place-items: center;
+  margin-bottom: 18px;
+}
+
+.juice-cup {
+  position: relative;
+  width: 170px;
+  height: 230px;
+  border: 3px solid rgba(255, 255, 255, 0.65);
+  border-radius: 28px 28px 38px 38px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 2px rgba(95, 39, 178, 0.12), 0 18px 24px rgba(59, 21, 117, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.juice-lid {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 135px;
+  height: 18px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.3);
+  z-index: 2;
+}
+
+.juice-liquid {
+  position: absolute;
+  inset: 38px 8px 8px;
+  border-radius: 18px 18px 30px 30px;
+  transition: background 0.3s ease;
+}
+
+.cup-logo {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 115px;
+  text-align: center;
+  border-radius: 999px;
+  background: rgba(59, 21, 117, 0.88);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 8px 10px;
+  z-index: 3;
+}
+
+.builder-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.fruit-chip {
+  border: 1px solid rgba(95, 39, 178, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  color: var(--purple-900);
+  font-weight: 700;
+  padding: 8px 14px 8px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-cup {
+  width: 24px;
+  height: 30px;
+  border-radius: 8px 8px 10px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.35);
+  padding: 2px;
+}
+
+.mini-cup-liquid {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 6px 6px 8px 8px;
+}
+
+.fruit-chip.active {
+  border-color: var(--green-500);
+  background: rgba(168, 232, 111, 0.35);
+}
+
+.fruit-chip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.builder-limit {
+  margin: 14px 0 8px;
+  color: var(--wine-500);
+  font-weight: 700;
+}
+
+.builder-result {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px dashed rgba(95, 197, 45, 0.6);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-weight: 700;
+}
+
 .benefits ul {
   margin: 0;
   display: grid;
   gap: 10px;
   padding-left: 18px;
+}
+
+.tips-info-section {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 235, 255, 0.88));
+}
+
+.tips-header {
+  margin-bottom: 16px;
+}
+
+.tips-blog-list {
+  display: grid;
+  gap: 14px;
+}
+
+.tip-post {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(95, 39, 178, 0.16);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 22px rgba(59, 21, 117, 0.1);
+}
+
+.tip-category {
+  display: inline-block;
+  background: rgba(95, 197, 45, 0.2);
+  color: #315f08;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+.tip-post h3 {
+  margin: 8px 0;
+}
+
+.tip-summary {
+  margin: 0;
+  color: var(--muted);
+}
+
+.tip-post ul {
+  margin: 12px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.tips-total-likes {
+  margin: 8px 0 0;
+  color: var(--purple-900);
+  font-weight: 700;
+}
+
+.tip-post-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.tip-like-button {
+  margin-top: 12px;
+  border: 1px solid rgba(95, 39, 178, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--purple-900);
+  border-radius: 999px;
+  font-weight: 700;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tip-like-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 21, 117, 0.15);
 }
 
 .testimonials {
@@ -583,6 +846,36 @@ blockquote cite {
   color: var(--text);
   padding: 10px 12px;
   font: inherit;
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.map-box {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(95, 39, 178, 0.16);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(59, 21, 117, 0.16);
+}
+
+.map-box h3 {
+  margin: 0;
+}
+
+.map-box p {
+  margin: 6px 0 14px;
+  color: var(--muted);
+}
+
+.map-box iframe {
+  width: 100%;
+  height: 240px;
+  border: 0;
+  border-radius: 14px;
 }
 
 .footer {
@@ -710,7 +1003,8 @@ body::before {
 
   .combos,
   .reviews,
-  .hero-grid {
+  .hero-grid,
+  .contact-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -728,7 +1022,14 @@ body::before {
 
   .topbar-right {
     margin-left: auto;
+    gap: 8px;
   }
+
+  .basket-slot {
+    margin-left: 6px;
+    padding-left: 8px;
+  }
+
 
   .cards {
     grid-template-columns: 1fr;

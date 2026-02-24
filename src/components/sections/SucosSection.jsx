@@ -1,4 +1,5 @@
 export function SucosSection({ sucos, language, title, labels, onAddJuice }) {
+export function SucosSection({ sucos, language, title, labels, onAddJuice, pedido }) {
   return (
     <section id="catalogo" className="section">
       <div className="container">
@@ -18,6 +19,9 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice }) {
                 </div>
                 <button type="button" className="card-action" onClick={() => onAddJuice(suco)}>
                   {labels.addToBasket}
+                <button type="button" className="add-juice-button" onClick={() => onAddJuice(suco.name)}>
+                  {labels.addToBasket}
+                  {pedido[suco.name] ? ` (${pedido[suco.name]})` : ""}
                 </button>
               </div>
             </article>
