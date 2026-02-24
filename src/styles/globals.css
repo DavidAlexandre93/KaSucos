@@ -846,6 +846,7 @@ blockquote cite {
   color: var(--text);
   padding: 10px 12px;
   font: inherit;
+}
 
 .contact-grid {
   display: grid;
@@ -894,6 +895,7 @@ blockquote cite {
 
 html {
   --scroll-glow: 0;
+  --scroll-party: 0;
 }
 
 body::before {
@@ -905,6 +907,18 @@ body::before {
   opacity: calc(var(--scroll-glow) * 0.45);
   background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.7), transparent 40%);
   transition: opacity 0.3s ease;
+}
+
+
+body.site-party-mode::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.42;
+  background: conic-gradient(from 0deg at 50% 50%, rgba(255, 95, 162, 0.3), rgba(255, 204, 33, 0.3), rgba(95, 197, 45, 0.28), rgba(95, 39, 178, 0.3), rgba(255, 95, 162, 0.3));
+  animation: partySpin 1.9s linear infinite;
 }
 
 .effect-reveal {
@@ -950,6 +964,43 @@ body::before {
   to {
     opacity: 0;
     transform: translate3d(var(--end-x), var(--end-y), 0) scale(1.25) rotate(var(--spin));
+  }
+}
+
+
+.scroll-fruit {
+  position: fixed;
+  bottom: -40px;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.7;
+  animation: fruitRise 7s linear forwards;
+  filter: drop-shadow(0 8px 16px rgba(59, 21, 117, 0.18));
+}
+
+@keyframes fruitRise {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: translate3d(0, -115vh, 0) rotate(60deg) scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes partySpin {
+  from {
+    transform: rotate(0deg) scale(1.08);
+  }
+
+  to {
+    transform: rotate(360deg) scale(1.08);
   }
 }
 
