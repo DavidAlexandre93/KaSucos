@@ -1,3 +1,4 @@
+import { KaSucosWordmark } from "../ui/KaSucosWordmark";
 import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useRef, useState } from "react";
@@ -110,8 +111,8 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
     <header className="topbar">
       <div className="container topbar-inner">
         <motion.a href="#inicio" className="brand" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <img src="/img/logotipo.jpeg" alt="KaSucos" />
-          <span>KaSucos</span>
+          <img className="brand-logo" src="/img/logotipo.jpeg" alt="KaSucos" />
+          <KaSucosWordmark className="brand-wordmark" />
         </motion.a>
 
         <div className="topbar-right">
