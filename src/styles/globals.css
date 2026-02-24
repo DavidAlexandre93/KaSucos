@@ -1073,65 +1073,212 @@ body.splash-lock {
 .juice-preview {
   display: grid;
   place-items: center;
-  margin-bottom: 18px;
+  margin: 6px 0 22px;
+}
+
+.juice-scene {
+  position: relative;
+  min-height: 330px;
+  isolation: isolate;
+}
+
+.juice-aura {
+  position: absolute;
+  width: 360px;
+  height: 240px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(255, 194, 61, 0.35), rgba(241, 246, 255, 0));
+  filter: blur(8px);
+  z-index: 0;
+}
+
+.juice-bottle {
+  position: absolute;
+  width: clamp(120px, 20vw, 170px);
+  opacity: 0.74;
+  filter: drop-shadow(0 10px 24px rgba(35, 21, 56, 0.22));
+  z-index: 1;
+}
+
+.juice-bottle--left {
+  left: clamp(-10px, 5vw, 40px);
+  bottom: 20px;
+  transform: rotate(-8deg);
+}
+
+.juice-bottle--right {
+  right: clamp(-6px, 7vw, 48px);
+  bottom: 26px;
+  transform: rotate(10deg);
 }
 
 .juice-cup {
   position: relative;
-  width: 170px;
-  height: 230px;
-  border: 3px solid rgba(255, 255, 255, 0.65);
-  border-radius: 28px 28px 38px 38px;
+  z-index: 2;
+  width: 210px;
+  height: 272px;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  border-radius: 30px 30px 44px 44px;
   overflow: hidden;
-  box-shadow: inset 0 0 0 2px rgba(95, 39, 178, 0.12), 0 18px 24px rgba(59, 21, 117, 0.2);
-  background: rgba(255, 255, 255, 0.2);
+  box-shadow:
+    inset 0 0 0 2px rgba(95, 39, 178, 0.12),
+    inset 0 -10px 18px rgba(255, 255, 255, 0.18),
+    0 24px 32px rgba(59, 21, 117, 0.24);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.16));
+}
+
+.juice-glass-highlight {
+  position: absolute;
+  top: 18px;
+  left: 15px;
+  width: 36px;
+  height: 170px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.1));
+  z-index: 3;
+}
+
+.juice-glass-reflection {
+  position: absolute;
+  right: 16px;
+  top: 34px;
+  width: 10px;
+  height: 128px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  z-index: 3;
 }
 
 .juice-lid {
   position: absolute;
-  top: 10px;
+  top: 11px;
   left: 50%;
   transform: translateX(-50%);
-  width: 135px;
-  height: 18px;
+  width: 162px;
+  height: 22px;
   border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.3);
-  z-index: 2;
+  border: 2px solid rgba(255, 255, 255, 0.82);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(227, 227, 255, 0.22));
+  z-index: 4;
 }
 
 .juice-liquid {
+  --liquid-level: 48;
   position: absolute;
-  inset: 38px 8px 8px;
-  border-radius: 18px 18px 30px 30px;
-  transition: background 0.3s ease;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  top: calc(var(--liquid-level) * 1px);
+  border-radius: 22px 22px 32px 32px;
+  transition: background 0.3s ease, top 0.28s ease;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.juice-wave {
+  position: absolute;
+  top: -11px;
+  left: -6px;
+  right: -6px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.1));
+}
+
+.juice-bubble {
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+}
+
+.juice-bubble--one {
+  width: 12px;
+  height: 12px;
+  left: 28px;
+  bottom: 30px;
+}
+
+.juice-bubble--two {
+  width: 8px;
+  height: 8px;
+  right: 30px;
+  bottom: 52px;
+}
+
+.juice-bubble--three {
+  width: 6px;
+  height: 6px;
+  left: 50%;
+  bottom: 78px;
+}
+
+.juice-droplet {
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  border-radius: 40% 40% 50% 50%;
+  background: rgba(255, 148, 66, 0.55);
+  filter: blur(0.2px);
+  z-index: 5;
+}
+
+.juice-droplet--one {
+  top: 46px;
+  right: -14px;
+}
+
+.juice-droplet--two {
+  top: 76px;
+  right: -28px;
+  width: 7px;
+  height: 10px;
+}
+
+.juice-droplet--three {
+  top: 102px;
+  left: -16px;
+  width: 8px;
+  height: 11px;
+}
+
+.juice-shadow {
+  position: absolute;
+  bottom: 8px;
+  width: 210px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(42, 27, 62, 0.28), rgba(42, 27, 62, 0));
+  z-index: 1;
 }
 
 .cup-logo {
   position: absolute;
-  bottom: 24px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  width: 115px;
+  width: 130px;
   text-align: center;
   border-radius: 999px;
-  background: rgba(59, 21, 117, 0.88);
+  background: rgba(59, 21, 117, 0.92);
   color: #fff;
   font-weight: 700;
-  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  font-size: 0.92rem;
   padding: 8px 10px;
-  z-index: 3;
+  z-index: 6;
 }
 
 .builder-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  justify-content: center;
 }
 
 .fruit-chip {
   border: 1px solid rgba(95, 39, 178, 0.2);
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 999px;
   color: var(--purple-900);
   font-weight: 700;
@@ -1140,6 +1287,7 @@ body.splash-lock {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 8px 16px rgba(40, 16, 71, 0.08);
 }
 
 .mini-cup {
@@ -1181,6 +1329,26 @@ body.splash-lock {
   padding: 10px 12px;
   color: var(--text);
   font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  .juice-scene {
+    min-height: 280px;
+  }
+
+  .juice-bottle {
+    width: 108px;
+    opacity: 0.62;
+  }
+
+  .juice-cup {
+    width: 180px;
+    height: 236px;
+  }
+
+  .juice-shadow {
+    width: 180px;
+  }
 }
 
 .benefits ul {
