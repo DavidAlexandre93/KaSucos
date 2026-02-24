@@ -1,21 +1,15 @@
-export function TestimonialsSection() {
+export function TestimonialsSection({ t }) {
   return (
     <section className="section testimonials">
       <div className="container">
-        <h2 className="section-title">Quem já provou aprova</h2>
+        <h2 className="section-title">{t.testimonialsTitle}</h2>
         <div className="grid reviews">
-          <blockquote>
-            “Sabor incrível e entrega rápida. O Verde Vital virou meu favorito!”
-            <cite>— Juliana R.</cite>
-          </blockquote>
-          <blockquote>
-            “Os combos valem muito a pena, qualidade impecável.”
-            <cite>— Marcos A.</cite>
-          </blockquote>
-          <blockquote>
-            “Atendimento excelente e sucos realmente naturais.”
-            <cite>— Camila P.</cite>
-          </blockquote>
+          {t.testimonials.map((testimonial) => (
+            <blockquote key={testimonial.author}>
+              {testimonial.text}
+              <cite>{testimonial.author}</cite>
+            </blockquote>
+          ))}
         </div>
       </div>
     </section>

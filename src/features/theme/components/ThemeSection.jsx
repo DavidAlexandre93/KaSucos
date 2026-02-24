@@ -1,9 +1,9 @@
-export function ThemeSection({ colorThemes, selectedTheme, onThemeChange }) {
+export function ThemeSection({ colorThemes, selectedTheme, onThemeChange, t }) {
   return (
     <section className="section theme-section">
       <div className="container">
-        <h2 className="section-title">Escolha as cores da sua experiência</h2>
-        <p className="theme-text">Todas as opções usam a paleta da logo KaSucos.</p>
+        <h2 className="section-title">{t.themeTitle}</h2>
+        <p className="theme-text">{t.themeDescription}</p>
         <div className="theme-options">
           {Object.entries(colorThemes).map(([key, theme]) => (
             <button

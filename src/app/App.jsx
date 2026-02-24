@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BenefitsSection } from "../features/benefits/components/BenefitsSection";
 import { CatalogSection } from "../features/catalog/components/CatalogSection";
 import { juices } from "../features/catalog/data/catalogData";
@@ -12,28 +12,44 @@ import { ScrollArtLayer } from "../features/layout/components/ScrollArtLayer";
 import { TestimonialsSection } from "../features/testimonials/components/TestimonialsSection";
 import { ThemeSection } from "../features/theme/components/ThemeSection";
 import { colorThemes } from "../features/theme/data/colorThemes";
+import {
+  detectInitialLocale,
+  getLocalizedCatalog,
+  getLocalizedCombos,
+  getTranslations,
+} from "../i18n/translations";
 
 export default function App() {
   const [selectedTheme, setSelectedTheme] = useState("roxo");
+  const [locale, setLocale] = useState("pt-BR");
+
+  useEffect(() => {
+    detectInitialLocale().then(setLocale);
+  }, []);
+
+  const t = getTranslations(locale);
+  const localizedJuices = getLocalizedCatalog(locale, juices);
+  const localizedCombos = getLocalizedCombos(locale, combos);
 
   return (
     <div className="site" style={colorThemes[selectedTheme].colors}>
       <ScrollArtLayer />
-      <Header />
+      <Header locale={locale} onLocaleChange={setLocale} t={t} />
       <main>
-        <HeroSection />
+        <HeroSection t={t} />
         <ThemeSection
           colorThemes={colorThemes}
           selectedTheme={selectedTheme}
           onThemeChange={setSelectedTheme}
+          t={t}
         />
-        <CatalogSection juices={juices} />
-        <CombosSection combos={combos} />
-        <BenefitsSection />
-        <TestimonialsSection />
-        <ContactSection />
+        <CatalogSection juices={localizedJuices} t={t} />
+        <CombosSection combos={localizedCombos} t={t} />
+        <BenefitsSection t={t} />
+        <TestimonialsSection t={t} />
+        <ContactSection t={t} />
       </main>
-      <Footer />
+      <Footer t={t} />
     </div>
   );
 }

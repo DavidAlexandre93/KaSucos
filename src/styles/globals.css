@@ -143,6 +143,37 @@ body {
   gap: 18px;
 }
 
+.topbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flag-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.flag-btn:hover,
+.flag-btn.active {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.33);
+}
+
 .topbar nav a {
   color: #fdf3ff;
   text-decoration: none;
@@ -501,8 +532,17 @@ blockquote cite {
   }
 
 
+  .topbar-controls {
+    margin-left: auto;
+  }
+
   .topbar nav {
     display: none;
+  }
+
+  .flag-btn {
+    width: 30px;
+    height: 30px;
   }
 
   .cards {

@@ -1,8 +1,8 @@
-export function CatalogSection({ juices }) {
+export function CatalogSection({ juices, t }) {
   return (
     <section id="catalogo" className="section">
       <div className="container">
-        <h2 className="section-title">Sucos disponíveis para venda</h2>
+        <h2 className="section-title">{t.catalogTitle}</h2>
         <div className="grid cards">
           {juices.map((juice) => (
             <article key={juice.name} className="card">
