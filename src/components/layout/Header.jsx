@@ -15,7 +15,7 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
         </a>
 
         <div className="topbar-right">
-          <nav>
+          <nav aria-label={labels.title ?? "Main navigation"}>
             <a href="#catalogo">{labels.juices}</a>
             <a href="#monte-seu-suco">{labels.buildYourJuice}</a>
             <a href="#combos">{labels.combos}</a>
@@ -37,6 +37,7 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
                 title={option.label}
                 aria-label={option.label}
                 className={language === option.code ? "active" : ""}
+                aria-pressed={language === option.code}
                 onClick={() => onLanguageChange(option.code)}
               >
                 <span aria-hidden="true">{option.flag}</span>

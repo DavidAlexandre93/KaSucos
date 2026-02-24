@@ -9,7 +9,8 @@
     "clean:deps": "rm -rf node_modules package-lock.json yarn.lock",
     "reinstall:clean": "npm run clean:deps && npm install",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "validate:code": "node scripts/validate-code.mjs"
   },
   "dependencies": {
     "react": "^18.3.1",
