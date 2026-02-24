@@ -28,6 +28,27 @@ const FRUIT_COLORS = {
 
 const DEFAULT_JUICE_COLOR = "#ffbf3f";
 
+const FRUIT_EMOJIS = {
+  acerola: "🍒",
+  laranja: "🍊",
+  orange: "🍊",
+  abacaxi: "🍍",
+  pineapple: "🍍",
+  pina: "🍍",
+  ananas: "🍍",
+  limao: "🍋",
+  lemon: "🍋",
+  citron: "🍋",
+  maracuja: "🥭",
+  "passion fruit": "🥭",
+  maracuya: "🥭",
+  "fruit de la passion": "🥭",
+  morango: "🍓",
+  strawberry: "🍓",
+  fresa: "🍓",
+  fraise: "🍓",
+};
+
 const normalizeFruitKey = (value) =>
   value
     .normalize("NFD")
@@ -37,6 +58,7 @@ const normalizeFruitKey = (value) =>
 export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
   const sectionRef = useRef(null);
   const [selectedFruits, setSelectedFruits] = useState([]);
+  const [fruitDrops, setFruitDrops] = useState([]);
 
   const canCreate = selectedFruits.length === MAX_COMBINATIONS;
 
@@ -58,9 +80,21 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
     }
 
     return {
-      background: `linear-gradient(90deg, ${selectedColors[0]} 0%, ${selectedColors[0]} 50%, ${selectedColors[1]} 50%, ${selectedColors[1]} 100%)`,
+      background: `linear-gradient(180deg, ${selectedColors[0]} 0%, ${selectedColors[0]} 50%, ${selectedColors[1]} 50%, ${selectedColors[1]} 100%)`,
     };
   }, [selectedFruits]);
+
+  const enqueueFruitDrop = (fruit) => {
+    const key = normalizeFruitKey(fruit);
+    setFruitDrops((current) => [
+      ...current,
+      {
+        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        color: FRUIT_COLORS[key] ?? DEFAULT_JUICE_COLOR,
+        icon: FRUIT_EMOJIS[key] ?? "🍹",
+      },
+    ]);
+  };
 
   const handleToggleFruit = (fruit) => {
     const isSelected = selectedFruits.includes(fruit);
@@ -72,6 +106,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
 
     if (selectedFruits.length < MAX_COMBINATIONS) {
       setSelectedFruits([...selectedFruits, fruit]);
+      enqueueFruitDrop(fruit);
     }
   };
 
@@ -91,6 +126,8 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
       const bubbles = selector(".juice-bubble");
       const droplets = selector(".juice-droplet");
       const fruitChips = selector(".fruit-chip");
+      const fruitDropElements = selector(".fruit-drop:not([data-animated='true'])");
+      const wave = selector(".juice-wave")[0];
 
       gsap
         .timeline()
@@ -98,8 +135,8 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
         .fromTo(fruitChips, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.05 });
 
       if (liquid) {
-        gsap.set(liquid, { "--liquid-level": 84 });
-        gsap.to(liquid, { "--liquid-level": 32, duration: 0.7 });
+        const liquidLevel = selectedFruits.length === 0 ? 124 : selectedFruits.length === 1 ? 78 : 38;
+        gsap.to(liquid, { "--liquid-level": liquidLevel, duration: 0.72, ease: "power2.out" });
       }
 
       bubbles.forEach((bubble, index) => {
@@ -111,8 +148,37 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
         gsap.set(droplet, { y: 12, opacity: 0 });
         gsap.to(droplet, { y: -10 - index * 6, opacity: 0.85, duration: 0.7 + index * 0.06 });
       });
+
+      fruitDropElements.forEach((drop) => {
+        drop.dataset.animated = "true";
+        const dropId = drop.dataset.dropId;
+
+        gsap
+          .timeline({
+            onComplete: () => setFruitDrops((current) => current.filter((item) => item.id !== dropId)),
+          })
+          .fromTo(
+            drop,
+            { y: -118, x: gsap.utils.random(-42, 42), scale: 0.55, rotate: gsap.utils.random(-34, 34), opacity: 0 },
+            { y: -92, scale: 1, opacity: 1, duration: 0.15, ease: "power1.out" },
+          )
+          .to(drop, { y: 156, rotate: "+=110", duration: 0.62, ease: "power2.in" })
+          .to(drop, { opacity: 0, scale: 1.15, duration: 0.14 }, "-=0.08");
+
+        if (liquid) {
+          gsap.fromTo(
+            liquid,
+            { filter: "saturate(1) brightness(1)" },
+            { filter: "saturate(1.16) brightness(1.08)", repeat: 1, yoyo: true, duration: 0.2, delay: 0.45 },
+          );
+        }
+
+        if (wave) {
+          gsap.fromTo(wave, { scaleX: 0.82, y: -1 }, { scaleX: 1.08, y: 1, repeat: 1, yoyo: true, duration: 0.2, delay: 0.44 });
+        }
+      });
     },
-    { scope: sectionRef, dependencies: [selectedFruits.join("|")] },
+    { scope: sectionRef, dependencies: [selectedFruits.join("|"), fruitDrops.map((drop) => drop.id).join("|")] },
   );
 
   return (
@@ -127,8 +193,21 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
           <img className="juice-bottle juice-bottle--right" src="/img/garrafinha03.png" alt="" aria-hidden="true" loading="lazy" />
 
           <motion.div className="juice-cup" whileHover={{ y: -4, scale: 1.01 }} transition={{ duration: 0.25 }}>
+            <div className="juice-drop-zone" aria-hidden="true">
+              {fruitDrops.map((drop) => (
+                <span
+                  key={drop.id}
+                  className="fruit-drop"
+                  data-drop-id={drop.id}
+                  style={{ background: drop.color }}
+                >
+                  {drop.icon}
+                </span>
+              ))}
+            </div>
             <div className="juice-liquid" style={cupFillStyle}>
               <span className="juice-wave" />
+              <span className="juice-liquid-glow" />
               <span className="juice-bubble juice-bubble--one" />
               <span className="juice-bubble juice-bubble--two" />
               <span className="juice-bubble juice-bubble--three" />
