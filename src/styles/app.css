@@ -2,9 +2,12 @@
   --purple-900: #3b1575;
   --purple-700: #5f27b2;
   --purple-100: #f2ebff;
-  --green-500: #75cb2f;
+  --green-500: #5fc52d;
+  --green-300: #a8e86f;
+  --lime-200: #ddf8bf;
   --yellow-400: #ffcc21;
   --orange-500: #ff8e1e;
+  --pink-400: #ff5fa2;
   --wine-500: #93246b;
   --text: #2d184f;
   --muted: #6f5b93;
@@ -28,9 +31,10 @@ body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at 8% 0%, rgba(255, 204, 33, 0.38), transparent 32%),
-    radial-gradient(circle at 95% 12%, rgba(117, 203, 47, 0.28), transparent 30%),
-    radial-gradient(circle at 40% 100%, rgba(95, 39, 178, 0.16), transparent 42%),
+    radial-gradient(circle at 8% 0%, rgba(255, 204, 33, 0.36), transparent 32%),
+    radial-gradient(circle at 95% 12%, rgba(95, 197, 45, 0.34), transparent 34%),
+    radial-gradient(circle at 86% 82%, rgba(255, 95, 162, 0.18), transparent 37%),
+    radial-gradient(circle at 40% 100%, rgba(95, 39, 178, 0.18), transparent 42%),
     var(--bg-base);
 }
 
@@ -89,7 +93,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: linear-gradient(100deg, rgba(59, 21, 117, 0.9), rgba(95, 39, 178, 0.86));
+  background: linear-gradient(100deg, rgba(59, 21, 117, 0.9), rgba(95, 39, 178, 0.82), rgba(95, 197, 45, 0.72));
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -151,7 +155,7 @@ body {
 .chip {
   display: inline-block;
   margin: 0;
-  background: linear-gradient(120deg, var(--yellow-400), #ffe47f);
+  background: linear-gradient(120deg, var(--yellow-400), var(--green-300), #ffe47f);
   color: #4d3400;
   font-weight: 700;
   padding: 8px 14px;
@@ -191,7 +195,7 @@ body {
 
 .btn-primary,
 .combo button {
-  background: linear-gradient(130deg, var(--orange-500), var(--yellow-400));
+  background: linear-gradient(130deg, var(--orange-500), var(--yellow-400), var(--green-300));
   color: #402900;
 }
 
@@ -247,7 +251,7 @@ body {
 
 .section-title {
   margin: 0 0 18px;
-  color: var(--purple-900);
+  color: color-mix(in srgb, var(--purple-900) 76%, var(--green-500));
   letter-spacing: -0.02em;
 }
 
@@ -287,7 +291,7 @@ body {
 }
 
 .soft {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.65));
+  background: linear-gradient(180deg, rgba(221, 248, 191, 0.35), rgba(255, 255, 255, 0.78));
 }
 
 .grid {
@@ -301,7 +305,7 @@ body {
 
 .card {
   background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(95, 39, 178, 0.12);
+  border: 1px solid rgba(95, 197, 45, 0.22);
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 12px 26px rgba(95, 39, 178, 0.08);
@@ -387,7 +391,7 @@ body {
 
 .badge {
   justify-self: start;
-  background: var(--green-500);
+  background: linear-gradient(120deg, var(--green-500), var(--green-300));
   color: #183d00;
   font-weight: 700;
   padding: 5px 9px;
@@ -409,7 +413,7 @@ body {
 }
 
 .testimonials {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 235, 255, 0.95));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(221, 248, 191, 0.72), rgba(242, 235, 255, 0.94));
 }
 
 .reviews {
@@ -434,7 +438,7 @@ blockquote cite {
 }
 
 .cta-box {
-  background: linear-gradient(135deg, var(--purple-900), var(--wine-500));
+  background: linear-gradient(135deg, var(--purple-900), var(--wine-500), var(--green-500));
   color: var(--white);
   border-radius: 22px;
   padding: 26px;
@@ -447,7 +451,7 @@ blockquote cite {
 }
 
 .footer {
-  background: #2e124d;
+  background: linear-gradient(90deg, #2e124d, #3f1f68, #2f6f2b);
   color: #f8d98d;
   padding: 18px 0;
 }
