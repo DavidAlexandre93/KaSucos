@@ -94,8 +94,16 @@ export function DicasInformacoesSection({ blog }) {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <motion.button type="button" className="tip-like-button" onClick={() => handleLike(post.id)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-                👍 {blog.likeButtonLabel}: {likesByPost[post.id] ?? 0}
+              <motion.button
+                type="button"
+                className="tip-like-button"
+                onClick={() => handleLike(post.id)}
+                whileHover={{ y: -2, scale: 1.05 }}
+                whileTap={{ scale: 0.94 }}
+                aria-label={`${blog.likeButtonLabel}: ${likesByPost[post.id] ?? 0}`}
+                title={`${blog.likeButtonLabel}: ${likesByPost[post.id] ?? 0}`}
+              >
+                <span aria-hidden="true">👍</span>
               </motion.button>
             </motion.article>
           ))}
