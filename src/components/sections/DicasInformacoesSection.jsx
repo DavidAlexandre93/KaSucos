@@ -84,8 +84,8 @@ export function DicasInformacoesSection({ blog }) {
 
         <div className="tips-blog-list">
           {posts.map((post) => (
-            <motion.article key={post.id} className="tip-post" whileHover={{ y: -5, scale: 1.01 }} transition={{ duration: 0.25 }}>
-              {post.image ? <motion.img src={post.image} alt={post.imageAlt} className="tip-post-image" whileHover={{ scale: 1.03 }} /> : null}
+            <article key={post.id} className="tip-post">
+              {post.image ? <img src={post.image} alt={post.imageAlt} className="tip-post-image" /> : null}
               <span className="tip-category">{post.category}</span>
               <h3>{post.title}</h3>
               <p className="tip-summary">{post.summary}</p>
@@ -105,7 +105,7 @@ export function DicasInformacoesSection({ blog }) {
               >
                 <span aria-hidden="true">👍</span>
               </motion.button>
-            </motion.article>
+            </article>
           ))}
         </div>
       </div>
