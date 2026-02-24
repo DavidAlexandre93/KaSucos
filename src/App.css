@@ -2,17 +2,24 @@
   --brand-green-900: #2f7d32;
   --brand-green-700: #58a635;
   --brand-green-100: #e8f6df;
+
   --orange-500: #ff8a1f;
   --orange-400: #ffa53b;
   --yellow-400: #ffd54a;
+
   --wine-700: #8a1d3f;
   --wine-100: #f9e5ec;
+
   --text: #245028;
   --muted: #6b3f4b;
   --white: #ffffff;
-  --bg-base: #fff8ea;
-}
 
+  --bg-base: #fff8ea;
+  --surface-soft: #fff1d4;
+  --surface-warm: #fff0cf;
+  --border-fruit: #f3d19b;
+  --border-soft: #d3ebc4;
+}
 
 * {
   box-sizing: border-box;
@@ -92,6 +99,10 @@ body {
   padding: 64px 0 50px;
 }
 
+.topbar nav a:hover {
+  color: #ffe39a;
+}
+
 .hero-grid {
   display: grid;
   gap: 22px;
@@ -139,7 +150,7 @@ body {
 
 .btn-primary,
 .combo button {
-  background: linear-gradient(125deg, var(--orange-500), var(--yellow-400));
+  background: linear-gradient(125deg, var(--orange-500), var(--yellow-400) 62%, #ffe487);
   color: #5d3000;
 }
 
@@ -150,7 +161,7 @@ body {
 
 .hero-card {
   background: var(--white);
-  border: 2px solid #d7efc8;
+  border: 2px solid #d8efc8;
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -196,7 +207,7 @@ body {
 }
 
 .theme-option {
-  border: 2px solid #d3ebc4;
+  border: 2px solid var(--border-soft);
   background: var(--white);
   color: var(--brand-green-900);
   border-radius: 999px;
@@ -211,7 +222,7 @@ body {
 }
 
 .soft {
-  background: #fff1d4;
+  background: var(--surface-soft);
 }
 
 .grid {
@@ -284,7 +295,7 @@ body {
 
 .combo {
   background: var(--white);
-  border: 2px solid #f3d19b;
+  border: 2px solid var(--border-fruit);
   border-radius: 16px;
   padding: 18px;
   display: grid;
@@ -320,7 +331,7 @@ body {
 }
 
 .testimonials {
-  background: linear-gradient(180deg, #ffffff, #fff0cf);
+  background: linear-gradient(180deg, #ffffff, var(--surface-warm));
 }
 
 .reviews {
@@ -330,7 +341,7 @@ body {
 blockquote {
   margin: 0;
   background: var(--white);
-  border: 1px solid #f3d19b;
+  border: 1px solid var(--border-fruit);
   border-radius: 12px;
   padding: 14px;
   color: var(--muted);
@@ -357,7 +368,7 @@ blockquote cite {
 }
 
 .footer {
-  background: linear-gradient(120deg, #256f2f, #7b1e3d);
+  background: linear-gradient(120deg, #256f2f 12%, #ff8a1f 58%, #7b1e3d 100%);
   color: #ffe4ac;
   padding: 18px 0;
 }
