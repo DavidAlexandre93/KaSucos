@@ -212,6 +212,20 @@ body {
   padding: 8px 12px;
   font-weight: 700;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.basket-button-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+}
+
+.basket-button-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .card-action {
