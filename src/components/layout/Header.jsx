@@ -61,7 +61,7 @@ const COMPACT_NAV_LABELS = {
   },
 };
 
-export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
+export function Header({ language, onLanguageChange, labels, onBasketClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useGSAP(() => {
@@ -138,8 +138,14 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
             ))}
           </nav>
 
-          <motion.button type="button" className="basket-button" onClick={onBasketClick} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97 }}>
-            🧺 {labels.basket ?? "Cesta"} ({basketCount})
+          <motion.button
+            type="button"
+            className="basket-button"
+            onClick={onBasketClick}
+            aria-label={labels.basket ?? "Cesta"}
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+          >
             <span className="basket-button-icon" aria-hidden="true">
               <svg viewBox="0 0 64 64" role="img" focusable="false">
                 <path d="M23 17a2 2 0 0 1-1.79-2.9l6-12a2 2 0 1 1 3.58 1.8l-6 12A2 2 0 0 1 23 17zm18 0a2 2 0 0 1-1.79-1.1l-6-12a2 2 0 1 1 3.58-1.8l6 12A2 2 0 0 1 41 17z" fill="#0b2379" />
