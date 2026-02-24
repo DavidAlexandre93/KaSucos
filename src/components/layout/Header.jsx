@@ -13,11 +13,9 @@ const LANGUAGE_OPTIONS = [
 const COMPACT_NAV_LABELS = {
   pt: {
     home: "Início",
-    themes: "Temas",
     juices: "Sucos",
     buildYourJuice: "Monte",
     combos: "Combos",
-    benefits: "Benef.",
     tipsInfo: "Dicas",
     testimonials: "Avaliações",
     findUs: "Onde",
@@ -25,11 +23,9 @@ const COMPACT_NAV_LABELS = {
   },
   en: {
     home: "Home",
-    themes: "Themes",
     juices: "Juices",
     buildYourJuice: "Build",
     combos: "Combos",
-    benefits: "Benefits",
     tipsInfo: "Tips",
     testimonials: "Reviews",
     findUs: "Find us",
@@ -37,11 +33,9 @@ const COMPACT_NAV_LABELS = {
   },
   es: {
     home: "Inicio",
-    themes: "Temas",
     juices: "Jugos",
     buildYourJuice: "Arma",
     combos: "Combos",
-    benefits: "Benef.",
     tipsInfo: "Consejos",
     testimonials: "Reseñas",
     findUs: "Dónde",
@@ -49,11 +43,9 @@ const COMPACT_NAV_LABELS = {
   },
   fr: {
     home: "Accueil",
-    themes: "Thèmes",
     juices: "Jus",
     buildYourJuice: "Composer",
     combos: "Combos",
-    benefits: "Avantages",
     tipsInfo: "Conseils",
     testimonials: "Avis",
     findUs: "Adresse",
@@ -78,11 +70,9 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const navLabels = {
     home: labels.home ?? "Início",
-    themes: labels.themes ?? "Temas",
     juices: labels.juices ?? "Sucos",
     buildYourJuice: labels.buildYourJuice ?? "Monte seu Suco",
     combos: labels.combos ?? "Combos",
-    benefits: labels.benefits ?? "Benefícios",
     tipsInfo: labels.tipsInfo ?? "Dicas e Informações",
     testimonials: labels.testimonials ?? "Depoimentos",
     findUs: labels.findUs ?? "Onde nos encontrar",
@@ -93,11 +83,9 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
 
   const menuItems = [
     { href: "#inicio", key: "home" },
-    { href: "#temas", key: "themes" },
     { href: "#catalogo", key: "juices" },
     { href: "#monte-seu-suco", key: "buildYourJuice" },
     { href: "#combos", key: "combos" },
-    { href: "#beneficios", key: "benefits" },
     { href: "#dicas", key: "tipsInfo" },
     { href: "#depoimentos", key: "testimonials" },
     { href: "#onde-nos-encontrar", key: "findUs" },
