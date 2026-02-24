@@ -32,12 +32,12 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
       <div className="container">
         <TypingText className="section-title" text={title} highlight />
         <div className="grid cards">
-          {sucos.map((suco, index) => {
+          {sucos.map((suco) => {
             const quantity = getJuiceQuantity?.(suco) ?? 0;
 
             return (
               <motion.article key={suco.name} className="card" {...cardMotion}>
-                <div className="card-media" style={{ "--bottle-tone": suco.bottleTone }}>
+                <div className="card-media">
                   <img className="card-bottle" src={suco.image} alt={suco.name} loading="lazy" />
                 </div>
                 <div className="card-body">
@@ -59,7 +59,6 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
                     {labels.addToBasket} {quantity > 0 ? `(${quantity})` : ""}
                   </motion.button>
                 </div>
-                <span className="card-juice-glow" style={{ "--delay": `${index * 120}ms` }} />
               </motion.article>
             );
           })}
