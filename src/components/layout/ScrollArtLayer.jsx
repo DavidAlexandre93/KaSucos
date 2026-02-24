@@ -30,6 +30,7 @@ export function ScrollArtLayer() {
         return {
           ...layer,
           opacity: visibility,
+          transform: `translate3d(${layer.baseX + drift * 0.1 + orbit + pointerX}vw, ${layer.baseY - drift * 0.14 + bob + pointerY}vh, 0) rotate(${orbit * 0.55}deg) scale(${layer.scale + Math.sin(phase * Math.PI) * 0.03})`,
           transform: `translate3d(${layer.baseX}%, ${layer.baseY + settle}%, 0) rotate(${layer.tilt}deg) scale(${layer.scale})`,
         };
       }),
