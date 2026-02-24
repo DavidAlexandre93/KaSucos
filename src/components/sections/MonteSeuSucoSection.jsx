@@ -251,14 +251,16 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
           })}
         </div>
 
-        <p className="builder-limit">{content.limitMessage}</p>
-        <div className="builder-result" aria-live="polite">
-          {resultText}
+        <div className="builder-feedback">
+          <p className="builder-limit">{content.limitMessage}</p>
+          <div className="builder-result" aria-live="polite">
+            {resultText}
+          </div>
         </div>
 
         <motion.button
           type="button"
-          className="btn-primary"
+          className="btn-primary builder-add-button"
           disabled={!canCreate}
           onClick={handleAddCustomJuice}
           whileHover={{ y: -2, scale: 1.02 }}
