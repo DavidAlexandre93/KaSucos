@@ -54,8 +54,6 @@ export default function App() {
 
   useGSAP(
     ({ selector }) => {
-      const floatingTargets = selector(".card-bottle, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
-      const tiltCards = selector(".card, .combo, .tip-post, .theme-option, .fruit-chip, .reviews blockquote");
       const floatingTargets = selector(".card img, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
       const tiltCards = selector(".card, .combo, .tip-post, .fruit-chip, .reviews blockquote");
 
@@ -126,6 +124,9 @@ export default function App() {
     { scope: siteRef, dependencies: [] },
   );
 
+  if (showSplash) {
+    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+  }
 
   const addItem = (product, typeLabel) => {
     setCartItems((current) => {
@@ -176,7 +177,6 @@ export default function App() {
 
   return (
     <div className="site" style={DEFAULT_THEME_COLORS} ref={siteRef}>
-      {showSplash ? <SplashScreen onComplete={() => setShowSplash(false)} /> : null}
       <ScrollArtLayer />
       <Header
         language={language}
