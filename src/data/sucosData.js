@@ -1,4 +1,4 @@
-export const juices = [
+export const sucos = [
   {
     name: "Verde Vital",
     volume: "300 ml",

@@ -1,4 +1,4 @@
-export const colorThemes = {
+export const temas = {
   roxo: {
     name: "Roxo KaSucos",
     colors: {

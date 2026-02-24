@@ -1,4 +1,4 @@
-export function TestimonialsSection() {
+export function DepoimentosSection() {
   return (
     <section className="section testimonials">
       <div className="container">
