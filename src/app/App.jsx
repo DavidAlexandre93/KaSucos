@@ -74,8 +74,8 @@ export default function App() {
 
   useGSAP(
     ({ selector }) => {
-      const floatingTargets = selector(".card img, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
-      const tiltCards = selector(".card, .combo, .tip-post, .fruit-chip, .reviews blockquote");
+      const floatingTargets = selector(".card img, .combo, .map-box iframe, .hero-showcase-jar");
+      const tiltCards = selector(".card, .combo, .fruit-chip, .reviews blockquote");
 
       const onPointerMove = (event) => {
         const x = Math.round((event.clientX / window.innerWidth) * 100);

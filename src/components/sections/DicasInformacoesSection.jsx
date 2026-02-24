@@ -1,10 +1,5 @@
 import { useRef, useState } from "react";
-import gsap from "../../lib/gsap";
-import { ScrollTrigger } from "../../lib/ScrollTrigger";
-import { useGSAP } from "../../lib/useGSAP";
 import { motion } from "../../lib/motion";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const STORAGE_KEY = "kasucos-blog-likes";
 
@@ -27,37 +22,6 @@ export function DicasInformacoesSection({ blog }) {
   const posts = blog?.posts ?? [];
   const [likesByPost, setLikesByPost] = useState(() => getInitialLikes(posts));
   const sectionRef = useRef(null);
-
-  useGSAP(
-    ({ selector }) => {
-      if (!sectionRef.current || !posts.length) return undefined;
-
-      const header = selector(".tips-header")[0];
-      const cards = selector(".tip-post");
-
-      gsap.set([header, ...cards], { opacity: 0, y: 18 });
-      gsap.set(cards, { y: 22, scale: 0.98 });
-
-      let hasPlayed = false;
-      ScrollTrigger.create({
-        trigger: sectionRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        onUpdate: ({ progress }) => {
-          if (hasPlayed || progress < 0.15) return;
-          hasPlayed = true;
-          gsap
-            .timeline()
-            .to(header, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" })
-            .to(cards, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out", stagger: 0.09 });
-        },
-      });
-
-      return undefined;
-    },
-    { scope: sectionRef, dependencies: [posts.length] },
-  );
-
 
   if (!posts.length) {
     return null;
