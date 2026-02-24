@@ -68,16 +68,6 @@ export function ContatoSection({ contact }) {
               {contact.sendLabel ?? "Enviar mensagem"}
             </button>
           </form>
-          <motion.a
-            className="btn-primary"
-            href="https://wa.me/5500000000000"
-            target="_blank"
-            rel="noreferrer"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            {contact.cta}
-          </motion.a>
         </motion.div>
 
         <motion.div id="onde-nos-encontrar" className="map-box">
