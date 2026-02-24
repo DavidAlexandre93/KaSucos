@@ -1,17 +1,18 @@
 :root {
-  --purple-900: #1f6a2d;
-  --purple-700: #2f8f43;
-  --purple-100: #ebf8ee;
-  --green-500: #55a630;
-  --yellow-400: #ffcf33;
-  --orange-500: #f78c2f;
-  --wine-700: #7a1f3d;
-  --wine-100: #f9e6ed;
-  --text: #214e2c;
-  --muted: #5f3a48;
+  --brand-green-900: #2f7d32;
+  --brand-green-700: #58a635;
+  --brand-green-100: #e8f6df;
+  --orange-500: #ff8a1f;
+  --orange-400: #ffa53b;
+  --yellow-400: #ffd54a;
+  --wine-700: #8a1d3f;
+  --wine-100: #f9e5ec;
+  --text: #245028;
+  --muted: #6b3f4b;
   --white: #ffffff;
-  --bg-base: #fff9ef;
+  --bg-base: #fff8ea;
 }
+
 
 * {
   box-sizing: border-box;
@@ -28,9 +29,10 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top right, #ffe6a8, transparent 35%),
-    radial-gradient(circle at bottom left, #e5f8d4, transparent 38%),
-    radial-gradient(circle at center right, #f9e6ed, transparent 42%),
+    radial-gradient(circle at top right, #ffd979, transparent 36%),
+    radial-gradient(circle at bottom left, #dbf1c7, transparent 40%),
+    radial-gradient(circle at center right, #f8df9d, transparent 44%),
+    radial-gradient(circle at center left, #f8e2e9, transparent 47%),
     var(--bg-base);
 }
 
@@ -47,7 +49,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(31, 106, 45, 0.95);
+  background: rgba(47, 125, 50, 0.96);
   backdrop-filter: blur(8px);
 }
 
@@ -81,7 +83,7 @@ body {
 }
 
 .topbar nav a {
-  color: #f7ffe6;
+  color: #fff5cf;
   text-decoration: none;
   font-weight: 600;
 }
@@ -100,7 +102,7 @@ body {
 .chip {
   display: inline-block;
   margin: 0;
-  background: var(--yellow-400);
+  background: linear-gradient(120deg, var(--orange-400), var(--yellow-400));
   color: #5b3300;
   font-weight: 700;
   padding: 6px 12px;
@@ -137,7 +139,7 @@ body {
 
 .btn-primary,
 .combo button {
-  background: linear-gradient(130deg, var(--orange-500), var(--yellow-400));
+  background: linear-gradient(125deg, var(--orange-500), var(--yellow-400));
   color: #5d3000;
 }
 
@@ -148,7 +150,7 @@ body {
 
 .hero-card {
   background: var(--white);
-  border: 2px solid #d5efdd;
+  border: 2px solid #d7efc8;
   border-radius: 16px;
   padding: 20px;
   text-align: center;
@@ -161,7 +163,7 @@ body {
 }
 
 .hero-card h2 {
-  color: var(--purple-900);
+  color: var(--brand-green-900);
   margin: 12px 0 8px;
 }
 
@@ -175,7 +177,7 @@ body {
 
 .section-title {
   margin: 0 0 18px;
-  color: var(--purple-900);
+  color: var(--brand-green-900);
 }
 
 .theme-section {
@@ -194,9 +196,9 @@ body {
 }
 
 .theme-option {
-  border: 2px solid #d0ead7;
+  border: 2px solid #d3ebc4;
   background: var(--white);
-  color: var(--purple-900);
+  color: var(--brand-green-900);
   border-radius: 999px;
   font-weight: 700;
   padding: 9px 14px;
@@ -204,12 +206,12 @@ body {
 }
 
 .theme-option.active {
-  border-color: var(--green-500);
-  box-shadow: 0 10px 22px rgba(117, 203, 47, 0.2);
+  border-color: var(--brand-green-700);
+  box-shadow: 0 10px 22px rgba(88, 166, 53, 0.24);
 }
 
 .soft {
-  background: #fff2dc;
+  background: #fff1d4;
 }
 
 .grid {
@@ -223,7 +225,7 @@ body {
 
 .card {
   background: var(--white);
-  border: 1px solid #f0dec0;
+  border: 1px solid #f3d9a8;
   border-radius: 14px;
   overflow: hidden;
 }
@@ -262,7 +264,7 @@ body {
   display: inline-block;
   margin-top: 8px;
   font-weight: 700;
-  color: var(--green-500);
+  color: var(--brand-green-700);
 }
 
 .card-footer {
@@ -282,7 +284,7 @@ body {
 
 .combo {
   background: var(--white);
-  border: 2px solid #f2d7a6;
+  border: 2px solid #f3d19b;
   border-radius: 16px;
   padding: 18px;
   display: grid;
@@ -290,13 +292,13 @@ body {
 }
 
 .combo.highlight {
-  border-color: var(--green-500);
-  box-shadow: 0 12px 26px rgba(117, 203, 47, 0.2);
+  border-color: var(--brand-green-700);
+  box-shadow: 0 12px 26px rgba(88, 166, 53, 0.24);
 }
 
 .badge {
   justify-self: start;
-  background: var(--green-500);
+  background: var(--brand-green-700);
   color: #183d00;
   font-weight: 700;
   padding: 5px 8px;
@@ -318,7 +320,7 @@ body {
 }
 
 .testimonials {
-  background: linear-gradient(180deg, #ffffff, #fff3db);
+  background: linear-gradient(180deg, #ffffff, #fff0cf);
 }
 
 .reviews {
@@ -328,7 +330,7 @@ body {
 blockquote {
   margin: 0;
   background: var(--white);
-  border: 1px solid #f2d7a6;
+  border: 1px solid #f3d19b;
   border-radius: 12px;
   padding: 14px;
   color: var(--muted);
@@ -343,7 +345,7 @@ blockquote cite {
 }
 
 .cta-box {
-  background: linear-gradient(135deg, var(--purple-900), var(--wine-700));
+  background: linear-gradient(135deg, #3c9438, var(--wine-700));
   color: var(--white);
   border-radius: 16px;
   padding: 24px;
@@ -351,11 +353,11 @@ blockquote cite {
 }
 
 .cta-box p {
-  color: #ffe8b8;
+  color: #fff0c8;
 }
 
 .footer {
-  background: #1b5d2a;
+  background: linear-gradient(120deg, #256f2f, #7b1e3d);
   color: #ffe4ac;
   padding: 18px 0;
 }
