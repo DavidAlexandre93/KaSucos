@@ -2,6 +2,7 @@ export const scrollArtLayers = [
   {
     id: "jar-morango",
     src: "/img/garrafinha.png",
+    spillSrc: "/img/ai/juice-cup-spill.svg",
     alt: "Jarra de suco de morango derramando",
     flavor: "morango",
     start: 0,
@@ -14,6 +15,7 @@ export const scrollArtLayers = [
   {
     id: "jar-maracuja",
     src: "/img/garrafinha02.png",
+    spillSrc: "/img/ai/juice-cup-spill.svg",
     alt: "Jarra de suco de maracujá derramando",
     flavor: "maracuja",
     start: 0.25,
@@ -26,6 +28,7 @@ export const scrollArtLayers = [
   {
     id: "jar-uva",
     src: "/img/garrafinha03.png",
+    spillSrc: "/img/ai/juice-cup-spill.svg",
     alt: "Jarra de suco de uva derramando",
     flavor: "uva",
     start: 0.55,

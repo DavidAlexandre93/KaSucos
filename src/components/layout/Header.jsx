@@ -128,16 +128,8 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
             className={isMobileMenuOpen ? "open" : ""}
             aria-label={labels.title ?? "Main navigation"}
           >
-            <a href="#catalogo" onClick={closeMobileMenu}>{labels.juices}</a>
-            <a href="#monte-seu-suco" onClick={closeMobileMenu}>{labels.buildYourJuice}</a>
-            <a href="#combos" onClick={closeMobileMenu}>{labels.combos}</a>
-            <a href="#beneficios" onClick={closeMobileMenu}>{labels.benefits}</a>
-            <a href="#dicas" onClick={closeMobileMenu}>{labels.tipsInfo}</a>
-            <a href="#onde-nos-encontrar" onClick={closeMobileMenu}>{labels.findUs}</a>
-            <a href="#contato" onClick={closeMobileMenu}>{labels.contact}</a>
-          <nav aria-label={labels.title ?? "Main navigation"}>
             {menuItems.map((item) => (
-              <a key={item.key} href={item.href} title={navLabels[item.key]}>
+              <a key={item.key} href={item.href} title={navLabels[item.key]} onClick={closeMobileMenu}>
                 {compactLabels[item.key]}
               </a>
             ))}
@@ -154,7 +146,6 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
                 <path d="M24.3 52.4a1.6 1.6 0 0 1-1.58-1.35l-1.9-13.3a1.6 1.6 0 1 1 3.17-.46l1.9 13.3a1.6 1.6 0 0 1-1.59 1.81zm7.7 0a1.6 1.6 0 0 1-1.6-1.6V37.4a1.6 1.6 0 1 1 3.2 0v13.4a1.6 1.6 0 0 1-1.6 1.6zm7.7 0a1.6 1.6 0 0 1-1.59-1.81l1.9-13.3a1.6 1.6 0 1 1 3.17.46l-1.9 13.3a1.6 1.6 0 0 1-1.58 1.35z" fill="#0b2379" />
               </svg>
             </span>
-            {labels.basket} ({basketCount})
           </button>
 
           <div className="language-switcher" aria-label="Language selector">
