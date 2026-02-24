@@ -727,148 +727,103 @@ body.splash-lock {
 .hero-showcase {
   margin-top: 18px;
   position: relative;
-  min-height: 260px;
+  min-height: 280px;
   border-radius: 18px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 20% 15%, rgba(255, 204, 33, 0.35), transparent 40%),
-    radial-gradient(circle at 80% 10%, rgba(255, 95, 162, 0.28), transparent 38%),
-    linear-gradient(160deg, rgba(59, 21, 117, 0.92), rgba(95, 39, 178, 0.84));
+    radial-gradient(circle at 20% 15%, rgba(255, 204, 33, 0.5), transparent 46%),
+    radial-gradient(circle at 80% 10%, rgba(255, 95, 162, 0.34), transparent 38%),
+    radial-gradient(circle at 50% 110%, rgba(95, 197, 45, 0.24), transparent 38%),
+    linear-gradient(160deg, rgba(59, 21, 117, 0.96), rgba(95, 39, 178, 0.88));
   border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.2);
   transform-style: preserve-3d;
   transform: perspective(900px) rotateX(var(--showcase-rot-x, 0deg)) rotateY(var(--showcase-rot-y, 0deg)) translate3d(var(--showcase-shift-x, 0px), var(--showcase-shift-y, 0px), 0);
 }
 
-.hero-showcase-logo {
+.hero-showcase-glow {
   position: absolute;
-  left: 12px;
-  top: 14px;
-  width: 92px;
-  height: 92px;
-  border-radius: 999px;
-  border: 2px solid rgba(255, 255, 255, 0.86);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
-}
-
-.hero-showcase-basket {
-  position: absolute;
-  left: 22px;
-  bottom: 18px;
-  width: 156px;
-  height: 88px;
-  border-radius: 30px 30px 45px 45px;
-  border: 2px solid rgba(255, 255, 255, 0.32);
-  background: linear-gradient(180deg, rgba(206, 117, 41, 0.88), rgba(138, 70, 20, 0.95));
-  box-shadow: 0 16px 30px rgba(31, 10, 53, 0.34);
-}
-
-.hero-showcase-bottle {
-  position: absolute;
-  width: 54px;
-  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.35));
-}
-
-.hero-showcase-bottle--left {
-  left: 8px;
-  top: -38px;
-  transform: rotate(-12deg);
-}
-
-.hero-showcase-bottle--middle {
-  left: 48px;
-  top: -48px;
-}
-
-.hero-showcase-bottle--right {
-  left: 96px;
-  top: -36px;
-  transform: rotate(10deg);
-}
-
-.hero-showcase-jar {
-  position: absolute;
-  width: 120px;
-  pointer-events: none;
-  transform-style: preserve-3d;
-  animation: heroJarFloat 3.6s ease-in-out infinite;
-}
-
-.hero-showcase-jar img {
-  width: 100%;
-  transform: rotate(-14deg);
-  filter: drop-shadow(0 14px 20px rgba(0, 0, 0, 0.34));
-}
-
-.hero-showcase-jar--top {
-  right: 2px;
-  top: 8px;
-}
-
-.hero-showcase-jar--bottom {
-  right: 20px;
-  top: 104px;
-  animation-delay: 0.75s;
-}
-
-.hero-jar-liquid {
-  position: absolute;
-  left: 18%;
-  top: 41%;
-  width: 54%;
-  height: 44%;
-  border-radius: 28% 34% 40% 45%;
-  opacity: 0.52;
-  filter: blur(0.2px);
-  --liquid-wave: 6px;
-  transform: translateY(calc(var(--liquid-wave) * 0.4)) rotate(-10deg);
-  animation: heroLiquidSlosh 2.3s ease-in-out infinite;
-}
-
-.hero-jar-liquid--gold {
-  background: linear-gradient(180deg, rgba(255, 224, 126, 0.72), rgba(255, 142, 30, 0.78));
-}
-
-.hero-jar-liquid--red {
-  background: linear-gradient(180deg, rgba(255, 147, 174, 0.72), rgba(211, 49, 126, 0.78));
-}
-
-.hero-jar-gloss {
-  position: absolute;
-  left: 26%;
-  top: 18%;
-  width: 16%;
-  height: 62%;
-  border-radius: 999px;
-  --gloss-shift: 0px;
-  transform: translateX(var(--gloss-shift)) rotate(-9deg);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0));
+  inset: 0;
+  background:
+    radial-gradient(circle at 68% 40%, rgba(255, 214, 88, 0.34), transparent 38%),
+    radial-gradient(circle at 61% 74%, rgba(255, 95, 162, 0.22), transparent 34%);
   mix-blend-mode: screen;
-  opacity: 0.35;
-  animation: heroGlossSweep 2.5s ease-in-out infinite;
 }
 
-.hero-stream-fill {
+.hero-showcase-stage {
   position: absolute;
-  left: 35%;
-  top: 68%;
-  width: 24px;
-  height: 132px;
-  border-radius: 999px;
-  transform-origin: top center;
-  opacity: 0.35;
-  --fill-scale: 0.25;
-  transform: scaleY(var(--fill-scale)) rotate(-8deg);
+  inset: 0;
 }
 
-.hero-stream-fill--gold {
-  background: linear-gradient(180deg, rgba(255, 214, 88, 0.96), rgba(255, 145, 31, 0.92));
-  box-shadow: 0 10px 18px rgba(255, 145, 31, 0.35);
+.hero-pouring-jar {
+  position: absolute;
+  right: -10px;
+  top: -26px;
+  width: 340px;
+  max-width: 82%;
+  transform: rotate(-6deg);
+  transform-origin: 76% 36%;
 }
 
-.hero-stream-fill--red {
-  background: linear-gradient(180deg, rgba(255, 130, 160, 0.95), rgba(211, 49, 126, 0.92));
-  box-shadow: 0 10px 18px rgba(211, 49, 126, 0.35);
+.hero-jar-image {
+  width: 100%;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 20px 24px rgba(9, 5, 32, 0.42));
+}
+
+.hero-stream-aura {
+  position: absolute;
+  left: 12%;
+  top: 44%;
+  width: 56%;
+  height: 46%;
+  border-radius: 60% 40% 48% 52%;
+  background:
+    radial-gradient(circle at 20% 26%, rgba(255, 206, 86, 0.24), transparent 56%),
+    radial-gradient(circle at 34% 86%, rgba(255, 141, 27, 0.36), transparent 58%);
+  filter: blur(4px);
+  opacity: 0.55;
+  --fill-scale: 0.7;
+  transform-origin: center bottom;
+  transform: scaleY(var(--fill-scale));
+}
+
+.hero-info-card {
+  position: absolute;
+  width: 150px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  backdrop-filter: blur(8px);
+  text-align: left;
+  box-shadow: 0 10px 20px rgba(20, 7, 37, 0.24);
+}
+
+.hero-info-card strong {
+  display: block;
+  color: #fff3c9;
+  font-size: 0.82rem;
+  margin-bottom: 4px;
+}
+
+.hero-info-card span {
+  display: block;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.hero-info-card--left {
+  left: 12px;
+  bottom: 16px;
+}
+
+.hero-info-card--right {
+  left: 18px;
+  top: 18px;
 }
 
 @keyframes heroJarFloat {
@@ -2222,50 +2177,22 @@ body.site-party-mode::after {
     min-height: 220px;
   }
 
-  .hero-showcase-logo {
-    width: 72px;
-    height: 72px;
+  .hero-pouring-jar {
+    right: -14px;
+    top: -8px;
+    width: 290px;
   }
 
-  .hero-showcase-basket {
-    width: 130px;
-    height: 78px;
-    left: 14px;
-    bottom: 14px;
+  .hero-stream-aura {
+    width: 60%;
+    height: 40%;
+    left: 8%;
+    top: 48%;
   }
 
-  .hero-showcase-bottle {
-    width: 44px;
-  }
-
-  .hero-showcase-bottle--left {
-    left: 6px;
-    top: -30px;
-  }
-
-  .hero-showcase-bottle--middle {
-    left: 40px;
-    top: -38px;
-  }
-
-  .hero-showcase-bottle--right {
-    left: 78px;
-    top: -29px;
-  }
-
-  .hero-showcase-jar {
-    width: 92px;
-  }
-
-  .hero-showcase-jar--bottom {
-    top: 94px;
-    right: 12px;
-  }
-
-  .hero-stream-fill {
-    width: 18px;
-    height: 96px;
-    left: 36%;
+  .hero-info-card {
+    width: 128px;
+    padding: 10px;
   }
 }
 
