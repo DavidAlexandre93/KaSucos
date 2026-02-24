@@ -37,7 +37,48 @@ body {
 .site {
   min-height: 100vh;
   transition: background-color 0.45s ease, color 0.45s ease;
+  position: relative;
+  isolation: isolate;
 }
+
+.site > * {
+  position: relative;
+  z-index: 2;
+}
+
+.scroll-art {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.scroll-art-image {
+  position: absolute;
+  width: clamp(220px, 29vw, 450px);
+  max-width: 44vw;
+  opacity: 0;
+  filter: drop-shadow(0 24px 32px rgba(59, 21, 117, 0.18));
+  transition: opacity 0.65s ease;
+  will-change: transform, opacity;
+}
+
+.scroll-art-image--clouds {
+  top: 6%;
+  left: 5%;
+}
+
+.scroll-art-image--fence {
+  top: 42%;
+  right: 2%;
+}
+
+.scroll-art-image--juice {
+  bottom: 4%;
+  left: 10%;
+}
+
 
 .container {
   width: min(1140px, 92%);
@@ -431,6 +472,16 @@ blockquote cite {
 }
 
 @media (max-width: 720px) {
+  .scroll-art-image {
+    width: clamp(180px, 45vw, 260px);
+    max-width: 62vw;
+  }
+
+  .scroll-art-image--fence {
+    right: -8%;
+  }
+
+
   .topbar nav {
     display: none;
   }

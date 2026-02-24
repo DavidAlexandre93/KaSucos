@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Footer } from "./components/layout/Footer";
 import { Header } from "./components/layout/Header";
+import { ScrollArtLayer } from "./components/layout/ScrollArtLayer";
 import { BenefitsSection } from "./components/sections/BenefitsSection";
 import { CatalogSection } from "./components/sections/CatalogSection";
 import { CombosSection } from "./components/sections/CombosSection";
@@ -17,6 +18,7 @@ function App() {
 
   return (
     <div className="site" style={colorThemes[selectedTheme].colors}>
+      <ScrollArtLayer />
       <Header />
       <HeroSection />
       <ThemeSection

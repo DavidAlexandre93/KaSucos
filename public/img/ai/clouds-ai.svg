@@ -1,0 +1,23 @@
+<svg width="900" height="600" viewBox="0 0 900 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#BEE8FF"/>
+      <stop offset="1" stop-color="#E8F8FF"/>
+    </linearGradient>
+    <radialGradient id="c1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(260 220) rotate(30) scale(290 170)">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D8EEFF"/>
+    </radialGradient>
+    <radialGradient id="c2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(620 320) rotate(12) scale(290 160)">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D5E8FF"/>
+    </radialGradient>
+  </defs>
+  <rect width="900" height="600" rx="48" fill="url(#sky)"/>
+  <ellipse cx="250" cy="250" rx="230" ry="125" fill="url(#c1)"/>
+  <ellipse cx="140" cy="260" rx="100" ry="70" fill="#F6FDFF"/>
+  <ellipse cx="360" cy="260" rx="110" ry="74" fill="#F8FCFF"/>
+  <ellipse cx="630" cy="330" rx="220" ry="118" fill="url(#c2)"/>
+  <ellipse cx="530" cy="335" rx="95" ry="65" fill="#F8FCFF"/>
+  <ellipse cx="730" cy="345" rx="105" ry="68" fill="#F8FCFF"/>
+</svg>
