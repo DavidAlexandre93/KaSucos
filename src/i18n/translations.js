@@ -1,0 +1,164 @@
+export const translations = {
+  pt: {
+    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
+    hero: {
+      chip: "Entrega no mesmo dia*",
+      title: "Os sucos mais frescos para sua rotina saudável.",
+      description:
+        "Inspirado no estilo Life Sucos, com catálogo claro dos sabores disponíveis para venda, combos e pedido rápido no WhatsApp.",
+      buyNow: "Comprar agora",
+      viewCombos: "Ver combos",
+      slogan: "O sabor da fruta, e o carinho de casa.",
+    },
+    theme: {
+      title: "Escolha as cores da sua experiência",
+      description: "Todas as opções usam a paleta da logo KaSucos.",
+    },
+    juices: { title: "Sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades" },
+    combos: { title: "Combos para economizar", mostOrdered: "Mais pedido", action: "Quero este" },
+    benefits: {
+      title: "Por que escolher a KaSucos?",
+      items: [
+        "Sem adição de açúcar e sem conservantes.",
+        "Produção diária com frutas frescas.",
+        "Entrega refrigerada para manter qualidade.",
+        "Atendimento humanizado pelo WhatsApp.",
+      ],
+    },
+    testimonials: {
+      title: "Quem já provou aprova",
+      items: [
+        "Sabor incrível e entrega rápida. O Verde Vital virou meu favorito!",
+        "Os combos valem muito a pena, qualidade impecável.",
+        "Atendimento excelente e sucos realmente naturais.",
+      ],
+    },
+    contact: {
+      title: "Faça seu pedido agora",
+      description: "Peça pelo WhatsApp e receba seus sucos geladinhos na sua casa.",
+      cta: "Falar no WhatsApp",
+    },
+    footer: { rights: "Todos os direitos reservados.", delivery: "*Consulte áreas de entrega." },
+  },
+  en: {
+    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", contact: "Contact" },
+    hero: {
+      chip: "Same-day delivery*",
+      title: "The freshest juices for your healthy routine.",
+      description:
+        "Inspired by the Life Sucos style, with a clear catalog of flavors available for sale, bundles, and quick WhatsApp ordering.",
+      buyNow: "Buy now",
+      viewCombos: "See combos",
+      slogan: "Fruit flavor with homemade care.",
+    },
+    theme: { title: "Choose your experience colors", description: "All options use KaSucos logo palette." },
+    juices: { title: "Juices available for sale", availableToday: "Available today", lastUnits: "Last units" },
+    combos: { title: "Combos to save more", mostOrdered: "Most ordered", action: "I want this" },
+    benefits: {
+      title: "Why choose KaSucos?",
+      items: [
+        "No added sugar and no preservatives.",
+        "Daily production with fresh fruits.",
+        "Refrigerated delivery to keep quality.",
+        "Friendly support on WhatsApp.",
+      ],
+    },
+    testimonials: {
+      title: "Loved by our customers",
+      items: [
+        "Amazing flavor and fast delivery. Verde Vital became my favorite!",
+        "The combos are really worth it, flawless quality.",
+        "Excellent service and truly natural juices.",
+      ],
+    },
+    contact: {
+      title: "Place your order now",
+      description: "Order on WhatsApp and receive your chilled juices at home.",
+      cta: "Chat on WhatsApp",
+    },
+    footer: { rights: "All rights reserved.", delivery: "*Check delivery areas." },
+  },
+  es: {
+    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
+    hero: {
+      chip: "Entrega el mismo día*",
+      title: "Los jugos más frescos para tu rutina saludable.",
+      description:
+        "Inspirado en el estilo Life Sucos, con catálogo claro de sabores disponibles para venta, combos y pedido rápido por WhatsApp.",
+      buyNow: "Comprar ahora",
+      viewCombos: "Ver combos",
+      slogan: "El sabor de la fruta y el cariño de casa.",
+    },
+    theme: { title: "Elige los colores de tu experiencia", description: "Todas las opciones usan la paleta del logo KaSucos." },
+    juices: { title: "Jugos disponibles para la venta", availableToday: "Disponible hoy", lastUnits: "Últimas unidades" },
+    combos: { title: "Combos para ahorrar", mostOrdered: "Más pedido", action: "Quiero este" },
+    benefits: {
+      title: "¿Por qué elegir KaSucos?",
+      items: [
+        "Sin azúcar añadida y sin conservantes.",
+        "Producción diaria con frutas frescas.",
+        "Entrega refrigerada para mantener la calidad.",
+        "Atención humana por WhatsApp.",
+      ],
+    },
+    testimonials: {
+      title: "Quien ya probó, aprueba",
+      items: [
+        "Sabor increíble y entrega rápida. ¡Verde Vital se volvió mi favorito!",
+        "Los combos valen mucho la pena, calidad impecable.",
+        "Atención excelente y jugos realmente naturales.",
+      ],
+    },
+    contact: {
+      title: "Haz tu pedido ahora",
+      description: "Pide por WhatsApp y recibe tus jugos bien fríos en casa.",
+      cta: "Hablar por WhatsApp",
+    },
+    footer: { rights: "Todos los derechos reservados.", delivery: "*Consulta áreas de entrega." },
+  },
+  fr: {
+    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
+    hero: {
+      chip: "Livraison le jour même*",
+      title: "Les jus les plus frais pour votre routine saine.",
+      description:
+        "Inspiré du style Life Sucos, avec un catalogue clair des saveurs disponibles, des offres combo et une commande rapide sur WhatsApp.",
+      buyNow: "Acheter maintenant",
+      viewCombos: "Voir les combos",
+      slogan: "La saveur du fruit et la chaleur de la maison.",
+    },
+    theme: { title: "Choisissez les couleurs de votre expérience", description: "Toutes les options utilisent la palette du logo KaSucos." },
+    juices: { title: "Jus disponibles à la vente", availableToday: "Disponible aujourd'hui", lastUnits: "Dernières unités" },
+    combos: { title: "Combos pour économiser", mostOrdered: "Le plus demandé", action: "Je le veux" },
+    benefits: {
+      title: "Pourquoi choisir KaSucos ?",
+      items: [
+        "Sans sucre ajouté et sans conservateurs.",
+        "Production quotidienne avec des fruits frais.",
+        "Livraison réfrigérée pour préserver la qualité.",
+        "Service humain via WhatsApp.",
+      ],
+    },
+    testimonials: {
+      title: "Ceux qui ont goûté approuvent",
+      items: [
+        "Saveur incroyable et livraison rapide. Verde Vital est devenu mon préféré !",
+        "Les combos valent vraiment le coup, qualité impeccable.",
+        "Excellent service et jus vraiment naturels.",
+      ],
+    },
+    contact: {
+      title: "Passez votre commande maintenant",
+      description: "Commandez sur WhatsApp et recevez vos jus bien frais à domicile.",
+      cta: "Parler sur WhatsApp",
+    },
+    footer: { rights: "Tous droits réservés.", delivery: "*Vérifiez les zones de livraison." },
+  },
+};
+
+export const themeNames = {
+  pt: { roxo: "Roxo KaSucos", amarelo: "Amarelo Solar", verde: "Verde Fresh" },
+  en: { roxo: "KaSucos Purple", amarelo: "Solar Yellow", verde: "Fresh Green" },
+  es: { roxo: "Morado KaSucos", amarelo: "Amarillo Solar", verde: "Verde Fresh" },
+  fr: { roxo: "Violet KaSucos", amarelo: "Jaune Solaire", verde: "Vert Fresh" },
+};

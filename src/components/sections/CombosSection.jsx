@@ -1,16 +1,16 @@
-export function CombosSection({ combos }) {
+export function CombosSection({ combos, language, labels }) {
   return (
     <section id="combos" className="section soft">
       <div className="container">
-        <h2 className="section-title">Combos para economizar</h2>
+        <h2 className="section-title">{labels.title}</h2>
         <div className="grid combos">
           {combos.map((combo) => (
             <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>
-              {combo.highlight ? <span className="badge">Mais pedido</span> : null}
+              {combo.highlight ? <span className="badge">{labels.mostOrdered}</span> : null}
               <h3>{combo.title}</h3>
-              <p>{combo.detail}</p>
+              <p>{combo.detail[language]}</p>
               <strong>{combo.price}</strong>
-              <button type="button">Quero este</button>
+              <button type="button">{labels.action}</button>
             </article>
           ))}
         </div>

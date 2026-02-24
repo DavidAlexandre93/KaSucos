@@ -1,17 +1,17 @@
-export function SucosSection({ sucos }) {
+export function SucosSection({ sucos, language, title, labels }) {
   return (
     <section id="catalogo" className="section">
       <div className="container">
-        <h2 className="section-title">Sucos disponíveis para venda</h2>
+        <h2 className="section-title">{title}</h2>
         <div className="grid cards">
           {sucos.map((suco) => (
             <article key={suco.name} className="card">
               <img src={suco.image} alt={suco.name} loading="lazy" />
               <div className="card-body">
-                <span className="tag">{suco.tag}</span>
+                <span className="tag">{suco.tag[language]}</span>
                 <h3>{suco.name}</h3>
-                <p>{suco.description}</p>
-                <small className="availability">{suco.availability}</small>
+                <p>{suco.description[language]}</p>
+                <small className="availability">{labels[suco.availabilityKey]}</small>
                 <div className="card-footer">
                   <strong>{suco.price}</strong>
                   <span>{suco.volume}</span>
