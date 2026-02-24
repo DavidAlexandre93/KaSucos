@@ -1,8 +1,8 @@
 const LANGUAGE_OPTIONS = [
-  { code: "en", flag: "🇺🇸", label: "English" },
-  { code: "pt", flag: "🇧🇷", label: "Português" },
-  { code: "es", flag: "🇪🇸", label: "Español" },
-  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "en", countryCode: "us", label: "English" },
+  { code: "pt", countryCode: "br", label: "Português" },
+  { code: "es", countryCode: "es", label: "Español" },
+  { code: "fr", countryCode: "fr", label: "Français" },
 ];
 
 export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
@@ -40,7 +40,16 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
                 aria-pressed={language === option.code}
                 onClick={() => onLanguageChange(option.code)}
               >
-                <span aria-hidden="true">{option.flag}</span>
+                <img
+                  className="language-flag"
+                  src={`https://flagcdn.com/w40/${option.countryCode}.png`}
+                  srcSet={`https://flagcdn.com/w40/${option.countryCode}.png 1x, https://flagcdn.com/w80/${option.countryCode}.png 2x`}
+                  width="20"
+                  height="20"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
               </button>
             ))}
           </div>
