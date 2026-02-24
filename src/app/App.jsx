@@ -43,7 +43,10 @@ export default function App() {
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
+  const [showSplash, setShowSplash] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return !window.sessionStorage.getItem("kasucos:splash-seen");
+  });
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
 
@@ -125,7 +128,14 @@ export default function App() {
   );
 
   if (showSplash) {
-    return <SplashScreen onComplete={() => setShowSplash(false)} />;
+    return (
+      <SplashScreen
+        onComplete={() => {
+          window.sessionStorage.setItem("kasucos:splash-seen", "1");
+          setShowSplash(false);
+        }}
+      />
+    );
   }
 
   const addItem = (product, typeLabel) => {
