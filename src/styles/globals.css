@@ -978,6 +978,88 @@ body.site-party-mode::after {
   filter: drop-shadow(0 8px 16px rgba(59, 21, 117, 0.18));
 }
 
+.leaf-trail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.85;
+  animation: leafTrailFloat 2s ease-out forwards;
+}
+
+.juice-drop {
+  position: fixed;
+  top: -20px;
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 8px 16px rgba(59, 21, 117, 0.2));
+  animation: juiceDropFall 3.2s ease-in forwards;
+}
+
+.harvest-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translate(-50%, 24px) scale(0.96);
+  z-index: 45;
+  background: linear-gradient(120deg, rgba(95, 39, 178, 0.94), rgba(95, 197, 45, 0.92));
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  padding: 10px 18px;
+  box-shadow: 0 14px 24px rgba(59, 21, 117, 0.28);
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.harvest-toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+}
+
+.effect-decor {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.effect-decor img {
+  position: absolute;
+  opacity: calc(0.17 + var(--scroll-party) * 0.18);
+  filter: drop-shadow(0 10px 24px rgba(59, 21, 117, 0.2));
+}
+
+.effect-decor__fence {
+  width: min(54vw, 660px);
+  left: -4vw;
+  bottom: -6px;
+  animation: decorSway 9s ease-in-out infinite;
+}
+
+.effect-decor__spill {
+  width: min(24vw, 280px);
+  right: 2vw;
+  bottom: -8px;
+  animation: spillWiggle 5s ease-in-out infinite;
+}
+
+.effect-decor__juice {
+  width: min(24vw, 290px);
+  right: 12vw;
+  top: 14vh;
+  animation: decorSway 10s ease-in-out infinite reverse;
+}
+
+.effect-decor__cloud {
+  width: min(40vw, 480px);
+  left: 14vw;
+  top: -2vh;
+  animation: cloudDrift 14s linear infinite;
+}
+
 @keyframes fruitRise {
   0% {
     transform: translate3d(0, 0, 0) rotate(0deg) scale(0.85);
@@ -991,6 +1073,70 @@ body.site-party-mode::after {
   100% {
     transform: translate3d(0, -115vh, 0) rotate(60deg) scale(1.2);
     opacity: 0;
+  }
+}
+
+@keyframes leafTrailFloat {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.9);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate3d(var(--leaf-x), -38px, 0) rotate(var(--leaf-spin)) scale(1.12);
+    opacity: 0;
+  }
+}
+
+@keyframes juiceDropFall {
+  0% {
+    transform: translate3d(0, -10px, 0) rotate(0deg);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: translate3d(0, 92vh, 0) rotate(50deg);
+    opacity: 0;
+  }
+}
+
+@keyframes decorSway {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(1.5deg);
+  }
+}
+
+@keyframes spillWiggle {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+
+  50% {
+    transform: rotate(3deg) translateY(-8px);
+  }
+}
+
+@keyframes cloudDrift {
+  0% {
+    transform: translate3d(-6vw, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(4vw, 8px, 0);
+  }
+
+  100% {
+    transform: translate3d(-6vw, 0, 0);
   }
 }
 
@@ -1084,6 +1230,20 @@ body.site-party-mode::after {
 
   .cards {
     grid-template-columns: 1fr;
+  }
+
+  .effect-decor__fence {
+    width: min(80vw, 460px);
+  }
+
+  .effect-decor__juice {
+    width: min(36vw, 190px);
+    right: -2vw;
+  }
+
+  .effect-decor__spill {
+    width: min(38vw, 180px);
+    right: -8vw;
   }
 
   .hero-actions {
