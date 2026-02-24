@@ -630,7 +630,31 @@ body.splash-lock {
 }
 
 .hero {
+  position: relative;
+  overflow: hidden;
   padding: 70px 0 56px;
+  isolation: isolate;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image: url("/img/banner.png");
+  background-size: cover;
+  background-position: center;
+  filter: saturate(1.08);
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgba(255, 251, 232, 0.94) 0%, rgba(255, 251, 232, 0.84) 45%, rgba(255, 251, 232, 0.62) 100%),
+    radial-gradient(circle at 12% 15%, rgba(255, 255, 255, 0.52), transparent 42%);
 }
 
 .hero-grid {
