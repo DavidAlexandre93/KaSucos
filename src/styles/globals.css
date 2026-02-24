@@ -739,142 +739,38 @@ body.splash-lock {
 
 .hero-pouring-jar {
   position: absolute;
-  right: 24px;
-  top: 4px;
-  width: 176px;
-  height: 198px;
-  transform: rotate(-20deg);
-  filter: drop-shadow(0 22px 22px rgba(0, 0, 0, 0.32));
+  right: -10px;
+  top: -26px;
+  width: 340px;
+  max-width: 82%;
+  transform: rotate(-6deg);
+  transform-origin: 76% 36%;
 }
 
-.hero-jar-svg {
+.hero-jar-image {
   width: 100%;
-  height: 100%;
-  overflow: visible;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 20px 24px rgba(9, 5, 32, 0.42));
 }
 
-.hero-jar-cap {
-  fill: #6d31c3;
-  stroke: rgba(255, 255, 255, 0.44);
-  stroke-width: 2;
-}
-
-.hero-jar-neck {
-  fill: rgba(244, 235, 255, 0.4);
-  stroke: rgba(255, 255, 255, 0.58);
-  stroke-width: 2;
-}
-
-.hero-jar-handle {
-  fill: rgba(231, 217, 255, 0.28);
-  stroke: rgba(239, 227, 255, 0.64);
-  stroke-width: 2;
-}
-
-.hero-jar-body {
-  fill: url(#jarGlass);
-  stroke: url(#jarStroke);
-  stroke-width: 2;
-}
-
-.hero-jar-liquid {
-  fill: url(#juiceFill);
-  opacity: 0.9;
-  --liquid-wave: 8px;
-  transform: translateY(calc(var(--liquid-wave) * 0.35));
-}
-
-.hero-jar-liquid-wave {
-  fill: rgba(255, 242, 191, 0.62);
-  mix-blend-mode: screen;
-}
-
-.hero-jar-bubble {
-  fill: rgba(255, 255, 255, 0.8);
-  opacity: 0.65;
-}
-
-.hero-jar-bubble--two {
-  opacity: 0.45;
-}
-
-.hero-jar-gloss {
-  --gloss-shift: 0px;
-  transform: translateX(var(--gloss-shift));
-  fill: rgba(255, 255, 255, 0.55);
-  opacity: 0.45;
-}
-
-.hero-jar-gloss--soft {
-  fill: rgba(255, 255, 255, 0.3);
-}
-
-.hero-pour-stream {
+.hero-stream-aura {
   position: absolute;
-  left: 68%;
-  top: 32%;
-  width: 22px;
-  height: 168px;
-  border-radius: 999px;
-  transform-origin: top center;
-  opacity: 0.45;
-  --fill-scale: 0.25;
-  transform: scaleY(var(--fill-scale)) rotate(18deg);
-}
-
-.hero-pour-stream--main {
-  background: linear-gradient(180deg, rgba(255, 214, 88, 0.96), rgba(255, 145, 31, 0.92));
-  box-shadow: 0 10px 18px rgba(255, 145, 31, 0.35);
-}
-
-.hero-pour-stream--mist {
-  width: 12px;
-  height: 150px;
-  left: 67%;
-  top: 35%;
-  background: linear-gradient(180deg, rgba(255, 232, 178, 0.64), rgba(255, 142, 30, 0.32));
-  filter: blur(1.1px);
-}
-
-.hero-pool {
-  position: absolute;
-  right: 28px;
-  bottom: 22px;
-  width: 160px;
-  height: 54px;
-  border-radius: 48% 52% 45% 55%;
+  left: 12%;
+  top: 44%;
+  width: 56%;
+  height: 46%;
+  border-radius: 60% 40% 48% 52%;
   background:
-    radial-gradient(circle at 30% 40%, rgba(255, 232, 178, 0.68), transparent 36%),
-    linear-gradient(140deg, rgba(255, 186, 88, 0.92), rgba(255, 95, 162, 0.76));
-  box-shadow:
-    0 14px 20px rgba(41, 16, 72, 0.4),
-    inset 0 5px 8px rgba(255, 255, 255, 0.28);
+    radial-gradient(circle at 20% 26%, rgba(255, 206, 86, 0.24), transparent 56%),
+    radial-gradient(circle at 34% 86%, rgba(255, 141, 27, 0.36), transparent 58%);
+  filter: blur(4px);
+  opacity: 0.55;
+  --fill-scale: 0.7;
+  transform-origin: center bottom;
+  transform: scaleY(var(--fill-scale));
 }
-
-.hero-splash {
-  position: absolute;
-  right: 44px;
-  bottom: 62px;
-  width: 120px;
-  height: 80px;
-}
-
-.hero-droplet {
-  position: absolute;
-  width: 12px;
-  height: 18px;
-  border-radius: 50% 50% 56% 44%;
-  background: linear-gradient(180deg, rgba(255, 229, 124, 0.95), rgba(255, 142, 30, 0.95));
-  box-shadow: 0 6px 10px rgba(31, 8, 49, 0.28);
-}
-
-.hero-droplet:nth-child(1) { left: 12%; top: 36%; }
-.hero-droplet:nth-child(2) { left: 24%; top: 12%; width: 9px; height: 14px; }
-.hero-droplet:nth-child(3) { left: 38%; top: 26%; width: 10px; height: 16px; }
-.hero-droplet:nth-child(4) { left: 52%; top: 8%; width: 8px; height: 12px; }
-.hero-droplet:nth-child(5) { left: 64%; top: 30%; }
-.hero-droplet:nth-child(6) { left: 76%; top: 18%; width: 9px; height: 14px; }
-.hero-droplet:nth-child(7) { left: 88%; top: 32%; width: 10px; height: 15px; }
 
 .hero-info-card {
   position: absolute;
@@ -2123,20 +2019,16 @@ body.site-party-mode::after {
   }
 
   .hero-pouring-jar {
-    right: 30px;
-    width: 112px;
-    height: 138px;
+    right: -14px;
+    top: -8px;
+    width: 290px;
   }
 
-  .hero-pour-stream {
-    left: 66%;
-    height: 132px;
-  }
-
-  .hero-pool {
-    width: 128px;
-    height: 42px;
-    right: 18px;
+  .hero-stream-aura {
+    width: 60%;
+    height: 40%;
+    left: 8%;
+    top: 48%;
   }
 
   .hero-info-card {
