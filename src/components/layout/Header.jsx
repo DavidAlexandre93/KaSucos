@@ -1,6 +1,6 @@
 import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useGSAP } from "../../lib/useGSAP";
 
 const LANGUAGE_OPTIONS = [
@@ -55,6 +55,7 @@ const COMPACT_NAV_LABELS = {
 
 export function Header({ language, onLanguageChange, labels, onBasketClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navRef = useRef(null);
 
   useGSAP(() => {
     const mm = gsap.matchMedia();
@@ -66,6 +67,19 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
 
     return () => mm.revert();
   }, { dependencies: [] });
+
+  useGSAP(() => {
+    const navItems = navRef.current?.querySelectorAll("a");
+    if (!navItems?.length) return undefined;
+
+    gsap.fromTo(
+      navItems,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power2.out" },
+    );
+
+    return undefined;
+  }, { dependencies: [isMobileMenuOpen] });
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const navLabels = {
@@ -116,6 +130,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
 
           <nav
             id="primary-navigation"
+            ref={navRef}
             className={isMobileMenuOpen ? "open" : ""}
             aria-label={labels.title ?? "Main navigation"}
           >
