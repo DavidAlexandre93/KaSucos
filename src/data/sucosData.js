@@ -1,6 +1,6 @@
 export const sucos = [
   {
-    name: "Verde Vital",
+    name: "Maçã Verde",
     volume: "300 ml",
     description: {
       pt: "Couve, maçã verde, limão e gengibre prensados a frio.",
@@ -15,7 +15,7 @@ export const sucos = [
     tag: { pt: "Detox", en: "Detox", es: "Detox", fr: "Détox" },
   },
   {
-    name: "Laranja Imune",
+    name: "Laranja",
     volume: "300 ml",
     description: {
       pt: "Laranja, acerola e cúrcuma para reforçar sua rotina.",
@@ -30,7 +30,7 @@ export const sucos = [
     tag: { pt: "Imunidade", en: "Immunity", es: "Inmunidad", fr: "Immunité" },
   },
   {
-    name: "Abacaxi Fresh",
+    name: "Abacaxi",
     volume: "300 ml",
     description: {
       pt: "Abacaxi com hortelã, refrescante e sem açúcar.",
@@ -45,7 +45,7 @@ export const sucos = [
     tag: { pt: "Refrescante", en: "Refreshing", es: "Refrescante", fr: "Rafraîchissant" },
   },
   {
-    name: "Vermelho Power",
+    name: "Morango",
     volume: "500 ml",
     description: {
       pt: "Beterraba, maçã e frutas vermelhas para mais energia.",
