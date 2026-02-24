@@ -19,6 +19,7 @@ import { useLanguage } from "../hooks/useLanguage";
 import { themeNames, translations } from "../i18n/translations";
 import { CartSection } from "../components/sections/CartSection";
 import { CheckoutSection } from "../components/sections/CheckoutSection";
+import { dicasBlogData } from "../data/dicasBlogData";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
@@ -29,38 +30,25 @@ export default function App() {
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-import { dicasBlogData } from "../data/dicasBlogData";
-
-export default function App() {
-  const [temaSelecionado, setTemaSelecionado] = useState("roxo");
-  const [pedido, setPedido] = useState({});
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
-  const totalItems = Object.values(pedido).reduce((total, quantidade) => total + quantidade, 0);
-
-  const handleAddJuice = (juiceName) => {
-    setPedido((prevPedido) => ({
-      ...prevPedido,
-      [juiceName]: (prevPedido[juiceName] ?? 0) + 1,
-    }));
-  };
 
   useFunEffects();
 
   const addItem = (product, typeLabel) => {
     setCartItems((current) => {
-      const existing = current.find((item) => item.id === product.title || item.id === product.name);
+      const id = product.title || product.name;
+      const existing = current.find((item) => item.id === id);
+
       if (existing) {
-        return current.map((item) =>
-          item.id === existing.id ? { ...item, quantity: item.quantity + 1 } : item,
-        );
+        return current.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
       }
 
       return [
         ...current,
         {
-          id: product.title || product.name,
-          name: product.title || product.name,
+          id,
+          name: id,
           price: parsePrice(product.price),
           priceLabel: product.price,
           quantity: 1,
@@ -97,8 +85,6 @@ export default function App() {
         labels={t.nav}
         basketCount={totalItems}
         onBasketClick={openCart}
-        basketLabels={t.basket}
-        totalItems={totalItems}
       />
       <main>
         <InicioSection hero={t.hero} />
@@ -110,8 +96,6 @@ export default function App() {
           description={t.theme.description}
           themeNames={themeNames[language]}
         />
-        <SucosSection sucos={sucos} language={language} title={t.juices.title} labels={t.juices} />
-        <MonteSeuSucoSection content={t.customJuice} />
         <SucosSection
           sucos={sucos}
           language={language}
@@ -119,22 +103,14 @@ export default function App() {
           labels={t.juices}
           onAddJuice={(juice) => addItem(juice, t.cart.unit)}
         />
-        <CombosSection
-          combos={combos}
-          language={language}
-          labels={t.combos}
-          onAddCombo={(combo) => addItem(combo, t.cart.combo)}
-        />
+        <MonteSeuSucoSection content={t.customJuice} />
+        <CombosSection combos={combos} language={language} labels={t.combos} onAddCombo={(combo) => addItem(combo, t.cart.combo)} />
         {showCart ? <CartSection labels={t.cart} items={cartItems} total={totalLabel} onFinalize={finalizePurchase} /> : null}
         {showCheckout ? <CheckoutSection checkout={t.checkout} total={totalLabel} /> : null}
-          onAddJuice={handleAddJuice}
-          pedido={pedido}
-        />
-        <CombosSection combos={combos} language={language} labels={t.combos} />
         <BeneficiosSection benefits={t.benefits} />
         <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.pt} />
         <DepoimentosSection testimonials={t.testimonials} />
-        <ContatoSection contact={t.contact} pedido={pedido} />
+        <ContatoSection contact={t.contact} />
       </main>
       <Footer footer={t.footer} />
     </div>

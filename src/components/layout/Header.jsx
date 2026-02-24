@@ -1,5 +1,3 @@
-import { BasketSummary } from "./BasketSummary";
-
 const LANGUAGE_OPTIONS = [
   { code: "en", flag: "🇺🇸", label: "English" },
   { code: "pt", flag: "🇧🇷", label: "Português" },
@@ -8,7 +6,6 @@ const LANGUAGE_OPTIONS = [
 ];
 
 export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
-export function Header({ language, onLanguageChange, labels, basketLabels, totalItems }) {
   return (
     <header className="topbar">
       <div className="container topbar-inner">
@@ -45,10 +42,6 @@ export function Header({ language, onLanguageChange, labels, basketLabels, total
                 <span aria-hidden="true">{option.flag}</span>
               </button>
             ))}
-          </div>
-
-          <div className="basket-slot">
-            <BasketSummary labels={basketLabels} totalItems={totalItems} />
           </div>
         </div>
       </div>
