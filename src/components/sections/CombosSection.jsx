@@ -1,8 +1,6 @@
 import { useRef } from "react";
 import gsap from "../../lib/gsap";
-import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
-import { buttonMotion, cardMotion } from "../ui/MotionPrimitives";
 import { TypingText } from "../ui/TypingText";
 
 const bottleWord = {
@@ -22,13 +20,9 @@ function ComboMath({ combo, language }) {
     <div className="combo-math" aria-label={`${base} + ${bonus} = ${total} ${word}`}>
       <div className="combo-bottles" aria-hidden="true">
         {Array.from({ length: total }).map((_, index) => (
-          <motion.span
+          <span
             key={`${combo.title}-bottle-${index}`}
             className={`combo-bottle ${index >= base ? "bonus" : ""}`}
-            initial={{ opacity: 0, y: 8, scale: 0.85 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.25, delay: index * 0.02 }}
           />
         ))}
       </div>
@@ -61,21 +55,16 @@ export function CombosSection({ combos, language, labels, onAddCombo }) {
         <TypingText className="section-title" text={labels.title} highlight />
         <div className="grid combos">
           {combos.map((combo) => (
-            <motion.article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`} {...cardMotion}>
+            <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>
               {combo.highlight ? <span className="badge">{labels.mostOrdered}</span> : null}
               <h3>{combo.title}</h3>
               <p>{combo.detail[language]}</p>
               <ComboMath combo={combo} language={language} />
               <strong>{combo.price}</strong>
-              <motion.button
-                type="button"
-                onClick={() => onAddCombo(combo)}
-                whileHover={{ ...buttonMotion.whileHover, backgroundColor: "#ffcc21" }}
-                whileTap={buttonMotion.whileTap}
-              >
+              <button type="button" onClick={() => onAddCombo(combo)}>
                 {labels.action}
-              </motion.button>
-            </motion.article>
+              </button>
+            </article>
           ))}
         </div>
       </div>
