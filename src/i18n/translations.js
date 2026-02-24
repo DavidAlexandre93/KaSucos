@@ -1,6 +1,7 @@
 export const translations = {
   pt: {
     nav: { juices: "Sucos", buildYourJuice: "Monte seu Suco", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
+    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", findUs: "Onde nos encontrar", contact: "Contato" },
     hero: {
       chip: "Entrega no mesmo dia*",
       title: "Os sucos mais frescos para sua rotina saudável.",
@@ -23,6 +24,7 @@ export const translations = {
       resultPlaceholder: "Selecione 2 frutas para ver sua mistura.",
       resultReady: "Seu suco personalizado: {combo}",
     },
+    juices: { title: "Sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades", addToBasket: "Adicionar à cesta" },
     combos: { title: "Combos para economizar", mostOrdered: "Mais pedido", action: "Quero este" },
     benefits: {
       title: "Por que escolher a KaSucos?",
@@ -45,11 +47,19 @@ export const translations = {
       title: "Faça seu pedido agora",
       description: "Peça pelo WhatsApp e receba seus sucos geladinhos na sua casa.",
       cta: "Falar no WhatsApp",
+      closeOrderCta: "Fechar pedido no WhatsApp",
+      whatsappIntro: "Olá! Quero fechar este pedido:",
+      whatsappTotalLabel: "Total de sucos:",
+      whatsappEmpty: "Olá! Quero fechar meu pedido de sucos.",
+      mapTitle: "Onde nos encontrar",
+      address: "Taboão da Serra - SP",
     },
+    basket: { title: "Cesta", ariaLabel: "Abrir seção de contato para fechar pedido" },
     footer: { rights: "Todos os direitos reservados.", delivery: "*Consulte áreas de entrega." },
   },
   en: {
     nav: { juices: "Juices", buildYourJuice: "Build your Juice", combos: "Combos", benefits: "Benefits", contact: "Contact" },
+    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", findUs: "Where to find us", contact: "Contact" },
     hero: {
       chip: "Same-day delivery*",
       title: "The freshest juices for your healthy routine.",
@@ -69,6 +79,7 @@ export const translations = {
       resultPlaceholder: "Select 2 fruits to preview your blend.",
       resultReady: "Your custom juice: {combo}",
     },
+    juices: { title: "Juices available for sale", availableToday: "Available today", lastUnits: "Last units", addToBasket: "Add to basket" },
     combos: { title: "Combos to save more", mostOrdered: "Most ordered", action: "I want this" },
     benefits: {
       title: "Why choose KaSucos?",
@@ -91,11 +102,19 @@ export const translations = {
       title: "Place your order now",
       description: "Order on WhatsApp and receive your chilled juices at home.",
       cta: "Chat on WhatsApp",
+      closeOrderCta: "Complete order on WhatsApp",
+      whatsappIntro: "Hi! I would like to complete this order:",
+      whatsappTotalLabel: "Total juices:",
+      whatsappEmpty: "Hi! I would like to complete my juice order.",
+      mapTitle: "Where to find us",
+      address: "Taboão da Serra - SP",
     },
+    basket: { title: "Basket", ariaLabel: "Open contact section to complete order" },
     footer: { rights: "All rights reserved.", delivery: "*Check delivery areas." },
   },
   es: {
     nav: { juices: "Jugos", buildYourJuice: "Arma tu Jugo", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
+    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", findUs: "Dónde encontrarnos", contact: "Contacto" },
     hero: {
       chip: "Entrega el mismo día*",
       title: "Los jugos más frescos para tu rutina saludable.",
@@ -115,6 +134,7 @@ export const translations = {
       resultPlaceholder: "Selecciona 2 frutas para ver tu mezcla.",
       resultReady: "Tu jugo personalizado: {combo}",
     },
+    juices: { title: "Jugos disponibles para la venta", availableToday: "Disponible hoy", lastUnits: "Últimas unidades", addToBasket: "Agregar a la cesta" },
     combos: { title: "Combos para ahorrar", mostOrdered: "Más pedido", action: "Quiero este" },
     benefits: {
       title: "¿Por qué elegir KaSucos?",
@@ -137,11 +157,19 @@ export const translations = {
       title: "Haz tu pedido ahora",
       description: "Pide por WhatsApp y recibe tus jugos bien fríos en casa.",
       cta: "Hablar por WhatsApp",
+      closeOrderCta: "Cerrar pedido por WhatsApp",
+      whatsappIntro: "¡Hola! Quiero cerrar este pedido:",
+      whatsappTotalLabel: "Total de jugos:",
+      whatsappEmpty: "¡Hola! Quiero cerrar mi pedido de jugos.",
+      mapTitle: "Dónde encontrarnos",
+      address: "Taboão da Serra - SP",
     },
+    basket: { title: "Cesta", ariaLabel: "Abrir sección de contacto para cerrar pedido" },
     footer: { rights: "Todos los derechos reservados.", delivery: "*Consulta áreas de entrega." },
   },
   fr: {
     nav: { juices: "Jus", buildYourJuice: "Composez votre Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
+    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", findUs: "Où nous trouver", contact: "Contact" },
     hero: {
       chip: "Livraison le jour même*",
       title: "Les jus les plus frais pour votre routine saine.",
@@ -161,6 +189,7 @@ export const translations = {
       resultPlaceholder: "Sélectionnez 2 fruits pour voir votre mélange.",
       resultReady: "Votre jus personnalisé : {combo}",
     },
+    juices: { title: "Jus disponibles à la vente", availableToday: "Disponible aujourd'hui", lastUnits: "Dernières unités", addToBasket: "Ajouter au panier" },
     combos: { title: "Combos pour économiser", mostOrdered: "Le plus demandé", action: "Je le veux" },
     benefits: {
       title: "Pourquoi choisir KaSucos ?",
@@ -183,7 +212,14 @@ export const translations = {
       title: "Passez votre commande maintenant",
       description: "Commandez sur WhatsApp et recevez vos jus bien frais à domicile.",
       cta: "Parler sur WhatsApp",
+      closeOrderCta: "Finaliser la commande sur WhatsApp",
+      whatsappIntro: "Bonjour ! Je souhaite finaliser cette commande :",
+      whatsappTotalLabel: "Total de jus :",
+      whatsappEmpty: "Bonjour ! Je souhaite finaliser ma commande de jus.",
+      mapTitle: "Où nous trouver",
+      address: "Taboão da Serra - SP",
     },
+    basket: { title: "Panier", ariaLabel: "Ouvrir la section contact pour finaliser la commande" },
     footer: { rights: "Tous droits réservés.", delivery: "*Vérifiez les zones de livraison." },
   },
 };
