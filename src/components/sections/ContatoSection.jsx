@@ -80,7 +80,7 @@ export function ContatoSection({ contact }) {
           </motion.a>
         </motion.div>
 
-        <motion.div id="onde-nos-encontrar" className="map-box" whileHover={{ y: -4 }}>
+        <motion.div id="onde-nos-encontrar" className="map-box">
           <h3>{contact.mapTitle}</h3>
           <p>{contact.address}</p>
           <iframe
