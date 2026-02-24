@@ -1156,6 +1156,32 @@ body.splash-lock {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.16));
 }
 
+.juice-drop-zone {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: -130px;
+  height: 150px;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.fruit-drop {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  margin-left: -17px;
+  border-radius: 50%;
+  box-shadow:
+    0 8px 16px rgba(55, 20, 96, 0.25),
+    inset 0 1px 3px rgba(255, 255, 255, 0.6);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+}
+
 .juice-glass-highlight {
   position: absolute;
   top: 18px;
@@ -1202,6 +1228,9 @@ body.splash-lock {
   transition: background 0.3s ease, top 0.28s ease;
   z-index: 2;
   overflow: hidden;
+  box-shadow:
+    inset 0 10px 20px rgba(255, 255, 255, 0.22),
+    inset 0 -16px 20px rgba(80, 34, 8, 0.09);
 }
 
 .juice-wave {
@@ -1212,6 +1241,15 @@ body.splash-lock {
   height: 24px;
   border-radius: 50%;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.1));
+}
+
+.juice-liquid-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.32), transparent 42%),
+    radial-gradient(circle at 78% 85%, rgba(255, 255, 255, 0.12), transparent 45%);
+  mix-blend-mode: soft-light;
 }
 
 .juice-bubble {
