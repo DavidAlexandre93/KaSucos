@@ -25,8 +25,8 @@ const layers = [
   },
   {
     id: "juice",
-    src: "/img/ai/juice-ai.svg",
-    alt: "Ilustração de sucos gerada por IA",
+    src: "/img/ai/juice-cup-spill.svg",
+    alt: "Copo de suco derramando",
     speed: 0.46,
     start: 0.56,
     end: 1,
@@ -41,6 +41,12 @@ function rangeVisibility(progress, start, end) {
   const phase = (progress - start) / (end - start || 1);
   const fade = phase < 0.2 ? phase / 0.2 : phase > 0.8 ? (1 - phase) / 0.2 : 1;
   return Math.max(0, Math.min(1, fade));
+}
+
+function rangePhase(progress, start, end) {
+  if (progress <= start) return 0;
+  if (progress >= end) return 1;
+  return (progress - start) / (end - start || 1);
 }
 
 export function ScrollArtLayer() {
@@ -67,11 +73,16 @@ export function ScrollArtLayer() {
     () =>
       layers.map((layer) => {
         const visibility = rangeVisibility(scrollProgress, layer.start, layer.end);
+        const phase = rangePhase(scrollProgress, layer.start, layer.end);
         const drift = scrollProgress * 120 * layer.speed;
+        const pourAngle = layer.id === "juice" ? -14 + Math.sin(phase * Math.PI) * 20 : 0;
+        const spillStrength = layer.id === "juice" ? Math.max(0, Math.sin(phase * Math.PI)) : 0;
+
         return {
           ...layer,
           opacity: visibility,
-          transform: `translate3d(${layer.baseX + drift * 0.12}%, ${layer.baseY - drift * 0.15}%, 0) scale(${layer.scale})`,
+          transform: `translate3d(${layer.baseX + drift * 0.12}%, ${layer.baseY - drift * 0.15}%, 0) scale(${layer.scale}) rotate(${pourAngle}deg)`,
+          filter: layer.id === "juice" ? `drop-shadow(0 24px 32px rgba(255, 142, 30, ${0.2 + spillStrength * 0.15}))` : undefined,
         };
       }),
     [scrollProgress],
@@ -80,14 +91,15 @@ export function ScrollArtLayer() {
   return (
     <div className="scroll-art" aria-hidden="true">
       {visuals.map((visual) => (
-        <img
-          key={visual.id}
-          className={`scroll-art-image scroll-art-image--${visual.id}`}
-          src={visual.src}
-          alt={visual.alt}
-          loading="lazy"
-          style={{ opacity: visual.opacity, transform: visual.transform }}
-        />
+        <div key={visual.id} className={`scroll-art-item scroll-art-item--${visual.id}`}>
+          <img
+            className={`scroll-art-image scroll-art-image--${visual.id}`}
+            src={visual.src}
+            alt={visual.alt}
+            loading="lazy"
+            style={{ opacity: visual.opacity, transform: visual.transform, filter: visual.filter }}
+          />
+        </div>
       ))}
     </div>
   );

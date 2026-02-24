@@ -58,6 +58,11 @@ body {
   overflow: hidden;
 }
 
+.scroll-art-item {
+  position: absolute;
+  inset: 0;
+}
+
 .scroll-art-image {
   position: absolute;
   width: clamp(220px, 29vw, 450px);
@@ -79,8 +84,11 @@ body {
 }
 
 .scroll-art-image--juice {
-  bottom: 4%;
-  left: 10%;
+  width: clamp(260px, 34vw, 560px);
+  max-width: 52vw;
+  bottom: 1%;
+  left: 8%;
+  transform-origin: 65% 85%;
 }
 
 
