@@ -1,4 +1,4 @@
-export function CombosSection({ combos, language, labels }) {
+export function CombosSection({ combos, language, labels, onAddCombo }) {
   return (
     <section id="combos" className="section soft">
       <div className="container">
@@ -10,7 +10,9 @@ export function CombosSection({ combos, language, labels }) {
               <h3>{combo.title}</h3>
               <p>{combo.detail[language]}</p>
               <strong>{combo.price}</strong>
-              <button type="button">{labels.action}</button>
+              <button type="button" onClick={() => onAddCombo(combo)}>
+                {labels.action}
+              </button>
             </article>
           ))}
         </div>

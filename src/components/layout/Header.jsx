@@ -5,7 +5,7 @@ const LANGUAGE_OPTIONS = [
   { code: "fr", flag: "🇫🇷", label: "Français" },
 ];
 
-export function Header({ language, onLanguageChange, labels }) {
+export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
   return (
     <header className="topbar">
       <div className="container topbar-inner">
@@ -21,6 +21,10 @@ export function Header({ language, onLanguageChange, labels }) {
             <a href="#beneficios">{labels.benefits}</a>
             <a href="#contato">{labels.contact}</a>
           </nav>
+
+          <button type="button" className="basket-button" onClick={onBasketClick}>
+            🧺 {labels.basket} ({basketCount})
+          </button>
 
           <div className="language-switcher" aria-label="Language selector">
             {LANGUAGE_OPTIONS.map((option) => (
