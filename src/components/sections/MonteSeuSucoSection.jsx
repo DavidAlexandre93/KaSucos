@@ -27,6 +27,7 @@ const FRUIT_COLORS = {
 };
 
 const DEFAULT_JUICE_COLOR = "#ffbf3f";
+const randomBetween = (min, max) => min + Math.random() * (max - min);
 
 const FRUIT_EMOJIS = {
   acerola: "🍒",
@@ -159,7 +160,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
           })
           .fromTo(
             drop,
-            { y: -118, x: gsap.utils.random(-42, 42), scale: 0.55, rotate: gsap.utils.random(-34, 34), opacity: 0 },
+            { y: -118, x: randomBetween(-42, 42), scale: 0.55, rotate: randomBetween(-34, 34), opacity: 0 },
             { y: -92, scale: 1, opacity: 1, duration: 0.15, ease: "power1.out" },
           )
           .to(drop, { y: 156, rotate: "+=110", duration: 0.62, ease: "power2.in" })
