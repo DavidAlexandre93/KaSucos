@@ -11,7 +11,6 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
   useGSAP(
     ({ selector }) => {
       const cards = selector(".card");
-      const images = selector(".card-bottle");
 
       cards.forEach((card, index) => {
         gsap.set(card, { opacity: 0, y: 24, rotate: index % 2 === 0 ? -1.6 : 1.6 });
@@ -23,14 +22,6 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
         rotate: 0,
         duration: 0.62,
         stagger: 0.08,
-      });
-
-      images.forEach((image, index) => {
-        gsap.to(image, {
-          yPercent: index % 2 === 0 ? -2.5 : -1.5,
-          scale: 1.03,
-          duration: 1.5 + index * 0.15,
-        });
       });
     },
     { scope: sectionRef, dependencies: [language, sucos.length] },
