@@ -65,8 +65,6 @@ body {
 
 .scroll-art-image {
   position: absolute;
-  width: clamp(140px, 18vw, 320px);
-  max-width: 34vw;
   opacity: 0;
   filter: drop-shadow(0 20px 30px rgba(59, 21, 117, 0.2));
   transition: opacity 0.65s ease;
@@ -74,20 +72,70 @@ body {
   transform-origin: center;
 }
 
-.scroll-art-image--banner {
-  width: clamp(220px, 32vw, 560px);
-  max-width: 52vw;
-}
-
-.scroll-art-image--about {
-  width: clamp(180px, 24vw, 380px);
-}
-
-.scroll-art-image--garrafinha,
-.scroll-art-image--garrafinha02,
-.scroll-art-image--garrafinha03 {
-  width: clamp(110px, 12vw, 210px);
+.scroll-art-image--jar {
+  width: clamp(140px, 16vw, 240px);
   max-width: 24vw;
+}
+
+.scroll-art-stream {
+  position: absolute;
+  width: clamp(26px, 2.2vw, 40px);
+  height: min(40vh, 360px);
+  border-radius: 999px;
+  transform-origin: top center;
+  filter: blur(0.2px) drop-shadow(0 16px 18px rgba(59, 21, 117, 0.2));
+  transition: opacity 0.65s ease;
+}
+
+.scroll-art-stream::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -10%;
+  width: 180%;
+  height: 16%;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  opacity: 0.65;
+}
+
+.scroll-art-item--jar-morango .scroll-art-stream {
+  left: clamp(150px, 14vw, 210px);
+  top: clamp(86px, 16vh, 160px);
+}
+
+.scroll-art-item--jar-maracuja .scroll-art-stream {
+  left: clamp(41vw, 46vw, 50vw);
+  top: clamp(84px, 15vh, 150px);
+}
+
+.scroll-art-item--jar-uva .scroll-art-stream {
+  left: clamp(78vw, 82vw, 87vw);
+  top: clamp(90px, 16vh, 160px);
+}
+
+.scroll-art-stream--morango {
+  background: linear-gradient(180deg, rgba(255, 95, 162, 0.92), rgba(211, 49, 126, 0.88));
+}
+
+.scroll-art-stream--morango::after {
+  background: rgba(211, 49, 126, 0.68);
+}
+
+.scroll-art-stream--maracuja {
+  background: linear-gradient(180deg, rgba(255, 204, 33, 0.92), rgba(255, 142, 30, 0.9));
+}
+
+.scroll-art-stream--maracuja::after {
+  background: rgba(255, 142, 30, 0.62);
+}
+
+.scroll-art-stream--uva {
+  background: linear-gradient(180deg, rgba(95, 39, 178, 0.9), rgba(59, 21, 117, 0.9));
+}
+
+.scroll-art-stream--uva::after {
+  background: rgba(59, 21, 117, 0.62);
 }
 
 
@@ -177,6 +225,20 @@ body {
   padding: 8px 12px;
   font-weight: 700;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.basket-button-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+}
+
+.basket-button-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .card-action {
@@ -256,6 +318,14 @@ body {
 .language-switcher button.active {
   border-color: var(--yellow-400);
   background: rgba(255, 204, 33, 0.2);
+}
+
+.language-flag {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
 
@@ -1213,9 +1283,29 @@ body.site-party-mode::after {
 }
 
 @media (max-width: 720px) {
-  .scroll-art-image {
-    width: clamp(120px, 40vw, 220px);
-    max-width: 58vw;
+  .scroll-art-image--jar {
+    width: clamp(124px, 36vw, 180px);
+    max-width: 46vw;
+  }
+
+  .scroll-art-stream {
+    width: clamp(20px, 4vw, 30px);
+    height: min(28vh, 220px);
+  }
+
+  .scroll-art-item--jar-morango .scroll-art-stream {
+    left: clamp(108px, 26vw, 138px);
+    top: 20vh;
+  }
+
+  .scroll-art-item--jar-maracuja .scroll-art-stream {
+    left: clamp(43vw, 49vw, 58vw);
+    top: 18vh;
+  }
+
+  .scroll-art-item--jar-uva .scroll-art-stream {
+    left: clamp(76vw, 84vw, 90vw);
+    top: 20vh;
   }
 
 
