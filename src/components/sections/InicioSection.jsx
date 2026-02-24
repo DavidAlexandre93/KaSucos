@@ -122,19 +122,9 @@ export function InicioSection({ hero }) {
             <img className="hero-showcase-logo" src="/img/logotipo.jpeg" alt="Logo KaSucos na cesta de sucos" />
 
             <div className="hero-showcase-basket" aria-hidden="true">
-              <img className="hero-showcase-bottle hero-showcase-bottle--left" src="/img/garrafinha.png" alt="" loading="lazy" />
-              <img className="hero-showcase-bottle hero-showcase-bottle--middle" src="/img/garrafinha02.png" alt="" loading="lazy" />
-              <img className="hero-showcase-bottle hero-showcase-bottle--right" src="/img/garrafinha03.png" alt="" loading="lazy" />
-            </div>
-
-            <div className="hero-showcase-jar hero-showcase-jar--top" aria-hidden="true">
-              <img src="/img/garrafinha02.png" alt="" loading="lazy" />
-              <span className="hero-stream-fill hero-stream-fill--gold" />
-            </div>
-
-            <div className="hero-showcase-jar hero-showcase-jar--bottom" aria-hidden="true">
-              <img src="/img/garrafinha03.png" alt="" loading="lazy" />
-              <span className="hero-stream-fill hero-stream-fill--red" />
+              <img className="hero-showcase-bottle hero-showcase-bottle--left" src="/img/ai/clouds-ai.svg" alt="" loading="lazy" />
+              <img className="hero-showcase-bottle hero-showcase-bottle--middle" src="/img/ai/juice-ai.svg" alt="" loading="lazy" />
+              <img className="hero-showcase-bottle hero-showcase-bottle--right" src="/img/ai/fence-ai.svg" alt="" loading="lazy" />
             </div>
           </motion.div>
         </motion.div>

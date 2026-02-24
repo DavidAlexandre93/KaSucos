@@ -11,7 +11,7 @@ export const dicasBlogData = {
         category: "Conservação",
         title: "Como armazenar seus sucos da forma correta",
         summary: "Aprenda a faixa ideal de temperatura e os cuidados para manter sabor, cor e nutrientes por mais tempo.",
-        image: "/img/garrafinha.png",
+        image: "/img/about.png",
         imageAlt: "Garrafinha de suco KaSucos como exemplo de armazenamento",
         content: [
           "Guarde os sucos sempre refrigerados entre 2°C e 5°C.",
@@ -24,7 +24,7 @@ export const dicasBlogData = {
         category: "Consumo",
         title: "Qual é o melhor prazo para consumir",
         summary: "Entenda em quanto tempo o suco mantém melhor qualidade depois da entrega.",
-        image: "/img/garrafinha02.png",
+        image: "/img/banner.png",
         imageAlt: "Exemplo de suco pronto para consumo",
         content: [
           "O ideal é consumir em até 48 horas após o recebimento.",
@@ -59,7 +59,7 @@ export const dicasBlogData = {
         category: "Storage",
         title: "How to store your juices properly",
         summary: "Learn the ideal temperature range and key practices to preserve flavor and nutrients.",
-        image: "/img/garrafinha03.png",
+        image: "/img/about.png",
         imageAlt: "Juice bottle storage example",
         content: [
           "Keep juices refrigerated between 2°C and 5°C.",
@@ -94,7 +94,7 @@ export const dicasBlogData = {
         category: "Conservación",
         title: "Cómo almacenar correctamente tus jugos",
         summary: "Conoce la temperatura ideal y cuidados básicos para mantener calidad y sabor.",
-        image: "/img/garrafinha.png",
+        image: "/img/about.png",
         imageAlt: "Ejemplo de almacenamiento de jugos",
         content: [
           "Mantén los jugos refrigerados entre 2°C y 5°C.",
@@ -116,7 +116,7 @@ export const dicasBlogData = {
         category: "Conservation",
         title: "Comment bien conserver vos jus",
         summary: "Retrouvez les températures idéales et les bons gestes pour garder qualité et goût.",
-        image: "/img/garrafinha02.png",
+        image: "/img/banner.png",
         imageAlt: "Exemple de conservation de jus",
         content: [
           "Conservez les jus entre 2°C et 5°C.",
