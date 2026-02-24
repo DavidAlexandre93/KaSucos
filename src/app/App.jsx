@@ -54,6 +54,8 @@ export default function App() {
 
   useGSAP(
     ({ selector }) => {
+      const floatingTargets = selector(".card-bottle, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
+      const tiltCards = selector(".card, .combo, .tip-post, .theme-option, .fruit-chip, .reviews blockquote");
       const floatingTargets = selector(".card img, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
       const tiltCards = selector(".card, .combo, .tip-post, .fruit-chip, .reviews blockquote");
 
@@ -152,6 +154,11 @@ export default function App() {
   const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
   const totalLabel = formatBRL(totalAmount);
 
+  const getJuiceQuantity = (juice) => {
+    const id = juice.title || juice.name;
+    return cartItems.find((item) => item.id === id)?.quantity ?? 0;
+  };
+
   const openCart = () => {
     setShowCart(true);
     setShowCheckout(true);
@@ -188,6 +195,7 @@ export default function App() {
             title={t.juices.title}
             labels={t.juices}
             onAddJuice={(juice) => addItem(juice, t.cart.unit)}
+            getJuiceQuantity={getJuiceQuantity}
           />
         </MotionSection>
         <MotionSection delay={0.08}>

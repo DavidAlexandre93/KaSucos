@@ -10,8 +10,8 @@ export const sucos = [
     },
     price: "R$ 14,90",
     availabilityKey: "availableToday",
-    image:
-      "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=1200&q=70",
+    image: "/img/garrafinha03.png",
+    bottleTone: "linear-gradient(150deg, rgba(92, 171, 55, 0.92), rgba(164, 221, 112, 0.85))",
     tag: { pt: "Detox", en: "Detox", es: "Detox", fr: "Détox" },
   },
   {
@@ -25,8 +25,8 @@ export const sucos = [
     },
     price: "R$ 13,90",
     availabilityKey: "availableToday",
-    image:
-      "https://images.unsplash.com/photo-1603569283847-aa295f0d016a?auto=format&fit=crop&w=1200&q=70",
+    image: "/img/garrafinha03.png",
+    bottleTone: "linear-gradient(150deg, rgba(255, 173, 51, 0.94), rgba(255, 221, 133, 0.86))",
     tag: { pt: "Imunidade", en: "Immunity", es: "Inmunidad", fr: "Immunité" },
   },
   {
@@ -40,8 +40,8 @@ export const sucos = [
     },
     price: "R$ 12,90",
     availabilityKey: "lastUnits",
-    image:
-      "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=1200&q=70",
+    image: "/img/garrafinha03.png",
+    bottleTone: "linear-gradient(150deg, rgba(246, 228, 96, 0.95), rgba(184, 236, 122, 0.8))",
     tag: { pt: "Refrescante", en: "Refreshing", es: "Refrescante", fr: "Rafraîchissant" },
   },
   {
@@ -55,8 +55,8 @@ export const sucos = [
     },
     price: "R$ 17,90",
     availabilityKey: "availableToday",
-    image:
-      "https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=1200&q=70",
+    image: "/img/garrafinha03.png",
+    bottleTone: "linear-gradient(150deg, rgba(197, 58, 116, 0.95), rgba(122, 33, 102, 0.9))",
     tag: { pt: "Energia", en: "Energy", es: "Energía", fr: "Énergie" },
   },
 ];
