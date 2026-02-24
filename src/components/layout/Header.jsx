@@ -1,3 +1,4 @@
+import { motion } from "../../lib/motion";
 import { useEffect, useState } from "react";
 
 const LANGUAGE_OPTIONS = [
@@ -104,10 +105,10 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
   return (
     <header className="topbar">
       <div className="container topbar-inner">
-        <a href="#inicio" className="brand">
+        <motion.a href="#inicio" className="brand" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <img src="/img/logotipo.jpeg" alt="KaSucos" />
           <span>KaSucos</span>
-        </a>
+        </motion.a>
 
         <div className="topbar-right">
           <button
@@ -135,7 +136,7 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
             ))}
           </nav>
 
-          <button type="button" className="basket-button" onClick={onBasketClick}>
+          <motion.button type="button" className="basket-button" onClick={onBasketClick} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97 }}>
             🧺 {labels.basket ?? "Cesta"} ({basketCount})
             <span className="basket-button-icon" aria-hidden="true">
               <svg viewBox="0 0 64 64" role="img" focusable="false">
@@ -146,11 +147,11 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
                 <path d="M24.3 52.4a1.6 1.6 0 0 1-1.58-1.35l-1.9-13.3a1.6 1.6 0 1 1 3.17-.46l1.9 13.3a1.6 1.6 0 0 1-1.59 1.81zm7.7 0a1.6 1.6 0 0 1-1.6-1.6V37.4a1.6 1.6 0 1 1 3.2 0v13.4a1.6 1.6 0 0 1-1.6 1.6zm7.7 0a1.6 1.6 0 0 1-1.59-1.81l1.9-13.3a1.6 1.6 0 1 1 3.17.46l-1.9 13.3a1.6 1.6 0 0 1-1.58 1.35z" fill="#0b2379" />
               </svg>
             </span>
-          </button>
+          </motion.button>
 
           <div className="language-switcher" aria-label="Language selector">
             {LANGUAGE_OPTIONS.map((option) => (
-              <button
+              <motion.button
                 key={option.code}
                 type="button"
                 title={option.label}
@@ -169,7 +170,7 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
                   loading="lazy"
                   decoding="async"
                 />
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>

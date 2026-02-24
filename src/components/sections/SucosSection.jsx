@@ -1,3 +1,6 @@
+import { motion } from "../../lib/motion";
+import { buttonMotion, cardMotion } from "../ui/MotionPrimitives";
+
 export function SucosSection({ sucos, language, title, labels, onAddJuice }) {
   return (
     <section id="catalogo" className="section">
@@ -5,7 +8,7 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice }) {
         <h2 className="section-title">{title}</h2>
         <div className="grid cards">
           {sucos.map((suco) => (
-            <article key={suco.name} className="card">
+            <motion.article key={suco.name} className="card" {...cardMotion}>
               <img src={suco.image} alt={suco.name} loading="lazy" />
               <div className="card-body">
                 <span className="tag">{suco.tag[language]}</span>
@@ -16,11 +19,11 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice }) {
                   <strong>{suco.price}</strong>
                   <span>{suco.volume}</span>
                 </div>
-                <button type="button" className="card-action" onClick={() => onAddJuice?.(suco)}>
+                <motion.button type="button" className="card-action" onClick={() => onAddJuice?.(suco)} {...buttonMotion}>
                   {labels.addToBasket}
-                </button>
+                </motion.button>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>

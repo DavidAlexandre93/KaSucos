@@ -13,13 +13,13 @@ import { DepoimentosSection } from "../components/sections/DepoimentosSection";
 import { TemasSection } from "../components/sections/TemasSection";
 import { DicasInformacoesSection } from "../components/sections/DicasInformacoesSection";
 import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
-import { useFunEffects } from "../hooks/useFunEffects";
 import { temas } from "../data/temasData";
 import { useLanguage } from "../hooks/useLanguage";
 import { themeNames, translations } from "../i18n/translations";
 import { CartSection } from "../components/sections/CartSection";
 import { CheckoutSection } from "../components/sections/CheckoutSection";
 import { dicasBlogData } from "../data/dicasBlogData";
+import { MotionSection } from "../components/ui/MotionPrimitives";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
@@ -33,7 +33,6 @@ export default function App() {
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
 
-  useFunEffects();
 
   const addItem = (product, typeLabel) => {
     setCartItems((current) => {
@@ -87,30 +86,56 @@ export default function App() {
         onBasketClick={openCart}
       />
       <main>
-        <InicioSection hero={t.hero} />
-        <TemasSection
-          temas={temas}
-          temaSelecionado={temaSelecionado}
-          onTemaChange={setTemaSelecionado}
-          title={t.theme.title}
-          description={t.theme.description}
-          themeNames={themeNames[language]}
-        />
-        <SucosSection
-          sucos={sucos}
-          language={language}
-          title={t.juices.title}
-          labels={t.juices}
-          onAddJuice={(juice) => addItem(juice, t.cart.unit)}
-        />
-        <MonteSeuSucoSection content={t.customJuice} />
-        <CombosSection combos={combos} language={language} labels={t.combos} onAddCombo={(combo) => addItem(combo, t.cart.combo)} />
-        {showCart ? <CartSection labels={t.cart} items={cartItems} total={totalLabel} onFinalize={finalizePurchase} /> : null}
-        {showCheckout ? <CheckoutSection checkout={t.checkout} total={totalLabel} /> : null}
-        <BeneficiosSection benefits={t.benefits} />
-        <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.pt} />
-        <DepoimentosSection testimonials={t.testimonials} />
-        <ContatoSection contact={t.contact} />
+        <MotionSection>
+          <InicioSection hero={t.hero} />
+        </MotionSection>
+        <MotionSection delay={0.04}>
+          <TemasSection
+            temas={temas}
+            temaSelecionado={temaSelecionado}
+            onTemaChange={setTemaSelecionado}
+            title={t.theme.title}
+            description={t.theme.description}
+            themeNames={themeNames[language]}
+          />
+        </MotionSection>
+        <MotionSection delay={0.06}>
+          <SucosSection
+            sucos={sucos}
+            language={language}
+            title={t.juices.title}
+            labels={t.juices}
+            onAddJuice={(juice) => addItem(juice, t.cart.unit)}
+          />
+        </MotionSection>
+        <MotionSection delay={0.08}>
+          <MonteSeuSucoSection content={t.customJuice} />
+        </MotionSection>
+        <MotionSection delay={0.1}>
+          <CombosSection combos={combos} language={language} labels={t.combos} onAddCombo={(combo) => addItem(combo, t.cart.combo)} />
+        </MotionSection>
+        {showCart ? (
+          <MotionSection>
+            <CartSection labels={t.cart} items={cartItems} total={totalLabel} onFinalize={finalizePurchase} />
+          </MotionSection>
+        ) : null}
+        {showCheckout ? (
+          <MotionSection>
+            <CheckoutSection checkout={t.checkout} total={totalLabel} />
+          </MotionSection>
+        ) : null}
+        <MotionSection>
+          <BeneficiosSection benefits={t.benefits} />
+        </MotionSection>
+        <MotionSection>
+          <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.pt} />
+        </MotionSection>
+        <MotionSection>
+          <DepoimentosSection testimonials={t.testimonials} />
+        </MotionSection>
+        <MotionSection>
+          <ContatoSection contact={t.contact} />
+        </MotionSection>
       </main>
       <Footer footer={t.footer} />
     </div>
