@@ -44,7 +44,10 @@ export default function App() {
   }, [showSplash]);
 
   useGSAP(
-    () => {
+    ({ selector }) => {
+      const floatingTargets = selector(".card img, .combo, .tip-post-image, .map-box iframe, .hero-showcase-jar");
+      const tiltCards = selector(".card, .combo, .tip-post, .theme-option, .fruit-chip, .reviews blockquote");
+
       const onPointerMove = (event) => {
         const x = Math.round((event.clientX / window.innerWidth) * 100);
         const y = Math.round((event.clientY / window.innerHeight) * 100);
@@ -53,10 +56,61 @@ export default function App() {
           "--cursor-y": `${y}%`,
           duration: 0.3,
         });
+
+        tiltCards.forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          const centerX = rect.left + rect.width / 2;
+          const centerY = rect.top + rect.height / 2;
+          const rotateY = ((event.clientX - centerX) / Math.max(220, rect.width)) * 10;
+          const rotateX = ((centerY - event.clientY) / Math.max(220, rect.height)) * 10;
+
+          gsap.to(card, {
+            "--tilt-x": `${rotateX.toFixed(2)}deg`,
+            "--tilt-y": `${rotateY.toFixed(2)}deg`,
+            duration: 0.35,
+          });
+        });
       };
 
+      const onPointerLeave = () => {
+        tiltCards.forEach((card) => {
+          gsap.to(card, { "--tilt-x": "0deg", "--tilt-y": "0deg", duration: 0.45 });
+        });
+      };
+
+      const onScroll = () => {
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const progress = window.scrollY / maxScroll;
+        gsap.to(document.documentElement, {
+          "--scroll-glow": progress,
+          "--scroll-party": Math.max(0, (progress - 0.25) * 1.4),
+          duration: 0.28,
+        });
+      };
+
+      const pulseInterval = window.setInterval(() => {
+        floatingTargets.forEach((target, index) => {
+          const shift = (index % 2 === 0 ? -1 : 1) * (8 + (index % 3) * 2);
+          gsap.to(target, {
+            yPercent: shift,
+            rotate: (index % 2 === 0 ? -1 : 1) * 1.4,
+            scale: 1.012,
+            duration: 1.2 + (index % 4) * 0.12,
+          });
+        });
+      }, 1500);
+
       window.addEventListener("pointermove", onPointerMove, { passive: true });
-      return () => window.removeEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerleave", onPointerLeave);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      return () => {
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerleave", onPointerLeave);
+        window.removeEventListener("scroll", onScroll);
+        window.clearInterval(pulseInterval);
+      };
     },
     { scope: siteRef, dependencies: [] },
   );

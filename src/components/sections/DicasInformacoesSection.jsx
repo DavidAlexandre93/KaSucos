@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import gsap from "../../lib/gsap";
 import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { useGSAP } from "../../lib/useGSAP";
+import { motion } from "../../lib/motion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,8 +89,8 @@ export function DicasInformacoesSection({ blog }) {
 
         <div className="tips-blog-list">
           {posts.map((post) => (
-            <article key={post.id} className="tip-post">
-              {post.image ? <img src={post.image} alt={post.imageAlt} className="tip-post-image" /> : null}
+            <motion.article key={post.id} className="tip-post" whileHover={{ y: -5, scale: 1.01 }} transition={{ duration: 0.25 }}>
+              {post.image ? <motion.img src={post.image} alt={post.imageAlt} className="tip-post-image" whileHover={{ scale: 1.03 }} /> : null}
               <span className="tip-category">{post.category}</span>
               <h3>{post.title}</h3>
               <p className="tip-summary">{post.summary}</p>
@@ -98,10 +99,10 @@ export function DicasInformacoesSection({ blog }) {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <button type="button" className="tip-like-button" onClick={() => handleLike(post.id)}>
+              <motion.button type="button" className="tip-like-button" onClick={() => handleLike(post.id)} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.97 }}>
                 👍 {blog.likeButtonLabel}: {likesByPost[post.id] ?? 0}
-              </button>
-            </article>
+              </motion.button>
+            </motion.article>
           ))}
         </div>
       </div>

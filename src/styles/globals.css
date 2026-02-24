@@ -462,6 +462,19 @@ body.splash-lock {
   cursor: pointer;
 }
 
+.card,
+.combo,
+.tip-post,
+.theme-option,
+.fruit-chip,
+.reviews blockquote {
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  transform: perspective(920px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y));
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
 .cart-section {
   padding-top: 10px;
 }
