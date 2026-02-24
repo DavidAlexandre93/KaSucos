@@ -7,6 +7,57 @@ const LANGUAGE_OPTIONS = [
   { code: "fr", countryCode: "fr", label: "Français" },
 ];
 
+const COMPACT_NAV_LABELS = {
+  pt: {
+    home: "Início",
+    themes: "Temas",
+    juices: "Sucos",
+    buildYourJuice: "Monte",
+    combos: "Combos",
+    benefits: "Benef.",
+    tipsInfo: "Dicas",
+    testimonials: "Avaliações",
+    findUs: "Onde",
+    contact: "Contato",
+  },
+  en: {
+    home: "Home",
+    themes: "Themes",
+    juices: "Juices",
+    buildYourJuice: "Build",
+    combos: "Combos",
+    benefits: "Benefits",
+    tipsInfo: "Tips",
+    testimonials: "Reviews",
+    findUs: "Find us",
+    contact: "Contact",
+  },
+  es: {
+    home: "Inicio",
+    themes: "Temas",
+    juices: "Jugos",
+    buildYourJuice: "Arma",
+    combos: "Combos",
+    benefits: "Benef.",
+    tipsInfo: "Consejos",
+    testimonials: "Reseñas",
+    findUs: "Dónde",
+    contact: "Contacto",
+  },
+  fr: {
+    home: "Accueil",
+    themes: "Thèmes",
+    juices: "Jus",
+    buildYourJuice: "Composer",
+    combos: "Combos",
+    benefits: "Avantages",
+    tipsInfo: "Conseils",
+    testimonials: "Avis",
+    findUs: "Adresse",
+    contact: "Contact",
+  },
+};
+
 export function Header({ language, onLanguageChange, labels, basketCount, onBasketClick }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -22,6 +73,33 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
   }, []);
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const navLabels = {
+    home: labels.home ?? "Início",
+    themes: labels.themes ?? "Temas",
+    juices: labels.juices ?? "Sucos",
+    buildYourJuice: labels.buildYourJuice ?? "Monte seu Suco",
+    combos: labels.combos ?? "Combos",
+    benefits: labels.benefits ?? "Benefícios",
+    tipsInfo: labels.tipsInfo ?? "Dicas e Informações",
+    testimonials: labels.testimonials ?? "Depoimentos",
+    findUs: labels.findUs ?? "Onde nos encontrar",
+    contact: labels.contact ?? "Contato",
+  };
+
+  const compactLabels = COMPACT_NAV_LABELS[language] ?? COMPACT_NAV_LABELS.pt;
+
+  const menuItems = [
+    { href: "#inicio", key: "home" },
+    { href: "#temas", key: "themes" },
+    { href: "#catalogo", key: "juices" },
+    { href: "#monte-seu-suco", key: "buildYourJuice" },
+    { href: "#combos", key: "combos" },
+    { href: "#beneficios", key: "benefits" },
+    { href: "#dicas", key: "tipsInfo" },
+    { href: "#depoimentos", key: "testimonials" },
+    { href: "#onde-nos-encontrar", key: "findUs" },
+    { href: "#contato", key: "contact" },
+  ];
 
   return (
     <header className="topbar">
@@ -57,9 +135,16 @@ export function Header({ language, onLanguageChange, labels, basketCount, onBask
             <a href="#dicas" onClick={closeMobileMenu}>{labels.tipsInfo}</a>
             <a href="#onde-nos-encontrar" onClick={closeMobileMenu}>{labels.findUs}</a>
             <a href="#contato" onClick={closeMobileMenu}>{labels.contact}</a>
+          <nav aria-label={labels.title ?? "Main navigation"}>
+            {menuItems.map((item) => (
+              <a key={item.key} href={item.href} title={navLabels[item.key]}>
+                {compactLabels[item.key]}
+              </a>
+            ))}
           </nav>
 
           <button type="button" className="basket-button" onClick={onBasketClick}>
+            🧺 {labels.basket ?? "Cesta"} ({basketCount})
             <span className="basket-button-icon" aria-hidden="true">
               <svg viewBox="0 0 64 64" role="img" focusable="false">
                 <path d="M23 17a2 2 0 0 1-1.79-2.9l6-12a2 2 0 1 1 3.58 1.8l-6 12A2 2 0 0 1 23 17zm18 0a2 2 0 0 1-1.79-1.1l-6-12a2 2 0 1 1 3.58-1.8l6 12A2 2 0 0 1 41 17z" fill="#0b2379" />

@@ -3,7 +3,7 @@ export const translations = {
     nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", contact: "Contato", basket: "Cesta" },
     nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", tipsInfo: "Dicas e Informações", contact: "Contato" },
     nav: { juices: "Sucos", buildYourJuice: "Monte seu Suco", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
-    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", findUs: "Onde nos encontrar", contact: "Contato" },
+    nav: { home: "Início", themes: "Temas", juices: "Sucos", buildYourJuice: "Monte seu Suco", combos: "Combos", benefits: "Benefícios", tipsInfo: "Dicas e Informações", testimonials: "Depoimentos", findUs: "Onde nos encontrar", contact: "Contato" },
     hero: {
       chip: "Entrega no mesmo dia*",
       title: "Os sucos mais frescos para sua rotina saudável.",
@@ -88,7 +88,7 @@ export const translations = {
     nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", contact: "Contact", basket: "Basket" },
     nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", tipsInfo: "Tips & Info", contact: "Contact" },
     nav: { juices: "Juices", buildYourJuice: "Build your Juice", combos: "Combos", benefits: "Benefits", contact: "Contact" },
-    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", findUs: "Where to find us", contact: "Contact" },
+    nav: { home: "Home", themes: "Themes", juices: "Juices", buildYourJuice: "Build your Juice", combos: "Combos", benefits: "Benefits", tipsInfo: "Tips & Info", testimonials: "Testimonials", findUs: "Where to find us", contact: "Contact" },
     hero: {
       chip: "Same-day delivery*",
       title: "The freshest juices for your healthy routine.",
@@ -170,7 +170,7 @@ export const translations = {
     nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", contact: "Contacto", basket: "Cesta" },
     nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", tipsInfo: "Consejos e Información", contact: "Contacto" },
     nav: { juices: "Jugos", buildYourJuice: "Arma tu Jugo", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
-    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", findUs: "Dónde encontrarnos", contact: "Contacto" },
+    nav: { home: "Inicio", themes: "Temas", juices: "Jugos", buildYourJuice: "Arma tu Jugo", combos: "Combos", benefits: "Beneficios", tipsInfo: "Consejos e Información", testimonials: "Testimonios", findUs: "Dónde encontrarnos", contact: "Contacto" },
     hero: {
       chip: "Entrega el mismo día*",
       title: "Los jugos más frescos para tu rutina saludable.",
@@ -252,7 +252,7 @@ export const translations = {
     nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", contact: "Contact", basket: "Panier" },
     nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", tipsInfo: "Conseils & Infos", contact: "Contact" },
     nav: { juices: "Jus", buildYourJuice: "Composez votre Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
-    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", findUs: "Où nous trouver", contact: "Contact" },
+    nav: { home: "Accueil", themes: "Thèmes", juices: "Jus", buildYourJuice: "Composez votre Jus", combos: "Combos", benefits: "Avantages", tipsInfo: "Conseils & Infos", testimonials: "Témoignages", findUs: "Où nous trouver", contact: "Contact" },
     hero: {
       chip: "Livraison le jour même*",
       title: "Les jus les plus frais pour votre routine saine.",
