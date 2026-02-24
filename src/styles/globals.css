@@ -565,6 +565,38 @@ blockquote cite {
   color: #f8ddff;
 }
 
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.map-box {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(95, 39, 178, 0.16);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(59, 21, 117, 0.16);
+}
+
+.map-box h3 {
+  margin: 0;
+}
+
+.map-box p {
+  margin: 6px 0 14px;
+  color: var(--muted);
+}
+
+.map-box iframe {
+  width: 100%;
+  height: 240px;
+  border: 0;
+  border-radius: 14px;
+}
+
 .footer {
   background: linear-gradient(90deg, #2e124d, #3f1f68, #2f6f2b);
   color: #f8d98d;
@@ -690,7 +722,8 @@ body::before {
 
   .combos,
   .reviews,
-  .hero-grid {
+  .hero-grid,
+  .contact-grid {
     grid-template-columns: 1fr;
   }
 }
