@@ -72,30 +72,29 @@ body {
 
 .scroll-art-image {
   position: absolute;
-  width: clamp(220px, 29vw, 450px);
-  max-width: 44vw;
+  width: clamp(140px, 18vw, 320px);
+  max-width: 34vw;
   opacity: 0;
-  filter: drop-shadow(0 24px 32px rgba(59, 21, 117, 0.18));
+  filter: drop-shadow(0 20px 30px rgba(59, 21, 117, 0.2));
   transition: opacity 0.65s ease;
   will-change: transform, opacity;
+  transform-origin: center;
 }
 
-.scroll-art-image--clouds {
-  top: 6%;
-  left: 5%;
-}
-
-.scroll-art-image--fence {
-  top: 42%;
-  right: 2%;
-}
-
-.scroll-art-image--juice {
-  width: clamp(260px, 34vw, 560px);
+.scroll-art-image--banner {
+  width: clamp(220px, 32vw, 560px);
   max-width: 52vw;
-  bottom: 1%;
-  left: 8%;
-  transform-origin: 65% 85%;
+}
+
+.scroll-art-image--about {
+  width: clamp(180px, 24vw, 380px);
+}
+
+.scroll-art-image--garrafinha,
+.scroll-art-image--garrafinha02,
+.scroll-art-image--garrafinha03 {
+  width: clamp(110px, 12vw, 210px);
+  max-width: 24vw;
 }
 
 
@@ -632,12 +631,8 @@ body::before {
 
 @media (max-width: 720px) {
   .scroll-art-image {
-    width: clamp(180px, 45vw, 260px);
-    max-width: 62vw;
-  }
-
-  .scroll-art-image--fence {
-    right: -8%;
+    width: clamp(120px, 40vw, 220px);
+    max-width: 58vw;
   }
 
 
