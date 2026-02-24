@@ -293,6 +293,14 @@ body {
   background: rgba(255, 204, 33, 0.2);
 }
 
+.language-flag {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
 
 .basket-slot {
   margin-left: 8px;
