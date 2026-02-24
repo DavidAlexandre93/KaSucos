@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "Moon Flower";
+  src: url("/font/moon-flower/MoonFlower.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root {
   --purple-900: #3b1575;
   --purple-700: #5f27b2;
@@ -28,7 +35,7 @@ body,
 }
 
 body {
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Moon Flower", cursive;
   color: var(--text);
   background:
     radial-gradient(circle at 8% 0%, rgba(255, 204, 33, 0.36), transparent 32%),
