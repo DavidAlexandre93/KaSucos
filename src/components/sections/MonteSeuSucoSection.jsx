@@ -1,4 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import gsap from "../../lib/gsap";
+import { motion } from "../../lib/motion";
+import { useGSAP } from "../../lib/useGSAP";
 
 const MAX_COMBINATIONS = 2;
 
@@ -32,6 +35,7 @@ const normalizeFruitKey = (value) =>
     .toLowerCase();
 
 export function MonteSeuSucoSection({ content }) {
+  const sectionRef = useRef(null);
   const [selectedFruits, setSelectedFruits] = useState([]);
 
   const canCreate = selectedFruits.length === MAX_COMBINATIONS;
@@ -71,18 +75,65 @@ export function MonteSeuSucoSection({ content }) {
     }
   };
 
+  useGSAP(
+    ({ selector }) => {
+      const scene = selector(".juice-scene")[0];
+      const liquid = selector(".juice-liquid")[0];
+      const bubbles = selector(".juice-bubble");
+      const droplets = selector(".juice-droplet");
+      const fruitChips = selector(".fruit-chip");
+
+      gsap
+        .timeline()
+        .fromTo(scene, { opacity: 0, y: 30, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.65 })
+        .fromTo(fruitChips, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.05 });
+
+      if (liquid) {
+        gsap.set(liquid, { "--liquid-level": 84 });
+        gsap.to(liquid, { "--liquid-level": 32, duration: 0.7 });
+      }
+
+      bubbles.forEach((bubble, index) => {
+        gsap.set(bubble, { y: 0, opacity: 0.35 + index * 0.08 });
+        gsap.to(bubble, { y: -18 - index * 8, opacity: 0.7, duration: 0.9 + index * 0.08 });
+      });
+
+      droplets.forEach((droplet, index) => {
+        gsap.set(droplet, { y: 12, opacity: 0 });
+        gsap.to(droplet, { y: -10 - index * 6, opacity: 0.85, duration: 0.7 + index * 0.06 });
+      });
+    },
+    { scope: sectionRef, dependencies: [selectedFruits.join("|")] },
+  );
+
   return (
-    <section id="monte-seu-suco" className="section soft">
+    <section id="monte-seu-suco" className="section soft" ref={sectionRef}>
       <div className="container">
         <h2 className="section-title">{content.title}</h2>
         <p className="builder-description">{content.description}</p>
 
-        <div className="juice-preview">
-          <div className="juice-cup">
-            <div className="juice-liquid" style={cupFillStyle} />
+        <div className="juice-preview juice-scene">
+          <div className="juice-aura" aria-hidden="true" />
+          <img className="juice-bottle juice-bottle--left" src="/img/garrafinha.png" alt="" aria-hidden="true" loading="lazy" />
+          <img className="juice-bottle juice-bottle--right" src="/img/garrafinha03.png" alt="" aria-hidden="true" loading="lazy" />
+
+          <motion.div className="juice-cup" whileHover={{ y: -4, scale: 1.01 }} transition={{ duration: 0.25 }}>
+            <div className="juice-liquid" style={cupFillStyle}>
+              <span className="juice-wave" />
+              <span className="juice-bubble juice-bubble--one" />
+              <span className="juice-bubble juice-bubble--two" />
+              <span className="juice-bubble juice-bubble--three" />
+            </div>
             <div className="juice-lid" />
+            <div className="juice-glass-highlight" aria-hidden="true" />
+            <div className="juice-glass-reflection" aria-hidden="true" />
+            <span className="juice-droplet juice-droplet--one" aria-hidden="true" />
+            <span className="juice-droplet juice-droplet--two" aria-hidden="true" />
+            <span className="juice-droplet juice-droplet--three" aria-hidden="true" />
             <div className="cup-logo">KaSucos</div>
-          </div>
+          </motion.div>
+
+          <div className="juice-shadow" aria-hidden="true" />
         </div>
 
         <div className="builder-grid">
@@ -92,18 +143,21 @@ export function MonteSeuSucoSection({ content }) {
             const fruitColor = FRUIT_COLORS[normalizeFruitKey(fruit)] ?? DEFAULT_JUICE_COLOR;
 
             return (
-              <button
+              <motion.button
                 key={fruit}
                 type="button"
                 className={`fruit-chip ${active ? "active" : ""}`.trim()}
                 onClick={() => handleToggleFruit(fruit)}
                 disabled={disabled}
+                whileHover={{ y: -2, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.2 }}
               >
                 <span className="mini-cup">
                   <span className="mini-cup-liquid" style={{ background: fruitColor }} />
                 </span>
                 <span>{fruit}</span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
