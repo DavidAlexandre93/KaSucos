@@ -21,12 +21,23 @@
     <filter id="shadow" x="170" y="100" width="900" height="1080" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
       <feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#8B3B00" flood-opacity="0.28"/>
     </filter>
+    <linearGradient id="handleGlass" x1="768" y1="476" x2="980" y2="800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.28"/>
+    </linearGradient>
+    <linearGradient id="labelBg" x1="468" y1="760" x2="748" y2="850" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4B1F8A"/>
+      <stop offset="1" stop-color="#2F0E63"/>
+    </linearGradient>
   </defs>
 
   <circle cx="600" cy="612" r="420" fill="url(#bgGlow)"/>
 
   <g filter="url(#shadow)" transform="rotate(-9 610 650)">
+    <path d="M868 336L955 334C981 333 1000 354 996 378C992 399 972 415 949 414L862 414" fill="#FFFFFF" fill-opacity="0.7"/>
     <path d="M316 356C334 304 386 266 442 266H772C826 266 874 300 892 350L834 930C823 994 768 1042 703 1042H500C438 1042 385 997 372 936L316 356Z" fill="url(#cupEdge)"/>
+    <path d="M812 474C892 468 957 520 968 600C979 682 932 767 855 792L836 740C884 723 914 667 906 615C898 562 856 525 807 530L812 474Z" fill="url(#handleGlass)"/>
+    <path d="M820 532C868 530 910 565 918 614C925 665 897 712 853 728L847 694C869 684 885 651 880 620C876 590 850 569 822 569L820 532Z" fill="#FFFFFF" fill-opacity="0.55"/>
     <path d="M346 388C361 348 399 320 442 320H767C809 320 846 347 861 386L815 903C805 952 763 987 713 987H496C448 987 407 955 396 908L346 388Z" fill="url(#juiceMain)"/>
 
     <ellipse cx="608" cy="340" rx="280" ry="60" fill="#FFE58A" fill-opacity="0.78"/>
@@ -38,6 +49,10 @@
     <path d="M950 512C962 495 994 493 1008 509C1024 529 1007 561 979 562C957 562 936 532 950 512Z" fill="#FFA000"/>
 
     <ellipse cx="618" cy="728" rx="175" ry="122" fill="#FFE9A9" fill-opacity="0.27"/>
-    <text x="610" y="756" text-anchor="middle" fill="#5A1A7A" font-size="112" font-family="Inter, Arial, sans-serif" font-weight="800">KaSucos</text>
+    <g transform="translate(470 744)">
+      <rect width="272" height="114" rx="54" fill="url(#labelBg)"/>
+      <image href="/img/logotipo.jpeg" x="24" y="26" width="64" height="64" preserveAspectRatio="xMidYMid slice"/>
+      <text x="155" y="74" text-anchor="middle" fill="#FFFFFF" font-size="42" font-family="Inter, Arial, sans-serif" font-weight="800">KaSucos</text>
+    </g>
   </g>
 </svg>
