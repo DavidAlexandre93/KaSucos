@@ -753,6 +753,26 @@ body.splash-lock {
   letter-spacing: -0.02em;
 }
 
+.typing-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.typing-text--highlight {
+  padding-right: 6px;
+  background: linear-gradient(120deg, rgba(255, 204, 33, 0.24), rgba(95, 197, 45, 0.2));
+  border-radius: 10px;
+}
+
+.typing-caret {
+  width: 2px;
+  height: 1em;
+  background: currentColor;
+  border-radius: 99px;
+  animation: typingCaretBlink 0.7s steps(1, end) infinite;
+}
+
 .theme-section {
   padding-top: 2px;
 }
@@ -1740,4 +1760,9 @@ body.site-party-mode::after {
     height: 96px;
     left: 36%;
   }
+}
+
+@keyframes typingCaretBlink {
+  0%, 46% { opacity: 1; }
+  47%, 100% { opacity: 0; }
 }

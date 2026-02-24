@@ -1,5 +1,6 @@
 import { motion } from "../../lib/motion";
 import { buttonMotion } from "../ui/MotionPrimitives";
+import { TypingText } from "../ui/TypingText";
 
 export function TemasSection({
   temas,
@@ -12,7 +13,7 @@ export function TemasSection({
   return (
     <section id="temas" className="section theme-section">
       <div className="container">
-        <h2 className="section-title">{title}</h2>
+        <TypingText className="section-title" text={title} highlight />
         <p className="theme-text">{description}</p>
         <div className="theme-options">
           {Object.entries(temas).map(([key]) => (

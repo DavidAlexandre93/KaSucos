@@ -4,6 +4,7 @@ import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 import { buttonMotion, cardMotion } from "../ui/MotionPrimitives";
+import { TypingText } from "../ui/TypingText";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -101,7 +102,7 @@ export function InicioSection({ hero }) {
           <motion.p className="chip hero-chip" whileHover={{ scale: 1.04, rotate: -2 }} transition={{ duration: 0.2 }}>
             {hero.chip}
           </motion.p>
-          <h1 className="hero-title">{hero.title}</h1>
+          <TypingText as="h1" className="hero-title" text={hero.title} speed={36} delay={80} highlight />
           <p className="hero-description">{hero.description}</p>
           <div className="hero-actions">
             <motion.a href="#catalogo" className="btn-primary" {...buttonMotion}>
