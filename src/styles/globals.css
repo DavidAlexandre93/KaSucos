@@ -73,8 +73,27 @@ body {
 }
 
 .scroll-art-image--jar {
-  width: clamp(140px, 16vw, 240px);
-  max-width: 24vw;
+  width: clamp(220px, 24vw, 360px);
+  max-width: 34vw;
+}
+
+.scroll-art-image--spill {
+  width: clamp(460px, 56vw, 980px);
+  max-width: 76vw;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 30px 40px rgba(59, 21, 117, 0.18));
+}
+
+.scroll-art-image--spill-morango {
+  filter: hue-rotate(305deg) saturate(1.2) drop-shadow(0 30px 40px rgba(147, 36, 107, 0.24));
+}
+
+.scroll-art-image--spill-maracuja {
+  filter: hue-rotate(0deg) saturate(1.1) drop-shadow(0 30px 40px rgba(255, 142, 30, 0.24));
+}
+
+.scroll-art-image--spill-uva {
+  filter: hue-rotate(95deg) saturate(1.12) drop-shadow(0 30px 40px rgba(59, 21, 117, 0.3));
 }
 
 .scroll-art-stream {
@@ -100,17 +119,17 @@ body {
 }
 
 .scroll-art-item--jar-morango .scroll-art-stream {
-  left: clamp(150px, 14vw, 210px);
+  left: clamp(210px, 20vw, 310px);
   top: clamp(86px, 16vh, 160px);
 }
 
 .scroll-art-item--jar-maracuja .scroll-art-stream {
-  left: clamp(41vw, 46vw, 50vw);
+  left: clamp(45vw, 51vw, 56vw);
   top: clamp(84px, 15vh, 150px);
 }
 
 .scroll-art-item--jar-uva .scroll-art-stream {
-  left: clamp(78vw, 82vw, 87vw);
+  left: clamp(82vw, 87vw, 93vw);
   top: clamp(90px, 16vh, 160px);
 }
 
@@ -1346,6 +1365,11 @@ body.site-party-mode::after {
   .scroll-art-image--jar {
     width: clamp(124px, 36vw, 180px);
     max-width: 46vw;
+  }
+
+  .scroll-art-image--spill {
+    width: clamp(260px, 84vw, 520px);
+    max-width: 95vw;
   }
 
   .scroll-art-stream {

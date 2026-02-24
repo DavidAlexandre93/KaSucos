@@ -44,6 +44,13 @@ export function ScrollArtLayer() {
           className={`scroll-art-item scroll-art-item--${visual.id}`}
           style={{ transform: visual.transform }}
         >
+          <img
+            className={`scroll-art-image scroll-art-image--spill scroll-art-image--spill-${visual.flavor}`}
+            src={visual.spillSrc}
+            alt=""
+            loading="lazy"
+            style={{ opacity: visual.opacity * 0.35 }}
+          />
           <div
             className={`scroll-art-stream scroll-art-stream--${visual.flavor}`}
             style={{ opacity: visual.opacity }}
