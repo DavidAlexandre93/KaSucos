@@ -11,10 +11,13 @@ import { Header } from "../components/layout/Header";
 import { ScrollArtLayer } from "../components/layout/ScrollArtLayer";
 import { DepoimentosSection } from "../components/sections/DepoimentosSection";
 import { TemasSection } from "../components/sections/TemasSection";
+import { useFunEffects } from "../hooks/useFunEffects";
 import { temas } from "../data/temasData";
 
 export default function App() {
   const [temaSelecionado, setTemaSelecionado] = useState("roxo");
+
+  useFunEffects();
 
   return (
     <div className="site" style={temas[temaSelecionado].colors}>
