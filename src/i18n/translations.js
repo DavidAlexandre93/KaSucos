@@ -1,6 +1,6 @@
 export const translations = {
   pt: {
-    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", contact: "Contato" },
+    nav: { juices: "Sucos", combos: "Combos", benefits: "Benefícios", findUs: "Onde nos encontrar", contact: "Contato" },
     hero: {
       chip: "Entrega no mesmo dia*",
       title: "Os sucos mais frescos para sua rotina saudável.",
@@ -37,11 +37,13 @@ export const translations = {
       title: "Faça seu pedido agora",
       description: "Peça pelo WhatsApp e receba seus sucos geladinhos na sua casa.",
       cta: "Falar no WhatsApp",
+      mapTitle: "Onde nos encontrar",
+      address: "Taboão da Serra - SP",
     },
     footer: { rights: "Todos os direitos reservados.", delivery: "*Consulte áreas de entrega." },
   },
   en: {
-    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", contact: "Contact" },
+    nav: { juices: "Juices", combos: "Combos", benefits: "Benefits", findUs: "Where to find us", contact: "Contact" },
     hero: {
       chip: "Same-day delivery*",
       title: "The freshest juices for your healthy routine.",
@@ -75,11 +77,13 @@ export const translations = {
       title: "Place your order now",
       description: "Order on WhatsApp and receive your chilled juices at home.",
       cta: "Chat on WhatsApp",
+      mapTitle: "Where to find us",
+      address: "Taboão da Serra - SP",
     },
     footer: { rights: "All rights reserved.", delivery: "*Check delivery areas." },
   },
   es: {
-    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", contact: "Contacto" },
+    nav: { juices: "Jugos", combos: "Combos", benefits: "Beneficios", findUs: "Dónde encontrarnos", contact: "Contacto" },
     hero: {
       chip: "Entrega el mismo día*",
       title: "Los jugos más frescos para tu rutina saludable.",
@@ -113,11 +117,13 @@ export const translations = {
       title: "Haz tu pedido ahora",
       description: "Pide por WhatsApp y recibe tus jugos bien fríos en casa.",
       cta: "Hablar por WhatsApp",
+      mapTitle: "Dónde encontrarnos",
+      address: "Taboão da Serra - SP",
     },
     footer: { rights: "Todos los derechos reservados.", delivery: "*Consulta áreas de entrega." },
   },
   fr: {
-    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", contact: "Contact" },
+    nav: { juices: "Jus", combos: "Combos", benefits: "Avantages", findUs: "Où nous trouver", contact: "Contact" },
     hero: {
       chip: "Livraison le jour même*",
       title: "Les jus les plus frais pour votre routine saine.",
@@ -151,6 +157,8 @@ export const translations = {
       title: "Passez votre commande maintenant",
       description: "Commandez sur WhatsApp et recevez vos jus bien frais à domicile.",
       cta: "Parler sur WhatsApp",
+      mapTitle: "Où nous trouver",
+      address: "Taboão da Serra - SP",
     },
     footer: { rights: "Tous droits réservés.", delivery: "*Vérifiez les zones de livraison." },
   },
