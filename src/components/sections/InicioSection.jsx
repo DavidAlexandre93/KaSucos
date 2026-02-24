@@ -175,10 +175,6 @@ export function InicioSection({ hero }) {
               <span className="hero-jar-gloss" />
               <span className="hero-stream-fill hero-stream-fill--red" />
             </motion.div>
-              <img className="hero-showcase-bottle hero-showcase-bottle--left" src="/img/ai/clouds-ai.svg" alt="" loading="lazy" />
-              <img className="hero-showcase-bottle hero-showcase-bottle--middle" src="/img/ai/juice-ai.svg" alt="" loading="lazy" />
-              <img className="hero-showcase-bottle hero-showcase-bottle--right" src="/img/ai/fence-ai.svg" alt="" loading="lazy" />
-            </div>
           </motion.div>
         </motion.div>
       </div>
