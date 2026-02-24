@@ -1093,6 +1093,48 @@ body.splash-lock {
   margin: 0;
 }
 
+.combo-math {
+  display: grid;
+  gap: 8px;
+}
+
+.combo-bottles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.combo-bottle {
+  width: 10px;
+  height: 22px;
+  border-radius: 4px 4px 6px 6px;
+  background: linear-gradient(180deg, #ffd85b 0%, #ff9e2c 90%);
+  box-shadow: inset 0 -3px 0 rgba(255, 255, 255, 0.35);
+  position: relative;
+}
+
+.combo-bottle::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  left: 2px;
+  width: 6px;
+  height: 4px;
+  border-radius: 2px 2px 0 0;
+  background: #6f5f95;
+}
+
+.combo-bottle.bonus {
+  background: linear-gradient(180deg, #84e760 0%, #58bf36 90%);
+}
+
+.combo-equation {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3f2e62;
+}
+
 
 .builder-description {
   margin: 0 0 12px;
