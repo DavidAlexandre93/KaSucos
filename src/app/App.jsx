@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { BeneficiosSection } from "../components/sections/BeneficiosSection";
 import { SucosSection } from "../components/sections/SucosSection";
 import { sucos } from "../data/sucosData";
@@ -17,6 +17,18 @@ import { useFunEffects } from "../hooks/useFunEffects";
 import { temas } from "../data/temasData";
 import { useLanguage } from "../hooks/useLanguage";
 import { themeNames, translations } from "../i18n/translations";
+import { CartSection } from "../components/sections/CartSection";
+import { CheckoutSection } from "../components/sections/CheckoutSection";
+
+const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
+const formatBRL = (value) =>
+  new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
+
+export default function App() {
+  const [temaSelecionado, setTemaSelecionado] = useState("roxo");
+  const [cartItems, setCartItems] = useState([]);
+  const [showCart, setShowCart] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
 import { dicasBlogData } from "../data/dicasBlogData";
 
 export default function App() {
@@ -35,6 +47,47 @@ export default function App() {
 
   useFunEffects();
 
+  const addItem = (product, typeLabel) => {
+    setCartItems((current) => {
+      const existing = current.find((item) => item.id === product.title || item.id === product.name);
+      if (existing) {
+        return current.map((item) =>
+          item.id === existing.id ? { ...item, quantity: item.quantity + 1 } : item,
+        );
+      }
+
+      return [
+        ...current,
+        {
+          id: product.title || product.name,
+          name: product.title || product.name,
+          price: parsePrice(product.price),
+          priceLabel: product.price,
+          quantity: 1,
+          typeLabel,
+        },
+      ];
+    });
+  };
+
+  const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
+  const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
+  const totalLabel = formatBRL(totalAmount);
+
+  const openCart = () => {
+    setShowCart(true);
+    setTimeout(() => {
+      document.getElementById("cesta")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  };
+
+  const finalizePurchase = () => {
+    setShowCheckout(true);
+    setTimeout(() => {
+      document.getElementById("finalizar")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  };
+
   return (
     <div className="site" style={temas[temaSelecionado].colors}>
       <ScrollArtLayer />
@@ -42,6 +95,8 @@ export default function App() {
         language={language}
         onLanguageChange={setLanguage}
         labels={t.nav}
+        basketCount={totalItems}
+        onBasketClick={openCart}
         basketLabels={t.basket}
         totalItems={totalItems}
       />
@@ -62,6 +117,16 @@ export default function App() {
           language={language}
           title={t.juices.title}
           labels={t.juices}
+          onAddJuice={(juice) => addItem(juice, t.cart.unit)}
+        />
+        <CombosSection
+          combos={combos}
+          language={language}
+          labels={t.combos}
+          onAddCombo={(combo) => addItem(combo, t.cart.combo)}
+        />
+        {showCart ? <CartSection labels={t.cart} items={cartItems} total={totalLabel} onFinalize={finalizePurchase} /> : null}
+        {showCheckout ? <CheckoutSection checkout={t.checkout} total={totalLabel} /> : null}
           onAddJuice={handleAddJuice}
           pedido={pedido}
         />
