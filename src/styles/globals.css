@@ -1458,19 +1458,21 @@ body.splash-lock {
 
 .tip-like-button {
   margin-top: 12px;
-  border: 1px solid rgba(95, 39, 178, 0.2);
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--purple-900);
-  border-radius: 999px;
-  font-weight: 700;
-  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 24px;
+  line-height: 1;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .tip-like-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(59, 21, 117, 0.15);
+  transform: translateY(-2px) scale(1.05);
 }
 
 .testimonials {
