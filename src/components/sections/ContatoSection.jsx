@@ -14,11 +14,9 @@ export function ContatoSection({ contact }) {
   useGSAP(
     ({ selector }) => {
       const cta = selector(".cta-box")[0];
-      const map = selector(".map-box")[0];
 
-      gsap.set([cta, map], { opacity: 0, y: 24 });
+      gsap.set(cta, { opacity: 0, y: 24 });
       gsap.to(cta, { opacity: 1, y: 0, duration: 0.6 });
-      gsap.to(map, { opacity: 1, y: 0, duration: 0.6, delay: 0.1 });
     },
     { scope: sectionRef, dependencies: [contact.title] },
   );
@@ -80,7 +78,7 @@ export function ContatoSection({ contact }) {
           </motion.a>
         </motion.div>
 
-        <motion.div id="onde-nos-encontrar" className="map-box">
+        <div id="onde-nos-encontrar" className="map-box">
           <h3>{contact.mapTitle}</h3>
           <p>{contact.address}</p>
           <iframe
@@ -89,7 +87,7 @@ export function ContatoSection({ contact }) {
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />
-        </motion.div>
+        </div>
       </div>
     </section>
   );
