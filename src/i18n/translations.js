@@ -36,12 +36,7 @@ export const translations = {
       badge: "Escolha inteligente para o seu dia",
       title: "Por que escolher a KaSucos?",
       subtitle: "Sucos naturais de verdade, feitos para facilitar sua rotina com sabor e confiança.",
-      items: [
-        "Sem adição de açúcar e sem conservantes: só fruta de verdade no seu copo.",
-        "Produção diária com frutas frescas para garantir sabor marcante em cada pedido.",
-        "Entrega refrigerada para você receber geladinho, pronto para consumir.",
-        "Atendimento humanizado no WhatsApp para montar o pedido ideal sem complicação.",
-      ],
+      items: [],
       cta: "Quero experimentar agora",
     },
     testimonials: {
