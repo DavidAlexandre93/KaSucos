@@ -496,9 +496,10 @@ body.splash-lock {
   display: inline-flex;
 }
 
-.basket-button-icon svg {
+.basket-button-icon img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
 }
 
 .card-action {
