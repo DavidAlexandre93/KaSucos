@@ -200,6 +200,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
           <img className="juice-bottle juice-bottle--right" src="/img/sucos/sucos.png" alt="" aria-hidden="true" loading="lazy" />
 
           <motion.div className="juice-cup" whileHover={{ y: -4, scale: 1.01 }} transition={{ duration: 0.25 }}>
+            <div className="juice-handle" aria-hidden="true" />
             <div className="juice-drop-zone" aria-hidden="true">
               {fruitDrops.map((drop) => (
                 <span
@@ -225,7 +226,9 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
             <span className="juice-droplet juice-droplet--one" aria-hidden="true" />
             <span className="juice-droplet juice-droplet--two" aria-hidden="true" />
             <span className="juice-droplet juice-droplet--three" aria-hidden="true" />
-            <div className="cup-logo">KaSucos</div>
+            <div className="cup-logo" aria-hidden="true">
+              <img src="/img/nav/logo.jpeg" alt="" loading="lazy" />
+            </div>
           </motion.div>
 
           <div className="juice-shadow" aria-hidden="true" />
