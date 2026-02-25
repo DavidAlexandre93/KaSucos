@@ -89,8 +89,6 @@ export function InicioSection({ hero }) {
         </div>
         <motion.div className="hero-card" {...cardMotion}>
           <img src="/img/presentation-banner/presentation-sub-banner.png" alt="Apresentação KaSucos" />
-          <h2>KaSucos</h2>
-          <p>{hero.slogan}</p>
         </motion.div>
       </div>
     </section>
