@@ -4,7 +4,7 @@ import { motion } from "../../lib/motion";
 const bgField = "/img/tela-splash/campo-gramado.png";
 const wolf = "/img/tela-splash/lobo-mal.png";
 
-export function SplashScreen({ subtitle = "Carregando...", onDone, onComplete }) {
+export function SplashScreen({ subtitle = "", onDone, onComplete }) {
   const [reduceMotion, setReduceMotion] = useState(false);
 
   const rootRef = useRef(null);
@@ -236,16 +236,17 @@ export function SplashScreen({ subtitle = "Carregando...", onDone, onComplete })
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: "easeOut" }}
           >
-            <div className="splash-v2-pill">
-              <span className="splash-v2-pill-dot" />
-              <span className="splash-v2-pill-text">Carregando…</span>
-            </div>
-
-            <p className="splash-v2-subtitle">{subtitle}</p>
+            {subtitle ? <p className="splash-v2-subtitle">{subtitle}</p> : null}
 
             <div className="splash-v2-progress-wrap">
               <div className="splash-v2-progress-header">
-                <span>Inicializando</span>
+                <span className="splash-v2-welcome-text" aria-label="Bem vindo ao site da KaSucos">
+                  <span className="splash-v2-welcome-bem">Bem</span>{" "}
+                  <span className="splash-v2-welcome-vindo">vindo</span>{" "}
+                  <span className="splash-v2-welcome-ao">ao</span>{" "}
+                  <span className="splash-v2-welcome-site">site da</span>{" "}
+                  <span className="splash-v2-welcome-brand">KaSucos</span>
+                </span>
                 <span>{Math.round(progress)}%</span>
               </div>
 
