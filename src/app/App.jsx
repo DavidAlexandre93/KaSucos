@@ -39,31 +39,11 @@ const DEFAULT_THEME_COLORS = {
 };
 
 export default function App() {
-  const hasSeenSplash = () => {
-    if (typeof window === "undefined") return true;
-
-    try {
-      return Boolean(window.sessionStorage.getItem("kasucos:splash-seen"));
-    } catch {
-      return false;
-    }
-  };
-
-  const markSplashAsSeen = () => {
-    if (typeof window === "undefined") return;
-
-    try {
-      window.sessionStorage.setItem("kasucos:splash-seen", "1");
-    } catch {
-      // no-op when sessionStorage is blocked/unavailable.
-    }
-  };
-
   const siteRef = useRef(null);
   const [cartItems, setCartItems] = useState([]);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [showSplash, setShowSplash] = useState(() => !hasSeenSplash());
+  const [showSplash, setShowSplash] = useState(true);
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
 
@@ -195,7 +175,6 @@ export default function App() {
     return (
       <SplashScreen
         onComplete={() => {
-          markSplashAsSeen();
           setShowSplash(false);
         }}
       />
