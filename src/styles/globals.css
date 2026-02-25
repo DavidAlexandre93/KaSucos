@@ -1139,7 +1139,7 @@ body.splash-lock {
 
 .juice-scene {
   position: relative;
-  min-height: 330px;
+  min-height: 410px;
   isolation: isolate;
 }
 
@@ -1153,29 +1153,23 @@ body.splash-lock {
   z-index: 0;
 }
 
-.juice-bottle {
+.juice-mini-banner {
   position: absolute;
-  width: clamp(120px, 20vw, 170px);
-  opacity: 0.74;
-  filter: drop-shadow(0 10px 24px rgba(35, 21, 56, 0.22));
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 560px);
+  max-height: 240px;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 26px rgba(35, 21, 56, 0.24));
+  border-radius: 16px;
   z-index: 1;
-}
-
-.juice-bottle--left {
-  left: clamp(-10px, 5vw, 40px);
-  bottom: 20px;
-  transform: rotate(-8deg);
-}
-
-.juice-bottle--right {
-  right: clamp(-6px, 7vw, 48px);
-  bottom: 26px;
-  transform: rotate(10deg);
 }
 
 .juice-cup {
   position: relative;
-  z-index: 2;
+  z-index: 1;
+  margin-top: 162px;
   width: 210px;
   height: 272px;
   border: 3px solid rgba(255, 255, 255, 0.8);
@@ -1446,15 +1440,16 @@ body.splash-lock {
 
 @media (max-width: 760px) {
   .juice-scene {
-    min-height: 280px;
+    min-height: 350px;
   }
 
-  .juice-bottle {
-    width: 108px;
-    opacity: 0.62;
+  .juice-mini-banner {
+    width: min(100%, 420px);
+    max-height: 190px;
   }
 
   .juice-cup {
+    margin-top: 126px;
     width: 180px;
     height: 236px;
   }
