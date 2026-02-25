@@ -1476,6 +1476,16 @@ body.splash-lock {
   color: var(--muted);
 }
 
+.benefits-image {
+  width: 100%;
+  max-width: 980px;
+  display: block;
+  margin: 0 0 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(95, 39, 178, 0.16);
+  box-shadow: 0 12px 24px rgba(59, 21, 117, 0.1);
+}
+
 .benefits-list li {
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(95, 39, 178, 0.12);
