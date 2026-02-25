@@ -555,46 +555,39 @@ body.splash-lock {
   align-items: center;
   gap: 8px;
   margin-left: auto;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 8px 16px rgba(27, 8, 58, 0.24);
 }
 
 .language-switcher button {
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  background: rgba(255, 255, 255, 0.16);
-  border-radius: 999px;
-  width: 38px;
-  height: 38px;
+  border: none;
+  background: transparent;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
   display: grid;
   place-items: center;
   padding: 0;
-  box-shadow: 0 4px 10px rgba(20, 6, 44, 0.25);
-  transition: transform 0.2s ease, filter 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: none;
+  opacity: 0.82;
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
 }
 
 .language-switcher button:hover {
   transform: translateY(-2px);
   filter: brightness(1.05);
-  border-color: rgba(255, 255, 255, 0.58);
-  box-shadow: 0 8px 14px rgba(20, 6, 44, 0.3);
+  opacity: 1;
 }
 
 .language-switcher button.active {
   transform: translateY(-1px) scale(1.06);
-  border-color: rgba(255, 246, 205, 0.9);
-  box-shadow: 0 0 0 2px rgba(255, 246, 205, 0.38), 0 8px 14px rgba(20, 6, 44, 0.34);
+  opacity: 1;
 }
 
 .language-flag {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+  box-shadow: none;
 }
 
 
@@ -2253,13 +2246,13 @@ body.site-party-mode::after {
   }
 
   .language-switcher button {
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
   }
 
   .language-flag {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
   }
 
   .basket-slot {
