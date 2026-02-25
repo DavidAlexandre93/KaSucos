@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "../../lib/gsap";
 import { ScrollTrigger } from "../../lib/ScrollTrigger";
 import { motion } from "../../lib/motion";
@@ -10,8 +10,22 @@ gsap.registerPlugin(ScrollTrigger);
 
 const prefersReducedMotion =
   typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const heroBanners = ["/img/banner/banner-apresentação.png", "/img/banner/banner-brinde-kasucos.png"];
+
 export function InicioSection({ hero }) {
   const sectionRef = useRef(null);
+  const [activeBannerIndex, setActiveBannerIndex] = useState(0);
+
+  useEffect(() => {
+    if (heroBanners.length <= 1) return undefined;
+
+    const intervalId = window.setInterval(() => {
+      setActiveBannerIndex((currentIndex) => (currentIndex + 1) % heroBanners.length);
+    }, 4200);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
 
   useGSAP(
     ({ selector }) => {
@@ -48,6 +62,15 @@ export function InicioSection({ hero }) {
 
   return (
     <section id="inicio" className="hero" ref={sectionRef}>
+      <div className="hero-banner-rotator" aria-hidden="true">
+        {heroBanners.map((bannerImage, bannerIndex) => (
+          <span
+            key={bannerImage}
+            className={`hero-banner-layer ${bannerIndex === activeBannerIndex ? "is-active" : ""}`}
+            style={{ backgroundImage: `url("${bannerImage}")` }}
+          />
+        ))}
+      </div>
       <div className="container hero-grid">
         <div>
           <motion.p className="chip hero-chip" whileHover={{ scale: 1.04, rotate: -2 }} transition={{ duration: 0.2 }}>
