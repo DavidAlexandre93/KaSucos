@@ -74,7 +74,7 @@ export default function App() {
 
   useGSAP(
     ({ selector }) => {
-      const floatingTargets = selector(".card img, .combo, .map-box iframe, .hero-showcase-jar");
+      const floatingTargets = selector(".card img, .combo, .hero-showcase-jar");
       const tiltCards = selector(".card, .combo, .fruit-chip, .reviews blockquote");
 
       const onPointerMove = (event) => {
@@ -253,9 +253,7 @@ export default function App() {
         <MotionSection>
           <DepoimentosSection testimonials={t.testimonials} />
         </MotionSection>
-        <MotionSection>
-          <ContatoSection contact={t.contact} />
-        </MotionSection>
+        <ContatoSection contact={t.contact} />
       </main>
       <Footer footer={t.footer} />
     </div>
