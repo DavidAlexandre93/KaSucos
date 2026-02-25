@@ -33,6 +33,12 @@ export function BeneficiosSection({ benefits }) {
         <span className="benefits-badge">{benefits.badge ?? "Escolha inteligente para o seu dia"}</span>
         <TypingText className="section-title" text={benefits.title} highlight />
         <p className="benefits-subtitle">{benefits.subtitle ?? "Mais energia, mais sabor e zero dor de cabeça no pedido."}</p>
+        <img
+          className="benefits-image"
+          src="/img/porque-escolher-kasucos/porque-kasucos.png"
+          alt="Por que escolher a KaSucos"
+          loading="lazy"
+        />
         <ul className="benefits-list">
           {benefits.items.map((item) => (
             <motion.li key={item} whileHover={{ x: 5, scale: 1.015, boxShadow: "0 12px 24px rgba(59, 21, 117, 0.16)" }}>
