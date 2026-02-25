@@ -2,37 +2,29 @@ import { useRef } from "react";
 import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
-import { TypingText } from "../ui/TypingText";
 
 export function BeneficiosSection({ benefits }) {
   const sectionRef = useRef(null);
 
   useGSAP(
     ({ selector }) => {
-      const badge = selector(".benefits-badge")[0];
-      const subtitle = selector(".benefits-subtitle")[0];
       const listItems = selector(".benefits-list li");
       const cta = selector(".benefits-cta")[0];
 
-      gsap.set([badge, subtitle, cta], { opacity: 0, y: 14 });
+      gsap.set([cta], { opacity: 0, y: 14 });
       gsap.set(listItems, { opacity: 0, xPercent: -5, y: 8 });
 
       const timeline = gsap.timeline();
       timeline
-        .to(badge, { opacity: 1, y: 0, duration: 0.28 })
-        .to(subtitle, { opacity: 1, y: 0, duration: 0.28 })
         .to(listItems, { opacity: 1, xPercent: 0, y: 0, stagger: 0.1, duration: 0.34 })
         .to(cta, { opacity: 1, y: 0, duration: 0.26 });
     },
-    { scope: sectionRef, dependencies: [benefits.title] },
+    { scope: sectionRef, dependencies: [benefits.items] },
   );
 
   return (
     <section id="beneficios" className="section" ref={sectionRef}>
       <div className="container benefits">
-        <span className="benefits-badge">{benefits.badge ?? "Escolha inteligente para o seu dia"}</span>
-        <TypingText className="section-title" text={benefits.title} highlight />
-        <p className="benefits-subtitle">{benefits.subtitle ?? "Mais energia, mais sabor e zero dor de cabeça no pedido."}</p>
         <img
           className="benefits-image"
           src="/img/porque-escolher-kasucos/porque-kasucos.png"
