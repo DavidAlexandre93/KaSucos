@@ -190,14 +190,6 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
 
         <div className="juice-preview juice-scene">
           <div className="juice-aura" aria-hidden="true" />
-          <img
-            className="juice-mini-banner"
-            src="/img/monte/monte-sucos.png"
-            alt="Banner do Monte Seu Suco"
-            loading="lazy"
-          />
-          <img className="juice-bottle juice-bottle--left" src="/img/sucos/sucos.png" alt="" aria-hidden="true" loading="lazy" />
-          <img className="juice-bottle juice-bottle--right" src="/img/sucos/sucos.png" alt="" aria-hidden="true" loading="lazy" />
 
           <motion.div className="juice-cup" whileHover={{ y: -4, scale: 1.01 }} transition={{ duration: 0.25 }}>
             <div className="juice-handle" aria-hidden="true" />
