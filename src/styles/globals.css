@@ -739,22 +739,23 @@ body.splash-lock {
 .language-switcher {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 18px;
   margin-left: auto;
 }
 
 .language-switcher button {
   border: none;
   background: transparent;
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
   cursor: pointer;
   display: grid;
   place-items: center;
   padding: 0;
+  border-radius: 999px;
   box-shadow: none;
   opacity: 0.82;
-  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, filter 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .language-switcher button:hover {
@@ -764,13 +765,15 @@ body.splash-lock {
 }
 
 .language-switcher button.active {
-  transform: translateY(-1px) scale(1.06);
+  transform: translateY(-1px) scale(1.08);
   opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.88);
 }
 
 .language-flag {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 999px;
   object-fit: cover;
   box-shadow: none;
@@ -2449,8 +2452,8 @@ body.site-party-mode::after {
   }
 
   .language-switcher button {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
   }
 
   .language-flag {
