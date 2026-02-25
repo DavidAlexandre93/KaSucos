@@ -5,10 +5,10 @@ import { useRef, useState } from "react";
 import { useGSAP } from "../../lib/useGSAP";
 
 const LANGUAGE_OPTIONS = [
-  { code: "en", label: "English", flag: "🇺🇸" },
-  { code: "pt", label: "Português", flag: "🇧🇷" },
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "en", label: "English", flagSrc: "/img/flags/us.svg" },
+  { code: "pt", label: "Português", flagSrc: "/img/flags/br.svg" },
+  { code: "es", label: "Español", flagSrc: "/img/flags/es.svg" },
+  { code: "fr", label: "Français", flagSrc: "/img/flags/fr.svg" },
 ];
 
 const COMPACT_NAV_LABELS = {
@@ -153,7 +153,14 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
                 aria-pressed={language === option.code}
                 onClick={() => onLanguageChange(option.code)}
               >
-                <span className="language-flag" aria-hidden="true">{option.flag}</span>
+                <img
+                  className="language-flag"
+                  src={option.flagSrc}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
+                />
               </motion.button>
             ))}
           </div>
