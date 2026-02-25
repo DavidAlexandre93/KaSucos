@@ -242,8 +242,8 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
                 whileTap={{ scale: 0.98 }}
                 transition={{ duration: 0.2 }}
               >
-                <span className="mini-cup">
-                  <span className="mini-cup-liquid" style={{ background: fruitColor }} />
+                <span className="mini-fruit" role="img" aria-label={fruit} style={{ background: fruitColor }}>
+                  {FRUIT_EMOJIS[normalizeFruitKey(fruit)] ?? "🍹"}
                 </span>
                 <span>{fruit}</span>
               </motion.button>
