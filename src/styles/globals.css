@@ -467,8 +467,8 @@ body.splash-lock {
   border: 0;
   background: transparent;
   color: #fff;
-  width: 46px;
-  height: 46px;
+  width: 138px;
+  height: 138px;
   padding: 0;
   cursor: pointer;
   display: flex;
@@ -477,8 +477,8 @@ body.splash-lock {
 }
 
 .basket-button-icon {
-  width: 46px;
-  height: 46px;
+  width: 138px;
+  height: 138px;
   display: inline-flex;
 }
 
@@ -2213,8 +2213,8 @@ body.site-party-mode::after {
   }
 
   .basket-button {
-    width: 42px;
-    height: 42px;
+    width: 126px;
+    height: 126px;
   }
 
   .language-switcher button {
