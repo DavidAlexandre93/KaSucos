@@ -111,7 +111,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
     <header className="topbar">
       <div className="container topbar-inner">
         <motion.a href="#inicio" className="brand" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-          <img className="brand-logo" src="/img/logotipo.jpeg" alt="KaSucos" />
+          <img className="brand-logo" src="/img/nav/logo.jpeg" alt="KaSucos" />
           <KaSucosWordmark className="brand-wordmark" />
         </motion.a>
 
