@@ -22,7 +22,7 @@ export function ContatoSection({ contact }) {
   );
 
   return (
-    <section id="contato" className="section cta" ref={sectionRef}>
+    <section id="contato" className="section cta contact-section" ref={sectionRef}>
       <div className="container contact-grid">
         <motion.div className="cta-box" whileHover={{ scale: 1.01, y: -4 }}>
           <h2>{contact.title}</h2>
