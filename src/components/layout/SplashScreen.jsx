@@ -240,9 +240,8 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
 
             <div className="splash-v2-progress-wrap">
               <div className="splash-v2-progress-header">
-                <span className="splash-v2-welcome-text" aria-label="Bem vindo ao site da KaSucos">
-                  <span className="splash-v2-welcome-bem">Bem</span>{" "}
-                  <span className="splash-v2-welcome-vindo">vindo</span>{" "}
+                <span className="splash-v2-welcome-text" aria-label="Bem-vindo ao site da KaSucos">
+                  <span className="splash-v2-welcome-bem">Bem</span>-<span className="splash-v2-welcome-vindo">vindo</span>{" "}
                   <span className="splash-v2-welcome-ao">ao</span>{" "}
                   <span className="splash-v2-welcome-site">site da</span>{" "}
                   <span className="splash-v2-welcome-brand">KaSucos</span>
