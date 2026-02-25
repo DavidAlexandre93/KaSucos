@@ -1066,6 +1066,16 @@ body.splash-lock {
   gap: 8px;
 }
 
+.combo button {
+  transition: none;
+}
+
+.combo button:hover {
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
 .combo.highlight {
   border-color: var(--green-500);
   box-shadow: 0 16px 28px rgba(117, 203, 47, 0.22);
