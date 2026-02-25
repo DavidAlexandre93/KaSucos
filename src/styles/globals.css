@@ -992,6 +992,10 @@ body.splash-lock {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  animation: none;
+  filter: none;
+  transform: none;
+  transition: none;
 }
 
 .card-body {
@@ -1064,6 +1068,16 @@ body.splash-lock {
   padding: 18px;
   display: grid;
   gap: 8px;
+}
+
+.combo button {
+  transition: none;
+}
+
+.combo button:hover {
+  transform: none;
+  box-shadow: none;
+  filter: none;
 }
 
 .combo.highlight {
@@ -1553,7 +1567,7 @@ body.splash-lock {
 }
 
 .tips-info-section {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(242, 235, 255, 0.88));
+  background: #fff;
 }
 
 .tips-header {
@@ -1570,7 +1584,6 @@ body.splash-lock {
   border: 1px solid rgba(95, 39, 178, 0.16);
   border-radius: 18px;
   padding: 18px;
-  box-shadow: 0 10px 22px rgba(59, 21, 117, 0.1);
 }
 
 .tip-category {
@@ -1620,12 +1633,8 @@ body.splash-lock {
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
-  transition: transform 0.2s ease;
 }
 
-.tip-like-button:hover {
-  transform: translateY(-2px) scale(1.05);
-}
 
 .testimonials {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(221, 248, 191, 0.72), rgba(242, 235, 255, 0.94));
@@ -2175,7 +2184,7 @@ body.site-party-mode::after {
 
   .topbar nav {
     position: absolute;
-    top: calc(100% + 8px);
+    top: clamp(170px, 43vh, 300px);
     right: 0;
     left: 0;
     display: none;

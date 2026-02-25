@@ -10,7 +10,7 @@ export const dicasBlogData = {
         category: "Conservação",
         title: "Como armazenar seus sucos da forma correta",
         summary: "Aprenda a faixa ideal de temperatura e os cuidados para manter sabor, cor e nutrientes por mais tempo.",
-        image: "/img/about.png",
+        image: "/img/sucos/sucos.png",
         imageAlt: "Garrafinha de suco KaSucos como exemplo de armazenamento",
         content: [
           "Guarde os sucos sempre refrigerados entre 2°C e 5°C.",
@@ -23,7 +23,7 @@ export const dicasBlogData = {
         category: "Consumo",
         title: "Qual é o melhor prazo para consumir",
         summary: "Entenda em quanto tempo o suco mantém melhor qualidade depois da entrega.",
-        image: "/img/banner.png",
+        image: "/img/banner/banner-apresentação.png",
         imageAlt: "Exemplo de suco pronto para consumo",
         content: [
           "O ideal é consumir em até 48 horas após o recebimento.",
@@ -36,7 +36,7 @@ export const dicasBlogData = {
         category: "Preparo",
         title: "Antes de beber: dica rápida de preparo",
         summary: "Uma ação simples para aproveitar as fibras naturais e ter uma bebida mais equilibrada.",
-        image: "/img/banner.png",
+        image: "/img/banner/banner-brinde-kasucos.png",
         imageAlt: "Imagem de frutas e suco para dica de preparo",
         content: [
           "Agite levemente a garrafinha antes de abrir.",
@@ -57,7 +57,7 @@ export const dicasBlogData = {
         category: "Storage",
         title: "How to store your juices properly",
         summary: "Learn the ideal temperature range and key practices to preserve flavor and nutrients.",
-        image: "/img/about.png",
+        image: "/img/sucos/sucos.png",
         imageAlt: "Juice bottle storage example",
         content: [
           "Keep juices refrigerated between 2°C and 5°C.",
@@ -70,7 +70,7 @@ export const dicasBlogData = {
         category: "Consumption",
         title: "What is the best time window to drink",
         summary: "Know how long your juice keeps top quality after delivery.",
-        image: "/img/about.png",
+        image: "/img/banner/banner-brinde-kasucos.png",
         imageAlt: "Healthy juice consumption example",
         content: [
           "For best quality, consume within 48 hours after delivery.",
@@ -91,7 +91,7 @@ export const dicasBlogData = {
         category: "Conservación",
         title: "Cómo almacenar correctamente tus jugos",
         summary: "Conoce la temperatura ideal y cuidados básicos para mantener calidad y sabor.",
-        image: "/img/about.png",
+        image: "/img/sucos/sucos.png",
         imageAlt: "Ejemplo de almacenamiento de jugos",
         content: [
           "Mantén los jugos refrigerados entre 2°C y 5°C.",
@@ -112,7 +112,7 @@ export const dicasBlogData = {
         category: "Conservation",
         title: "Comment bien conserver vos jus",
         summary: "Retrouvez les températures idéales et les bons gestes pour garder qualité et goût.",
-        image: "/img/banner.png",
+        image: "/img/banner/banner-apresentação.png",
         imageAlt: "Exemple de conservation de jus",
         content: [
           "Conservez les jus entre 2°C et 5°C.",
