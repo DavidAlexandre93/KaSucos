@@ -238,6 +238,36 @@ body.splash-lock {
   font-size: 0.75rem;
 }
 
+
+.splash-v2-welcome-text {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  font-size: clamp(1rem, 2.2vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.splash-v2-welcome-bem {
+  color: #facc15;
+}
+
+.splash-v2-welcome-vindo {
+  color: #22c55e;
+}
+
+.splash-v2-welcome-ao {
+  color: #f97316;
+}
+
+.splash-v2-welcome-site {
+  color: #6d28d9;
+}
+
+.splash-v2-welcome-brand {
+  color: #ef4444;
+}
+
 .splash-v2-progress-line-wrap {
   height: 12px;
   margin-top: 8px;
