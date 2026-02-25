@@ -544,7 +544,7 @@ body.splash-lock {
 @media (min-width: 721px) {
   .topbar nav {
     position: fixed;
-    top: 16px;
+    top: 140px;
     left: 16px;
     z-index: 45;
     width: min(300px, calc(100vw - 32px));
