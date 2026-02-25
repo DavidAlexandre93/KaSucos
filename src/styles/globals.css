@@ -948,8 +948,8 @@ body.splash-lock {
 .hero-card {
   background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.82));
   border: 1px solid rgba(117, 203, 47, 0.35);
-  border-radius: 22px;
-  padding: clamp(14px, 2vw, 24px);
+  border-radius: 14px;
+  padding: clamp(2px, 0.5vw, 6px);
   text-align: center;
   box-shadow: 0 24px 50px rgba(59, 21, 117, 0.18);
   transform: translateY(var(--hero-parallax, 0px));
@@ -968,7 +968,7 @@ body.splash-lock {
   width: 100%;
   height: auto;
   object-fit: contain;
-  border-radius: 14px;
+  border-radius: 10px;
 }
 
 .hero-card h2 {
