@@ -118,7 +118,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
         <div className="topbar-right">
           <button
             type="button"
-            className={`menu-toggle ${isMobileMenuOpen ? "active" : ""}`}
+            className="menu-toggle"
             aria-expanded={isMobileMenuOpen}
             aria-controls="primary-navigation"
             aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
@@ -135,6 +135,15 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
             className={isMobileMenuOpen ? "open" : ""}
             aria-label={labels.title ?? "Main navigation"}
           >
+            <button
+              type="button"
+              className="mobile-menu-close"
+              aria-label="Fechar menu"
+              onClick={closeMobileMenu}
+            >
+              ×
+            </button>
+
             {menuItems.map((item) => (
               <a key={item.key} href={item.href} title={navLabels[item.key]} onClick={closeMobileMenu}>
                 {compactLabels[item.key]}
