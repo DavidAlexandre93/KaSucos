@@ -992,6 +992,10 @@ body.splash-lock {
   height: 100%;
   object-fit: cover;
   object-position: center;
+  animation: none;
+  filter: none;
+  transform: none;
+  transition: none;
 }
 
 .card-body {
