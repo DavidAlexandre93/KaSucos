@@ -127,6 +127,169 @@ body.splash-lock {
   filter: drop-shadow(0 14px 20px rgba(42, 30, 8, 0.3));
 }
 
+
+.splash-v2-root {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  overflow: hidden;
+  background: #020617;
+  color: #fff;
+}
+
+.splash-v2-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+.splash-v2-field {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.splash-v2-vignette,
+.splash-v2-vignette-gradient,
+.splash-v2-vignette-shadow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.splash-v2-vignette {
+  z-index: 4;
+}
+
+.splash-v2-vignette-gradient {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.6));
+}
+
+.splash-v2-vignette-shadow {
+  box-shadow: inset 0 0 140px rgba(0, 0, 0, 0.65);
+}
+
+.splash-v2-content-wrap {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+}
+
+.splash-v2-content-grid {
+  display: grid;
+  width: 100%;
+  max-width: 1100px;
+  grid-template-columns: 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.splash-v2-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  backdrop-filter: blur(8px);
+}
+
+.splash-v2-pill-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(110, 231, 183, 0.9);
+  box-shadow: 0 0 18px rgba(110, 231, 183, 0.9);
+}
+
+.splash-v2-pill-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.splash-v2-subtitle {
+  margin-top: 20px;
+  max-width: 640px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
+.splash-v2-progress-wrap {
+  margin-top: 24px;
+  max-width: 640px;
+}
+
+.splash-v2-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+}
+
+.splash-v2-progress-line-wrap {
+  height: 12px;
+  margin-top: 8px;
+}
+
+.splash-v2-progress-line {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 215, 120, 0.95), rgba(255, 245, 190, 0.95), rgba(255, 190, 90, 0.95));
+  box-shadow: 0 0 18px rgba(255, 215, 120, 0.55);
+}
+
+.splash-v2-right {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.splash-v2-wolf-glow {
+  position: absolute;
+  inset: -24px;
+  border-radius: 2.2rem;
+  filter: blur(36px);
+  background: radial-gradient(circle at 35% 30%, rgba(255, 230, 140, 0.28), rgba(255, 230, 140, 0.02) 55%, rgba(0, 0, 0, 0) 70%);
+}
+
+.splash-v2-wolf {
+  position: relative;
+  width: min(84vw, 440px);
+  user-select: none;
+  filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.55));
+}
+
+.splash-v2-exit {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: #000;
+}
+
+@media (min-width: 1024px) {
+  .splash-v2-content-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  }
+
+  .splash-v2-right {
+    justify-content: flex-end;
+  }
+}
+
+
 .site {
   min-height: 100vh;
   transition: background-color 0.45s ease, color 0.45s ease;
