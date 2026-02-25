@@ -262,7 +262,7 @@ body.splash-lock {
 }
 
 .topbar-inner {
-  min-height: 112px;
+  min-height: 224px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -279,14 +279,14 @@ body.splash-lock {
 }
 
 .brand-logo {
-  width: 112px;
-  height: 112px;
+  width: 224px;
+  height: 224px;
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.96);
   box-shadow:
     0 0 0 3px rgba(255, 204, 33, 0.3),
     0 8px 24px rgba(0, 0, 0, 0.25);
-  animation: logoSparkle 1.15s ease-in-out infinite;
+  animation: none;
 }
 
 .brand-wordmark {
@@ -2178,7 +2178,7 @@ body.site-party-mode::after {
   }
 
   .topbar-inner {
-    min-height: 90px;
+    min-height: 176px;
     position: relative;
   }
 
@@ -2188,8 +2188,8 @@ body.site-party-mode::after {
   }
 
   .brand-logo {
-    width: 88px;
-    height: 88px;
+    width: 176px;
+    height: 176px;
   }
 
   .menu-toggle {
