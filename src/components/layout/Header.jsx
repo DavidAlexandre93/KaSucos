@@ -102,7 +102,6 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
     { href: "#monte-seu-suco", key: "buildYourJuice" },
     { href: "#combos", key: "combos" },
     { href: "#dicas", key: "tipsInfo" },
-    { href: "#depoimentos", key: "testimonials" },
     { href: "#onde-nos-encontrar", key: "findUs" },
     { href: "#contato", key: "contact" },
   ];
