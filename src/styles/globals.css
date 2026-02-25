@@ -949,12 +949,14 @@ body.splash-lock {
   background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.82));
   border: 1px solid rgba(117, 203, 47, 0.35);
   border-radius: 22px;
-  padding: 24px;
+  padding: clamp(14px, 2vw, 24px);
   text-align: center;
   box-shadow: 0 24px 50px rgba(59, 21, 117, 0.18);
   transform: translateY(var(--hero-parallax, 0px));
   transition: transform 0.35s ease;
   will-change: transform;
+  width: min(100%, 560px);
+  justify-self: center;
 }
 
 .hero-card:hover {
@@ -962,7 +964,10 @@ body.splash-lock {
 }
 
 .hero-card img {
-  width: min(190px, 75%);
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
   border-radius: 14px;
 }
 
