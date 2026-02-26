@@ -204,14 +204,18 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
             type="button"
             className="basket-button"
             onClick={onBasketClick}
-            aria-label={labels.basket ?? "Cesta"}
+            aria-label={`${labels.basket ?? "Cesta"}${basketCount > 0 ? ` (${basketCount})` : ""}`}
             whileHover={{ y: -2, scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
           >
             <span className="basket-button-icon" aria-hidden="true">
               <img src="/img/icons/icon-cesta.png" alt="" loading="lazy" decoding="async" />
             </span>
-            {basketCount > 0 ? <span className="basket-count">{basketCount}</span> : null}
+            {basketCount > 0 ? (
+              <span className="basket-count" aria-live="polite">
+                {basketCount}
+              </span>
+            ) : null}
           </motion.button>
         </div>
       </div>
