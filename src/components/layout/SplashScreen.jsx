@@ -268,17 +268,43 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
               transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
             />
 
-            <motion.img
-              src={wolf}
-              alt="Lobo"
-              className="splash-v2-wolf"
+            <motion.div
               style={{
                 transform: reduceMotion ? undefined : `translate3d(${wolfOffset.x}px, ${wolfOffset.y}px, 0)`,
               }}
-              initial={{ scale: 0.92, rotate: -2, y: 20, opacity: 0 }}
-              animate={{ scale: 1, rotate: 0, y: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 90, damping: 16 }}
-            />
+            >
+              <motion.img
+                src={wolf}
+                alt="Lobo"
+                className="splash-v2-wolf"
+                initial={{ scale: 0.92, rotate: -2, y: 20, opacity: 0 }}
+                animate={
+                  reduceMotion
+                    ? { scale: 1, rotate: 0, y: 0, opacity: 1 }
+                    : {
+                        scale: [1, 1.04, 1],
+                        rotate: 0,
+                        y: 0,
+                        opacity: 1,
+                      }
+                }
+                transition={
+                  reduceMotion
+                    ? { type: "spring", stiffness: 90, damping: 16 }
+                    : {
+                        scale: {
+                          delay: 0.55,
+                          duration: 1.7,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        },
+                        rotate: { type: "spring", stiffness: 90, damping: 16 },
+                        y: { type: "spring", stiffness: 90, damping: 16 },
+                        opacity: { duration: 0.55 },
+                      }
+                }
+              />
+            </motion.div>
           </motion.div>
         </div>
       </div>
