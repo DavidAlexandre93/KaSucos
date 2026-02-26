@@ -64,7 +64,7 @@ const COMPACT_NAV_LABELS = {
   },
 };
 
-export function Header({ language, onLanguageChange, labels, onBasketClick }) {
+export function Header({ language, onLanguageChange, labels, onBasketClick, basketCount = 0 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
 
@@ -211,6 +211,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
             <span className="basket-button-icon" aria-hidden="true">
               <img src="/img/icons/icon-cesta.png" alt="" loading="lazy" decoding="async" />
             </span>
+            {basketCount > 0 ? <span className="basket-count">{basketCount}</span> : null}
           </motion.button>
         </div>
       </div>
