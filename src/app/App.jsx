@@ -138,6 +138,8 @@ export default function App() {
   );
 
   const addItem = (product, typeLabel) => {
+    pendingScrollRestoreRef.current = window.scrollY;
+
     setCartItems((current) => {
       const id = product.title || product.name;
       const existing = current.find((item) => item.id === id);
@@ -188,7 +190,7 @@ export default function App() {
     window.requestAnimationFrame(() => {
       window.scrollTo({ top: targetScrollY, behavior: "auto" });
     });
-  }, [availableJuices.length, cartItems.length]);
+  }, [availableJuices, cartItems]);
 
   const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
   const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
