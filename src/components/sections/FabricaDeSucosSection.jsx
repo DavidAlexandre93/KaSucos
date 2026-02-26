@@ -106,6 +106,66 @@ const GAME_THEME = {
 };
 
 const LS_KEY = "juice_splash_ranking_v1";
+const PLAYER_NAME_KEY = "juice_splash_player_name_v1";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
+
+function hasSupabaseConfig() {
+  return Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
+}
+
+async function requestSupabase(path, options = {}) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+      ...(options.headers || {}),
+    },
+  });
+
+  if (!response.ok) {
+    let details = "";
+    try {
+      const json = await response.json();
+      details = json?.message || json?.error || "";
+    } catch {
+      details = await response.text();
+    }
+    throw new Error(`Supabase ${response.status}${details ? `: ${details}` : ""}`);
+  }
+
+  return response;
+}
+
+async function fetchRankingFromSupabase() {
+  if (!hasSupabaseConfig()) return [];
+  const query = new URLSearchParams({
+    select: "id,player_name,score,skin,date,mode",
+    order: "score.desc,date.asc",
+    limit: "10",
+  });
+
+  const response = await requestSupabase(`${SUPABASE_TABLE}?${query.toString()}`);
+  const rows = await response.json();
+  return Array.isArray(rows) ? rows : [];
+}
+
+async function saveScoreToSupabase(entry) {
+  if (!hasSupabaseConfig()) return;
+
+  await requestSupabase(SUPABASE_TABLE, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+    },
+    body: JSON.stringify(entry),
+  });
+}
+
 function loadRanking() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -118,6 +178,22 @@ function loadRanking() {
 function saveRanking(list) {
   try {
     localStorage.setItem(LS_KEY, JSON.stringify(list));
+  } catch {
+    // noop
+  }
+}
+
+function loadPlayerName() {
+  try {
+    return localStorage.getItem(PLAYER_NAME_KEY) || "Anônimo";
+  } catch {
+    return "Anônimo";
+  }
+}
+
+function savePlayerName(name) {
+  try {
+    localStorage.setItem(PLAYER_NAME_KEY, name);
   } catch {
     // noop
   }
@@ -239,6 +315,11 @@ function JuiceSplashGameFull() {
   const [bossTimer, setBossTimer] = useState(0);
   const [power, setPower] = useState({ slow: 0, double: 0, magnet: 0 });
   const [ranking, setRanking] = useState(() => (typeof window !== "undefined" ? loadRanking() : []));
+  const [playerName, setPlayerName] = useState(() => (typeof window !== "undefined" ? loadPlayerName() : "Anônimo"));
+  const [rankingScope, setRankingScope] = useState(() => (hasSupabaseConfig() ? "global" : "local"));
+  const [rankingMessage, setRankingMessage] = useState(() =>
+    hasSupabaseConfig() ? "Ranking global (Supabase)" : "Sem Supabase configurado. Usando ranking local."
+  );
   const bestScore = ranking?.[0]?.score ?? 0;
   const phaseRef = useRef(phase);
   const levelRef = useRef(level);
@@ -309,6 +390,39 @@ function JuiceSplashGameFull() {
     blenderZoneRef.current = blenderZone;
   }, [blenderZone]);
 
+  useEffect(() => {
+    savePlayerName(playerName);
+  }, [playerName]);
+
+  useEffect(() => {
+    let active = true;
+    async function loadGlobalRanking() {
+      if (!hasSupabaseConfig()) return;
+      try {
+        const rows = await fetchRankingFromSupabase();
+        if (!active) return;
+        if (rows.length > 0) {
+          setRanking(rows);
+          setRankingScope("global");
+          setRankingMessage("Ranking global (Supabase)");
+        } else {
+          setRanking([]);
+          setRankingScope("global");
+          setRankingMessage("Ranking global vazio. Seja o primeiro a pontuar!");
+        }
+      } catch {
+        if (!active) return;
+        setRankingScope("local");
+        setRankingMessage("Não foi possível carregar o Supabase. Exibindo ranking local.");
+      }
+    }
+
+    loadGlobalRanking();
+    return () => {
+      active = false;
+    };
+  }, []);
+
   function showToast(kind, text, ms = 1400) {
     setToast({ kind, text });
     window.clearTimeout(showToast._t);
@@ -349,7 +463,7 @@ function JuiceSplashGameFull() {
     loop();
   }
 
-  function endGame(reason = "Fim de jogo!") {
+  async function endGame(reason = "Fim de jogo!") {
     play("gameover");
     showToast("danger", reason, 2200);
     phaseRef.current = "over";
@@ -357,10 +471,35 @@ function JuiceSplashGameFull() {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
 
-    const entry = { score: scoreRef.current, skin: theme.id, date: new Date().toISOString(), mode };
+    const entry = {
+      player_name: (playerName || "Anônimo").trim().slice(0, 24) || "Anônimo",
+      score: scoreRef.current,
+      skin: theme.id,
+      date: new Date().toISOString(),
+      mode,
+    };
+
     const next = pushScore(loadRanking(), entry);
     saveRanking(next);
+
+    if (hasSupabaseConfig()) {
+      try {
+        await saveScoreToSupabase(entry);
+        const globalRows = await fetchRankingFromSupabase();
+        setRanking(globalRows);
+        setRankingScope("global");
+        setRankingMessage(globalRows.length > 0 ? "Ranking global (Supabase)" : "Ranking global vazio. Seja o primeiro a pontuar!");
+      } catch {
+        setRanking(next);
+        setRankingScope("local");
+        setRankingMessage("Falha ao salvar no Supabase. Ranking local atualizado.");
+      }
+      return;
+    }
+
     setRanking(next);
+    setRankingScope("local");
+    setRankingMessage("Sem Supabase configurado. Usando ranking local.");
   }
 
   function inZone(px, py, zone) {
@@ -622,6 +761,10 @@ function JuiceSplashGameFull() {
   }
 
   function clearRanking() {
+    if (rankingScope === "global") {
+      showToast("info", "Ranking global não pode ser limpo pelo cliente.", 1300);
+      return;
+    }
     saveRanking([]);
     setRanking([]);
     showToast("info", "Ranking limpo.", 900);
@@ -642,7 +785,7 @@ function JuiceSplashGameFull() {
       <div className="container">
         <header className="section-head">
           <h2>Fábrica de sucos</h2>
-          <p>Modo arcade com drag and drop, combos, boss fruit e ranking local.</p>
+          <p>Modo arcade com drag and drop, combos, boss fruit e ranking global com Supabase.</p>
         </header>
 
         <div
@@ -1320,8 +1463,33 @@ function JuiceSplashGameFull() {
                       )}
                     </div>
 
-                    <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-                      <div style={{ fontWeight: 950, opacity: 0.9, fontSize: isMobile ? 16 : 18 }}>Ranking local (Top 10)</div>
+                    <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+                      <div>
+                        <div style={{ fontWeight: 950, opacity: 0.9, fontSize: isMobile ? 16 : 18 }}>
+                          {rankingScope === "global" ? "Ranking global (Top 10)" : "Ranking local (Top 10)"}
+                        </div>
+                        <div style={{ marginTop: 4, fontSize: 12, opacity: 0.75, fontWeight: 700 }}>{rankingMessage}</div>
+                      </div>
+
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
+                        Nome:
+                        <input
+                          value={playerName}
+                          onChange={(ev) => setPlayerName(ev.target.value.slice(0, 24))}
+                          placeholder="Seu nome"
+                          style={{
+                            borderRadius: 10,
+                            padding: "7px 9px",
+                            border: `1px solid ${theme.border}`,
+                            background: "rgba(255,255,255,0.08)",
+                            color: "white",
+                            minWidth: 110,
+                            maxWidth: 160,
+                            fontWeight: 700,
+                          }}
+                        />
+                      </label>
+
                       <button
                         type="button"
                         onClick={clearRanking}
@@ -1332,12 +1500,14 @@ function JuiceSplashGameFull() {
                           background: "rgba(255,255,255,0.06)",
                           color: "white",
                           fontWeight: 950,
-                          cursor: "pointer",
+                          cursor: rankingScope === "global" ? "not-allowed" : "pointer",
+                          opacity: rankingScope === "global" ? 0.6 : 1,
                           display: "flex",
                           alignItems: "center",
                           gap: 8,
                         }}
-                        title="Limpar ranking"
+                        title={rankingScope === "global" ? "Indisponível no ranking global" : "Limpar ranking"}
+                        disabled={rankingScope === "global"}
                       >
                         <Trash2 size={16} />
                         Limpar
@@ -1372,6 +1542,7 @@ function JuiceSplashGameFull() {
                             <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                               <span style={{ opacity: 0.8 }}>{String(idx + 1).padStart(2, "0")}</span>
                               <span>{r.score}</span>
+                              <span style={{ opacity: 0.9, fontWeight: 900 }}>{r.player_name || "Anônimo"}</span>
                               <span style={{ opacity: 0.65, fontWeight: 800, fontSize: 12 }}>{r.skin?.toUpperCase?.() || "KASUCOS"}</span>
                             </div>
                             <div style={{ opacity: 0.65, fontWeight: 800, fontSize: 12 }}>{new Date(r.date).toLocaleDateString()}</div>
