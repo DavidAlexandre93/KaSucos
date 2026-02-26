@@ -2444,6 +2444,10 @@ body.site-party-mode::after {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .card-action {
+    color: #000;
+  }
+
   .combos,
   .reviews,
   .hero-grid,
