@@ -1,6 +1,6 @@
 export const dicasBlogData = {
   pt: {
-    sectionTitle: "Blog de Dicas e Informações",
+    sectionTitle: "Blog de dicas e informações",
     sectionDescription:
       "Um espaço com orientações práticas para conservar melhor os sucos e facilitar o dia a dia. Para adicionar, editar ou remover conteúdo, basta atualizar a lista de posts abaixo.",
     likeButtonLabel: "Joia",
