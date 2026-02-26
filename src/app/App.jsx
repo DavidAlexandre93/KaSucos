@@ -171,6 +171,12 @@ export default function App() {
     }, 0);
   };
 
+  const viewCombos = () => {
+    setTimeout(() => {
+      document.getElementById("combos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
+  };
+
   if (showSplash) {
     return (
       <SplashScreen
@@ -192,7 +198,7 @@ export default function App() {
       />
       <main>
         <MotionSection>
-          <InicioSection hero={t.hero} />
+          <InicioSection hero={t.hero} onViewCombos={viewCombos} />
         </MotionSection>
         <MotionSection delay={0.06}>
           <SucosSection
