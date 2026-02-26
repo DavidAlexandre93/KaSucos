@@ -232,7 +232,7 @@ function JuiceSplashGameFull() {
   const powerRef = useRef(power);
   const sizeRef = useRef(size);
 
-  const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 } });
+  const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" });
   const isMobile = size.width < 720;
   const isTablet = size.width >= 720 && size.width < 1024;
   const topHudHeight = isMobile ? 164 : isTablet ? 128 : 102;
@@ -318,7 +318,7 @@ function JuiceSplashGameFull() {
     setEntities([]);
     setPops([]);
     setToast(null);
-    dragRef.current = { draggingUid: null, start: null, offset: { x: 0, y: 0 } };
+    dragRef.current = { draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" };
   }
 
   function startGame() {
@@ -453,6 +453,8 @@ function JuiceSplashGameFull() {
     dragRef.current.draggingUid = uid;
     dragRef.current.start = pt;
     dragRef.current.offset = { x: pt.x - ent.x, y: pt.y - ent.y };
+    dragRef.current.moved = false;
+    dragRef.current.pointerKind = "touches" in ev ? "touch" : "mouse";
     setEntities((arr) => {
       const e = arr.find((x) => x.uid === uid);
       if (!e) return arr;
@@ -467,6 +469,11 @@ function JuiceSplashGameFull() {
     ev.preventDefault();
     const pt = getLocalPoint(ev);
     const off = dragRef.current.offset;
+    if (dragRef.current.start) {
+      const dx = pt.x - dragRef.current.start.x;
+      const dy = pt.y - dragRef.current.start.y;
+      if (Math.hypot(dx, dy) > 8) dragRef.current.moved = true;
+    }
     setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, x: pt.x - off.x, y: pt.y - off.y } : e)));
   }
 
@@ -476,9 +483,15 @@ function JuiceSplashGameFull() {
     if (!uid) return;
     ev.preventDefault();
     const ent = entitiesRef.current.find((x) => x.uid === uid);
+    const wasTapAssist = (isMobile || isTablet) && dragRef.current.pointerKind === "touch" && !dragRef.current.moved;
     dragRef.current.draggingUid = null;
     dragRef.current.start = null;
     if (!ent) return;
+
+    if (wasTapAssist) {
+      handleDropIntoBlender(ent);
+      return;
+    }
 
     const dropX = ent.x + 26;
     const dropY = ent.y + 26;
@@ -793,6 +806,23 @@ function JuiceSplashGameFull() {
                   </div>
                 </div>
               </div>
+
+              {(isMobile || isTablet) && (
+                <div
+                  style={{
+                    marginTop: 10,
+                    padding: "8px 10px",
+                    borderRadius: 12,
+                    border: `1px solid ${theme.border}`,
+                    background: "rgba(255,255,255,0.08)",
+                    color: "rgba(255,255,255,0.88)",
+                    fontWeight: 800,
+                    fontSize: 12,
+                  }}
+                >
+                  Dica mobile/tablet: toque na bolinha para enviar direto ao liquidificador.
+                </div>
+              )}
             </div>
           </div>
 
@@ -938,8 +968,8 @@ function JuiceSplashGameFull() {
                       position: "absolute",
                       left: e.x,
                       top: e.y,
-                      width: isBoss ? 78 : 54,
-                      height: isBoss ? 78 : 54,
+                      width: isBoss ? (isMobile || isTablet ? 88 : 78) : isMobile || isTablet ? 68 : 54,
+                      height: isBoss ? (isMobile || isTablet ? 88 : 78) : isMobile || isTablet ? 68 : 54,
                       borderRadius: 999,
                       background: color,
                       boxShadow: isBoss
