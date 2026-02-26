@@ -3,7 +3,7 @@ import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 
-export function CartSection({ labels, items, total, onFinalize }) {
+export function CartSection({ labels, items, total, onRemoveItem, onFinalize }) {
   const sectionRef = useRef(null);
 
   useGSAP(
@@ -33,9 +33,19 @@ export function CartSection({ labels, items, total, onFinalize }) {
                 <span>
                   {item.name} <small>({item.typeLabel})</small>
                 </span>
-                <strong>
-                  {item.quantity}x {item.priceLabel}
-                </strong>
+                <div className="cart-item-actions">
+                  <strong>
+                    {item.quantity}x {item.priceLabel}
+                  </strong>
+                  <button
+                    type="button"
+                    className="cart-remove"
+                    onClick={() => onRemoveItem(item.id)}
+                    aria-label={labels.removeItemAria?.replace("{item}", item.name) ?? `Remover ${item.name}`}
+                  >
+                    {labels.removeItem}
+                  </button>
+                </div>
               </motion.li>
             ))}
           </ul>
