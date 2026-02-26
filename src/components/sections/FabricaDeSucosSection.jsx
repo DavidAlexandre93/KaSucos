@@ -336,6 +336,7 @@ function JuiceSplashGameFull() {
   const [power, setPower] = useState({ slow: 0, double: 0, magnet: 0 });
   const [ranking, setRanking] = useState(() => (typeof window !== "undefined" ? loadRanking() : []));
   const [playerName, setPlayerName] = useState(() => (typeof window !== "undefined" ? loadPlayerName() : ""));
+  const [nameValidationError, setNameValidationError] = useState(false);
   const [rankingScope, setRankingScope] = useState(() => (hasSupabaseConfig() ? "global" : "local"));
   const [rankingMessage, setRankingMessage] = useState(() =>
     hasSupabaseConfig() ? "Ranking global (Supabase)" : "Sem Supabase configurado. Usando ranking local."
@@ -501,10 +502,12 @@ function JuiceSplashGameFull() {
   function startGame() {
     const safeName = normalizePlayerName(playerName);
     if (!safeName) {
+      setNameValidationError(true);
       showToast("danger", "Digite um nome obrigatório para jogar.", 1700);
       return;
     }
 
+    setNameValidationError(false);
     if (safeName !== playerName) setPlayerName(safeName);
     resetAll();
     phaseRef.current = "play";
@@ -864,6 +867,7 @@ function JuiceSplashGameFull() {
 
   function resetPlayerIdentity() {
     const existingName = normalizePlayerName(playerName);
+    setNameValidationError(false);
     setPlayerName("");
     savePlayerName("");
     if (!existingName) {
@@ -1599,18 +1603,23 @@ function JuiceSplashGameFull() {
                         Nome:
                         <input
                           value={playerName}
-                          onChange={(ev) => setPlayerName(ev.target.value.slice(0, 24))}
+                          onChange={(ev) => {
+                            const nextName = ev.target.value.slice(0, 24);
+                            setPlayerName(nextName);
+                            if (normalizePlayerName(nextName)) setNameValidationError(false);
+                          }}
                           placeholder="Seu nome (obrigatório)"
                           required
                           style={{
                             borderRadius: 10,
                             padding: "7px 9px",
-                            border: `1px solid ${theme.border}`,
+                            border: nameValidationError ? "1px solid #ff4d4d" : `1px solid ${theme.border}`,
                             background: "rgba(255,255,255,0.08)",
                             color: "white",
                             minWidth: 110,
                             maxWidth: 160,
                             fontWeight: 700,
+                            boxShadow: nameValidationError ? "0 0 0 2px rgba(255, 77, 77, 0.18)" : "none",
                           }}
                         />
                       </label>
@@ -1688,9 +1697,8 @@ function JuiceSplashGameFull() {
                           color: "white",
                           fontWeight: 1000,
                           cursor: "pointer",
-                          opacity: normalizePlayerName(playerName) ? 1 : 0.65,
+                          opacity: 1,
                         }}
-                        disabled={!normalizePlayerName(playerName)}
                         title={!normalizePlayerName(playerName) ? "Digite um nome para jogar" : "Jogar agora"}
                       >
                         Jogar agora
