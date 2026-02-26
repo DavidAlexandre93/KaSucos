@@ -1,9 +1,12 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 
 const MAX_COMBINATIONS = 2;
+const SPAWN_INTERVAL_MS = 1150;
+const FRUIT_FALL_SPEED = 3.6;
+const CUP_WIDTH = 210;
 
 const FRUIT_COLORS = {
   acerola: "#ea2f2f",
@@ -58,8 +61,10 @@ const normalizeFruitKey = (value) =>
 
 export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
   const sectionRef = useRef(null);
+  const sceneRef = useRef(null);
   const [selectedFruits, setSelectedFruits] = useState([]);
-  const [fruitDrops, setFruitDrops] = useState([]);
+  const [fallingFruits, setFallingFruits] = useState([]);
+  const [cupPosition, setCupPosition] = useState(50);
 
   const canCreate = selectedFruits.length === MAX_COMBINATIONS;
 
@@ -85,32 +90,6 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
     };
   }, [selectedFruits]);
 
-  const enqueueFruitDrop = (fruit) => {
-    const key = normalizeFruitKey(fruit);
-    setFruitDrops((current) => [
-      ...current,
-      {
-        id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-        color: FRUIT_COLORS[key] ?? DEFAULT_JUICE_COLOR,
-        icon: FRUIT_EMOJIS[key] ?? "🍹",
-      },
-    ]);
-  };
-
-  const handleToggleFruit = (fruit) => {
-    const isSelected = selectedFruits.includes(fruit);
-
-    if (isSelected) {
-      setSelectedFruits(selectedFruits.filter((item) => item !== fruit));
-      return;
-    }
-
-    if (selectedFruits.length < MAX_COMBINATIONS) {
-      setSelectedFruits([...selectedFruits, fruit]);
-      enqueueFruitDrop(fruit);
-    }
-  };
-
   const handleAddCustomJuice = () => {
     if (!canCreate) return;
 
@@ -120,20 +99,84 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
     });
   };
 
+  const moveCup = (nextPercent) => {
+    setCupPosition(Math.min(100, Math.max(0, nextPercent)));
+  };
+
+  useEffect(() => {
+    const handleKeyMove = (event) => {
+      if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
+        setCupPosition((current) => Math.max(0, current - 8));
+      }
+      if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") {
+        setCupPosition((current) => Math.min(100, current + 8));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyMove);
+    return () => window.removeEventListener("keydown", handleKeyMove);
+  }, []);
+
+  useEffect(() => {
+    const spawnFruit = () => {
+      const randomFruit = content.fruits[Math.floor(Math.random() * content.fruits.length)];
+      const fruitKey = normalizeFruitKey(randomFruit);
+
+      setFallingFruits((current) => [
+        ...current,
+        {
+          id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+          fruit: randomFruit,
+          x: randomBetween(8, 92),
+          y: -16,
+          icon: FRUIT_EMOJIS[fruitKey] ?? "🍹",
+          color: FRUIT_COLORS[fruitKey] ?? DEFAULT_JUICE_COLOR,
+        },
+      ]);
+    };
+
+    spawnFruit();
+    const spawnInterval = window.setInterval(spawnFruit, SPAWN_INTERVAL_MS);
+    return () => window.clearInterval(spawnInterval);
+  }, [content.fruits]);
+
+  useEffect(() => {
+    const sceneHeight = sceneRef.current?.clientHeight ?? 410;
+
+    const tick = window.setInterval(() => {
+      setFallingFruits((current) =>
+        current
+          .map((fruit) => ({ ...fruit, y: fruit.y + FRUIT_FALL_SPEED }))
+          .filter((fruit) => {
+            const fruitCenterX = fruit.x;
+            const cupLeft = cupPosition - (CUP_WIDTH / 2 / (sceneRef.current?.clientWidth ?? 1)) * 100;
+            const cupRight = cupPosition + (CUP_WIDTH / 2 / (sceneRef.current?.clientWidth ?? 1)) * 100;
+            const reachesCup = fruit.y >= 170 && fruit.y <= 245;
+            const insideCup = fruitCenterX >= cupLeft + 10 && fruitCenterX <= cupRight - 10;
+
+            if (!canCreate && reachesCup && insideCup) {
+              setSelectedFruits((selected) => (selected.length < MAX_COMBINATIONS ? [...selected, fruit.fruit] : selected));
+              return false;
+            }
+
+            return fruit.y <= sceneHeight;
+          }),
+      );
+    }, 30);
+
+    return () => window.clearInterval(tick);
+  }, [canCreate, cupPosition]);
+
   useGSAP(
     ({ selector }) => {
       const scene = selector(".juice-scene")[0];
       const liquid = selector(".juice-liquid")[0];
       const bubbles = selector(".juice-bubble");
       const droplets = selector(".juice-droplet");
-      const fruitChips = selector(".fruit-chip");
-      const fruitDropElements = selector(".fruit-drop:not([data-animated='true'])");
+      const fallingFruitElements = selector(".falling-fruit:not([data-animated='true'])");
       const wave = selector(".juice-wave")[0];
 
-      gsap
-        .timeline()
-        .fromTo(scene, { opacity: 0, y: 30, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.65 })
-        .fromTo(fruitChips, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.05 });
+      gsap.timeline().fromTo(scene, { opacity: 0, y: 30, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.65 });
 
       if (liquid) {
         const liquidLevel = selectedFruits.length === 0 ? 124 : selectedFruits.length === 1 ? 78 : 38;
@@ -150,21 +193,10 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
         gsap.to(droplet, { y: -10 - index * 6, opacity: 0.85, duration: 0.7 + index * 0.06 });
       });
 
-      fruitDropElements.forEach((drop) => {
+      fallingFruitElements.forEach((drop) => {
         drop.dataset.animated = "true";
-        const dropId = drop.dataset.dropId;
 
-        gsap
-          .timeline({
-            onComplete: () => setFruitDrops((current) => current.filter((item) => item.id !== dropId)),
-          })
-          .fromTo(
-            drop,
-            { y: -118, x: randomBetween(-42, 42), scale: 0.55, rotate: randomBetween(-34, 34), opacity: 0 },
-            { y: -92, scale: 1, opacity: 1, duration: 0.15, ease: "power1.out" },
-          )
-          .to(drop, { y: 156, rotate: "+=110", duration: 0.62, ease: "power2.in" })
-          .to(drop, { opacity: 0, scale: 1.15, duration: 0.14 }, "-=0.08");
+        gsap.fromTo(drop, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power1.out" });
 
         if (liquid) {
           gsap.fromTo(
@@ -179,7 +211,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
         }
       });
     },
-    { scope: sectionRef, dependencies: [selectedFruits.join("|"), fruitDrops.map((drop) => drop.id).join("|")] },
+    { scope: sectionRef, dependencies: [selectedFruits.join("|"), fallingFruits.map((drop) => drop.id).join("|")] },
   );
 
   return (
@@ -188,23 +220,29 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
         <h2 className="section-title">{content.title}</h2>
         <p className="builder-description">{content.description}</p>
 
-        <div className="juice-preview juice-scene">
+        <div className="juice-preview juice-scene" ref={sceneRef} onMouseMove={(event) => {
+          if (!sceneRef.current) return;
+          const rect = sceneRef.current.getBoundingClientRect();
+          moveCup(((event.clientX - rect.left) / rect.width) * 100);
+        }}>
           <div className="juice-aura" aria-hidden="true" />
 
-          <motion.div className="juice-cup" whileHover={{ y: -4, scale: 1.01 }} transition={{ duration: 0.25 }}>
+          {fallingFruits.map((fruit) => (
+            <span
+              key={fruit.id}
+              className="falling-fruit"
+              style={{ left: `${fruit.x}%`, top: `${fruit.y}px`, background: fruit.color }}
+              aria-hidden="true"
+            >
+              {fruit.icon}
+            </span>
+          ))}
+
+          <motion.div
+            className="juice-cup"
+            style={{ left: `${cupPosition}%`, transform: "translateX(-50%)" }}
+          >
             <div className="juice-handle" aria-hidden="true" />
-            <div className="juice-drop-zone" aria-hidden="true">
-              {fruitDrops.map((drop) => (
-                <span
-                  key={drop.id}
-                  className="fruit-drop"
-                  data-drop-id={drop.id}
-                  style={{ background: drop.color }}
-                >
-                  {drop.icon}
-                </span>
-              ))}
-            </div>
             <div className="juice-liquid" style={cupFillStyle}>
               <span className="juice-wave" />
               <span className="juice-liquid-glow" />
@@ -223,33 +261,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
             </div>
           </motion.div>
 
-          <div className="juice-shadow" aria-hidden="true" />
-        </div>
-
-        <div className="builder-grid">
-          {content.fruits.map((fruit) => {
-            const active = selectedFruits.includes(fruit);
-            const disabled = !active && selectedFruits.length >= MAX_COMBINATIONS;
-            const fruitColor = FRUIT_COLORS[normalizeFruitKey(fruit)] ?? DEFAULT_JUICE_COLOR;
-
-            return (
-              <motion.button
-                key={fruit}
-                type="button"
-                className={`fruit-chip ${active ? "active" : ""}`.trim()}
-                onClick={() => handleToggleFruit(fruit)}
-                disabled={disabled}
-                whileHover={{ y: -2, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <span className="mini-fruit" role="img" aria-label={fruit} style={{ background: fruitColor }}>
-                  {FRUIT_EMOJIS[normalizeFruitKey(fruit)] ?? "🍹"}
-                </span>
-                <span>{fruit}</span>
-              </motion.button>
-            );
-          })}
+          <div className="juice-shadow" aria-hidden="true" style={{ left: `${cupPosition}%`, transform: "translateX(-50%)" }} />
         </div>
 
         <div className="builder-feedback">
