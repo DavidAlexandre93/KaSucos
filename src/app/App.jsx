@@ -172,6 +172,10 @@ export default function App() {
     }, 0);
   };
 
+  const viewCombos = () => {
+    setTimeout(() => {
+      document.getElementById("combos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
   const openJuicesCatalog = (event) => {
     event?.preventDefault();
 
@@ -208,6 +212,7 @@ export default function App() {
       />
       <main>
         <MotionSection>
+          <InicioSection hero={t.hero} onViewCombos={viewCombos} />
           <InicioSection hero={t.hero} onBuyNow={openJuicesCatalog} />
         </MotionSection>
         <MotionSection delay={0.06}>

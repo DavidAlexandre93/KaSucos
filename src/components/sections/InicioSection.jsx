@@ -13,6 +13,7 @@ const prefersReducedMotion =
 
 const heroBanners = ["/img/banner/banner-apresentação.png", "/img/banner/banner-brinde-kasucos.png"];
 
+export function InicioSection({ hero, onViewCombos }) {
 export function InicioSection({ hero, onBuyNow }) {
   const sectionRef = useRef(null);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
@@ -89,7 +90,17 @@ export function InicioSection({ hero, onBuyNow }) {
             >
               {hero.buyNow}
             </motion.a>
-            <motion.a href="#combos" className="btn-ghost" {...buttonMotion}>
+            <motion.a
+              href="#combos"
+              className="btn-ghost"
+              onClick={(event) => {
+                if (!onViewCombos) return;
+
+                event.preventDefault();
+                onViewCombos();
+              }}
+              {...buttonMotion}
+            >
               {hero.viewCombos}
             </motion.a>
           </div>
