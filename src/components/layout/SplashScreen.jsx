@@ -28,11 +28,17 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
     if (typeof window === "undefined" || !window.matchMedia) return undefined;
 
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const sync = () => setReduceMotion(media.matches);
+    const lowPowerMobile = window.matchMedia("(max-width: 1024px), (pointer: coarse)");
+    const sync = () => setReduceMotion(media.matches || lowPowerMobile.matches);
 
     sync();
     media.addEventListener?.("change", sync);
-    return () => media.removeEventListener?.("change", sync);
+    lowPowerMobile.addEventListener?.("change", sync);
+
+    return () => {
+      media.removeEventListener?.("change", sync);
+      lowPowerMobile.removeEventListener?.("change", sync);
+    };
   }, []);
 
   useEffect(() => {
