@@ -43,11 +43,24 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
 
   useEffect(() => {
     if (reduceMotion) {
-      setProgress(100);
-      setDone(true);
-      onSplashDone?.();
-      return;
+      setProgress(0);
+
+      const showProgressFrame = requestAnimationFrame(() => {
+        setProgress(100);
+      });
+
+      const finishTimer = window.setTimeout(() => {
+        setDone(true);
+        onSplashDone?.();
+      }, 1100);
+
+      return () => {
+        cancelAnimationFrame(showProgressFrame);
+        window.clearTimeout(finishTimer);
+      };
     }
+
+    setDone(false);
 
     const start = performance.now();
     let mounted = true;
@@ -75,6 +88,7 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
       if (rafProgressRef.current) cancelAnimationFrame(rafProgressRef.current);
     };
   }, [onSplashDone, reduceMotion]);
+
 
   useEffect(() => {
     if (reduceMotion) return undefined;
