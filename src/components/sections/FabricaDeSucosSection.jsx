@@ -497,15 +497,9 @@ function JuiceSplashGameFull() {
     if (!uid) return;
     ev.preventDefault();
     const ent = entitiesRef.current.find((x) => x.uid === uid);
-    const wasTapAssist = (isMobile || isTablet) && dragRef.current.pointerKind === "touch" && !dragRef.current.moved;
     dragRef.current.draggingUid = null;
     dragRef.current.start = null;
     if (!ent) return;
-
-    if (wasTapAssist) {
-      handleDropIntoBlender(ent);
-      return;
-    }
 
     const dropX = ent.x + 26;
     const dropY = ent.y + 26;
@@ -839,7 +833,7 @@ function JuiceSplashGameFull() {
                     fontSize: 12,
                   }}
                 >
-                  Dica mobile/tablet: toque na bolinha para enviar direto ao liquidificador.
+                  Dica mobile/tablet: toque e arraste a fruta. Ao pegar, ela para de cair e você joga no liquidificador.
                 </div>
               )}
             </div>
@@ -924,7 +918,20 @@ function JuiceSplashGameFull() {
                     }}
                   >
                     <span aria-hidden style={{ fontSize: isMobile ? 18 : 20 }}>🟠</span>
-                    <span aria-hidden>🤏</span>
+                    <motion.span
+                      aria-hidden
+                      animate={{ opacity: [1, 0, 0, 1] }}
+                      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      🫴
+                    </motion.span>
+                    <motion.span
+                      aria-hidden
+                      animate={{ opacity: [0, 1, 1, 0] }}
+                      transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      ✊
+                    </motion.span>
                   </motion.div>
 
                   <motion.div
