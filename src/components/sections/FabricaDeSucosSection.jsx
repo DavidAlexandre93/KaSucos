@@ -340,6 +340,7 @@ function JuiceSplashGameFull() {
   const [rankingMessage, setRankingMessage] = useState(() =>
     hasSupabaseConfig() ? "Ranking global (Supabase)" : "Sem Supabase configurado. Usando ranking local."
   );
+  const [blenderXPercent, setBlenderXPercent] = useState(50);
   const bestScore = ranking?.[0]?.score ?? 0;
   const phaseRef = useRef(phase);
   const levelRef = useRef(level);
@@ -351,14 +352,18 @@ function JuiceSplashGameFull() {
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" });
   const isMobile = size.width < 720;
   const isTablet = size.width >= 720 && size.width < 1024;
-  const topHudHeight = isMobile ? 164 : isTablet ? 128 : 102;
+
+  const moveBlender = (nextPercent) => {
+    setBlenderXPercent(clamp(nextPercent, 12, 88));
+  };
 
   const blenderZone = useMemo(() => {
-    const w = Math.min(320, Math.max(240, size.width - 28));
-    const x = Math.floor((size.width - w) / 2);
-    const y = topHudHeight;
-    return { x, y, w, h: 220 };
-  }, [size.width, topHudHeight]);
+    const w = isMobile ? 120 : 130;
+    const h = isMobile ? 172 : 182;
+    const x = clamp(Math.round((size.width * blenderXPercent) / 100 - w / 2), 12, size.width - w - 12);
+    const y = size.height - (isMobile ? 290 : 318);
+    return { x, y, w, h };
+  }, [blenderXPercent, isMobile, size.height, size.width]);
 
   const blenderZoneRef = useRef(blenderZone);
 
@@ -414,6 +419,21 @@ function JuiceSplashGameFull() {
   useEffect(() => {
     blenderZoneRef.current = blenderZone;
   }, [blenderZone]);
+
+  useEffect(() => {
+    const handleKeyMove = (event) => {
+      if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
+        setBlenderXPercent((current) => clamp(current - 6, 12, 88));
+      }
+
+      if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") {
+        setBlenderXPercent((current) => clamp(current + 6, 12, 88));
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyMove);
+    return () => window.removeEventListener("keydown", handleKeyMove);
+  }, []);
 
   useEffect(() => {
     savePlayerName(playerName);
@@ -662,6 +682,13 @@ function JuiceSplashGameFull() {
       if (Math.hypot(dx, dy) > 8) dragRef.current.moved = true;
     }
     setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, x: pt.x - off.x, y: pt.y - off.y } : e)));
+  }
+
+  function moveBlenderByPointer(ev) {
+    if (phaseRef.current !== "play") return;
+    if (dragRef.current.draggingUid) return;
+    const pt = getLocalPoint(ev);
+    moveBlender((pt.x / Math.max(1, size.width)) * 100);
   }
 
   function endDrag(ev) {
@@ -1059,10 +1086,16 @@ function JuiceSplashGameFull() {
 
           <div
             ref={arenaRef}
-            onMouseMove={moveDrag}
+            onMouseMove={(event) => {
+              moveDrag(event);
+              moveBlenderByPointer(event);
+            }}
             onMouseUp={endDrag}
             onMouseLeave={endDrag}
-            onTouchMove={moveDrag}
+            onTouchMove={(event) => {
+              moveDrag(event);
+              moveBlenderByPointer(event);
+            }}
             onTouchEnd={endDrag}
             style={{
               position: "absolute",
@@ -1192,34 +1225,21 @@ function JuiceSplashGameFull() {
                 top: blenderZone.y,
                 width: blenderZone.w,
                 height: blenderZone.h,
-                borderRadius: 26,
-                background: "linear-gradient(180deg, rgba(245,255,255,0.18), rgba(255,255,255,0.05))",
-                border: `1px solid rgba(255,255,255,0.2)`,
-                boxShadow: "0 16px 44px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.35)",
+                borderRadius: 20,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: 8,
+                gap: 6,
                 zIndex: 2,
-                overflow: "hidden",
               }}
             >
               <div
                 aria-hidden
                 style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "radial-gradient(circle at top, rgba(120,255,170,0.2), transparent 52%)",
-                }}
-              />
-
-              <div
-                aria-hidden
-                style={{
                   position: "relative",
-                  width: isMobile ? 56 : 62,
-                  height: isMobile ? 70 : 78,
+                  width: isMobile ? 58 : 64,
+                  height: isMobile ? 72 : 80,
                   borderRadius: "14px 14px 22px 22px",
                   background: "linear-gradient(180deg, rgba(255,255,255,0.85), rgba(185,224,255,0.26))",
                   border: "1px solid rgba(255,255,255,0.82)",
