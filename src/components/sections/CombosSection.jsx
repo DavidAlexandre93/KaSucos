@@ -12,7 +12,7 @@ function ComboMath({ combo, language }) {
   const base = combo.visualMath?.base ?? 0;
   const bonus = combo.visualMath?.bonus ?? 0;
   const total = base + bonus;
-  const word = bottleWord[language] ?? bottleWord.pt;
+  const word = bottleWord[language] ?? bottleWord.en ?? bottleWord.pt;
 
   return (
     <div className="combo-math" aria-label={`${base} + ${bonus} = ${total} ${word}`}>
@@ -44,7 +44,7 @@ export function CombosSection({ combos, language, labels, onAddCombo }) {
             <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>
               {combo.highlight ? <span className="badge">{labels.mostOrdered}</span> : null}
               <h3>{combo.title}</h3>
-              <p>{combo.detail[language]}</p>
+              <p>{combo.detail[language] ?? combo.detail.en ?? combo.detail.pt}</p>
               <ComboMath combo={combo} language={language} />
               <strong>{combo.price}</strong>
               <button type="button" onClick={() => onAddCombo(combo)}>

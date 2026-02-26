@@ -41,9 +41,9 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
                   <img className="card-bottle" src={suco.image} alt={suco.name} loading="lazy" />
                 </div>
                 <div className="card-body">
-                  <span className="tag">{suco.tag[language]}</span>
+                  <span className="tag">{suco.tag[language] ?? suco.tag.en ?? suco.tag.pt}</span>
                   <h3>{suco.name}</h3>
-                  <p>{suco.description[language]}</p>
+                  <p>{suco.description[language] ?? suco.description.en ?? suco.description.pt}</p>
                   <small className="availability">{labels[suco.availabilityKey]}</small>
                   <div className="card-footer">
                     <strong>{suco.price}</strong>

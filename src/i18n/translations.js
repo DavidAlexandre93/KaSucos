@@ -338,9 +338,28 @@ export const translations = {
   },
 };
 
+
+translations.ja = {
+  ...translations.en,
+  nav: {
+    ...translations.en.nav,
+    home: "ホーム",
+    themes: "テーマ",
+    juices: "ジュース",
+    buildYourJuice: "カスタム",
+    combos: "セット",
+    benefits: "メリット",
+    tipsInfo: "ヒント",
+    testimonials: "レビュー",
+    findUs: "店舗情報",
+    contact: "お問い合わせ",
+  },
+};
+
 export const themeNames = {
   pt: { roxo: "Roxo KaSucos", amarelo: "Amarelo Solar", verde: "Verde Fresh" },
   en: { roxo: "KaSucos Purple", amarelo: "Solar Yellow", verde: "Fresh Green" },
   es: { roxo: "Morado KaSucos", amarelo: "Amarillo Solar", verde: "Verde Fresh" },
   fr: { roxo: "Violet KaSucos", amarelo: "Jaune Solaire", verde: "Vert Fresh" },
+  ja: { roxo: "KaSucosパープル", amarelo: "ソーラーイエロー", verde: "フレッシュグリーン" },
 };
