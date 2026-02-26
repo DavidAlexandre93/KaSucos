@@ -623,6 +623,11 @@ function JuiceSplashGameFull() {
   const nextNeedInfo = fruitById(nextNeed);
   const draggingUid = dragRef.current.draggingUid;
   const dangerPct = clamp(danger, 0, 100);
+  const showMobileHandGuide = (isMobile || isTablet) && phase !== "over";
+  const handGuideStartX = clamp(blenderZone.x - (isMobile ? 72 : 88), 18, size.width - 170);
+  const handGuideStartY = clamp(blenderZone.y - (isMobile ? 42 : 50), 56, size.height - 300);
+  const handGuideEndX = blenderZone.x + blenderZone.w / 2 - 26;
+  const handGuideEndY = blenderZone.y + blenderZone.h / 2 - 18;
 
   return (
     <section id="fabrica-de-sucos" className="section section-alt" ref={wrapRef} style={{ width: "100%" }}>
@@ -871,6 +876,70 @@ function JuiceSplashGameFull() {
                 />
               </div>
             </div>
+
+            <AnimatePresence>
+              {showMobileHandGuide && (
+                <motion.div
+                  key="mobile-hand-guide"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: phase === "idle" ? 0.95 : 0.55 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.35 }}
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: 7,
+                    pointerEvents: "none",
+                  }}
+                >
+                  <motion.div
+                    animate={{
+                      x: [handGuideStartX, handGuideEndX, handGuideEndX, handGuideStartX],
+                      y: [handGuideStartY, handGuideEndY, handGuideEndY + 10, handGuideStartY],
+                    }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      fontSize: isMobile ? 24 : 28,
+                      filter: "drop-shadow(0 8px 12px rgba(0,0,0,0.28))",
+                    }}
+                  >
+                    <span aria-hidden style={{ fontSize: isMobile ? 18 : 20 }}>🟠</span>
+                    <span aria-hidden>🤏</span>
+                  </motion.div>
+
+                  <motion.div
+                    animate={{
+                      opacity: [0, 0.85, 0.85, 0],
+                      scale: [0.9, 1, 1, 0.9],
+                      x: [handGuideStartX - 6, handGuideStartX - 6, handGuideEndX - 14, handGuideEndX - 14],
+                      y: [handGuideStartY + 30, handGuideStartY + 30, handGuideEndY + 30, handGuideEndY + 30],
+                    }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      padding: "6px 10px",
+                      borderRadius: 999,
+                      background: "rgba(0,0,0,0.36)",
+                      color: "white",
+                      fontWeight: 900,
+                      fontSize: 11,
+                      letterSpacing: 0.2,
+                      border: `1px solid ${theme.border}`,
+                    }}
+                  >
+                    Pegue e solte no blender
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             <motion.div
               animate={{
