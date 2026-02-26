@@ -16,6 +16,7 @@ import { useLanguage } from "../hooks/useLanguage";
 import { translations } from "../i18n/translations";
 import { CartSection } from "../components/sections/CartSection";
 import { CheckoutSection } from "../components/sections/CheckoutSection";
+import { FabricaDeSucosSection } from "../components/sections/FabricaDeSucosSection";
 import { dicasBlogData } from "../data/dicasBlogData";
 import { MotionSection } from "../components/ui/MotionPrimitives";
 import { SplashScreen } from "../components/layout/SplashScreen";
@@ -223,6 +224,9 @@ export default function App() {
             <CheckoutSection checkout={t.checkout} total={totalLabel} />
           </MotionSection>
         ) : null}
+        <MotionSection delay={0.12}>
+          <FabricaDeSucosSection />
+        </MotionSection>
         <MotionSection>
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
