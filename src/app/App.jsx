@@ -168,6 +168,16 @@ export default function App() {
     setAvailableJuices((current) => current.filter((item) => (item.title || item.name) !== id));
   };
 
+  const removeItemFromCart = (id) => {
+    setCartItems((current) =>
+      current.flatMap((item) => {
+        if (item.id !== id) return item;
+        if (item.quantity <= 1) return [];
+        return { ...item, quantity: item.quantity - 1 };
+      }),
+    );
+  };
+
 
   useLayoutEffect(() => {
     if (pendingScrollRestoreRef.current == null) return;
@@ -274,6 +284,7 @@ export default function App() {
               labels={t.cart}
               items={cartItems}
               total={totalLabel}
+              onRemoveItem={removeItemFromCart}
               onFinalize={finalizePurchase}
             />
           </MotionSection>
