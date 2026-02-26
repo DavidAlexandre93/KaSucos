@@ -25,6 +25,7 @@ import gsap from "../lib/gsap";
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
+const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || "5511000000000";
 
 const DEFAULT_THEME_COLORS = {
   "--purple-900": "#3b1575",
@@ -158,7 +159,7 @@ export default function App() {
 
   const openCart = () => {
     setShowCart(true);
-    setShowCheckout(true);
+    setShowCheckout(totalItems > 0);
     setTimeout(() => {
       document.getElementById("cesta")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
@@ -189,6 +190,7 @@ export default function App() {
         onLanguageChange={setLanguage}
         labels={t.nav}
         onBasketClick={openCart}
+        basketCount={totalItems}
       />
       <main>
         <MotionSection>
@@ -215,12 +217,19 @@ export default function App() {
         </MotionSection>
         {showCart ? (
           <MotionSection>
-            <CartSection labels={t.cart} items={cartItems} total={totalLabel} onFinalize={finalizePurchase} />
+            <CartSection
+              labels={t.cart}
+              items={cartItems}
+              total={totalLabel}
+              onFinalize={finalizePurchase}
+              availableJuices={sucos}
+              onAddAvailableJuice={(juice) => addItem(juice, t.cart.unit)}
+            />
           </MotionSection>
         ) : null}
         {showCheckout ? (
           <MotionSection>
-            <CheckoutSection checkout={t.checkout} total={totalLabel} />
+            <CheckoutSection checkout={t.checkout} total={totalLabel} items={cartItems} whatsappPhone={WHATSAPP_PHONE} contact={t.contact} />
           </MotionSection>
         ) : null}
         <MotionSection>

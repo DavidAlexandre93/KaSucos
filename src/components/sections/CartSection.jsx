@@ -3,7 +3,7 @@ import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 
-export function CartSection({ labels, items, total, onFinalize }) {
+export function CartSection({ labels, items, total, onFinalize, availableJuices = [], onAddAvailableJuice }) {
   const sectionRef = useRef(null);
 
   useGSAP(
@@ -25,6 +25,26 @@ export function CartSection({ labels, items, total, onFinalize }) {
     <section id="cesta" className="section cart-section" ref={sectionRef}>
       <motion.div className="container cart-box" whileHover={{ y: -2, scale: 1.002 }} transition={{ duration: 0.25 }}>
         <h2>{labels.title}</h2>
+
+        {availableJuices.length ? (
+          <div className="cart-available">
+            <h3>{labels.availableTitle ?? "Sucos disponíveis para venda"}</h3>
+            <ul className="cart-available-list">
+              {availableJuices.map((juice) => (
+                <li key={juice.name}>
+                  <span>{juice.name}</span>
+                  <div>
+                    <strong>{juice.price}</strong>
+                    <button type="button" className="btn-secondary" onClick={() => onAddAvailableJuice?.(juice)}>
+                      {labels.addFromList ?? "Adicionar"}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
         {items.length ? (
           <ul className="cart-list">
             {items.map((item) => (

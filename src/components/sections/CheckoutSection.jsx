@@ -1,10 +1,28 @@
-import { useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 
-export function CheckoutSection({ checkout, total }) {
+export function CheckoutSection({ checkout, total, items = [], whatsappPhone = "5511000000000", contact = {} }) {
   const sectionRef = useRef(null);
+  const [storageType, setStorageType] = useState("");
+  const [deliveryType, setDeliveryType] = useState("");
+
+  const whatsappHref = useMemo(() => {
+    const lines = items.length
+      ? items.map((item) => `- ${item.quantity}x ${item.name} (${item.priceLabel})`)
+      : [checkout.emptyOrderMessage ?? "Sem itens na cesta."];
+
+    const rawMessage = [
+      contact.whatsappIntro ?? "Olá! Quero fechar este pedido:",
+      ...lines,
+      `${checkout.temperatureLabel}: ${storageType || checkout.chooseOption}`,
+      `${checkout.deliveryLabel}: ${deliveryType || checkout.chooseOption}`,
+      `${checkout.totalLabel} ${total}`,
+    ].join("\n");
+
+    return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(rawMessage)}`;
+  }, [checkout, contact.whatsappIntro, deliveryType, items, storageType, total, whatsappPhone]);
 
   useGSAP(
     ({ selector }) => {
@@ -29,7 +47,7 @@ export function CheckoutSection({ checkout, total }) {
         <form className="checkout-form" aria-label={checkout.formLabel}>
           <motion.label whileHover={{ x: 2 }}>
             <span>{checkout.temperatureLabel}</span>
-            <select defaultValue="" name="temperatura">
+            <select value={storageType} onChange={(event) => setStorageType(event.target.value)} name="temperatura">
               <option value="" disabled>
                 {checkout.chooseOption}
               </option>
@@ -40,7 +58,7 @@ export function CheckoutSection({ checkout, total }) {
 
           <motion.label whileHover={{ x: 2 }}>
             <span>{checkout.deliveryLabel}</span>
-            <select defaultValue="" name="entrega">
+            <select value={deliveryType} onChange={(event) => setDeliveryType(event.target.value)} name="entrega">
               <option value="" disabled>
                 {checkout.chooseOption}
               </option>
@@ -54,6 +72,17 @@ export function CheckoutSection({ checkout, total }) {
         <motion.p className="checkout-total" whileHover={{ scale: 1.01 }}>
           {checkout.totalLabel} <strong>{total}</strong>
         </motion.p>
+
+        <motion.a
+          className="btn-primary checkout-whatsapp"
+          href={whatsappHref}
+          target="_blank"
+          rel="noreferrer"
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.97 }}
+        >
+          {checkout.cta}
+        </motion.a>
       </motion.div>
     </section>
   );
