@@ -3,7 +3,7 @@ import gsap from "../../lib/gsap";
 import { motion } from "../../lib/motion";
 import { useGSAP } from "../../lib/useGSAP";
 
-export function CartSection({ labels, items, total, onFinalize, availableJuices = [], onAddAvailableJuice }) {
+export function CartSection({ labels, items, total, onFinalize, availableJuices = [], onRemoveAvailableJuice }) {
   const sectionRef = useRef(null);
 
   useGSAP(
@@ -35,8 +35,8 @@ export function CartSection({ labels, items, total, onFinalize, availableJuices 
                   <span>{juice.name}</span>
                   <div>
                     <strong>{juice.price}</strong>
-                    <button type="button" className="btn-secondary" onClick={() => onAddAvailableJuice?.(juice)}>
-                      {labels.addFromList ?? "Adicionar"}
+                    <button type="button" className="btn-secondary btn-remove-juice" onClick={() => onRemoveAvailableJuice?.(juice)}>
+                      {labels.removeFromList ?? "Remover"}
                     </button>
                   </div>
                 </li>
