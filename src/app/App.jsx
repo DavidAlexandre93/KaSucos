@@ -150,13 +150,6 @@ export default function App() {
     });
   };
 
-  const removeAvailableJuice = (juice) => {
-    const id = juice.title || juice.name;
-
-    setCartItems((current) => current.filter((item) => item.id !== id));
-    setAvailableJuices((current) => current.filter((item) => (item.title || item.name) !== id));
-  };
-
   const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
   const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
   const totalLabel = formatBRL(totalAmount);
@@ -252,8 +245,6 @@ export default function App() {
               items={cartItems}
               total={totalLabel}
               onFinalize={finalizePurchase}
-              availableJuices={availableJuices}
-              onRemoveAvailableJuice={removeAvailableJuice}
             />
           </MotionSection>
         ) : null}
