@@ -50,16 +50,30 @@ function formatTime(ms) {
 }
 
 const FRUITS = [
-  { id: "acerola", label: "Acerola", color: "#E53950" },
+  { id: "acerola", label: "Acerola", color: "#E53950", emoji: "🍒" },
   { id: "orange", label: "Laranja", color: "#FFA500" },
-  { id: "strawberry", label: "Morango", color: "#FF3E6C" },
+  { id: "strawberry", label: "Morango", color: "#FF3E6C", emoji: "🍓" },
   { id: "pineapple", label: "Abacaxi", color: "#FFD54D" },
   { id: "grape", label: "Uva", color: "#7B61FF" },
+  { id: "guava", label: "Goiaba", color: "#FF6A8C", emoji: "🍑" },
   { id: "lemon", label: "Limão", color: "#B7FF5A" },
   { id: "passionfruit", label: "Maracujá", color: "#F4BE34" },
   { id: "mango", label: "Manga", color: "#FFB14A" },
   { id: "greenapple", label: "Maçã Verde", color: "#73C86A" },
 ];
+
+const FRUIT_EMOJIS_BY_ID = {
+  acerola: "🍒",
+  orange: "🍊",
+  strawberry: "🍓",
+  pineapple: "🍍",
+  grape: "🍇",
+  guava: "🍑",
+  lemon: "🍋",
+  passionfruit: "🥭",
+  mango: "🥭",
+  greenapple: "🍏",
+};
 
 const RECIPES = [
   { name: "Tropical", need: ["mango", "pineapple", "orange"] },
@@ -1119,6 +1133,7 @@ function JuiceSplashGameFull() {
                 const isBoss = e.kind === "boss";
                 const isPower = e.kind === "power";
                 const color = isBoss ? "#FF4D4D" : fruitById(e.fruitId).color;
+                const fruitEmoji = FRUIT_EMOJIS_BY_ID[e.fruitId] ?? "🍎";
 
                 const powerLabel =
                   e.powerType === "slow" ? "SLOW" : e.powerType === "double" ? "x2" : e.powerType === "magnet" ? "MAG" : "";
@@ -1139,10 +1154,12 @@ function JuiceSplashGameFull() {
                       width: isBoss ? (isMobile || isTablet ? 88 : 78) : isMobile || isTablet ? 68 : 54,
                       height: isBoss ? (isMobile || isTablet ? 88 : 78) : isMobile || isTablet ? 68 : 54,
                       borderRadius: 999,
-                      background: color,
+                      background: isPower || isBoss ? color : "transparent",
                       boxShadow: isBoss
                         ? "0 14px 34px rgba(0,0,0,0.36), 0 0 0 4px rgba(255,255,255,0.16)"
-                        : "0 12px 28px rgba(0,0,0,0.30), 0 0 0 3px rgba(255,255,255,0.12)",
+                        : isPower
+                          ? "0 12px 28px rgba(0,0,0,0.30), 0 0 0 3px rgba(255,255,255,0.12)"
+                          : "none",
                       display: "grid",
                       placeItems: "center",
                       cursor: "grab",
@@ -1150,17 +1167,33 @@ function JuiceSplashGameFull() {
                       zIndex: draggingUid === e.uid ? 10 : 3,
                     }}
                   >
-                    <div
-                      style={{
-                        width: isBoss ? 22 : 18,
-                        height: isBoss ? 22 : 18,
-                        borderRadius: 999,
-                        background: "rgba(255,255,255,0.35)",
-                        position: "absolute",
-                        left: isBoss ? 14 : 10,
-                        top: isBoss ? 14 : 10,
-                      }}
-                    />
+                    {!isPower && !isBoss && (
+                      <span
+                        role="img"
+                        aria-label={fruitById(e.fruitId).label}
+                        style={{
+                          fontSize: isMobile || isTablet ? 44 : 36,
+                          filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.26))",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {fruitEmoji}
+                      </span>
+                    )}
+
+                    {(isPower || isBoss) && (
+                      <div
+                        style={{
+                          width: isBoss ? 22 : 18,
+                          height: isBoss ? 22 : 18,
+                          borderRadius: 999,
+                          background: "rgba(255,255,255,0.35)",
+                          position: "absolute",
+                          left: isBoss ? 14 : 10,
+                          top: isBoss ? 14 : 10,
+                        }}
+                      />
+                    )}
 
                     {isPower && (
                       <div
@@ -1207,6 +1240,7 @@ function JuiceSplashGameFull() {
                 const isBoss = p.kind === "boss";
                 const isPower = p.kind === "power";
                 const color = isBoss ? "#FF4D4D" : fruitById(p.fruitId).color;
+                const fruitEmoji = FRUIT_EMOJIS_BY_ID[p.fruitId] ?? "🍎";
                 return (
                   <motion.div
                     key={p.id}
@@ -1219,12 +1253,16 @@ function JuiceSplashGameFull() {
                       width: isBoss ? 64 : 44,
                       height: isBoss ? 64 : 44,
                       borderRadius: 999,
-                      background: isPower ? "rgba(255,255,255,0.7)" : color,
-                      boxShadow: "0 0 0 3px rgba(255,255,255,0.10)",
+                      background: isPower || isBoss ? (isPower ? "rgba(255,255,255,0.7)" : color) : "transparent",
+                      boxShadow: isPower || isBoss ? "0 0 0 3px rgba(255,255,255,0.10)" : "none",
                       pointerEvents: "none",
                       zIndex: 8,
                     }}
-                  />
+                  >
+                    {!isPower && !isBoss && (
+                      <span style={{ fontSize: 30, lineHeight: 1, filter: "drop-shadow(0 6px 8px rgba(0,0,0,0.2))" }}>{fruitEmoji}</span>
+                    )}
+                  </motion.div>
                 );
               })}
             </AnimatePresence>
