@@ -17,9 +17,9 @@ export const translations = {
       title: "Escolha as cores da sua experiência",
       description: "Todas as opções usam a paleta da logo KaSucos.",
     },
-    juices: { title: "Sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades", addToBasket: "Adicionar na cesta" },
-    combos: { title: "Combos para economizar", mostOrdered: "Mais pedido", action: "Adicionar combo" },
-    juices: { title: "Sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades" },
+    juices: { title: "sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades", addToBasket: "Adicionar na cesta" },
+    combos: { title: "combos para economizar", mostOrdered: "Mais pedido", action: "Adicionar combo" },
+    juices: { title: "sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades" },
     customJuice: {
       title: "Monte seu Suco",
       description: "Escolha até duas frutas para criar sua combinação perfeita.",
@@ -30,8 +30,8 @@ export const translations = {
       addToBasket: "Adicionar montado na cesta",
       price: "R$ 16,00",
     },
-    juices: { title: "Sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades", addToBasket: "Adicionar à cesta" },
-    combos: { title: "Combos para economizar", mostOrdered: "Mais pedido", action: "Quero este" },
+    juices: { title: "sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades", addToBasket: "Adicionar à cesta" },
+    combos: { title: "combos para economizar", mostOrdered: "Mais pedido", action: "Quero este" },
     benefits: {
       badge: "Escolha inteligente para o seu dia",
       title: "Por que escolher a KaSucos?",

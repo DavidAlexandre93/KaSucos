@@ -52,9 +52,7 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
       const elapsed = t - start;
       const k = clamped(elapsed / durationMs, 0, 1);
       const eased = 1 - Math.pow(1 - k, 3);
-      const wobble = Math.sin(t / 150) * 0.5;
-
-      setProgress(clamped(eased * 100 + wobble, 0, 100));
+      setProgress(eased * 100);
 
       if (k >= 1) {
         setProgress(100);
@@ -250,12 +248,9 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
               </div>
 
               <div className="splash-v2-progress-line-wrap">
-                <motion.div
+                <div
                   className="splash-v2-progress-line"
                   style={{ width: `${progress}%` }}
-                  initial={{ width: "0%" }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ type: "spring", stiffness: 110, damping: 18 }}
                 />
               </div>
             </div>

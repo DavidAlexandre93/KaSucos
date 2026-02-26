@@ -93,6 +93,12 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
   }, { dependencies: [isMobileMenuOpen] });
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const handleHomeClick = (event) => {
+    event.preventDefault();
+    closeMobileMenu();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.history.replaceState(null, "", "#inicio");
+  };
   const navLabels = {
     home: labels.home ?? "Início",
     juices: labels.juices ?? "Sucos",
@@ -119,7 +125,13 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
   return (
     <header className="topbar">
       <div className="container topbar-inner">
-        <motion.a href="#inicio" className="brand" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <motion.a
+          href="#inicio"
+          className="brand"
+          onClick={handleHomeClick}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
           <img className="brand-logo" src="/img/nav/logo.jpeg" alt="KaSucos" />
           <KaSucosWordmark className="brand-wordmark" />
         </motion.a>
@@ -154,7 +166,12 @@ export function Header({ language, onLanguageChange, labels, onBasketClick }) {
             </button>
 
             {menuItems.map((item) => (
-              <a key={item.key} href={item.href} title={navLabels[item.key]} onClick={closeMobileMenu}>
+              <a
+                key={item.key}
+                href={item.href}
+                title={navLabels[item.key]}
+                onClick={item.key === "home" ? handleHomeClick : closeMobileMenu}
+              >
                 {compactLabels[item.key]}
               </a>
             ))}
