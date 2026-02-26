@@ -13,8 +13,7 @@ const prefersReducedMotion =
 
 const heroBanners = ["/img/banner/banner-apresentação.png", "/img/banner/banner-brinde-kasucos.png"];
 
-export function InicioSection({ hero, onViewCombos }) {
-export function InicioSection({ hero, onBuyNow }) {
+export function InicioSection({ hero, onViewCombos, onBuyNow }) {
   const sectionRef = useRef(null);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
 
