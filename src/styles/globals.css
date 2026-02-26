@@ -29,6 +29,10 @@ body,
   scroll-behavior: smooth;
 }
 
+html {
+  font-size: clamp(14px, 0.45vw + 12px, 16px);
+}
+
 body {
   font-family: "Segoe UI", "Trebuchet MS", "Arial Rounded MT Bold", Arial, sans-serif;
   color: var(--text);
@@ -441,8 +445,14 @@ body.splash-lock {
 
 
 .container {
-  width: min(1140px, 92%);
+  width: min(1200px, 92%);
   margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+  .container {
+    width: min(1080px, 94%);
+  }
 }
 
 .topbar {
@@ -455,7 +465,7 @@ body.splash-lock {
 }
 
 .topbar-inner {
-  min-height: 224px;
+  min-height: clamp(120px, 14vw, 224px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -472,8 +482,8 @@ body.splash-lock {
 }
 
 .brand-logo {
-  width: 224px;
-  height: 224px;
+  width: clamp(120px, 15vw, 224px);
+  height: clamp(120px, 15vw, 224px);
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.96);
   box-shadow:
@@ -571,10 +581,10 @@ body.splash-lock {
   transform: translateY(-2px);
 }
 
-@media (min-width: 721px) {
+@media (min-width: 1180px) {
   .topbar nav {
     position: fixed;
-    top: 140px;
+    top: 126px;
     left: 16px;
     z-index: 45;
     width: min(300px, calc(100vw - 32px));
@@ -652,8 +662,8 @@ body.splash-lock {
   border: 0;
   background: transparent;
   color: #fff;
-  width: 138px;
-  height: 138px;
+  width: clamp(72px, 9vw, 138px);
+  height: clamp(72px, 9vw, 138px);
   margin-left: 24px;
   padding: 0;
   cursor: pointer;
@@ -663,8 +673,8 @@ body.splash-lock {
 }
 
 .basket-button-icon {
-  width: 138px;
-  height: 138px;
+  width: 100%;
+  height: 100%;
   display: inline-flex;
 }
 
@@ -906,6 +916,7 @@ body.splash-lock {
 .hero-actions {
   margin-top: 24px;
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
 }
 
@@ -2310,8 +2321,10 @@ body.site-party-mode::after {
   }
 
   .topbar nav {
+    width: 100%;
     gap: 10px;
     padding: 8px;
+    justify-content: center;
   }
 
   .topbar nav a {
@@ -2323,6 +2336,7 @@ body.site-party-mode::after {
     margin-left: auto;
     flex-wrap: wrap;
     justify-content: flex-end;
+    width: 100%;
   }
 
   .language-switcher {
@@ -2340,6 +2354,25 @@ body.site-party-mode::after {
   .hero-grid,
   .contact-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .brand {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .topbar-right {
+    justify-content: center;
+  }
+
+  .language-switcher {
+    margin-left: 0;
+  }
+
+  .basket-button {
+    margin-left: 0;
   }
 }
 
@@ -2375,7 +2408,7 @@ body.site-party-mode::after {
   }
 
   .topbar-inner {
-    min-height: 176px;
+    min-height: clamp(114px, 20vw, 160px);
     position: relative;
   }
 
@@ -2385,8 +2418,8 @@ body.site-party-mode::after {
   }
 
   .brand-logo {
-    width: 176px;
-    height: 176px;
+    width: clamp(88px, 28vw, 136px);
+    height: clamp(88px, 28vw, 136px);
   }
 
   .menu-toggle {
@@ -2453,8 +2486,8 @@ body.site-party-mode::after {
   }
 
   .basket-button {
-    width: 126px;
-    height: 126px;
+    width: clamp(62px, 18vw, 88px);
+    height: clamp(62px, 18vw, 88px);
     margin-left: 16px;
   }
 
@@ -2494,6 +2527,7 @@ body.site-party-mode::after {
 
   .hero-actions {
     flex-direction: column;
+    align-items: stretch;
   }
 
   .hero-showcase {
@@ -2516,6 +2550,84 @@ body.site-party-mode::after {
   .hero-info-card {
     width: 128px;
     padding: 10px;
+  }
+}
+
+@media (max-width: 520px) {
+  .container {
+    width: min(100%, 96%);
+  }
+
+  .brand {
+    gap: 12px;
+  }
+
+  .brand-wordmark {
+    width: clamp(120px, 40vw, 170px);
+  }
+
+  .language-switcher {
+    gap: 10px;
+  }
+
+  .language-switcher button {
+    width: 28px;
+    height: 28px;
+  }
+
+  .language-flag {
+    width: 24px;
+    height: 24px;
+  }
+
+  .section {
+    padding: 28px 0 42px;
+  }
+
+  .hero {
+    padding-top: 46px;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.68rem, 8vw, 2.1rem);
+  }
+
+  .hero-showcase {
+    min-height: 190px;
+  }
+
+  .hero-pouring-jar {
+    width: 240px;
+  }
+
+  .hero-info-card {
+    width: 110px;
+    padding: 8px;
+  }
+
+  .hero-info-card strong {
+    font-size: 0.72rem;
+  }
+
+  .hero-info-card span {
+    font-size: 0.66rem;
+  }
+
+  .juice-scene {
+    min-height: 320px;
+  }
+
+  .juice-cup {
+    width: 160px;
+    height: 212px;
+  }
+
+  .juice-shadow {
+    width: 160px;
+  }
+
+  .map-box {
+    padding: 16px;
   }
 }
 
