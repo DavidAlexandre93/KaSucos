@@ -325,6 +325,7 @@ function JuiceSplashGameFull() {
   const levelRef = useRef(level);
   const scoreRef = useRef(score);
   const powerRef = useRef(power);
+  const recipeRef = useRef(recipe);
   const sizeRef = useRef(size);
 
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" });
@@ -381,6 +382,10 @@ function JuiceSplashGameFull() {
   useEffect(() => {
     powerRef.current = power;
   }, [power]);
+
+  useEffect(() => {
+    recipeRef.current = recipe;
+  }, [recipe]);
 
   useEffect(() => {
     sizeRef.current = size;
@@ -442,7 +447,9 @@ function JuiceSplashGameFull() {
     setLevel(1);
     setBossTimer(9000);
     setPower({ slow: 0, double: 0, magnet: 0 });
-    setRecipe(pickRecipe());
+    const nextRecipe = pickRecipe();
+    recipeRef.current = nextRecipe;
+    setRecipe(nextRecipe);
     setEntities([]);
     setPops([]);
     setToast(null);
@@ -709,7 +716,7 @@ function JuiceSplashGameFull() {
       return;
     }
 
-    const expected = needNextFruit(recipe);
+    const expected = needNextFruit(recipeRef.current);
     const ok = ent.fruitId === expected;
     setStreakTimer(1600);
 
@@ -728,13 +735,16 @@ function JuiceSplashGameFull() {
       setRecipe((r) => {
         const next = { ...r, progress: [...r.progress, ent.fruitId] };
         if (next.progress.length >= next.need.length) {
+          const upcomingRecipe = pickRecipe();
+          recipeRef.current = upcomingRecipe;
           play("combo");
           showToast("good", `SUCO ${next.name.toUpperCase()} PRONTO! 🧃`, 1500);
           setScore((s) => s + 160);
           setCombo((c) => clamp(c + 2, 1, 9));
           setDanger((d) => Math.max(0, d - 10));
-          return pickRecipe();
+          return upcomingRecipe;
         }
+        recipeRef.current = next;
         return next;
       });
     } else {
@@ -952,6 +962,19 @@ function JuiceSplashGameFull() {
                     </div>
                   );
                 })}
+                <div
+                  style={{
+                    width: "100%",
+                    borderRadius: 12,
+                    border: `1px dashed ${theme.border}`,
+                    padding: "8px 10px",
+                    color: "rgba(255,255,255,0.9)",
+                    fontSize: 12,
+                    fontWeight: 900,
+                  }}
+                >
+                  Arraste as frutas na ordem exata do pedido: {recipe.need.map((id) => fruitById(id).label).join(" → ")}
+                </div>
                 <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
                   <div style={{ fontSize: 12, opacity: 0.78, fontWeight: 900 }}>
                     Próxima:{" "}
@@ -1318,17 +1341,30 @@ function JuiceSplashGameFull() {
                     }}
                   >
                     {!isPower && !isBoss && (
-                      <span
-                        role="img"
-                        aria-label={fruitById(e.fruitId).label}
-                        style={{
-                          fontSize: isMobile || isTablet ? 44 : 36,
-                          filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.26))",
-                          lineHeight: 1,
-                        }}
-                      >
-                        {fruitEmoji}
-                      </span>
+                      <div style={{ display: "grid", justifyItems: "center", gap: 4 }}>
+                        <span
+                          role="img"
+                          aria-label={fruitById(e.fruitId).label}
+                          style={{
+                            fontSize: isMobile || isTablet ? 44 : 36,
+                            filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.26))",
+                            lineHeight: 1,
+                          }}
+                        >
+                          {fruitEmoji}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: isMobile || isTablet ? 10 : 9,
+                            fontWeight: 900,
+                            color: "rgba(255,255,255,0.95)",
+                            textShadow: "0 2px 6px rgba(0,0,0,0.45)",
+                            letterSpacing: 0.2,
+                          }}
+                        >
+                          {fruitById(e.fruitId).label}
+                        </span>
+                      </div>
                     )}
 
                     {(isPower || isBoss) && (
