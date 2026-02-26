@@ -350,6 +350,7 @@ function JuiceSplashGameFull() {
   const sizeRef = useRef(size);
 
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" });
+  const blenderDragRef = useRef({ active: false });
   const isMobile = size.width < 720;
   const isTablet = size.width >= 720 && size.width < 1024;
 
@@ -494,6 +495,7 @@ function JuiceSplashGameFull() {
     setPops([]);
     setToast(null);
     dragRef.current = { draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" };
+    blenderDragRef.current = { active: false };
   }
 
   function startGame() {
@@ -669,6 +671,13 @@ function JuiceSplashGameFull() {
     });
   }
 
+  function startBlenderDrag(ev) {
+    if (phaseRef.current !== "play") return;
+    ev.preventDefault();
+    blenderDragRef.current.active = true;
+    moveBlenderByPointer(ev);
+  }
+
   function moveDrag(ev) {
     if (phaseRef.current !== "play") return;
     const uid = dragRef.current.draggingUid;
@@ -686,7 +695,7 @@ function JuiceSplashGameFull() {
 
   function moveBlenderByPointer(ev) {
     if (phaseRef.current !== "play") return;
-    if (dragRef.current.draggingUid) return;
+    if (dragRef.current.draggingUid || !blenderDragRef.current.active) return;
     const pt = getLocalPoint(ev);
     moveBlender((pt.x / Math.max(1, size.width)) * 100);
   }
@@ -694,7 +703,10 @@ function JuiceSplashGameFull() {
   function endDrag(ev) {
     if (phaseRef.current !== "play") return;
     const uid = dragRef.current.draggingUid;
-    if (!uid) return;
+    if (!uid) {
+      blenderDragRef.current.active = false;
+      return;
+    }
     ev.preventDefault();
     const ent = entitiesRef.current.find((x) => x.uid === uid);
     dragRef.current.draggingUid = null;
@@ -709,6 +721,8 @@ function JuiceSplashGameFull() {
     } else {
       setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, vy: Math.max(e.vy, 180 + levelRef.current * 8) } : e)));
     }
+
+    blenderDragRef.current.active = false;
   }
 
   function removeEntity(uid) {
@@ -1219,6 +1233,8 @@ function JuiceSplashGameFull() {
                 rotate: power.double > 0 ? [0, 0.7, -0.7, 0] : 0,
               }}
               transition={{ duration: 0.35, repeat: power.double > 0 ? Infinity : 0 }}
+              onMouseDown={startBlenderDrag}
+              onTouchStart={startBlenderDrag}
               style={{
                 position: "absolute",
                 left: blenderZone.x,
