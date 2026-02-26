@@ -51,12 +51,15 @@ function formatTime(ms) {
 }
 
 const FRUITS = [
+  { id: "acerola", label: "Acerola", color: "#E53950" },
   { id: "orange", label: "Laranja", color: "#FFA500" },
   { id: "strawberry", label: "Morango", color: "#FF3E6C" },
   { id: "pineapple", label: "Abacaxi", color: "#FFD54D" },
   { id: "grape", label: "Uva", color: "#7B61FF" },
   { id: "lemon", label: "Limão", color: "#B7FF5A" },
+  { id: "passionfruit", label: "Maracujá", color: "#F4BE34" },
   { id: "mango", label: "Manga", color: "#FFB14A" },
+  { id: "greenapple", label: "Maçã Verde", color: "#73C86A" },
 ];
 
 const RECIPES = [
@@ -64,6 +67,10 @@ const RECIPES = [
   { name: "Cítrico", need: ["lemon", "orange", "orange"] },
   { name: "Berry Blast", need: ["strawberry", "grape", "strawberry"] },
   { name: "Uva Power", need: ["grape", "grape", "lemon"] },
+  { name: "Clássico KaSucos", need: ["acerola", "orange", "strawberry"] },
+  { name: "Horta Verde", need: ["greenapple", "lemon", "pineapple"] },
+  { name: "Sol do Verão", need: ["passionfruit", "mango", "orange"] },
+  { name: "Vermelho Forte", need: ["acerola", "strawberry", "grape"] },
 ];
 
 function pickRecipe() {
@@ -244,6 +251,11 @@ function JuiceSplashGameFull() {
   const [power, setPower] = useState({ slow: 0, double: 0, magnet: 0 });
   const [ranking, setRanking] = useState(() => (typeof window !== "undefined" ? loadRanking() : []));
   const bestScore = ranking?.[0]?.score ?? 0;
+  const phaseRef = useRef(phase);
+  const levelRef = useRef(level);
+  const scoreRef = useRef(score);
+  const powerRef = useRef(power);
+  const sizeRef = useRef(size);
 
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 } });
 
@@ -253,6 +265,8 @@ function JuiceSplashGameFull() {
     const y = 120;
     return { x, y, w, h: 220 };
   }, [size.width]);
+
+  const blenderZoneRef = useRef(blenderZone);
 
   const cupZone = useMemo(() => {
     const w = Math.min(320, Math.max(240, size.width - 28));
@@ -279,6 +293,30 @@ function JuiceSplashGameFull() {
     entitiesRef.current = entities;
   }, [entities]);
 
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+
+  useEffect(() => {
+    levelRef.current = level;
+  }, [level]);
+
+  useEffect(() => {
+    scoreRef.current = score;
+  }, [score]);
+
+  useEffect(() => {
+    powerRef.current = power;
+  }, [power]);
+
+  useEffect(() => {
+    sizeRef.current = size;
+  }, [size]);
+
+  useEffect(() => {
+    blenderZoneRef.current = blenderZone;
+  }, [blenderZone]);
+
   function showToast(kind, text, ms = 1400) {
     setToast({ kind, text });
     window.clearTimeout(showToast._t);
@@ -288,6 +326,7 @@ function JuiceSplashGameFull() {
   function resetAll() {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
+    phaseRef.current = "idle";
     setPhase("idle");
     setScore(0);
     setCombo(1);
@@ -306,6 +345,7 @@ function JuiceSplashGameFull() {
 
   function startGame() {
     resetAll();
+    phaseRef.current = "play";
     setPhase("play");
     showToast("info", "Arraste e SOLTE as frutas no liquidificador! 🧃", 2000);
     setEntities(() => {
@@ -320,11 +360,12 @@ function JuiceSplashGameFull() {
   function endGame(reason = "Fim de jogo!") {
     play("gameover");
     showToast("danger", reason, 2200);
+    phaseRef.current = "over";
     setPhase("over");
     cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
 
-    const entry = { score, skin, date: new Date().toISOString(), mode };
+    const entry = { score: scoreRef.current, skin, date: new Date().toISOString(), mode };
     const next = pushScore(loadRanking(), entry);
     saveRanking(next);
     setRanking(next);
@@ -343,7 +384,7 @@ function JuiceSplashGameFull() {
     const t = now();
     const dt = Math.min(50, t - lastRef.current);
     lastRef.current = t;
-    if (phase !== "play") return;
+    if (phaseRef.current !== "play") return;
 
     setPower((p) => ({
       slow: Math.max(0, p.slow - dt),
@@ -358,7 +399,7 @@ function JuiceSplashGameFull() {
     });
 
     setDanger((d) => {
-      const inc = 0.015 + level * 0.002;
+      const inc = 0.015 + levelRef.current * 0.002;
       const nd = d + inc * (dt / 16.67);
       if (nd >= 100) {
         endGame("A cozinha explodiu de tanta bagunça 💥");
@@ -367,21 +408,21 @@ function JuiceSplashGameFull() {
       return nd;
     });
 
-    setLevel(() => clamp(1 + Math.floor(score / 600), 1, 50));
+    setLevel(() => clamp(1 + Math.floor(scoreRef.current / 600), 1, 50));
 
     setBossTimer((ms) => {
       let n = ms - dt;
       if (n <= 0) {
         play("boss");
         showToast("info", "BOSS FRUIT! Derrube a fruta chefe! 👑", 1700);
-        setEntities((arr) => [...arr, makeBoss({ width: size.width, level })]);
-        n = Math.max(6000, 15000 - level * 350);
+        setEntities((arr) => [...arr, makeBoss({ width: sizeRef.current.width, level: levelRef.current })]);
+        n = Math.max(6000, 15000 - levelRef.current * 350);
       }
       return n;
     });
 
-    const slowFactor = power.slow > 0 ? 0.55 : 1;
-    const magnetOn = power.magnet > 0;
+    const slowFactor = powerRef.current.slow > 0 ? 0.55 : 1;
+    const magnetOn = powerRef.current.magnet > 0;
 
     setEntities((prev) => {
       let arr = prev.map((e) => {
@@ -390,24 +431,26 @@ function JuiceSplashGameFull() {
         const ny = e.y + (e.vy * slowFactor * dt) / 1000;
 
         if (magnetOn && e.kind === "fruit") {
-          const cx = blenderZone.x + blenderZone.w / 2;
+          const cx = blenderZoneRef.current.x + blenderZoneRef.current.w / 2;
           const dx = cx - (e.x + 26);
           nx = e.x + dx * 0.004;
         }
 
-        if (ny > size.height + 80) {
-          if (e.kind === "power") return makePower({ width: size.width, level });
-          if (e.kind === "boss") return makeBoss({ width: size.width, level });
-          return makeFruit({ width: size.width, level });
+        if (ny > sizeRef.current.height + 80) {
+          if (e.kind === "power") return makePower({ width: sizeRef.current.width, level: levelRef.current });
+          if (e.kind === "boss") return makeBoss({ width: sizeRef.current.width, level: levelRef.current });
+          return makeFruit({ width: sizeRef.current.width, level: levelRef.current });
         }
 
         return { ...e, x: nx, y: ny };
       });
 
-      const maxEntities = 14 + Math.min(8, Math.floor(level / 2));
-      if (Math.random() < 0.012 + level * 0.0004) arr = [...arr, makeFruit({ width: size.width, level })];
+      const maxEntities = 14 + Math.min(8, Math.floor(levelRef.current / 2));
+      if (Math.random() < 0.012 + levelRef.current * 0.0004) {
+        arr = [...arr, makeFruit({ width: sizeRef.current.width, level: levelRef.current })];
+      }
       if (Math.random() < 0.0035 && arr.filter((x) => x.kind === "power").length < 2) {
-        arr = [...arr, makePower({ width: size.width, level })];
+        arr = [...arr, makePower({ width: sizeRef.current.width, level: levelRef.current })];
       }
 
       if (arr.length > maxEntities) arr = arr.slice(arr.length - maxEntities);
@@ -424,7 +467,7 @@ function JuiceSplashGameFull() {
   }
 
   function startDrag(uid, ev) {
-    if (phase !== "play") return;
+    if (phaseRef.current !== "play") return;
     ev.preventDefault();
     const pt = getLocalPoint(ev);
     const ent = entitiesRef.current.find((x) => x.uid === uid);
@@ -440,7 +483,7 @@ function JuiceSplashGameFull() {
   }
 
   function moveDrag(ev) {
-    if (phase !== "play") return;
+    if (phaseRef.current !== "play") return;
     const uid = dragRef.current.draggingUid;
     if (!uid) return;
     ev.preventDefault();
@@ -450,7 +493,7 @@ function JuiceSplashGameFull() {
   }
 
   function endDrag(ev) {
-    if (phase !== "play") return;
+    if (phaseRef.current !== "play") return;
     const uid = dragRef.current.draggingUid;
     if (!uid) return;
     ev.preventDefault();
@@ -465,7 +508,7 @@ function JuiceSplashGameFull() {
     if (inZone(dropX, dropY, blenderZone)) {
       handleDropIntoBlender(ent);
     } else {
-      setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, vy: Math.max(e.vy, 180 + level * 8) } : e)));
+      setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, vy: Math.max(e.vy, 180 + levelRef.current * 8) } : e)));
     }
   }
 
@@ -512,14 +555,14 @@ function JuiceSplashGameFull() {
     }
 
     if (ent.kind === "boss") {
-      setScore((s) => s + 80 + Math.floor(level * 4));
+      setScore((s) => s + 80 + Math.floor(levelRef.current * 4));
       play("combo");
       setCup((v) => clamp(v + 0.18, 0, 1));
       setCombo((c) => clamp(c + 1, 1, 9));
       setStreakTimer(1800);
 
       if (ent.hp > 1) {
-        setEntities((arr) => [...arr, { ...makeBoss({ width: size.width, level }), hp: ent.hp - 1 }]);
+        setEntities((arr) => [...arr, { ...makeBoss({ width: sizeRef.current.width, level: levelRef.current }), hp: ent.hp - 1 }]);
       } else {
         showToast("good", "BOSS DERROTADO! +BÔNUS 👑", 1500);
         setScore((s) => s + 250);
@@ -566,14 +609,14 @@ function JuiceSplashGameFull() {
   }
 
   function serve() {
-    if (phase !== "play") return;
+    if (phaseRef.current !== "play") return;
     if (cup < 1) {
       showToast("info", "Encha o copo antes de servir 😉", 1100);
       return;
     }
     play("serve");
     showToast("good", "SERVIDO! Bônus de pontos 🥤", 1300);
-    setScore((s) => s + 120 + Math.floor(level * 3));
+    setScore((s) => s + 120 + Math.floor(levelRef.current * 3));
     setCombo((c) => clamp(c + 1, 1, 9));
     setCup(0);
     setDanger((d) => Math.max(0, d - 12));
