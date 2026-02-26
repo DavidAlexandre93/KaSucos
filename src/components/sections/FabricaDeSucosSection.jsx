@@ -166,6 +166,17 @@ async function saveScoreToSupabase(entry) {
   });
 }
 
+async function deletePlayerScoresFromSupabase(playerName) {
+  if (!hasSupabaseConfig()) return;
+  const query = new URLSearchParams({ player_name: `eq.${playerName}` });
+  await requestSupabase(`${SUPABASE_TABLE}?${query.toString()}`, {
+    method: "DELETE",
+    headers: {
+      Prefer: "return=minimal",
+    },
+  });
+}
+
 function loadRanking() {
   try {
     const raw = localStorage.getItem(LS_KEY);
@@ -185,18 +196,27 @@ function saveRanking(list) {
 
 function loadPlayerName() {
   try {
-    return localStorage.getItem(PLAYER_NAME_KEY) || "Anônimo";
+    return localStorage.getItem(PLAYER_NAME_KEY) || "";
   } catch {
-    return "Anônimo";
+    return "";
   }
 }
 
 function savePlayerName(name) {
+  const normalized = (name || "").trim().slice(0, 24);
   try {
-    localStorage.setItem(PLAYER_NAME_KEY, name);
+    if (!normalized) {
+      localStorage.removeItem(PLAYER_NAME_KEY);
+      return;
+    }
+    localStorage.setItem(PLAYER_NAME_KEY, normalized);
   } catch {
     // noop
   }
+}
+
+function normalizePlayerName(name) {
+  return (name || "").trim().slice(0, 24);
 }
 function pushScore(list, entry) {
   const next = [...list, entry].sort((a, b) => b.score - a.score).slice(0, 10);
@@ -315,7 +335,7 @@ function JuiceSplashGameFull() {
   const [bossTimer, setBossTimer] = useState(0);
   const [power, setPower] = useState({ slow: 0, double: 0, magnet: 0 });
   const [ranking, setRanking] = useState(() => (typeof window !== "undefined" ? loadRanking() : []));
-  const [playerName, setPlayerName] = useState(() => (typeof window !== "undefined" ? loadPlayerName() : "Anônimo"));
+  const [playerName, setPlayerName] = useState(() => (typeof window !== "undefined" ? loadPlayerName() : ""));
   const [rankingScope, setRankingScope] = useState(() => (hasSupabaseConfig() ? "global" : "local"));
   const [rankingMessage, setRankingMessage] = useState(() =>
     hasSupabaseConfig() ? "Ranking global (Supabase)" : "Sem Supabase configurado. Usando ranking local."
@@ -457,6 +477,13 @@ function JuiceSplashGameFull() {
   }
 
   function startGame() {
+    const safeName = normalizePlayerName(playerName);
+    if (!safeName) {
+      showToast("danger", "Digite um nome obrigatório para jogar.", 1700);
+      return;
+    }
+
+    if (safeName !== playerName) setPlayerName(safeName);
     resetAll();
     phaseRef.current = "play";
     setPhase("play");
@@ -479,7 +506,7 @@ function JuiceSplashGameFull() {
     rafRef.current = null;
 
     const entry = {
-      player_name: (playerName || "Anônimo").trim().slice(0, 24) || "Anônimo",
+      player_name: normalizePlayerName(playerName),
       score: scoreRef.current,
       skin: theme.id,
       date: new Date().toISOString(),
@@ -770,14 +797,39 @@ function JuiceSplashGameFull() {
     setDanger((d) => Math.max(0, d - 12));
   }
 
-  function clearRanking() {
+  async function clearRanking() {
     if (rankingScope === "global") {
-      showToast("info", "Ranking global não pode ser limpo pelo cliente.", 1300);
+      const safeName = normalizePlayerName(playerName);
+      if (!safeName) {
+        showToast("info", "Defina um nome para resetar seus dados.", 1300);
+        return;
+      }
+
+      try {
+        await deletePlayerScoresFromSupabase(safeName);
+        const globalRows = await fetchRankingFromSupabase();
+        setRanking(globalRows);
+        showToast("info", "Seu nome e scores foram removidos da base.", 1500);
+      } catch {
+        showToast("danger", "Não foi possível deletar seus dados no Supabase.", 1600);
+      }
       return;
     }
+
     saveRanking([]);
     setRanking([]);
     showToast("info", "Ranking limpo.", 900);
+  }
+
+  function resetPlayerIdentity() {
+    const existingName = normalizePlayerName(playerName);
+    setPlayerName("");
+    savePlayerName("");
+    if (!existingName) {
+      showToast("info", "Nome resetado.", 900);
+      return;
+    }
+    clearRanking();
   }
 
   const nextNeed = needNextFruit(recipe);
@@ -1512,7 +1564,8 @@ function JuiceSplashGameFull() {
                         <input
                           value={playerName}
                           onChange={(ev) => setPlayerName(ev.target.value.slice(0, 24))}
-                          placeholder="Seu nome"
+                          placeholder="Seu nome (obrigatório)"
+                          required
                           style={{
                             borderRadius: 10,
                             padding: "7px 9px",
@@ -1536,17 +1589,16 @@ function JuiceSplashGameFull() {
                           background: "rgba(255,255,255,0.06)",
                           color: "white",
                           fontWeight: 950,
-                          cursor: rankingScope === "global" ? "not-allowed" : "pointer",
-                          opacity: rankingScope === "global" ? 0.6 : 1,
+                          cursor: "pointer",
+                          opacity: 1,
                           display: "flex",
                           alignItems: "center",
                           gap: 8,
                         }}
-                        title={rankingScope === "global" ? "Indisponível no ranking global" : "Limpar ranking"}
-                        disabled={rankingScope === "global"}
+                        title={rankingScope === "global" ? "Remover seu nome/scores do ranking global" : "Limpar ranking"}
                       >
                         <Trash2 size={16} />
-                        Limpar
+                        {rankingScope === "global" ? "Resetar jogador" : "Limpar"}
                       </button>
                     </div>
 
@@ -1600,13 +1652,16 @@ function JuiceSplashGameFull() {
                           color: "white",
                           fontWeight: 1000,
                           cursor: "pointer",
+                          opacity: normalizePlayerName(playerName) ? 1 : 0.65,
                         }}
+                        disabled={!normalizePlayerName(playerName)}
+                        title={!normalizePlayerName(playerName) ? "Digite um nome para jogar" : "Jogar agora"}
                       >
                         Jogar agora
                       </button>
                       <button
                         type="button"
-                        onClick={resetAll}
+                        onClick={resetPlayerIdentity}
                         style={{
                           borderRadius: 16,
                           padding: "12px 12px",
@@ -1617,7 +1672,7 @@ function JuiceSplashGameFull() {
                           cursor: "pointer",
                         }}
                       >
-                        Reset
+                        Resetar nome
                       </button>
                     </div>
                   </div>
