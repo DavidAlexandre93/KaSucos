@@ -12,7 +12,6 @@ const Trophy = ({ size }) => <Icon size={size}>🏆</Icon>;
 const RotateCcw = ({ size }) => <Icon size={size}>↺</Icon>;
 const Volume2 = ({ size }) => <Icon size={size}>🔊</Icon>;
 const VolumeX = ({ size }) => <Icon size={size}>🔇</Icon>;
-const Palette = ({ size }) => <Icon size={size}>🎨</Icon>;
 const InfinityIcon = ({ size }) => <Icon size={size}>♾️</Icon>;
 const Crown = ({ size }) => <Icon size={size}>👑</Icon>;
 const Trash2 = ({ size }) => <Icon size={size}>🗑️</Icon>;
@@ -82,37 +81,14 @@ function fruitById(id) {
   return FRUITS.find((f) => f.id === id) || FRUITS[0];
 }
 
-const SKINS = {
-  neon: {
-    id: "neon",
-    label: "Neon",
-    bg: "radial-gradient(1100px 600px at 20% 10%, rgba(255,90,160,0.28), transparent 60%), radial-gradient(900px 500px at 90% 15%, rgba(120,120,255,0.22), transparent 55%), linear-gradient(180deg, #140a2a, #071527)",
-    card: "rgba(255,255,255,0.07)",
-    border: "rgba(255,255,255,0.14)",
-    glow: "0 14px 44px rgba(0,0,0,0.42)",
-    accent: "linear-gradient(90deg, rgba(255,90,160,0.95), rgba(255,220,90,0.92))",
-    textSub: "rgba(255,255,255,0.78)",
-  },
-  praia: {
-    id: "praia",
-    label: "Praia",
-    bg: "radial-gradient(900px 520px at 20% 10%, rgba(255,220,120,0.32), transparent 58%), radial-gradient(900px 520px at 90% 15%, rgba(80,220,255,0.24), transparent 60%), linear-gradient(180deg, #0a2a2a, #07213a)",
-    card: "rgba(255,255,255,0.08)",
-    border: "rgba(255,255,255,0.15)",
-    glow: "0 14px 44px rgba(0,0,0,0.36)",
-    accent: "linear-gradient(90deg, rgba(80,220,255,0.92), rgba(255,220,120,0.92))",
-    textSub: "rgba(255,255,255,0.80)",
-  },
-  retro: {
-    id: "retro",
-    label: "Retrô",
-    bg: "radial-gradient(1000px 600px at 20% 10%, rgba(255,160,90,0.28), transparent 60%), radial-gradient(900px 520px at 90% 15%, rgba(120,255,170,0.18), transparent 60%), linear-gradient(180deg, #1f1a14, #121420)",
-    card: "rgba(255,255,255,0.06)",
-    border: "rgba(255,255,255,0.12)",
-    glow: "0 14px 44px rgba(0,0,0,0.44)",
-    accent: "linear-gradient(90deg, rgba(255,160,90,0.92), rgba(120,255,170,0.90))",
-    textSub: "rgba(255,255,255,0.76)",
-  },
+const GAME_THEME = {
+  id: "kasucos",
+  bg: "radial-gradient(1100px 600px at 20% 10%, rgba(164,92,255,0.28), transparent 60%), radial-gradient(900px 500px at 90% 15%, rgba(116,222,110,0.16), transparent 55%), linear-gradient(180deg, #251044, #11203f)",
+  card: "rgba(255,255,255,0.07)",
+  border: "rgba(255,255,255,0.14)",
+  glow: "0 14px 44px rgba(0,0,0,0.42)",
+  accent: "linear-gradient(90deg, rgba(162,111,255,0.94), rgba(109,215,95,0.9))",
+  textSub: "rgba(255,255,255,0.78)",
 };
 
 const LS_KEY = "juice_splash_ranking_v1";
@@ -231,8 +207,7 @@ function JuiceSplashGameFull() {
   const rafRef = useRef(null);
   const lastRef = useRef(now());
   const { muted, setMuted, play } = useSfx();
-  const [skin, setSkin] = useState("neon");
-  const theme = SKINS[skin] || SKINS.neon;
+  const theme = GAME_THEME;
   const [size, setSize] = useState({ width: 360, height: 680 });
   const [phase, setPhase] = useState("idle");
   const [mode] = useState("endless");
@@ -365,7 +340,7 @@ function JuiceSplashGameFull() {
     cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
 
-    const entry = { score: scoreRef.current, skin, date: new Date().toISOString(), mode };
+    const entry = { score: scoreRef.current, skin: theme.id, date: new Date().toISOString(), mode };
     const next = pushScore(loadRanking(), entry);
     saveRanking(next);
     setRanking(next);
@@ -750,32 +725,6 @@ function JuiceSplashGameFull() {
                     <span style={{ fontWeight: 900, fontSize: 13 }}>Endless</span>
                   </div>
 
-                  <div style={{ width: 1, height: 26, background: "rgba(255,255,255,0.14)" }} />
-
-                  <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <Palette size={18} />
-                    <select
-                      value={skin}
-                      onChange={(e) => setSkin(e.target.value)}
-                      style={{
-                        background: "rgba(0,0,0,0.30)",
-                        color: "white",
-                        border: `1px solid ${theme.border}`,
-                        borderRadius: 12,
-                        padding: "8px 10px",
-                        fontWeight: 900,
-                        outline: "none",
-                        cursor: "pointer",
-                      }}
-                      title="Skin"
-                    >
-                      {Object.values(SKINS).map((s) => (
-                        <option key={s.id} value={s.id}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
                 </div>
               </div>
 
@@ -1156,7 +1105,7 @@ function JuiceSplashGameFull() {
                             <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                               <span style={{ opacity: 0.8 }}>{String(idx + 1).padStart(2, "0")}</span>
                               <span>{r.score}</span>
-                              <span style={{ opacity: 0.65, fontWeight: 800, fontSize: 12 }}>{r.skin?.toUpperCase?.() || "NEON"}</span>
+                              <span style={{ opacity: 0.65, fontWeight: 800, fontSize: 12 }}>{r.skin?.toUpperCase?.() || "KASUCOS"}</span>
                             </div>
                             <div style={{ opacity: 0.65, fontWeight: 800, fontSize: 12 }}>{new Date(r.date).toLocaleDateString()}</div>
                           </div>
