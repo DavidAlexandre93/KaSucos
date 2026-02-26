@@ -233,22 +233,25 @@ function JuiceSplashGameFull() {
   const sizeRef = useRef(size);
 
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 } });
+  const isMobile = size.width < 720;
+  const isTablet = size.width >= 720 && size.width < 1024;
+  const topHudHeight = isMobile ? 164 : isTablet ? 128 : 102;
 
   const blenderZone = useMemo(() => {
     const w = Math.min(320, Math.max(240, size.width - 28));
     const x = Math.floor((size.width - w) / 2);
-    const y = 120;
+    const y = topHudHeight;
     return { x, y, w, h: 220 };
-  }, [size.width]);
+  }, [size.width, topHudHeight]);
 
   const blenderZoneRef = useRef(blenderZone);
 
   const cupZone = useMemo(() => {
     const w = Math.min(320, Math.max(240, size.width - 28));
     const x = Math.floor((size.width - w) / 2);
-    const y = size.height - 210;
+    const y = size.height - (isMobile ? 188 : 210);
     return { x, y, w, h: 170 };
-  }, [size.width, size.height]);
+  }, [size.width, size.height, isMobile]);
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -257,7 +260,7 @@ function JuiceSplashGameFull() {
       const rect = el.getBoundingClientRect();
       setSize({
         width: Math.max(320, Math.floor(rect.width)),
-        height: Math.max(640, Math.min(760, Math.floor(rect.height || 680))),
+        height: Math.max(520, Math.min(760, Math.floor(rect.height || 680))),
       });
     });
     ro.observe(el);
@@ -630,11 +633,21 @@ function JuiceSplashGameFull() {
             touchAction: "none",
           }}
         >
-          <div style={{ position: "absolute", inset: "14px 14px auto 14px", display: "flex", gap: 10, alignItems: "center" }}>
+          <div
+            style={{
+              position: "absolute",
+              inset: "14px 14px auto 14px",
+              display: "flex",
+              gap: 10,
+              alignItems: "center",
+              flexWrap: isMobile ? "wrap" : "nowrap",
+            }}
+          >
             <div
               style={{
                 flex: 1,
-                padding: "12px 12px",
+                minWidth: isMobile ? "100%" : 0,
+                padding: isMobile ? "10px 10px" : "12px 12px",
                 borderRadius: 16,
                 background: theme.card,
                 border: `1px solid ${theme.border}`,
@@ -646,12 +659,12 @@ function JuiceSplashGameFull() {
             >
               <Droplets size={18} />
               <div style={{ fontWeight: 950, letterSpacing: 0.2 }}>Juice Splash</div>
-              <div style={{ color: theme.textSub, fontWeight: 700, marginLeft: 4, fontSize: 13 }}>Drag & drop • combos • power-ups • boss</div>
+              {!isMobile && <div style={{ color: theme.textSub, fontWeight: 700, marginLeft: 4, fontSize: 13 }}>Drag & drop • combos • power-ups • boss</div>}
             </div>
 
             <div
               style={{
-                padding: "12px 12px",
+                padding: isMobile ? "10px" : "12px 12px",
                 borderRadius: 16,
                 background: theme.card,
                 border: `1px solid ${theme.border}`,
@@ -659,7 +672,7 @@ function JuiceSplashGameFull() {
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
-                minWidth: 165,
+                minWidth: isMobile ? 136 : 165,
                 justifyContent: "space-between",
               }}
             >
@@ -678,7 +691,7 @@ function JuiceSplashGameFull() {
                 border: `1px solid ${theme.border}`,
                 background: theme.card,
                 color: "white",
-                padding: "12px 12px",
+                padding: isMobile ? "10px" : "12px 12px",
                 borderRadius: 16,
                 fontWeight: 900,
                 cursor: "pointer",
@@ -697,7 +710,7 @@ function JuiceSplashGameFull() {
                 border: `1px solid ${theme.border}`,
                 background: phase === "play" ? theme.card : "rgba(255,255,255,0.10)",
                 color: "white",
-                padding: "12px 12px",
+                padding: isMobile ? "10px" : "12px 12px",
                 borderRadius: 16,
                 fontWeight: 950,
                 cursor: "pointer",
@@ -707,11 +720,21 @@ function JuiceSplashGameFull() {
               }}
             >
               <RotateCcw size={18} />
-              {phase === "play" ? "Reset" : "Jogar"}
+              {phase === "play" ? "Reset" : isMobile ? "Play" : "Jogar"}
             </button>
           </div>
 
-          <div style={{ position: "absolute", top: 68, left: 14, right: 14, display: "flex", gap: 10, alignItems: "center" }}>
+          <div
+            style={{
+              position: "absolute",
+              top: isMobile ? 114 : 68,
+              left: 14,
+              right: 14,
+              display: "flex",
+              gap: 10,
+              alignItems: "center",
+            }}
+          >
             <div style={{ flex: 1, padding: 12, borderRadius: 16, background: theme.card, border: `1px solid ${theme.border}`, color: "white" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
                 <div>
@@ -782,7 +805,7 @@ function JuiceSplashGameFull() {
             onTouchEnd={endDrag}
             style={{
               position: "absolute",
-              top: 196,
+              top: isMobile ? 242 : 196,
               left: 14,
               right: 14,
               bottom: 14,
@@ -925,6 +948,7 @@ function JuiceSplashGameFull() {
                       display: "grid",
                       placeItems: "center",
                       cursor: "grab",
+                      touchAction: "none",
                       zIndex: draggingUid === e.uid ? 10 : 3,
                     }}
                   >
@@ -1027,15 +1051,15 @@ function JuiceSplashGameFull() {
                   <div
                     style={{
                       width: "100%",
-                      maxWidth: 520,
+                      maxWidth: isMobile ? 460 : 520,
                       borderRadius: 22,
-                      padding: 16,
+                      padding: isMobile ? 12 : 16,
                       background: "rgba(0,0,0,0.50)",
                       border: `1px solid ${theme.border}`,
                       color: "white",
                     }}
                   >
-                    <div style={{ fontSize: 26, fontWeight: 1000 }}>{phase === "idle" ? "Hora do Suco!" : "Game Over!"}</div>
+                    <div style={{ fontSize: isMobile ? 22 : 26, fontWeight: 1000 }}>{phase === "idle" ? "Hora do Suco!" : "Game Over!"}</div>
                     <div style={{ marginTop: 8, opacity: 0.86, fontWeight: 750, lineHeight: 1.35 }}>
                       {phase === "idle" ? (
                         <>
@@ -1054,7 +1078,7 @@ function JuiceSplashGameFull() {
                     </div>
 
                     <div style={{ marginTop: 12, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
-                      <div style={{ fontWeight: 950, opacity: 0.9 }}>Ranking local (Top 10)</div>
+                      <div style={{ fontWeight: 950, opacity: 0.9, fontSize: isMobile ? 16 : 18 }}>Ranking local (Top 10)</div>
                       <button
                         type="button"
                         onClick={clearRanking}
@@ -1113,7 +1137,7 @@ function JuiceSplashGameFull() {
                       )}
                     </div>
 
-                    <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
+                    <div style={{ marginTop: 12, display: "flex", gap: 10, flexDirection: isMobile ? "column" : "row" }}>
                       <button
                         type="button"
                         onClick={startGame}
@@ -1185,10 +1209,11 @@ function JuiceSplashGameFull() {
             <div
               style={{
                 position: "absolute",
-                left: 12,
-                bottom: 12,
+                left: isMobile ? 8 : 12,
+                right: isMobile ? 8 : "auto",
+                bottom: isMobile ? 8 : 12,
                 zIndex: 6,
-                padding: "10px 12px",
+                padding: isMobile ? "8px 10px" : "10px 12px",
                 borderRadius: 16,
                 background: "rgba(0,0,0,0.30)",
                 border: `1px solid ${theme.border}`,
@@ -1197,6 +1222,7 @@ function JuiceSplashGameFull() {
                 fontSize: 12,
                 opacity: 0.9,
                 display: "flex",
+                flexWrap: isMobile ? "wrap" : "nowrap",
                 gap: 10,
                 alignItems: "center",
               }}
@@ -1204,7 +1230,7 @@ function JuiceSplashGameFull() {
               <InfinityIcon size={16} />
               <span>Boss em: {formatTime(bossTimer)}</span>
               <span style={{ opacity: 0.6 }}>•</span>
-              <span>Clique e arraste → solte no Blender</span>
+              <span>{isMobile ? "Toque, arraste e solte no Blender" : "Clique e arraste → solte no Blender"}</span>
             </div>
           </div>
         </div>
