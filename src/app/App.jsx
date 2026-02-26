@@ -171,6 +171,21 @@ export default function App() {
     }, 0);
   };
 
+  const openJuicesCatalog = (event) => {
+    event?.preventDefault();
+
+    const juicesSection = document.getElementById("catalogo");
+    if (!juicesSection) return;
+
+    juicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    const heading = juicesSection.querySelector(".section-title");
+    if (heading instanceof HTMLElement) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    }
+  };
+
   if (showSplash) {
     return (
       <SplashScreen
@@ -192,7 +207,7 @@ export default function App() {
       />
       <main>
         <MotionSection>
-          <InicioSection hero={t.hero} />
+          <InicioSection hero={t.hero} onBuyNow={openJuicesCatalog} />
         </MotionSection>
         <MotionSection delay={0.06}>
           <SucosSection
