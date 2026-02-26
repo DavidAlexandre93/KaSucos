@@ -954,18 +954,117 @@ function JuiceSplashGameFull() {
                 width: blenderZone.w,
                 height: blenderZone.h,
                 borderRadius: 26,
-                background: "rgba(255,255,255,0.06)",
-                border: `1px solid ${theme.border}`,
-                boxShadow: "0 0 44px rgba(255,255,255,0.06)",
-                display: "grid",
-                placeItems: "center",
-                color: "white",
-                fontWeight: 950,
-                letterSpacing: 0.3,
+                background: "linear-gradient(180deg, rgba(245,255,255,0.18), rgba(255,255,255,0.05))",
+                border: `1px solid rgba(255,255,255,0.2)`,
+                boxShadow: "0 16px 44px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.35)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 8,
                 zIndex: 2,
+                overflow: "hidden",
               }}
             >
-              SOLTE AQUI 🎛️
+              <div
+                aria-hidden
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "radial-gradient(circle at top, rgba(120,255,170,0.2), transparent 52%)",
+                }}
+              />
+
+              <div
+                aria-hidden
+                style={{
+                  position: "relative",
+                  width: isMobile ? 56 : 62,
+                  height: isMobile ? 70 : 78,
+                  borderRadius: "14px 14px 22px 22px",
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.85), rgba(185,224,255,0.26))",
+                  border: "1px solid rgba(255,255,255,0.82)",
+                  boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05), inset 0 -14px 20px rgba(93,188,165,0.2)",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    top: -8,
+                    width: isMobile ? 24 : 26,
+                    height: 8,
+                    borderRadius: "8px 8px 4px 4px",
+                    background: "linear-gradient(180deg, #fbfdff, #dce5ef)",
+                    border: "1px solid rgba(255,255,255,0.8)",
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    right: isMobile ? -8 : -10,
+                    top: 16,
+                    width: isMobile ? 12 : 13,
+                    height: isMobile ? 22 : 24,
+                    borderRadius: "0 12px 12px 0",
+                    border: "2px solid rgba(255,255,255,0.75)",
+                    borderLeft: "none",
+                    opacity: 0.8,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 8,
+                    right: 8,
+                    bottom: 9,
+                    height: 20,
+                    borderRadius: 10,
+                    background: "linear-gradient(180deg, rgba(95,227,171,0.75), rgba(48,170,125,0.75))",
+                    boxShadow: "inset 0 2px 6px rgba(255,255,255,0.25)",
+                  }}
+                />
+              </div>
+
+              <div
+                aria-hidden
+                style={{
+                  width: isMobile ? 52 : 58,
+                  height: isMobile ? 26 : 28,
+                  borderRadius: 12,
+                  background: "linear-gradient(180deg, #dce5ef, #9ea9b8)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.75), 0 5px 8px rgba(0,0,0,0.25)",
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%, -50%)",
+                    width: 12,
+                    height: 12,
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle, #7ae8b8, #2da16f)",
+                    border: "1px solid rgba(255,255,255,0.8)",
+                  }}
+                />
+              </div>
+
+              <span
+                style={{
+                  color: "white",
+                  fontWeight: 950,
+                  letterSpacing: 0.6,
+                  fontSize: isMobile ? 11 : 12,
+                  textShadow: "0 3px 6px rgba(0,0,0,0.35)",
+                  zIndex: 1,
+                }}
+              >
+                SOLTE AQUI
+              </span>
             </motion.div>
 
             <div
