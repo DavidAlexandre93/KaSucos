@@ -266,8 +266,6 @@ export default function App() {
               items={cartItems}
               total={totalLabel}
               onFinalize={finalizePurchase}
-              availableJuices={availableJuices}
-              onRemoveAvailableJuice={removeAvailableJuice}
             />
           </MotionSection>
         ) : null}
