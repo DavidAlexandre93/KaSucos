@@ -263,8 +263,15 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
           >
             <motion.div
               className="splash-v2-wolf-glow"
-              animate={reduceMotion ? undefined : { opacity: [0.75, 1, 0.75] }}
-              transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+              animate={
+                reduceMotion
+                  ? undefined
+                  : {
+                      opacity: [0.55, 1, 0.55],
+                      scale: [0.96, 1.12, 0.96],
+                    }
+              }
+              transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
             />
 
             <motion.div
@@ -281,9 +288,9 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
                   reduceMotion
                     ? { scale: 1, rotate: 0, y: 0, opacity: 1 }
                     : {
-                        scale: [1, 1.04, 1],
+                        scale: [1, 1.11, 1],
                         rotate: 0,
-                        y: 0,
+                        y: [0, -8, 0],
                         opacity: 1,
                       }
                 }
@@ -293,12 +300,17 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
                     : {
                         scale: {
                           delay: 0.55,
-                          duration: 1.7,
+                          duration: 1.45,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        },
+                        y: {
+                          delay: 0.55,
+                          duration: 1.45,
                           repeat: Infinity,
                           ease: "easeInOut",
                         },
                         rotate: { type: "spring", stiffness: 90, damping: 16 },
-                        y: { type: "spring", stiffness: 90, damping: 16 },
                         opacity: { duration: 0.55 },
                       }
                 }
