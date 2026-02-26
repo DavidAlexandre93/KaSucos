@@ -1988,6 +1988,19 @@ blockquote cite {
   background: rgba(255, 255, 255, 0.3);
 }
 
+
+.btn-remove-juice {
+  background: linear-gradient(135deg, #ff4f5e, #d7263d);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(215, 38, 61, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+.btn-remove-juice:hover {
+  background: linear-gradient(135deg, #ff3348, #bc1f33);
+  box-shadow: 0 10px 22px rgba(188, 31, 51, 0.45);
+}
+
 .contact-grid {
   position: relative;
   z-index: 1;

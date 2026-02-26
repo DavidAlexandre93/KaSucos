@@ -43,6 +43,7 @@ const DEFAULT_THEME_COLORS = {
 export default function App() {
   const siteRef = useRef(null);
   const [cartItems, setCartItems] = useState([]);
+  const [availableJuices, setAvailableJuices] = useState(sucos);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
@@ -149,6 +150,13 @@ export default function App() {
     });
   };
 
+  const removeAvailableJuice = (juice) => {
+    const id = juice.title || juice.name;
+
+    setCartItems((current) => current.filter((item) => item.id !== id));
+    setAvailableJuices((current) => current.filter((item) => (item.title || item.name) !== id));
+  };
+
   const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
   const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
   const totalLabel = formatBRL(totalAmount);
@@ -220,7 +228,7 @@ export default function App() {
         </MotionSection>
         <MotionSection delay={0.06}>
           <SucosSection
-            sucos={sucos}
+            sucos={availableJuices}
             language={language}
             title={t.juices.title}
             labels={t.juices}
@@ -244,8 +252,8 @@ export default function App() {
               items={cartItems}
               total={totalLabel}
               onFinalize={finalizePurchase}
-              availableJuices={sucos}
-              onAddAvailableJuice={(juice) => addItem(juice, t.cart.unit)}
+              availableJuices={availableJuices}
+              onRemoveAvailableJuice={removeAvailableJuice}
             />
           </MotionSection>
         ) : null}
