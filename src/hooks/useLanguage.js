@@ -2,16 +2,43 @@ import { useEffect, useState } from "react";
 
 const COUNTRY_LANGUAGE_MAP = {
   BR: "pt",
+  PT: "pt",
   US: "en",
-  ES: "es",
+  GB: "en",
+  CA: "en",
+  AU: "en",
+  NZ: "en",
+  IE: "en",
   FR: "fr",
+  BE: "fr",
+  CH: "fr",
+  LU: "fr",
+  MC: "fr",
+  ES: "es",
+  MX: "es",
+  AR: "es",
+  CL: "es",
+  CO: "es",
+  PE: "es",
+  UY: "es",
+  PY: "es",
+  BO: "es",
+  EC: "es",
+  VE: "es",
+  CR: "es",
+  PA: "es",
+  JP: "ja",
 };
 
-const SUPPORTED_LANGUAGES = ["pt", "en", "es", "fr"];
+const SUPPORTED_LANGUAGES = ["pt", "en", "es", "fr", "ja"];
+
+function normalizeLanguage(language) {
+  return SUPPORTED_LANGUAGES.includes(language) ? language : "pt";
+}
 
 function getBrowserLanguage() {
   const language = navigator.language?.slice(0, 2)?.toLowerCase();
-  return SUPPORTED_LANGUAGES.includes(language) ? language : "pt";
+  return normalizeLanguage(language);
 }
 
 async function getCountryLanguage() {
@@ -40,9 +67,13 @@ export function useLanguage() {
     }
 
     getCountryLanguage().then((detectedLanguage) => {
-      setLanguage(detectedLanguage ?? getBrowserLanguage());
+      setLanguage(normalizeLanguage(detectedLanguage ?? getBrowserLanguage()));
     });
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const handleLanguageChange = (nextLanguage) => {
     if (!SUPPORTED_LANGUAGES.includes(nextLanguage)) {

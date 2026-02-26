@@ -227,7 +227,7 @@ export default function App() {
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
         <MotionSection>
-          <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.pt} />
+          <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.en ?? dicasBlogData.pt} />
         </MotionSection>
         <MotionSection>
           <DepoimentosSection testimonials={t.testimonials} />

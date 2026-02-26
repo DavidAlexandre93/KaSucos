@@ -52,6 +52,16 @@ const COMPACT_NAV_LABELS = {
     findUs: "Adresse",
     contact: "Contact",
   },
+  ja: {
+    home: "ホーム",
+    juices: "ジュース",
+    buildYourJuice: "カスタム",
+    combos: "セット",
+    tipsInfo: "ヒント",
+    testimonials: "レビュー",
+    findUs: "店舗",
+    contact: "連絡",
+  },
 };
 
 export function Header({ language, onLanguageChange, labels, onBasketClick }) {
