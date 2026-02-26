@@ -18,7 +18,15 @@ export function InicioSection({ hero, onViewCombos, onBuyNow }) {
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
 
   useEffect(() => {
-    if (heroBanners.length <= 1) return undefined;
+    if (heroBanners.length <= 1 || typeof window === "undefined") return undefined;
+
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lowPowerMobile = window.matchMedia("(max-width: 1024px), (pointer: coarse)").matches;
+
+    if (prefersReduced || lowPowerMobile) {
+      setActiveBannerIndex(0);
+      return undefined;
+    }
 
     const intervalId = window.setInterval(() => {
       setActiveBannerIndex((currentIndex) => (currentIndex + 1) % heroBanners.length);

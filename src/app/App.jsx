@@ -58,6 +58,15 @@ export default function App() {
 
   useGSAP(
     ({ selector }) => {
+      if (typeof window !== "undefined") {
+        const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const lowPowerMobile = window.matchMedia("(max-width: 1024px), (pointer: coarse)").matches;
+
+        if (prefersReduced || lowPowerMobile) {
+          return undefined;
+        }
+      }
+
       const floatingTargets = selector(".card img, .combo, .map-box iframe, .hero-showcase-jar");
       const tiltCards = selector(".card, .combo, .fruit-chip, .reviews blockquote");
 

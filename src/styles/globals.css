@@ -2580,6 +2580,10 @@ body.site-party-mode::after {
     align-items: stretch;
   }
 
+  .hero-banner-layer {
+    transition-duration: 0s;
+  }
+
   .hero-showcase {
     min-height: 220px;
   }
