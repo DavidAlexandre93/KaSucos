@@ -13,7 +13,7 @@ const prefersReducedMotion =
 
 const heroBanners = ["/img/banner/banner-apresentação.png", "/img/banner/banner-brinde-kasucos.png"];
 
-export function InicioSection({ hero }) {
+export function InicioSection({ hero, onBuyNow }) {
   const sectionRef = useRef(null);
   const [activeBannerIndex, setActiveBannerIndex] = useState(0);
 
@@ -79,7 +79,14 @@ export function InicioSection({ hero }) {
           <TypingText as="h1" className="hero-title" text={hero.title} speed={36} delay={80} highlight />
           <p className="hero-description">{hero.description}</p>
           <div className="hero-actions">
-            <motion.a href="#catalogo" className="btn-primary" {...buttonMotion}>
+            <motion.a
+              href="#catalogo"
+              className="btn-primary"
+              onClick={(event) => {
+                onBuyNow?.(event);
+              }}
+              {...buttonMotion}
+            >
               {hero.buyNow}
             </motion.a>
             <motion.a href="#combos" className="btn-ghost" {...buttonMotion}>
