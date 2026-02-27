@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { TypingText } from "../ui/TypingText";
 
 const bottleWord = {
   pt: "garrafas",
@@ -38,7 +37,7 @@ export function CombosSection({ combos, language, labels, onAddCombo }) {
   return (
     <section id="combos" className="section soft" ref={sectionRef}>
       <div className="container">
-        <TypingText className="section-title" text={labels.title} highlight />
+        <h2 className="section-title">{labels.title}</h2>
         <div className="grid combos">
           {combos.map((combo) => (
             <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>
