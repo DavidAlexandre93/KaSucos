@@ -1710,29 +1710,36 @@ body.splash-lock {
 }
 
 .fruit-chip {
-  border: 1px solid rgba(95, 39, 178, 0.2);
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 999px;
+  border: 1px solid rgba(95, 39, 178, 0.22);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
   color: var(--purple-900);
-  font-weight: 700;
-  padding: 8px 14px 8px 8px;
+  font-weight: 900;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  padding: 16px 26px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 8px 16px rgba(40, 16, 71, 0.08);
+  gap: 14px;
+  box-shadow: 0 14px 24px rgba(40, 16, 71, 0.14);
+  line-height: 1;
 }
 
 .mini-fruit {
-  width: 30px;
-  height: 30px;
+  width: 62px;
+  height: 62px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.82);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 2.1rem;
   line-height: 1;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.2));
+}
+
+.fruit-chip-label {
+  letter-spacing: 0.01em;
 }
 
 .fruit-chip.active {

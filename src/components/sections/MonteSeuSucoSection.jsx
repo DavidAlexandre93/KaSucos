@@ -196,7 +196,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
                 <span className="mini-fruit" style={{ background: FRUIT_COLORS[fruitKey] ?? DEFAULT_JUICE_COLOR }}>
                   {FRUIT_EMOJIS[fruitKey] ?? "🍹"}
                 </span>
-                <span>{fruit}</span>
+                <span className="fruit-chip-label">{fruit}</span>
               </button>
             );
           })}
