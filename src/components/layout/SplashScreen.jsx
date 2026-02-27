@@ -114,27 +114,58 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
       if (touch) onMove(touch.clientX, touch.clientY);
     };
 
-    window.addEventListener("mousemove", handleMouse, { passive: true });
-    window.addEventListener("touchmove", handleTouch, { passive: true });
-
     const smooth = () => {
       const p = parallax.current;
       p.x += (p.tx - p.x) * 0.06;
       p.y += (p.ty - p.y) * 0.06;
-      setParallaxPos({ x: p.x, y: p.y });
+
+      setParallaxPos((previous) => {
+        if (Math.abs(previous.x - p.x) < 0.002 && Math.abs(previous.y - p.y) < 0.002) {
+          return previous;
+        }
+
+        return { x: p.x, y: p.y };
+      });
+
+      const settled = Math.abs(p.tx - p.x) < 0.002 && Math.abs(p.ty - p.y) < 0.002;
+      if (settled) {
+        rafParallaxRef.current = null;
+        return;
+      }
+
       rafParallaxRef.current = requestAnimationFrame(smooth);
     };
 
-    rafParallaxRef.current = requestAnimationFrame(smooth);
+    const ensureParallaxLoop = () => {
+      if (rafParallaxRef.current) return;
+      rafParallaxRef.current = requestAnimationFrame(smooth);
+    };
+
+    const activateParallaxWithMouse = (event) => {
+      handleMouse(event);
+      ensureParallaxLoop();
+    };
+
+    const activateParallaxWithTouch = (event) => {
+      handleTouch(event);
+      ensureParallaxLoop();
+    };
+
+    window.addEventListener("mousemove", activateParallaxWithMouse, { passive: true });
+    window.addEventListener("touchmove", activateParallaxWithTouch, { passive: true });
+
+    ensureParallaxLoop();
 
     return () => {
-      window.removeEventListener("mousemove", handleMouse);
-      window.removeEventListener("touchmove", handleTouch);
+      window.removeEventListener("mousemove", activateParallaxWithMouse);
+      window.removeEventListener("touchmove", activateParallaxWithTouch);
       if (rafParallaxRef.current) cancelAnimationFrame(rafParallaxRef.current);
     };
   }, [reduceMotion]);
 
   useEffect(() => {
+    if (reduceMotion) return undefined;
+
     const canvas = canvasRef.current;
     const root = rootRef.current;
     if (!canvas || !root) return undefined;
@@ -161,7 +192,12 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
     resize();
     window.addEventListener("resize", resize);
 
-    const spawn = (count = 42) => {
+    const maxParticles =
+      typeof navigator !== "undefined" && navigator.hardwareConcurrency
+        ? Math.min(32, Math.max(12, navigator.hardwareConcurrency * 3))
+        : 24;
+
+    const spawn = (count = maxParticles) => {
       particles.current = Array.from({ length: count }).map(() => ({
         x: Math.random() * w,
         y: Math.random() * h,
@@ -220,7 +256,7 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
       window.removeEventListener("resize", resize);
       if (rafParticlesRef.current) cancelAnimationFrame(rafParticlesRef.current);
     };
-  }, []);
+  }, [reduceMotion]);
 
   const fieldOffset = useMemo(() => ({ x: -parallaxPos.x * 8, y: -parallaxPos.y * 6 }), [parallaxPos.x, parallaxPos.y]);
   const wolfOffset = useMemo(() => ({ x: -parallaxPos.x * 10, y: -parallaxPos.y * 8 }), [parallaxPos.x, parallaxPos.y]);
