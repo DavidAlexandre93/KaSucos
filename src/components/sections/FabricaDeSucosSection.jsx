@@ -615,7 +615,8 @@ function JuiceSplashGameFull() {
     const magnetOn = powerRef.current.magnet > 0;
 
     setEntities((prev) => {
-      let arr = prev.map((e) => {
+      const autoBlended = [];
+      let arr = prev.flatMap((e) => {
         if (dragRef.current.draggingUid === e.uid) return e;
         let nx = e.x;
         const ny = e.y + (e.vy * slowFactor * dt) / 1000;
@@ -627,12 +628,21 @@ function JuiceSplashGameFull() {
         }
 
         if (ny > sizeRef.current.height + 80) {
-          if (e.kind === "power") return makePower({ width: sizeRef.current.width, level: levelRef.current });
-          if (e.kind === "boss") return makeBoss({ width: sizeRef.current.width, level: levelRef.current });
-          return makeFruit({ width: sizeRef.current.width, level: levelRef.current });
+          if (e.kind === "power") return [makePower({ width: sizeRef.current.width, level: levelRef.current })];
+          if (e.kind === "boss") return [makeBoss({ width: sizeRef.current.width, level: levelRef.current })];
+          return [makeFruit({ width: sizeRef.current.width, level: levelRef.current })];
         }
 
-        return { ...e, x: nx, y: ny };
+        if (e.kind === "fruit") {
+          const centerX = nx + 26;
+          const centerY = ny + 26;
+          if (inZone(centerX, centerY, blenderZoneRef.current)) {
+            autoBlended.push({ ...e, x: nx, y: ny });
+            return [];
+          }
+        }
+
+        return [{ ...e, x: nx, y: ny }];
       });
 
       const maxEntities = 14 + Math.min(8, Math.floor(levelRef.current / 2));
@@ -644,6 +654,13 @@ function JuiceSplashGameFull() {
       }
 
       if (arr.length > maxEntities) arr = arr.slice(arr.length - maxEntities);
+
+      if (autoBlended.length > 0) {
+        queueMicrotask(() => {
+          autoBlended.forEach((ent) => handleDropIntoBlender(ent, { skipRemoval: true }));
+        });
+      }
+
       return arr;
     });
   }
@@ -749,9 +766,10 @@ function JuiceSplashGameFull() {
     setPops((p) => p.filter((x) => x.id !== id));
   }
 
-  function handleDropIntoBlender(ent) {
+  function handleDropIntoBlender(ent, options = {}) {
+    const skipRemoval = options?.skipRemoval ?? false;
     addPop(ent);
-    removeEntity(ent.uid);
+    if (!skipRemoval) removeEntity(ent.uid);
 
     if (ent.kind === "power") {
       if (ent.powerType === "slow") {
@@ -793,6 +811,7 @@ function JuiceSplashGameFull() {
 
     if (ok) {
       play("catch");
+      showToast("good", "Sucesso! Fruta correta no liquidificador ✅", 900);
       setCombo((c) => clamp(c + 1, 1, 9));
       setDanger((d) => Math.max(0, d - 2.2));
 
@@ -822,7 +841,7 @@ function JuiceSplashGameFull() {
       play("gameover");
       setCombo(1);
       setDanger((d) => clamp(d + 6.5, 0, 100));
-      showToast("danger", "Fruta errada! A cozinha ficou caótica 😅", 1200);
+      showToast("danger", "Errado! Essa fruta não é a próxima do pedido ❌", 1200);
       setCup((v) => clamp(v - 0.06, 0, 1));
     }
   }
