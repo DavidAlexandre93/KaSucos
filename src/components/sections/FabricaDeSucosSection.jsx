@@ -1637,6 +1637,8 @@ function JuiceSplashGameFull() {
                             setPlayerName(nextName);
                             if (normalizePlayerName(nextName)) setNameValidationError(false);
                           }}
+                          onKeyDown={(event) => event.stopPropagation()}
+                          onKeyUp={(event) => event.stopPropagation()}
                           placeholder="Seu nome (obrigatório)"
                           required
                           style={{
