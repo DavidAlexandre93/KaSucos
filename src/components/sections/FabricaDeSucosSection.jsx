@@ -41,6 +41,7 @@ class Howl {
 const rand = (min, max) => Math.random() * (max - min) + min;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const now = () => performance.now();
+const BLENDER_BASE_COLOR = "#5FE3AB";
 
 function formatTime(ms) {
   const s = Math.max(0, Math.ceil(ms / 1000));
@@ -117,6 +118,21 @@ function pickNewOrder(currentRecipe, currentClient) {
 
 function fruitById(id) {
   return FRUITS.find((f) => f.id === id) || FRUITS[0];
+}
+
+function mixColors(colorA, colorB, strength = 0.5) {
+  const parseHex = (value) => {
+    const clean = value.replace("#", "");
+    const full = clean.length === 3 ? clean.split("").map((c) => c + c).join("") : clean;
+    const int = Number.parseInt(full, 16);
+    return [int >> 16, (int >> 8) & 255, int & 255];
+  };
+
+  const [r1, g1, b1] = parseHex(colorA);
+  const [r2, g2, b2] = parseHex(colorB);
+  const alpha = clamp(strength, 0, 1);
+  const blend = (a, b) => Math.round(a * (1 - alpha) + b * alpha);
+  return `rgb(${blend(r1, r2)}, ${blend(g1, g2)}, ${blend(b1, b2)})`;
 }
 
 const GAME_THEME = {
@@ -367,6 +383,9 @@ function JuiceSplashGameFull() {
     hasSupabaseConfig() ? "Ranking global (Supabase)" : "Sem Supabase configurado. Usando ranking local."
   );
   const [blenderXPercent, setBlenderXPercent] = useState(50);
+  const [blenderLiquidLevel, setBlenderLiquidLevel] = useState(0.26);
+  const [blenderLiquidColor, setBlenderLiquidColor] = useState(BLENDER_BASE_COLOR);
+  const [isBlending, setIsBlending] = useState(false);
   const bestScore = ranking?.[0]?.score ?? 0;
   const phaseRef = useRef(phase);
   const levelRef = useRef(level);
@@ -378,6 +397,7 @@ function JuiceSplashGameFull() {
 
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" });
   const blenderDragRef = useRef({ active: false });
+  const blenderFxTimeoutRef = useRef(null);
   const isMobile = size.width < 720;
   const isTablet = size.width >= 720 && size.width < 1024;
 
@@ -537,8 +557,21 @@ function JuiceSplashGameFull() {
     setEntities([]);
     setPops([]);
     setToast(null);
+    setBlenderLiquidLevel(0.26);
+    setBlenderLiquidColor(BLENDER_BASE_COLOR);
+    setIsBlending(false);
+    window.clearTimeout(blenderFxTimeoutRef.current);
+    blenderFxTimeoutRef.current = null;
     dragRef.current = { draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" };
     blenderDragRef.current = { active: false };
+  }
+
+  function triggerBlenderEffect(nextColor) {
+    setBlenderLiquidColor((current) => mixColors(current, nextColor, 0.5));
+    setBlenderLiquidLevel((value) => clamp(value + 0.2, 0.2, 0.95));
+    setIsBlending(true);
+    window.clearTimeout(blenderFxTimeoutRef.current);
+    blenderFxTimeoutRef.current = window.setTimeout(() => setIsBlending(false), 380);
   }
 
   function startGame() {
@@ -854,6 +887,7 @@ function JuiceSplashGameFull() {
     if (ok) {
       play("catch");
       showToast("good", "Sucesso! Fruta correta no liquidificador ✅", 900);
+      triggerBlenderEffect(fruitById(ent.fruitId).color);
       setCombo((c) => clamp(c + 1, 1, 9));
       setDanger((d) => Math.max(0, d - 2.2));
 
@@ -877,6 +911,7 @@ function JuiceSplashGameFull() {
           setScore((s) => s + 160);
           setCombo((c) => clamp(c + 2, 1, 9));
           setDanger((d) => Math.max(0, d - 10));
+          setBlenderLiquidLevel(0.3);
           return nextOrder.recipe;
         }
         recipeRef.current = next;
@@ -1299,10 +1334,11 @@ function JuiceSplashGameFull() {
 
             <motion.div
               animate={{
-                scale: power.double > 0 ? [1, 1.01, 1] : 1,
-                rotate: power.double > 0 ? [0, 0.7, -0.7, 0] : 0,
+                scale: isBlending ? [1, 1.05, 0.97, 1.03, 1] : power.double > 0 ? [1, 1.01, 1] : 1,
+                rotate: isBlending ? [0, -2.2, 2.2, -1, 0.8, 0] : power.double > 0 ? [0, 0.7, -0.7, 0] : 0,
+                x: isBlending ? [0, -3, 3, -2, 2, 0] : 0,
               }}
-              transition={{ duration: 0.35, repeat: power.double > 0 ? Infinity : 0 }}
+              transition={{ duration: isBlending ? 0.38 : 0.35, repeat: !isBlending && power.double > 0 ? Infinity : 0 }}
               onMouseDown={startBlenderDrag}
               onTouchStart={startBlenderDrag}
               style={{
@@ -1364,10 +1400,13 @@ function JuiceSplashGameFull() {
                     left: 8,
                     right: 8,
                     bottom: 9,
-                    height: 20,
+                    height: `${Math.round(20 + blenderLiquidLevel * 34)}px`,
                     borderRadius: 10,
-                    background: "linear-gradient(180deg, rgba(95,227,171,0.75), rgba(48,170,125,0.75))",
-                    boxShadow: "inset 0 2px 6px rgba(255,255,255,0.25)",
+                    background: `linear-gradient(180deg, ${mixColors(blenderLiquidColor, "#ffffff", 0.35)}, ${blenderLiquidColor})`,
+                    boxShadow: isBlending
+                      ? "inset 0 2px 8px rgba(255,255,255,0.35), 0 0 14px rgba(255,255,255,0.35)"
+                      : "inset 0 2px 6px rgba(255,255,255,0.25)",
+                    transition: "height 220ms ease, background 220ms ease, box-shadow 180ms ease",
                   }}
                 />
               </div>
