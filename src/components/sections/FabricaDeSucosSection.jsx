@@ -643,7 +643,7 @@ function JuiceSplashGameFull() {
           return [makeFruit({ width: sizeRef.current.width, level: levelRef.current })];
         }
 
-        if (e.kind === "fruit") {
+        if (e.kind === "fruit" || e.kind === "power" || e.kind === "boss") {
           const centerX = nx + 26;
           const centerY = ny + 26;
           if (inZone(centerX, centerY, blenderZoneRef.current)) {
@@ -870,9 +870,9 @@ function JuiceSplashGameFull() {
     setDanger((d) => Math.max(0, d - 12));
   }
 
-  async function clearRanking() {
+  async function clearRanking(nameOverride) {
     if (rankingScope === "global") {
-      const safeName = normalizePlayerName(playerName);
+      const safeName = normalizePlayerName(nameOverride ?? playerName);
       if (!safeName) {
         showToast("info", "Defina um nome para resetar seus dados.", 1300);
         return;
@@ -881,7 +881,7 @@ function JuiceSplashGameFull() {
       try {
         await deletePlayerScoresFromSupabase(safeName);
         const globalRows = await fetchRankingFromSupabase();
-        setRanking(globalRows);
+        setRanking(globalRows.filter((entry) => normalizePlayerName(entry?.player_name) !== safeName));
         showToast("info", "Seu nome e scores foram removidos da base.", 1500);
       } catch {
         showToast("danger", "Não foi possível deletar seus dados no Supabase.", 1600);
@@ -903,7 +903,7 @@ function JuiceSplashGameFull() {
       showToast("info", "Nome resetado.", 900);
       return;
     }
-    clearRanking();
+    clearRanking(existingName);
   }
 
   const nextNeed = needNextFruit(recipe);
