@@ -946,7 +946,6 @@ function JuiceSplashGameFull() {
   const draggingUid = dragRef.current.draggingUid;
   const dangerPct = clamp(danger, 0, 100);
   const showMobileHandGuide = (isMobile || isTablet) && phase !== "over";
-  const hasStoredPlayerName = Boolean(normalizePlayerName(playerName));
   const handGuideStartX = clamp(blenderZone.x - (isMobile ? 72 : 88), 18, size.width - 170);
   const handGuideStartY = clamp(blenderZone.y - (isMobile ? 42 : 50), 56, size.height - 300);
   const handGuideEndX = blenderZone.x + blenderZone.w / 2 - 26;
@@ -1666,49 +1665,30 @@ function JuiceSplashGameFull() {
                         <div style={{ marginTop: 4, fontSize: 12, opacity: 0.75, fontWeight: 700 }}>{rankingMessage}</div>
                       </div>
 
-                      {hasStoredPlayerName ? (
-                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
-                          <span>Jogador:</span>
-                          <span
-                            style={{
-                              borderRadius: 10,
-                              padding: "7px 9px",
-                              border: `1px solid ${theme.border}`,
-                              background: "rgba(255,255,255,0.08)",
-                              color: "white",
-                              fontWeight: 900,
-                              letterSpacing: 0.2,
-                            }}
-                          >
-                            {normalizePlayerName(playerName)}
-                          </span>
-                        </div>
-                      ) : (
-                        <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
-                          Nome:
-                          <input
-                            value={playerName}
-                            onChange={(ev) => {
-                              const nextName = ev.target.value.slice(0, 24);
-                              setPlayerName(nextName);
-                              if (normalizePlayerName(nextName)) setNameValidationError(false);
-                            }}
-                            placeholder="Seu nome (obrigatório)"
-                            required
-                            style={{
-                              borderRadius: 10,
-                              padding: "7px 9px",
-                              border: nameValidationError ? "1px solid #ff4d4d" : `1px solid ${theme.border}`,
-                              background: "rgba(255,255,255,0.08)",
-                              color: "white",
-                              minWidth: 110,
-                              maxWidth: 160,
-                              fontWeight: 700,
-                              boxShadow: nameValidationError ? "0 0 0 2px rgba(255, 77, 77, 0.18)" : "none",
-                            }}
-                          />
-                        </label>
-                      )}
+                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
+                        Jogador:
+                        <input
+                          value={playerName}
+                          onChange={(ev) => {
+                            const nextName = ev.target.value.slice(0, 24);
+                            setPlayerName(nextName);
+                            if (normalizePlayerName(nextName)) setNameValidationError(false);
+                          }}
+                          placeholder="Seu nome (obrigatório)"
+                          required
+                          style={{
+                            borderRadius: 10,
+                            padding: "7px 9px",
+                            border: nameValidationError ? "1px solid #ff4d4d" : `1px solid ${theme.border}`,
+                            background: "rgba(255,255,255,0.08)",
+                            color: "white",
+                            minWidth: 110,
+                            maxWidth: 160,
+                            fontWeight: 700,
+                            boxShadow: nameValidationError ? "0 0 0 2px rgba(255, 77, 77, 0.18)" : "none",
+                          }}
+                        />
+                      </label>
 
                       <button
                         type="button"
