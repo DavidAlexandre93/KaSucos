@@ -86,9 +86,33 @@ const RECIPES = [
   { name: "Vermelho Forte", need: ["acerola", "strawberry", "grape"] },
 ];
 
+const CLIENTS = [
+  { id: "ana", name: "Ana", emoji: "🙋‍♀️" },
+  { id: "leo", name: "Léo", emoji: "🧑" },
+  { id: "bia", name: "Bia", emoji: "👩" },
+  { id: "davi", name: "Davi", emoji: "👨" },
+  { id: "nina", name: "Nina", emoji: "🧒" },
+];
+
 function pickRecipe() {
   const r = RECIPES[Math.floor(Math.random() * RECIPES.length)];
   return { ...r, id: `${r.name}-${Date.now()}`, progress: [] };
+}
+
+function pickClient(excludedClientId = null) {
+  const available = CLIENTS.filter((client) => client.id !== excludedClientId);
+  const pool = available.length > 0 ? available : CLIENTS;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function pickNewOrder(currentRecipe, currentClient) {
+  const differentRecipes = RECIPES.filter((recipe) => recipe.name !== currentRecipe?.name);
+  const recipePool = differentRecipes.length > 0 ? differentRecipes : RECIPES;
+  const nextRecipeBase = recipePool[Math.floor(Math.random() * recipePool.length)];
+  return {
+    recipe: { ...nextRecipeBase, id: `${nextRecipeBase.name}-${Date.now()}`, progress: [] },
+    client: pickClient(currentClient?.id),
+  };
 }
 
 function fruitById(id) {
@@ -322,6 +346,7 @@ function JuiceSplashGameFull() {
   const [phase, setPhase] = useState("idle");
   const [mode] = useState("endless");
   const [recipe, setRecipe] = useState(() => pickRecipe());
+  const [client, setClient] = useState(() => pickClient());
   const [entities, setEntities] = useState([]);
   const entitiesRef = useRef([]);
   const [pops, setPops] = useState([]);
@@ -348,6 +373,7 @@ function JuiceSplashGameFull() {
   const scoreRef = useRef(score);
   const powerRef = useRef(power);
   const recipeRef = useRef(recipe);
+  const clientRef = useRef(client);
   const sizeRef = useRef(size);
 
   const dragRef = useRef({ draggingUid: null, start: null, offset: { x: 0, y: 0 }, moved: false, pointerKind: "mouse" });
@@ -413,6 +439,10 @@ function JuiceSplashGameFull() {
   useEffect(() => {
     recipeRef.current = recipe;
   }, [recipe]);
+
+  useEffect(() => {
+    clientRef.current = client;
+  }, [client]);
 
   useEffect(() => {
     sizeRef.current = size;
@@ -499,9 +529,11 @@ function JuiceSplashGameFull() {
     setLevel(1);
     setBossTimer(9000);
     setPower({ slow: 0, double: 0, magnet: 0 });
-    const nextRecipe = pickRecipe();
-    recipeRef.current = nextRecipe;
-    setRecipe(nextRecipe);
+    const nextOrder = pickNewOrder(recipeRef.current, clientRef.current);
+    recipeRef.current = nextOrder.recipe;
+    clientRef.current = nextOrder.client;
+    setRecipe(nextOrder.recipe);
+    setClient(nextOrder.client);
     setEntities([]);
     setPops([]);
     setToast(null);
@@ -835,14 +867,17 @@ function JuiceSplashGameFull() {
       setRecipe((r) => {
         const next = { ...r, progress: [...r.progress, ent.fruitId] };
         if (next.progress.length >= next.need.length) {
-          const upcomingRecipe = pickRecipe();
-          recipeRef.current = upcomingRecipe;
+          const servedClientName = clientRef.current?.name || "cliente";
+          const nextOrder = pickNewOrder(next, clientRef.current);
+          recipeRef.current = nextOrder.recipe;
+          clientRef.current = nextOrder.client;
+          setClient(nextOrder.client);
           play("combo");
-          showToast("good", `SUCO ${next.name.toUpperCase()} PRONTO! 🧃`, 1500);
+          showToast("good", `Pedido entregue para ${servedClientName}! Próximo cliente: ${nextOrder.client.name} ${nextOrder.client.emoji}`, 1700);
           setScore((s) => s + 160);
           setCombo((c) => clamp(c + 2, 1, 9));
           setDanger((d) => Math.max(0, d - 10));
-          return upcomingRecipe;
+          return nextOrder.recipe;
         }
         recipeRef.current = next;
         return next;
@@ -1045,10 +1080,10 @@ function JuiceSplashGameFull() {
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 12, opacity: 0.9, fontWeight: 900, display: "flex", alignItems: "center", gap: 6 }}>
-                    <span role="img" aria-label="cliente querendo pedido">
-                      🙋
+                    <span role="img" aria-label={`cliente ${client.name}`}>
+                      {client.emoji}
                     </span>
-                    Esse é o pedido do cliente
+                    Pedido de {client.name}
                   </div>
                   <div style={{ fontSize: 18, fontWeight: 950 }}>{recipe.name}</div>
                 </div>
