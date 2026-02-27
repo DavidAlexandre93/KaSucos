@@ -2396,6 +2396,31 @@ body.splash-lock {
 }
 
 
+
+
+.testimonials-title {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.82), transparent 62%),
+    linear-gradient(120deg, rgba(255, 221, 107, 0.42), rgba(176, 235, 107, 0.28) 52%, rgba(255, 255, 255, 0.76));
+  border: 1px solid rgba(95, 39, 178, 0.18);
+  box-shadow:
+    0 12px 26px rgba(58, 21, 118, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  color: color-mix(in srgb, var(--purple-900) 80%, var(--wine-500));
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.testimonials-title::before {
+  content: "🍉";
+  font-size: 0.85em;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.18));
+}
 .testimonials {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(221, 248, 191, 0.72), rgba(242, 235, 255, 0.94));
 }

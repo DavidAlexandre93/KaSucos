@@ -20,7 +20,7 @@ export function DepoimentosSection({ testimonials }) {
   return (
     <section id="depoimentos" className="section testimonials" ref={sectionRef}>
       <div className="container">
-        <h2 className="section-title">{testimonials.title}</h2>
+        <h2 className="section-title testimonials-title">{testimonials.title}</h2>
         <div className="grid reviews">
           {testimonials.items.map((item, index) => (
             <motion.blockquote key={AUTHORS[index]} whileHover={{ y: -6, rotate: index % 2 === 0 ? -0.8 : 0.8 }}>
