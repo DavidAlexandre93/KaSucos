@@ -1043,7 +1043,12 @@ function JuiceSplashGameFull() {
             <div style={{ flex: 1, padding: 12, borderRadius: 16, background: theme.card, border: `1px solid ${theme.border}`, color: "white" }}>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
                 <div>
-                  <div style={{ fontSize: 12, opacity: 0.8, fontWeight: 900 }}>PEDIDO ATUAL</div>
+                  <div style={{ fontSize: 12, opacity: 0.9, fontWeight: 900, display: "flex", alignItems: "center", gap: 6 }}>
+                    <span role="img" aria-label="cliente querendo pedido">
+                      🙋
+                    </span>
+                    Esse é o pedido do cliente
+                  </div>
                   <div style={{ fontSize: 18, fontWeight: 950 }}>{recipe.name}</div>
                 </div>
 
@@ -1084,7 +1089,9 @@ function JuiceSplashGameFull() {
                           boxShadow: "0 0 0 3px rgba(255,255,255,0.10)",
                         }}
                       />
-                      <div style={{ fontWeight: 950, fontSize: 12, opacity: done ? 1 : 0.88 }}>{done ? "OK" : f.label}</div>
+                      <div style={{ fontWeight: 950, fontSize: 12, opacity: done ? 1 : 0.88 }}>
+                        {done ? "✅ OK" : `${FRUIT_EMOJIS_BY_ID[f.id] || "🍓"} ${f.label}`}
+                      </div>
                     </div>
                   );
                 })}
@@ -1099,14 +1106,14 @@ function JuiceSplashGameFull() {
                     fontWeight: 900,
                   }}
                 >
-                  Arraste as frutas na ordem exata do pedido: {recipe.need.map((id) => fruitById(id).label).join(" → ")}
+                  Arraste as frutas na ordem exata do pedido: {recipe.need.map((id) => `${FRUIT_EMOJIS_BY_ID[id] || "🍓"} ${fruitById(id).label}`).join(" → ")}
                 </div>
                 <div style={{ marginLeft: "auto", display: "flex", gap: 10, alignItems: "center" }}>
                   <div style={{ fontSize: 12, opacity: 0.78, fontWeight: 900 }}>
                     Próxima:{" "}
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 6, opacity: 1 }}>
                       <span style={{ width: 10, height: 10, borderRadius: 999, background: nextNeedInfo.color }} />
-                      {nextNeedInfo.label}
+                      {FRUIT_EMOJIS_BY_ID[nextNeedInfo.id] || "🍓"} {nextNeedInfo.label}
                     </span>
                   </div>
                 </div>
