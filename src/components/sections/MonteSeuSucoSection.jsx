@@ -149,7 +149,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
   return (
     <section id="monte-seu-suco" className="section soft" ref={sectionRef}>
       <div className="container">
-        <h2 className="section-title">{content.title}</h2>
+        <h2 className="section-title builder-title">{content.title}</h2>
         <p className="builder-description">{content.description}</p>
 
         <div className="juice-preview juice-scene">

@@ -1696,6 +1696,30 @@ body.splash-lock {
 }
 
 
+
+
+.builder-title {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 18px 6px;
+  border-radius: 999px;
+  background: linear-gradient(140deg, rgba(255, 236, 139, 0.55), rgba(255, 166, 52, 0.24));
+  color: #3a2456;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 10px 24px -14px rgba(159, 80, 1, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
+.builder-title::before,
+.builder-title::after {
+  content: "✦";
+  font-size: 0.95rem;
+  color: #f38d0b;
+  text-shadow: 0 0 10px rgba(255, 190, 90, 0.6);
+}
 .builder-description {
   margin: 0 auto 18px;
   max-width: 760px;
