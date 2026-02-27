@@ -628,9 +628,45 @@ function JuiceFactoryNinja() {
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {bottles.map((bottle) => (
                   <div key={bottle.slot} style={{ width: 120, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: 10, background: "rgba(255,255,255,0.08)" }}>
-                    <div style={{ fontWeight: 900, color: "white", marginBottom: 6 }}>{bottle.emoji} Garrafa</div>
-                    <div style={{ height: 12, borderRadius: 999, background: "rgba(255,255,255,0.14)", overflow: "hidden" }}>
-                      <div style={{ width: `${bottle.fill * 100}%`, height: "100%", background: "linear-gradient(90deg,#65ffbe,#34c28a)" }} />
+                    <div style={{ fontWeight: 900, color: "white", marginBottom: 8 }}>{bottle.emoji} Garrafa</div>
+                    <div style={{ display: "grid", justifyItems: "center" }}>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: 34,
+                          height: 56,
+                          borderRadius: "11px 11px 12px 12px",
+                          border: "2px solid rgba(255,255,255,0.68)",
+                          background: "rgba(255,255,255,0.08)",
+                          overflow: "hidden",
+                          boxShadow: "inset 0 0 10px rgba(0,0,0,0.3)",
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: -7,
+                            left: "50%",
+                            transform: "translateX(-50%)",
+                            width: 14,
+                            height: 9,
+                            borderRadius: "7px 7px 2px 2px",
+                            border: "2px solid rgba(255,255,255,0.68)",
+                            borderBottom: "none",
+                            background: "rgba(255,255,255,0.08)",
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            height: `${Math.max(0, Math.min(1, bottle.fill)) * 100}%`,
+                            background: "linear-gradient(180deg,#8effcd,#34c28a)",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
