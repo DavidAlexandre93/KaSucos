@@ -218,6 +218,8 @@ function JuiceFactoryNinja() {
   }, []);
 
   function resetGame() {
+    cancelAnimationFrame(rafRef.current);
+    lastSpawnAtRef.current = -Infinity;
     setItems([]);
     setSlashTrail([]);
     setScore(0);
