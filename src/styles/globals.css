@@ -2269,6 +2269,37 @@ body.splash-lock {
   margin-bottom: 16px;
 }
 
+.fruit-ninja-title {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background: linear-gradient(130deg, #4f227f 0%, #8128a4 32%, #e74282 62%, #ff9f2f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 3px 18px rgba(124, 40, 151, 0.24);
+}
+
+.fruit-ninja-title::before,
+.fruit-ninja-title::after {
+  content: "";
+  display: inline-block;
+  width: 26px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 168, 46, 0.95), rgba(236, 68, 122, 0.95));
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.75), 0 7px 16px rgba(236, 68, 122, 0.35);
+  transform: rotate(-14deg);
+}
+
+.fruit-ninja-title::after {
+  transform: rotate(14deg);
+}
+
 .tips-blog-list {
   display: grid;
   gap: 14px;
