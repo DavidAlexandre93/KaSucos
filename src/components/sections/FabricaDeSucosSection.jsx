@@ -8,13 +8,13 @@ const Icon = ({ children, size = 16 }) => (
 );
 
 const Droplets = ({ size }) => <Icon size={size}>💧</Icon>;
-const Trophy = ({ size }) => <Icon size={size}>🏆</Icon>;
 const RotateCcw = ({ size }) => <Icon size={size}>↺</Icon>;
 const Volume2 = ({ size }) => <Icon size={size}>🔊</Icon>;
 const VolumeX = ({ size }) => <Icon size={size}>🔇</Icon>;
 const InfinityIcon = ({ size }) => <Icon size={size}>♾️</Icon>;
 const Crown = ({ size }) => <Icon size={size}>👑</Icon>;
 const Trash2 = ({ size }) => <Icon size={size}>🗑️</Icon>;
+const Katana = ({ size }) => <Icon size={size}>⚔️</Icon>;
 
 class Howl {
   constructor({ src = [], volume = 1 }) {
@@ -137,11 +137,11 @@ function mixColors(colorA, colorB, strength = 0.5) {
 
 const GAME_THEME = {
   id: "kasucos",
-  bg: "radial-gradient(1100px 600px at 20% 10%, rgba(164,92,255,0.28), transparent 60%), radial-gradient(900px 500px at 90% 15%, rgba(116,222,110,0.16), transparent 55%), linear-gradient(180deg, #251044, #11203f)",
+  bg: "radial-gradient(1100px 600px at 12% 4%, rgba(255,160,76,0.24), transparent 58%), radial-gradient(900px 500px at 88% 12%, rgba(255,70,70,0.16), transparent 56%), linear-gradient(180deg, #2a1014, #1b1f36)",
   card: "rgba(255,255,255,0.07)",
   border: "rgba(255,255,255,0.14)",
   glow: "0 14px 44px rgba(0,0,0,0.42)",
-  accent: "linear-gradient(90deg, rgba(162,111,255,0.94), rgba(109,215,95,0.9))",
+  accent: "linear-gradient(90deg, rgba(255,122,59,0.94), rgba(244,70,90,0.9))",
   textSub: "rgba(255,255,255,0.78)",
 };
 
@@ -387,6 +387,7 @@ function JuiceSplashGameFull() {
   const [blenderLiquidLevel, setBlenderLiquidLevel] = useState(0.26);
   const [blenderLiquidColor, setBlenderLiquidColor] = useState(BLENDER_BASE_COLOR);
   const [isBlending, setIsBlending] = useState(false);
+  const [slashFx, setSlashFx] = useState(null);
   const bestScore = ranking?.[0]?.score ?? 0;
   const phaseRef = useRef(phase);
   const levelRef = useRef(level);
@@ -763,6 +764,7 @@ function JuiceSplashGameFull() {
     dragRef.current.offset = { x: pt.x - ent.x, y: pt.y - ent.y };
     dragRef.current.moved = false;
     dragRef.current.pointerKind = "touches" in ev ? "touch" : "mouse";
+    setSlashFx({ x1: pt.x, y1: pt.y, x2: pt.x, y2: pt.y, stamp: Date.now() });
     setEntities((arr) => {
       const e = arr.find((x) => x.uid === uid);
       if (!e) return arr;
@@ -789,6 +791,7 @@ function JuiceSplashGameFull() {
       const dy = pt.y - dragRef.current.start.y;
       if (Math.hypot(dx, dy) > 8) dragRef.current.moved = true;
     }
+    setSlashFx((fx) => (fx ? { ...fx, x2: pt.x, y2: pt.y, stamp: Date.now() } : fx));
     setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, x: pt.x - off.x, y: pt.y - off.y } : e)));
   }
 
@@ -821,6 +824,7 @@ function JuiceSplashGameFull() {
       setEntities((arr) => arr.map((e) => (e.uid === uid ? { ...e, vy: Math.max(e.vy, 180 + levelRef.current * 8) } : e)));
     }
 
+    setSlashFx(null);
     blenderDragRef.current.active = false;
   }
 
@@ -1027,13 +1031,15 @@ function JuiceSplashGameFull() {
   const handGuideStartY = clamp(blenderZone.y - (isMobile ? 42 : 50), 56, arenaHeight - 120);
   const handGuideEndX = blenderZone.x + blenderZone.w / 2 - 26;
   const handGuideEndY = blenderZone.y + blenderZone.h / 2 - 18;
+  const slashLen = slashFx ? Math.hypot(slashFx.x2 - slashFx.x1, slashFx.y2 - slashFx.y1) : 0;
+  const slashAngle = slashFx ? Math.atan2(slashFx.y2 - slashFx.y1, slashFx.x2 - slashFx.x1) : 0;
 
   return (
     <section id="fabrica-de-sucos" className="section section-alt" ref={wrapRef} style={{ width: "100%" }}>
       <div className="container">
         <header className="section-head">
           <h2>Fábrica de sucos</h2>
-          <p>Modo arcade com drag and drop, combos, boss fruit e ranking global com Supabase.</p>
+          <p>Estilo Fruit Ninja na fábrica KaSucos: corte no ritmo arcade, mantendo a lógica de pedido e liquidificador.</p>
         </header>
 
         <div
@@ -1075,8 +1081,8 @@ function JuiceSplashGameFull() {
               }}
             >
               <Droplets size={18} />
-              <div style={{ fontWeight: 950, letterSpacing: 0.2 }}>Juice Splash</div>
-              {!isMobile && <div style={{ color: theme.textSub, fontWeight: 700, marginLeft: 4, fontSize: 13 }}>Drag & drop • combos • power-ups • boss</div>}
+              <div style={{ fontWeight: 950, letterSpacing: 0.2 }}>KaSucos Ninja Factory</div>
+              {!isMobile && <div style={{ color: theme.textSub, fontWeight: 700, marginLeft: 4, fontSize: 13 }}>Slash & drop • combos • power-ups • boss</div>}
             </div>
 
             <div
@@ -1094,7 +1100,7 @@ function JuiceSplashGameFull() {
               }}
             >
               <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <Trophy size={16} />
+                <Katana size={16} />
                 <span style={{ fontWeight: 950 }}>{score}</span>
                 <span style={{ opacity: 0.7, fontWeight: 900 }}>x{combo}</span>
               </div>
@@ -1296,6 +1302,32 @@ function JuiceSplashGameFull() {
                 />
               </div>
             </div>
+
+            <AnimatePresence>
+              {slashFx && slashLen > 10 && (
+                <motion.div
+                  key={slashFx.stamp}
+                  initial={{ opacity: 0.9, scaleX: 0.82 }}
+                  animate={{ opacity: 0.45, scaleX: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.12 }}
+                  style={{
+                    position: "absolute",
+                    left: slashFx.x1,
+                    top: slashFx.y1,
+                    width: slashLen,
+                    height: 6,
+                    borderRadius: 999,
+                    transformOrigin: "0 50%",
+                    transform: `rotate(${slashAngle}rad)`,
+                    background: "linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,169,82,0.92), rgba(255,90,120,0.75))",
+                    boxShadow: "0 0 16px rgba(255,120,70,0.55)",
+                    pointerEvents: "none",
+                    zIndex: 9,
+                  }}
+                />
+              )}
+            </AnimatePresence>
 
             <AnimatePresence>
               {showMobileHandGuide && (
