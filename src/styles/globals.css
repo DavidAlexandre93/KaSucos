@@ -1224,6 +1224,44 @@ body.splash-lock {
   border-radius: 10px;
 }
 
+.section-title--fruit-ninja {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px 8px;
+  border-radius: 12px;
+  background:
+    linear-gradient(140deg, rgba(247, 243, 198, 0.9), rgba(225, 248, 183, 0.92)),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+  border: 1px solid color-mix(in srgb, var(--green-500) 42%, white);
+  box-shadow:
+    0 10px 20px rgba(53, 27, 112, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-transform: lowercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.48);
+}
+
+.section-title--fruit-ninja::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 14px;
+  pointer-events: none;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    rgba(255, 196, 64, 0.12),
+    rgba(126, 212, 63, 0.1),
+    rgba(255, 196, 64, 0.12)
+  );
+  filter: blur(1.2px);
+  z-index: -1;
+}
+
+.section-title--fruit-ninja span {
+  position: relative;
+  z-index: 1;
+}
+
 
 .typing-caret {
   width: 2px;
