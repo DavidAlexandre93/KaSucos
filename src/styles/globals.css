@@ -1819,22 +1819,35 @@ body.splash-lock {
 }
 
 .benefits-subtitle {
-  margin: -4px 0 18px;
+  margin: 0;
   max-width: 640px;
   color: var(--muted);
 }
 
-.benefits-image {
-  width: 100%;
-  max-width: 980px;
-  display: block;
+.benefits-hero {
+  display: grid;
+  gap: 10px;
   margin: 0 0 20px;
-  border-radius: 16px;
+  padding: 22px;
+  border-radius: 18px;
   border: 1px solid rgba(95, 39, 178, 0.16);
+  background:
+    radial-gradient(circle at 100% 20%, rgba(255, 204, 33, 0.24), transparent 48%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.9), rgba(242, 235, 255, 0.86));
   box-shadow: 0 12px 24px rgba(59, 21, 117, 0.1);
 }
 
+.benefits-title {
+  margin: 0;
+  font-size: clamp(1.85rem, 3.6vw, 2.45rem);
+}
+
+.benefits-list {
+  margin-top: 10px;
+}
+
 .benefits-list li {
+  width: 100%;
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(95, 39, 178, 0.12);
   border-radius: 12px;

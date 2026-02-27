@@ -25,12 +25,13 @@ export function BeneficiosSection({ benefits }) {
   return (
     <section id="beneficios" className="section" ref={sectionRef}>
       <div className="container benefits">
-        <img
-          className="benefits-image"
-          src="/img/porque-escolher-kasucos/porque-kasucos.png"
-          alt="Por que escolher a KaSucos"
-          loading="lazy"
-        />
+        <div className="benefits-hero" aria-labelledby="benefits-title">
+          {benefits.badge ? <p className="benefits-badge">{benefits.badge}</p> : null}
+          <h2 id="benefits-title" className="section-title benefits-title">
+            {benefits.title}
+          </h2>
+          {benefits.subtitle ? <p className="benefits-subtitle">{benefits.subtitle}</p> : null}
+        </div>
         <ul className="benefits-list">
           {benefits.items.map((item) => (
             <motion.li key={item} whileHover={{ x: 5, scale: 1.015, boxShadow: "0 12px 24px rgba(59, 21, 117, 0.16)" }}>
