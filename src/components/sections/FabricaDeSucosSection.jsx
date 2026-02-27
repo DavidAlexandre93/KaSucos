@@ -964,7 +964,7 @@ function JuiceSplashGameFull() {
     showToast("info", "Ranking limpo.", 900);
   }
 
-  function resetPlayerIdentity() {
+  async function resetPlayerIdentity() {
     const existingName = normalizePlayerName(playerName);
     setNameValidationError(false);
     setPlayerName("");
@@ -973,7 +973,32 @@ function JuiceSplashGameFull() {
       showToast("info", "Nome resetado.", 900);
       return;
     }
-    clearRanking(existingName);
+
+    const localWithoutPlayer = loadRanking().filter((entry) => normalizePlayerName(entry?.player_name) !== existingName);
+    saveRanking(localWithoutPlayer);
+
+    if (hasSupabaseConfig()) {
+      try {
+        await deletePlayerScoresFromSupabase(existingName);
+        const globalRows = await fetchRankingFromSupabase();
+        setRanking(globalRows);
+        setRankingScope("global");
+        setRankingMessage(globalRows.length > 0 ? "Ranking global (Supabase)" : "Ranking global vazio. Seja o primeiro a pontuar!");
+        showToast("info", "Seu nome e histórico foram removidos do Supabase.", 1600);
+        return;
+      } catch {
+        setRanking(localWithoutPlayer);
+        setRankingScope("local");
+        setRankingMessage("Falha ao limpar no Supabase. Histórico local atualizado.");
+        showToast("danger", "Não foi possível remover no Supabase. Histórico local resetado.", 1700);
+        return;
+      }
+    }
+
+    setRanking(localWithoutPlayer);
+    setRankingScope("local");
+    setRankingMessage("Sem Supabase configurado. Histórico local resetado.");
+    showToast("info", "Nome e histórico local resetados.", 1300);
   }
 
   const nextNeed = needNextFruit(recipe);
@@ -1704,30 +1729,50 @@ function JuiceSplashGameFull() {
                         <div style={{ marginTop: 4, fontSize: 12, opacity: 0.75, fontWeight: 700 }}>{rankingMessage}</div>
                       </div>
 
-                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
-                        Jogador:
-                        <input
-                          value={playerName}
-                          onChange={(ev) => {
-                            const nextName = ev.target.value.slice(0, 24);
-                            setPlayerName(nextName);
-                            if (normalizePlayerName(nextName)) setNameValidationError(false);
-                          }}
-                          placeholder="Seu nome (obrigatório)"
-                          required
-                          style={{
-                            borderRadius: 10,
-                            padding: "7px 9px",
-                            border: nameValidationError ? "1px solid #ff4d4d" : `1px solid ${theme.border}`,
-                            background: "rgba(255,255,255,0.08)",
-                            color: "white",
-                            minWidth: 110,
-                            maxWidth: 160,
-                            fontWeight: 700,
-                            boxShadow: nameValidationError ? "0 0 0 2px rgba(255, 77, 77, 0.18)" : "none",
-                          }}
-                        />
-                      </label>
+                      {normalizePlayerName(playerName) ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
+                          Jogador:
+                          <span
+                            style={{
+                              borderRadius: 10,
+                              padding: "7px 9px",
+                              border: `1px solid ${theme.border}`,
+                              background: "rgba(255,255,255,0.08)",
+                              color: "white",
+                              minWidth: 110,
+                              maxWidth: 160,
+                              fontWeight: 800,
+                            }}
+                          >
+                            {normalizePlayerName(playerName)}
+                          </span>
+                        </div>
+                      ) : (
+                        <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
+                          Jogador:
+                          <input
+                            value={playerName}
+                            onChange={(ev) => {
+                              const nextName = ev.target.value.slice(0, 24);
+                              setPlayerName(nextName);
+                              if (normalizePlayerName(nextName)) setNameValidationError(false);
+                            }}
+                            placeholder="Seu nome (obrigatório)"
+                            required
+                            style={{
+                              borderRadius: 10,
+                              padding: "7px 9px",
+                              border: nameValidationError ? "1px solid #ff4d4d" : `1px solid ${theme.border}`,
+                              background: "rgba(255,255,255,0.08)",
+                              color: "white",
+                              minWidth: 110,
+                              maxWidth: 160,
+                              fontWeight: 700,
+                              boxShadow: nameValidationError ? "0 0 0 2px rgba(255, 77, 77, 0.18)" : "none",
+                            }}
+                          />
+                        </label>
+                      )}
 
                       <button
                         type="button"
