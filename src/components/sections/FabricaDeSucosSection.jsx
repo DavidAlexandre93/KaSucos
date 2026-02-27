@@ -1037,8 +1037,10 @@ function JuiceSplashGameFull() {
   return (
     <section id="fabrica-de-sucos" className="section section-alt" ref={wrapRef} style={{ width: "100%" }}>
       <div className="container">
-        <header className="section-head">
-          <h2>Fábrica de sucos</h2>
+        <header className="section-head fabrica-title">
+          <h2>
+            <span>Fábrica de sucos</span>
+          </h2>
           <p>Estilo Fruit Ninja na fábrica KaSucos: corte no ritmo arcade, mantendo a lógica de pedido e liquidificador.</p>
         </header>
 
