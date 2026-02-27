@@ -997,6 +997,35 @@ body.splash-lock {
   line-height: 1.1;
 }
 
+.hero-title.typing-text--highlight {
+  position: relative;
+  padding: 10px 16px 12px;
+  background: linear-gradient(120deg, rgba(255, 204, 33, 0.28), rgba(255, 122, 60, 0.24) 52%, rgba(95, 197, 45, 0.24));
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(64, 22, 118, 0.2);
+}
+
+.hero-title.typing-text--highlight span {
+  background: linear-gradient(160deg, #532084 0%, #8e3dca 42%, #ff8f2a 82%, #ffd14b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 6px 18px rgba(83, 32, 132, 0.24);
+}
+
+.hero-title.typing-text--highlight::after {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 52%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  transform: rotate(-4deg);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
 .hero p {
   color: var(--muted);
   max-width: 62ch;
