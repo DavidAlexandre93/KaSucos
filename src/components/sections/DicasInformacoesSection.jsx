@@ -41,7 +41,7 @@ export function DicasInformacoesSection({ blog }) {
     <section id="dicas" className="section tips-info-section" ref={sectionRef}>
       <div className="container">
         <header className="tips-header">
-          <h2 className="section-title">{blog.sectionTitle}</h2>
+          <h2 className="section-title fruit-ninja-title">{blog.sectionTitle}</h2>
           <p className="theme-text">{blog.sectionDescription}</p>
         </header>
 
