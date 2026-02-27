@@ -380,6 +380,9 @@ function JuiceSplashGameFull() {
   const blenderDragRef = useRef({ active: false });
   const isMobile = size.width < 720;
   const isTablet = size.width >= 720 && size.width < 1024;
+  const arenaTop = isMobile ? 242 : 196;
+  const arenaWidth = Math.max(280, size.width - 28);
+  const arenaHeight = Math.max(260, size.height - arenaTop - 14);
 
   const moveBlender = (nextPercent) => {
     setBlenderXPercent(clamp(nextPercent, 12, 88));
@@ -388,19 +391,19 @@ function JuiceSplashGameFull() {
   const blenderZone = useMemo(() => {
     const w = isMobile ? 120 : 130;
     const h = isMobile ? 172 : 182;
-    const x = clamp(Math.round((size.width * blenderXPercent) / 100 - w / 2), 12, size.width - w - 12);
-    const y = size.height - (isMobile ? 290 : 318);
+    const x = clamp(Math.round((arenaWidth * blenderXPercent) / 100 - w / 2), 12, arenaWidth - w - 12);
+    const y = Math.max(70, arenaHeight - h - (isMobile ? 56 : 62));
     return { x, y, w, h };
-  }, [blenderXPercent, isMobile, size.height, size.width]);
+  }, [arenaHeight, arenaWidth, blenderXPercent, isMobile]);
 
   const blenderZoneRef = useRef(blenderZone);
 
   const cupZone = useMemo(() => {
-    const w = Math.min(320, Math.max(240, size.width - 28));
-    const x = Math.floor((size.width - w) / 2);
-    const y = size.height - (isMobile ? 188 : 210);
+    const w = Math.min(320, Math.max(220, arenaWidth - 16));
+    const x = Math.floor((arenaWidth - w) / 2);
+    const y = Math.max(18, arenaHeight - (isMobile ? 150 : 170));
     return { x, y, w, h: 170 };
-  }, [size.width, size.height, isMobile]);
+  }, [arenaHeight, arenaWidth, isMobile]);
 
   useEffect(() => {
     const el = wrapRef.current;
@@ -759,7 +762,7 @@ function JuiceSplashGameFull() {
     if (phaseRef.current !== "play") return;
     if (dragRef.current.draggingUid || !blenderDragRef.current.active) return;
     const pt = getLocalPoint(ev);
-    moveBlender((pt.x / Math.max(1, size.width)) * 100);
+    moveBlender((pt.x / Math.max(1, arenaWidth)) * 100);
   }
 
   function endDrag(ev) {
@@ -946,8 +949,8 @@ function JuiceSplashGameFull() {
   const draggingUid = dragRef.current.draggingUid;
   const dangerPct = clamp(danger, 0, 100);
   const showMobileHandGuide = (isMobile || isTablet) && phase !== "over";
-  const handGuideStartX = clamp(blenderZone.x - (isMobile ? 72 : 88), 18, size.width - 170);
-  const handGuideStartY = clamp(blenderZone.y - (isMobile ? 42 : 50), 56, size.height - 300);
+  const handGuideStartX = clamp(blenderZone.x - (isMobile ? 72 : 88), 18, arenaWidth - 170);
+  const handGuideStartY = clamp(blenderZone.y - (isMobile ? 42 : 50), 56, arenaHeight - 120);
   const handGuideEndX = blenderZone.x + blenderZone.w / 2 - 26;
   const handGuideEndY = blenderZone.y + blenderZone.h / 2 - 18;
 
@@ -1183,7 +1186,7 @@ function JuiceSplashGameFull() {
             onTouchEnd={endDrag}
             style={{
               position: "absolute",
-              top: isMobile ? 242 : 196,
+              top: arenaTop,
               left: 14,
               right: 14,
               bottom: 14,
