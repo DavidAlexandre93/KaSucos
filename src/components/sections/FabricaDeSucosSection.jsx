@@ -13,6 +13,7 @@ const FRUITS = [
 
 const BOMB = { id: "bomb", emoji: "💣" };
 const GRAVITY = 0.14;
+const ORDER_TIME_LIMIT = 20;
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -80,8 +81,9 @@ function JuiceFactoryNinja() {
   const [combo, setCombo] = useState(0);
   const [lives, setLives] = useState(3);
   const [wave, setWave] = useState(1);
+  const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_TIME_LIMIT);
   const [bottles, setBottles] = useState(buildOrder);
-  const [toast, setToast] = useState("Corte as frutas certas para encher as garrafas 🧃");
+  const [toast, setToast] = useState("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
@@ -111,8 +113,9 @@ function JuiceFactoryNinja() {
     setCombo(0);
     setLives(3);
     setWave(1);
+    setOrderTimeLeft(ORDER_TIME_LIMIT);
     setBottles(buildOrder());
-    setToast("Corte as frutas certas para encher as garrafas 🧃");
+    setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
   }
 
   function startGame() {
@@ -230,10 +233,39 @@ function JuiceFactoryNinja() {
     if (totalFill >= 1) {
       setScore((old) => old + 250 + wave * 20);
       setWave((old) => old + 1);
+      setOrderTimeLeft(ORDER_TIME_LIMIT);
       setBottles(buildOrder());
       setToast("Pedido pronto! Novas garrafas na esteira 🚚");
     }
   }, [totalFill, phase, wave]);
+
+  useEffect(() => {
+    if (phase !== "play") return;
+
+    const timer = window.setInterval(() => {
+      setOrderTimeLeft((old) => Math.max(0, old - 1));
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "play" || orderTimeLeft > 0) return;
+
+    setCombo(0);
+    setBottles(buildOrder());
+    setOrderTimeLeft(ORDER_TIME_LIMIT);
+    setToast("⏳ Tempo esgotado! Você perdeu 1 vida e o pedido foi reiniciado.");
+
+    setLives((old) => {
+      const next = old - 1;
+      if (next <= 0) {
+        endGame("Fim de jogo: o tempo da fábrica acabou para você!");
+        return 0;
+      }
+      return next;
+    });
+  }, [orderTimeLeft, phase]);
 
   function toLocalPoint(ev) {
     const rect = arenaRef.current?.getBoundingClientRect();
@@ -315,6 +347,7 @@ function JuiceFactoryNinja() {
                 <div>⚡ Combo: x{Math.max(1, combo)}</div>
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
+                <div style={{ color: orderTimeLeft <= 6 ? "#ff9a9a" : "#ffffff" }}>⏳ Tempo: {orderTimeLeft}s</div>
               </div>
             </div>
 
@@ -367,7 +400,7 @@ function JuiceFactoryNinja() {
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: "22px 24px", textAlign: "center", color: "white" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
-                <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte frutas do pedido e evite bombas." : `Pontuação final: ${score}`}</p>
+                <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte frutas do pedido, encha as garrafas a tempo e evite bombas." : `Pontuação final: ${score}`}</p>
                 <button
                   type="button"
                   onClick={startGame}
