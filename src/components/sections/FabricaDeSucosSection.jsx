@@ -1768,11 +1768,13 @@ function JuiceSplashGameFull() {
                         <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
                           Jogador:
                           <input
+                            ref={playerNameInputRef}
                             value={playerName}
                             onChange={(ev) => {
                               const nextName = ev.target.value.slice(0, 24);
                               setPlayerName(nextName);
                               if (normalizePlayerName(nextName)) setNameValidationError(false);
+                              keepPlayerNameInputFocused();
                             }}
                             placeholder="Seu nome (obrigatório)"
                             required
@@ -1790,32 +1792,6 @@ function JuiceSplashGameFull() {
                           />
                         </label>
                       )}
-                      <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
-                        Jogador:
-                        <input
-                          ref={playerNameInputRef}
-                          value={playerName}
-                          onChange={(ev) => {
-                            const nextName = ev.target.value.slice(0, 24);
-                            setPlayerName(nextName);
-                            if (normalizePlayerName(nextName)) setNameValidationError(false);
-                            keepPlayerNameInputFocused();
-                          }}
-                          placeholder="Seu nome (obrigatório)"
-                          required
-                          style={{
-                            borderRadius: 10,
-                            padding: "7px 9px",
-                            border: nameValidationError ? "1px solid #ff4d4d" : `1px solid ${theme.border}`,
-                            background: "rgba(255,255,255,0.08)",
-                            color: "white",
-                            minWidth: 110,
-                            maxWidth: 160,
-                            fontWeight: 700,
-                            boxShadow: nameValidationError ? "0 0 0 2px rgba(255, 77, 77, 0.18)" : "none",
-                          }}
-                        />
-                      </label>
 
                       <button
                         type="button"
