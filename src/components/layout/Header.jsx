@@ -93,11 +93,22 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
   }, { dependencies: [isMobileMenuOpen] });
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
-  const handleHomeClick = (event) => {
+
+  const scrollToSectionWithoutHash = (event, targetId) => {
     event.preventDefault();
     closeMobileMenu();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    window.history.replaceState(null, "", "#inicio");
+
+    if (targetId === "inicio") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const targetElement = document.getElementById(targetId);
+    targetElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleHomeClick = (event) => {
+    scrollToSectionWithoutHash(event, "inicio");
   };
   const navLabels = {
     home: labels.home ?? "Início",
@@ -170,7 +181,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
                 key={item.key}
                 href={item.href}
                 title={navLabels[item.key]}
-                onClick={item.key === "home" ? handleHomeClick : closeMobileMenu}
+                onClick={(event) => scrollToSectionWithoutHash(event, item.href.slice(1))}
               >
                 {compactLabels[item.key]}
               </a>
