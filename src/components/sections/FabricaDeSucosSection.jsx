@@ -424,6 +424,16 @@ function JuiceSplashGameFull() {
 
   useEffect(() => {
     const handleKeyMove = (event) => {
+      const target = event.target;
+      const isTypingField =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT");
+
+      if (isTypingField) return;
+
       if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
         setBlenderXPercent((current) => clamp(current - 6, 12, 88));
       }
