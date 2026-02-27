@@ -72,6 +72,8 @@ function JuiceFactoryNinja() {
   const rafRef = useRef(null);
   const slashRef = useRef([]);
   const lastSpawnAtRef = useRef(0);
+  const audioCtxRef = useRef(null);
+  const lastSliceSoundAtRef = useRef(0);
 
   const [size, setSize] = useState({ width: 980, height: 700 });
   const [phase, setPhase] = useState("idle");
@@ -84,6 +86,7 @@ function JuiceFactoryNinja() {
   const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_TIME_LIMIT);
   const [bottles, setBottles] = useState(buildOrder);
   const [toast, setToast] = useState("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
+  const [katanaPose, setKatanaPose] = useState({ x: 0, y: 0, angle: 0, visible: false, sparkAt: 0 });
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
@@ -128,6 +131,47 @@ function JuiceFactoryNinja() {
     setToast(message);
     setPhase("over");
     cancelAnimationFrame(rafRef.current);
+  }
+
+  function playSliceSound(type = "slice") {
+    if (typeof window === "undefined") return;
+
+    if (!audioCtxRef.current) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioCtxRef.current = new Ctx();
+    }
+
+    const ctx = audioCtxRef.current;
+    if (ctx.state === "suspended") ctx.resume();
+
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    if (type === "bomb") {
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(190, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.24);
+    } else if (type === "wrong") {
+      osc.type = "square";
+      osc.frequency.setValueAtTime(260, now);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
+    } else {
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(680, now);
+      osc.frequency.exponentialRampToValueAtTime(280, now + 0.1);
+    }
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.13, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+
+    osc.start(now);
+    osc.stop(now + 0.24);
   }
 
   function spawnLogic() {
@@ -203,11 +247,13 @@ function JuiceFactoryNinja() {
     );
 
     if (bombHit) {
+      playSliceSound("bomb");
       endGame("💥 Você cortou uma bomba!");
       return;
     }
 
     if (wrong > 0) {
+      playSliceSound("wrong");
       setLives((old) => {
         const next = old - 1;
         if (next <= 0) {
@@ -221,6 +267,7 @@ function JuiceFactoryNinja() {
     }
 
     if (hits > 0 && wrong === 0) {
+      playSliceSound("slice");
       setCombo((old) => old + 1);
       setScore((old) => old + hits * (12 + combo * 2));
       setToast(hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
@@ -279,6 +326,7 @@ function JuiceFactoryNinja() {
     const point = toLocalPoint(ev);
     slashRef.current = [point];
     setSlashTrail([point]);
+    setKatanaPose((old) => ({ ...old, x: point.x, y: point.y, visible: true }));
   }
 
   function onPointerMove(ev) {
@@ -291,11 +339,24 @@ function JuiceFactoryNinja() {
     setSlashTrail(arr);
 
     const previous = arr[arr.length - 2];
-    if (previous) applySlice(previous, point);
+    if (previous) {
+      const angle = Math.atan2(point.y - previous.y, point.x - previous.x) * (180 / Math.PI);
+      setKatanaPose({ x: point.x, y: point.y, angle, visible: true, sparkAt: Date.now() });
+
+      const distance = Math.hypot(point.x - previous.x, point.y - previous.y);
+      const now = Date.now();
+      if (distance > 14 && now - lastSliceSoundAtRef.current > 90) {
+        playSliceSound("slice");
+        lastSliceSoundAtRef.current = now;
+      }
+
+      applySlice(previous, point);
+    }
   }
 
   function onPointerUp() {
     slashRef.current = [];
+    setKatanaPose((old) => ({ ...old, visible: false }));
     setTimeout(() => setSlashTrail([]), 40);
   }
 
@@ -394,6 +455,39 @@ function JuiceFactoryNinja() {
                 strokeLinejoin="round"
               />
             </svg>
+          )}
+
+          {katanaPose.visible && (
+            <div
+              style={{
+                position: "absolute",
+                left: katanaPose.x,
+                top: katanaPose.y,
+                transform: `translate(-50%, -50%) rotate(${katanaPose.angle}deg)`,
+                pointerEvents: "none",
+                filter: "drop-shadow(0 0 10px rgba(173,249,255,0.9))",
+                fontSize: 46,
+              }}
+            >
+              🗡️
+            </div>
+          )}
+
+          {Date.now() - katanaPose.sparkAt < 80 && (
+            <div
+              style={{
+                position: "absolute",
+                left: katanaPose.x,
+                top: katanaPose.y,
+                transform: "translate(-50%, -50%)",
+                pointerEvents: "none",
+                color: "#c9fbff",
+                fontWeight: 900,
+                textShadow: "0 0 14px rgba(108,233,255,0.95)",
+              }}
+            >
+              ✦
+            </div>
           )}
 
           {phase !== "play" && (
