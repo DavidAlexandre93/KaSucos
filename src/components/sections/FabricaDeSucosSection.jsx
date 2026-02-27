@@ -12,14 +12,14 @@ const FRUITS = [
 ];
 
 const BOMB = { id: "bomb", emoji: "💣" };
-const GRAVITY = 0.32;
+const GRAVITY = 0.14;
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
 function createItem(width, height, speed = 1) {
   const isBomb = Math.random() < 0.15;
   const fruit = isBomb ? BOMB : pick(FRUITS);
-  const size = isBomb ? random(54, 66) : random(58, 76);
+  const size = isBomb ? random(72, 88) : random(86, 112);
   return {
     uid: `${Date.now()}-${Math.random()}`,
     kind: isBomb ? "bomb" : "fruit",
@@ -28,8 +28,8 @@ function createItem(width, height, speed = 1) {
     color: fruit.color || "#fff",
     x: random(40, Math.max(45, width - 90)),
     y: height + random(20, 90),
-    vx: random(-3.8, 3.8),
-    vy: random(-15.5, -11.2) * speed,
+    vx: random(-1.8, 1.8),
+    vy: random(-9.2, -7.2) * speed,
     size,
     rot: random(-25, 25),
     rotVel: random(-7, 7),
@@ -70,6 +70,7 @@ function JuiceFactoryNinja() {
   const arenaRef = useRef(null);
   const rafRef = useRef(null);
   const slashRef = useRef([]);
+  const lastSpawnAtRef = useRef(0);
 
   const [size, setSize] = useState({ width: 980, height: 700 });
   const [phase, setPhase] = useState("idle");
@@ -127,12 +128,19 @@ function JuiceFactoryNinja() {
   }
 
   function spawnLogic() {
+    const now = performance.now();
+    const spawnInterval = Math.max(2200, 3600 - wave * 220);
+
     setItems((prev) => {
-      const speed = 1 + wave * 0.06;
-      const max = Math.min(22, 10 + wave * 2);
+      if (now - lastSpawnAtRef.current < spawnInterval) return prev;
+
+      const speed = 0.7 + wave * 0.04;
+      const max = 1;
+      if (prev.length >= max) return prev;
+
+      lastSpawnAtRef.current = now;
       const next = [...prev];
-      if (Math.random() < 0.2) next.push(createItem(size.width, size.height, speed));
-      if (Math.random() < 0.06) next.push(createItem(size.width, size.height, speed));
+      next.push(createItem(size.width, size.height, speed));
       return next.slice(-max);
     });
   }
