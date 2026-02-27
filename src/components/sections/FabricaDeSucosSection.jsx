@@ -21,6 +21,46 @@ const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_score
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
+function createFruitSplits(item) {
+  const base = {
+    id: `${item.uid}-split-${Math.random()}`,
+    emoji: item.emoji,
+    x: item.x + item.size / 2,
+    y: item.y + item.size / 2,
+    size: item.size,
+    rot: item.rot,
+    createdAt: Date.now(),
+  };
+
+  return [
+    {
+      ...base,
+      half: "left",
+      vx: random(-3.4, -1.2),
+      vy: random(-3.8, -1.6),
+      rotVel: random(-7, -3),
+    },
+    {
+      ...base,
+      half: "right",
+      vx: random(1.2, 3.4),
+      vy: random(-3.8, -1.6),
+      rotVel: random(3, 7),
+    },
+  ];
+}
+
+function KatanaCursor() {
+  return (
+    <svg width="94" height="94" viewBox="0 0 94 94" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+      <path d="M60 13C62 11 65 12 66 14C68 17 67 20 65 22L24 63L15 54L60 13Z" fill="#B8DADE" />
+      <path d="M23 62L15 54L10 58C8 60 8 63 10 65L13 68C15 70 18 70 20 68L23 65V62Z" fill="#32344D" />
+      <path d="M18 56L14 60L24 70L28 66L18 56Z" fill="#282A3D" />
+      <path d="M22 51C24 49 28 49 30 51L36 57C38 59 38 63 36 65L32 69C30 71 26 71 24 69L18 63C16 61 16 57 18 55L22 51Z" fill="#F1C240" />
+    </svg>
+  );
+}
+
 function normalizePlayerName(name) {
   return name.replace(/\s+/g, " ").trim().slice(0, 24);
 }
@@ -167,6 +207,7 @@ function JuiceFactoryNinja() {
   const [ranking, setRanking] = useState([]);
   const [rankingStatus, setRankingStatus] = useState("idle");
   const [rankingMessage, setRankingMessage] = useState("");
+  const [slicedPieces, setSlicedPieces] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
@@ -229,6 +270,7 @@ function JuiceFactoryNinja() {
     setOrderTimeLeft(ORDER_TIME_LIMIT);
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
+    setSlicedPieces([]);
     hasSubmittedScoreRef.current = false;
   }
 
@@ -361,6 +403,18 @@ function JuiceFactoryNinja() {
     );
 
     spawnLogic();
+
+    setSlicedPieces((prev) =>
+      prev
+        .map((piece) => ({
+          ...piece,
+          x: piece.x + piece.vx,
+          y: piece.y + piece.vy,
+          vy: piece.vy + GRAVITY * 0.9,
+          rot: piece.rot + piece.rotVel,
+        }))
+        .filter((piece) => piece.y < size.height + 140 && Date.now() - piece.createdAt < 850)
+    );
   }
 
   function applySlice(pointA, pointB) {
@@ -369,6 +423,8 @@ function JuiceFactoryNinja() {
     let hits = 0;
     let wrong = 0;
     let bombHit = false;
+
+    const splitEffects = [];
 
     setItems((prev) =>
       prev.filter((item) => {
@@ -381,6 +437,7 @@ function JuiceFactoryNinja() {
         }
 
         hits += 1;
+        splitEffects.push(...createFruitSplits(item));
         if (!expectedFruitIds.includes(item.fruitId)) {
           wrong += 1;
           return false;
@@ -398,6 +455,10 @@ function JuiceFactoryNinja() {
         return false;
       })
     );
+
+    if (splitEffects.length > 0) {
+      setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
+    }
 
     if (bombHit) {
       playSliceSound("bomb");
@@ -616,6 +677,34 @@ function JuiceFactoryNinja() {
             ))}
           </AnimatePresence>
 
+          <AnimatePresence>
+            {slicedPieces.map((piece) => (
+              <motion.div
+                key={piece.id}
+                initial={{ opacity: 1, scale: 1 }}
+                animate={{ opacity: 0.25, scale: 0.9 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.45 }}
+                style={{
+                  position: "absolute",
+                  left: piece.x,
+                  top: piece.y,
+                  width: piece.size,
+                  height: piece.size,
+                  transform: `translate(-50%, -50%) rotate(${piece.rot}deg)`,
+                  fontSize: piece.size * 0.62,
+                  display: "grid",
+                  placeItems: "center",
+                  clipPath: piece.half === "left" ? "polygon(0 0, 57% 0, 40% 100%, 0 100%)" : "polygon(57% 0, 100% 0, 100% 100%, 40% 100%)",
+                  filter: "drop-shadow(0 0 10px rgba(255,255,255,0.2))",
+                  pointerEvents: "none",
+                }}
+              >
+                {piece.emoji}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+
           {slashTrail.length > 1 && (
             <svg style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
               <polyline
@@ -637,11 +726,10 @@ function JuiceFactoryNinja() {
                 top: katanaPose.y,
                 transform: `translate(-50%, -50%) rotate(${katanaPose.angle}deg)`,
                 pointerEvents: "none",
-                filter: "drop-shadow(0 0 10px rgba(173,249,255,0.9))",
-                fontSize: 46,
+                filter: "drop-shadow(0 0 14px rgba(173,249,255,0.95))",
               }}
             >
-              🗡️
+              <KatanaCursor />
             </div>
           )}
 
