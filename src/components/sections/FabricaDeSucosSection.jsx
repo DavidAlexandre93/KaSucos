@@ -14,8 +14,83 @@ const FRUITS = [
 const BOMB = { id: "bomb", emoji: "💣" };
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
+const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
+const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
+
+function normalizePlayerName(name) {
+  return name.replace(/\s+/g, " ").trim().slice(0, 24);
+}
+
+function sortRanking(entries = []) {
+  return [...entries]
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      return new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime();
+    })
+    .slice(0, 10);
+}
+
+function loadLocalRanking() {
+  if (typeof window === "undefined") return [];
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(RANKING_STORAGE_KEY) || "[]");
+    if (!Array.isArray(parsed)) return [];
+    return sortRanking(parsed);
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalRanking(entries) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(entries)));
+}
+
+async function fetchSupabaseRanking() {
+  const url = new URL(`${SUPABASE_URL}/rest/v1/${RANKING_TABLE}`);
+  url.searchParams.set("select", "player_name,score,date");
+  url.searchParams.set("order", "score.desc,date.asc");
+  url.searchParams.set("limit", "10");
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar ranking: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return sortRanking(data.map((item) => ({
+    player_name: item.player_name,
+    score: Number(item.score) || 0,
+    date: item.date,
+  })));
+}
+
+async function insertSupabaseScore(name, score) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${RANKING_TABLE}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Prefer: "return=minimal",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+    },
+    body: JSON.stringify([{ player_name: name, score }]),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Erro ao salvar pontuação: ${response.status}`);
+  }
+}
 
 function createItem(width, height, speed = 1) {
   const isBomb = Math.random() < 0.15;
@@ -80,6 +155,8 @@ function JuiceFactoryNinja() {
   const [items, setItems] = useState([]);
   const [slashTrail, setSlashTrail] = useState([]);
   const [score, setScore] = useState(0);
+  const [playerName, setPlayerName] = useState("");
+  const [nameError, setNameError] = useState("");
   const [combo, setCombo] = useState(0);
   const [lives, setLives] = useState(3);
   const [wave, setWave] = useState(1);
@@ -87,6 +164,10 @@ function JuiceFactoryNinja() {
   const [bottles, setBottles] = useState(buildOrder);
   const [toast, setToast] = useState("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
   const [katanaPose, setKatanaPose] = useState({ x: 0, y: 0, angle: 0, visible: false, sparkAt: 0 });
+  const [ranking, setRanking] = useState([]);
+  const [rankingStatus, setRankingStatus] = useState("idle");
+  const [rankingMessage, setRankingMessage] = useState("");
+  const hasSubmittedScoreRef = useRef(false);
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
@@ -109,6 +190,33 @@ function JuiceFactoryNinja() {
     return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
+  useEffect(() => {
+    async function loadRanking() {
+      setRankingStatus("loading");
+      const canUseSupabase = Boolean(SUPABASE_URL && SUPABASE_KEY);
+
+      if (!canUseSupabase) {
+        setRanking(loadLocalRanking());
+        setRankingStatus("ready");
+        setRankingMessage("Ranking local (configure o Supabase para ranking global).");
+        return;
+      }
+
+      try {
+        const entries = await fetchSupabaseRanking();
+        setRanking(entries);
+        setRankingStatus("ready");
+        setRankingMessage("Top 10 global carregado do Supabase.");
+      } catch {
+        setRanking(loadLocalRanking());
+        setRankingStatus("ready");
+        setRankingMessage("Não foi possível acessar o Supabase. Exibindo ranking local.");
+      }
+    }
+
+    loadRanking();
+  }, []);
+
   function resetGame() {
     setItems([]);
     setSlashTrail([]);
@@ -119,18 +227,61 @@ function JuiceFactoryNinja() {
     setOrderTimeLeft(ORDER_TIME_LIMIT);
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
+    hasSubmittedScoreRef.current = false;
   }
 
   function startGame() {
+    const normalizedName = normalizePlayerName(playerName);
+    if (!normalizedName) {
+      setNameError("Informe seu nome para iniciar a partida.");
+      return;
+    }
+
+    if (normalizedName !== playerName) {
+      setPlayerName(normalizedName);
+    }
+
+    setNameError("");
     resetGame();
     setPhase("play");
     tick();
+  }
+
+  async function persistScore(finalScore) {
+    if (hasSubmittedScoreRef.current) return;
+    hasSubmittedScoreRef.current = true;
+
+    const normalizedName = normalizePlayerName(playerName) || "Anônimo";
+    const canUseSupabase = Boolean(SUPABASE_URL && SUPABASE_KEY);
+
+    if (canUseSupabase) {
+      try {
+        await insertSupabaseScore(normalizedName, finalScore);
+        const freshRanking = await fetchSupabaseRanking();
+        setRanking(freshRanking);
+        setRankingStatus("ready");
+        setRankingMessage("Pontuação salva no Supabase ✅");
+        return;
+      } catch {
+        setRankingMessage("Falha ao salvar no Supabase. Pontuação salva localmente.");
+      }
+    }
+
+    const localEntries = loadLocalRanking();
+    const updated = sortRanking([
+      ...localEntries,
+      { player_name: normalizedName, score: finalScore, date: new Date().toISOString() },
+    ]);
+    saveLocalRanking(updated);
+    setRanking(updated);
+    setRankingStatus("ready");
   }
 
   function endGame(message) {
     setToast(message);
     setPhase("over");
     cancelAnimationFrame(rafRef.current);
+    void persistScore(score);
   }
 
   function playSliceSound(type = "slice") {
@@ -514,6 +665,18 @@ function JuiceFactoryNinja() {
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: "22px 24px", textAlign: "center", color: "white" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
                 <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte frutas do pedido, encha as garrafas a tempo e evite bombas." : `Pontuação final: ${score}`}</p>
+                <label style={{ display: "grid", gap: 6, textAlign: "left", marginBottom: 12 }}>
+                  <span style={{ fontWeight: 700 }}>Nome para registro</span>
+                  <input
+                    type="text"
+                    value={playerName}
+                    maxLength={24}
+                    onChange={(ev) => setPlayerName(ev.target.value)}
+                    placeholder="Digite seu nome"
+                    style={{ borderRadius: 10, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.08)", color: "white", padding: "10px 12px", fontWeight: 600 }}
+                  />
+                </label>
+                {nameError && <p style={{ marginTop: -4, marginBottom: 12, color: "#ff9a9a", fontWeight: 700 }}>{nameError}</p>}
                 <button
                   type="button"
                   onClick={startGame}
@@ -521,6 +684,19 @@ function JuiceFactoryNinja() {
                 >
                   {phase === "idle" ? "Começar" : "Jogar novamente"}
                 </button>
+
+                <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
+                  <p style={{ margin: "0 0 8px", fontWeight: 800 }}>🏆 Top 10 pontuadores</p>
+                  {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>Carregando ranking...</p>}
+                  {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>Ainda sem pontuações registradas.</p>}
+                  {ranking.map((entry, index) => (
+                    <div key={`${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
+                      <span>{index + 1}. {entry.player_name}</span>
+                      <span>{entry.score} pts</span>
+                    </div>
+                  ))}
+                  {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
+                </div>
               </div>
             </div>
           )}
