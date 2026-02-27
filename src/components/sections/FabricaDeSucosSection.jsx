@@ -1077,21 +1077,17 @@ function JuiceSplashGameFull() {
                         alignItems: "center",
                         gap: 10,
                         color: "white",
-                        minWidth: 120,
+                        minWidth: 90,
+                        justifyContent: "center",
                       }}
                     >
-                      <div
-                        style={{
-                          width: 16,
-                          height: 16,
-                          borderRadius: 999,
-                          background: f.color,
-                          boxShadow: "0 0 0 3px rgba(255,255,255,0.10)",
-                        }}
-                      />
-                      <div style={{ fontWeight: 950, fontSize: 12, opacity: done ? 1 : 0.88 }}>
-                        {done ? "✅ OK" : `${FRUIT_EMOJIS_BY_ID[f.id] || "🍓"} ${f.label}`}
-                      </div>
+                      <span
+                        role="img"
+                        aria-label={f.label}
+                        style={{ fontSize: isMobile ? 30 : 34, lineHeight: 1, filter: done ? "none" : "drop-shadow(0 0 8px rgba(255,255,255,0.18))" }}
+                      >
+                        {FRUIT_EMOJIS_BY_ID[f.id] || "🍓"}
+                      </span>
                     </div>
                   );
                 })}
@@ -1112,7 +1108,6 @@ function JuiceSplashGameFull() {
                   <div style={{ fontSize: 12, opacity: 0.78, fontWeight: 900 }}>
                     Próxima:{" "}
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 6, opacity: 1 }}>
-                      <span style={{ width: 10, height: 10, borderRadius: 999, background: nextNeedInfo.color }} />
                       {FRUIT_EMOJIS_BY_ID[nextNeedInfo.id] || "🍓"} {nextNeedInfo.label}
                     </span>
                   </div>
