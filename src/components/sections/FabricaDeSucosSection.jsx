@@ -905,8 +905,8 @@ function JuiceSplashGameFull() {
             background: theme.bg,
             border: `1px solid ${theme.border}`,
             boxShadow: theme.glow,
-            userSelect: "none",
-            touchAction: "none",
+            userSelect: phase === "play" ? "none" : "auto",
+            touchAction: phase === "play" ? "none" : "auto",
           }}
         >
           <div
