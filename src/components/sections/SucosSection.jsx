@@ -30,13 +30,14 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
   return (
     <section id="catalogo" className="section" ref={sectionRef}>
       <div className="container">
-        <TypingText className="section-title" text={title} highlight />
+        <TypingText className="section-title section-title--fruit-ninja" text={title} highlight />
         <div className="grid cards">
           {sucos.map((suco) => {
             const quantity = getJuiceQuantity?.(suco) ?? 0;
 
             return (
               <motion.article key={suco.name} className="card" {...cardMotion}>
+                <span className="card-slash" aria-hidden="true" />
                 <div className="card-media">
                   <img className="card-bottle" src={suco.image} alt={suco.name} loading="lazy" />
                 </div>
