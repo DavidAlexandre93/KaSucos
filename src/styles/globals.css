@@ -1281,6 +1281,8 @@ body.splash-lock {
 .fabrica-title p {
   margin-top: 0.85rem;
   max-width: 72ch;
+}
+
 .section-title--combos {
   position: relative;
   display: inline-flex;
@@ -2409,14 +2411,27 @@ body.splash-lock {
   margin-top: 12px;
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   justify-content: center;
-  padding: 0;
+  padding: 6px 12px;
   border: none;
-  background: transparent;
+  background: rgba(30, 136, 229, 0.12);
+  border-radius: 999px;
   color: inherit;
-  font-size: 24px;
+  font-size: 18px;
+  font-weight: 700;
   line-height: 1;
   cursor: pointer;
+}
+
+.tip-like-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.tip-like-count {
+  min-width: 12px;
 }
 
 
