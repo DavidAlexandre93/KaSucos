@@ -643,7 +643,7 @@ function JuiceSplashGameFull() {
           return [makeFruit({ width: sizeRef.current.width, level: levelRef.current })];
         }
 
-        if (e.kind === "fruit") {
+        if (e.kind === "fruit" || e.kind === "power" || e.kind === "boss") {
           const centerX = nx + 26;
           const centerY = ny + 26;
           if (inZone(centerX, centerY, blenderZoneRef.current)) {
