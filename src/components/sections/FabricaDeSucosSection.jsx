@@ -464,11 +464,11 @@ function JuiceSplashGameFull() {
 
       if (isTypingField) return;
 
-      if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
+      if (event.key === "ArrowLeft") {
         setBlenderXPercent((current) => clamp(current - 6, 12, 88));
       }
 
-      if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") {
+      if (event.key === "ArrowRight") {
         setBlenderXPercent((current) => clamp(current + 6, 12, 88));
       }
     };
