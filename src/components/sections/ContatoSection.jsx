@@ -69,14 +69,18 @@ export function ContatoSection({ contact }) {
         </motion.div>
 
         <div id="onde-nos-encontrar" className="map-box">
-          <h3>{contact.mapTitle}</h3>
-          <p>{contact.address}</p>
-          <iframe
-            title={contact.mapTitle}
-            src={`https://www.google.com/maps?q=${mapsQuery}&output=embed`}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
+          <div className="map-box-heading">
+            <h3>{contact.mapTitle}</h3>
+            <p>{contact.address}</p>
+          </div>
+          <div className="map-frame" aria-hidden="true">
+            <iframe
+              title={contact.mapTitle}
+              src={`https://www.google.com/maps?q=${mapsQuery}&output=embed`}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
         </div>
       </div>
     </section>
