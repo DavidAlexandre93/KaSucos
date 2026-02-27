@@ -382,6 +382,7 @@ function JuiceSplashGameFull() {
   const [rankingMessage, setRankingMessage] = useState(() =>
     hasSupabaseConfig() ? "Ranking global (Supabase)" : "Sem Supabase configurado. Usando ranking local."
   );
+  const playerNameInputRef = useRef(null);
   const [blenderXPercent, setBlenderXPercent] = useState(50);
   const [blenderLiquidLevel, setBlenderLiquidLevel] = useState(0.26);
   const [blenderLiquidColor, setBlenderLiquidColor] = useState(BLENDER_BASE_COLOR);
@@ -974,6 +975,19 @@ function JuiceSplashGameFull() {
       return;
     }
     clearRanking(existingName);
+  }
+
+  function keepPlayerNameInputFocused() {
+    if (!(isMobile || isTablet)) return;
+    const input = playerNameInputRef.current;
+    if (!input) return;
+
+    window.requestAnimationFrame(() => {
+      if (document.activeElement === input) return;
+      input.focus({ preventScroll: true });
+      const cursorPos = input.value.length;
+      input.setSelectionRange(cursorPos, cursorPos);
+    });
   }
 
   const nextNeed = needNextFruit(recipe);
@@ -1707,11 +1721,13 @@ function JuiceSplashGameFull() {
                       <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 800, fontSize: 12, opacity: 0.95 }}>
                         Jogador:
                         <input
+                          ref={playerNameInputRef}
                           value={playerName}
                           onChange={(ev) => {
                             const nextName = ev.target.value.slice(0, 24);
                             setPlayerName(nextName);
                             if (normalizePlayerName(nextName)) setNameValidationError(false);
+                            keepPlayerNameInputFocused();
                           }}
                           placeholder="Seu nome (obrigatório)"
                           required
