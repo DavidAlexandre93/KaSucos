@@ -321,6 +321,10 @@ function JuiceFactoryNinja() {
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
+  const bestScore = useMemo(() => {
+    const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
+    return Math.max(score, rankingBest);
+  }, [ranking, score]);
 
   useEffect(() => {
     const updateSize = () => {
@@ -795,10 +799,10 @@ function spawnLogic() {
   }
 
   return (
-    <section id="fabrica" style={{ padding: "48px 0 20px", background: "#f4f2fb" }}>
+    <section id="fabrica" style={{ padding: "48px 0 20px", background: "linear-gradient(180deg, #20140f 0%, #110d0b 100%)" }}>
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 14px" }}>
-        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0 }}>Fábrica de sucos</h2>
-        <p style={{ marginTop: 10, color: "#473a75", fontSize: 30, fontWeight: 800 }}>Fruit Ninja KaSucos</p>
+        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#f7d662" }}>Fábrica de sucos</h2>
+        <p style={{ marginTop: 10, color: "#ffd447", fontSize: 30, fontWeight: 900, letterSpacing: 1, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>Fruit Ninja KaSucos</p>
         <div
           ref={arenaRef}
           onMouseDown={onPointerDown}
@@ -815,21 +819,64 @@ function spawnLogic() {
             minHeight: 560,
             overflow: "hidden",
             borderRadius: 28,
-            border: "2px solid rgba(255,255,255,0.22)",
+            border: "2px solid rgba(50, 28, 15, 0.78)",
             background:
               "radial-gradient(900px 400px at 70% 0%, rgba(255,104,104,0.3), transparent 60%), radial-gradient(700px 300px at 10% 0%, rgba(255,186,85,0.3), transparent 60%), linear-gradient(180deg, #34161d, #16183a)",
-            boxShadow: "0 20px 55px rgba(30,18,46,0.4)",
+            boxShadow: "0 20px 55px rgba(10, 4, 3, 0.62)",
             userSelect: "none",
             touchAction: "none",
             backgroundImage:
-              "radial-gradient(900px 420px at 78% 4%, rgba(255,84,84,0.2), transparent 64%), radial-gradient(700px 320px at 16% 5%, rgba(255,171,64,0.18), transparent 66%), repeating-linear-gradient(90deg, rgba(94,44,17,0.96) 0px, rgba(94,44,17,0.96) 84px, rgba(110,54,23,0.95) 84px, rgba(110,54,23,0.95) 168px)",
+              "radial-gradient(1000px 480px at 52% -10%, rgba(255, 187, 79, 0.1), transparent 58%), linear-gradient(90deg, rgba(98,56,30,0.95) 0%, rgba(124,71,37,0.94) 22%, rgba(102,59,30,0.96) 41%, rgba(134,76,40,0.94) 62%, rgba(89,51,28,0.96) 100%), repeating-linear-gradient(90deg, rgba(62,36,18,0.4) 0px, rgba(62,36,18,0.4) 4px, transparent 4px, transparent 84px), repeating-linear-gradient(0deg, rgba(36,22,13,0.3) 0px, rgba(36,22,13,0.3) 2px, transparent 2px, transparent 138px)",
           }}
         >
+          <div style={{ position: "absolute", top: 20, left: 20, display: "grid", gap: 4, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 54, lineHeight: 1 }}>🍉</span>
+              <strong style={{ fontSize: 82, lineHeight: 0.85, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
+            </div>
+            <span style={{ color: "#79be46", fontSize: 42, fontWeight: 900, lineHeight: 0.8, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif" }}>
+              Best:{bestScore}
+            </span>
+          </div>
+
+          <div style={{ position: "absolute", top: 14, right: 20, display: "flex", gap: 8, opacity: 0.7, zIndex: 4 }}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div
+                key={`x-${index}`}
+                style={{
+                  width: 28,
+                  height: 28,
+                  border: "3px solid rgba(90, 157, 223, 0.95)",
+                  transform: `rotate(${18 + index * 9}deg)`,
+                  background: "rgba(58, 103, 159, 0.2)",
+                }}
+              />
+            ))}
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              bottom: 16,
+              left: 16,
+              width: 60,
+              height: 60,
+              borderRadius: 14,
+              background: "rgba(255, 255, 255, 0.15)",
+              display: "grid",
+              placeItems: "center",
+              zIndex: 4,
+              boxShadow: "inset 0 0 10px rgba(255,255,255,0.16)",
+            }}
+          >
+            <span style={{ color: "#fff", fontSize: 34, fontWeight: 800, lineHeight: 1 }}>Ⅱ</span>
+          </div>
+
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {bottles.map((bottle) => (
-                  <div key={bottle.slot} style={{ width: 120, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: 10, background: "rgba(255,255,255,0.08)" }}>
+                  <div key={bottle.slot} style={{ width: 120, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: 10, background: "rgba(0,0,0,0.3)" }}>
                     <div style={{ fontWeight: 900, color: "white", marginBottom: 8 }}>{bottle.emoji} Garrafa</div>
                     <div style={{ display: "grid", justifyItems: "center" }}>
                       <div
@@ -865,7 +912,7 @@ function spawnLogic() {
                             right: 0,
                             bottom: 0,
                             height: `${Math.max(0, Math.min(1, bottle.fill)) * 100}%`,
-                            background: "linear-gradient(180deg,#8effcd,#34c28a)",
+                          background: "linear-gradient(180deg,#ffe08a,#f5ab35)",
                           }}
                         />
                       </div>
@@ -874,8 +921,7 @@ function spawnLogic() {
                 ))}
               </div>
 
-              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "white", fontWeight: 900 }}>
-                <div>🥷 Score: {score}</div>
+              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "white", fontWeight: 900, marginTop: 130 }}>
                 <div>⚡ Combo: x{Math.max(1, combo)}</div>
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
@@ -884,7 +930,7 @@ function spawnLogic() {
               </div>
             </div>
 
-            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 12, background: "rgba(0,0,0,0.28)", color: "#fff", fontWeight: 700 }}>{toast}</div>
+            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 12, background: "rgba(0,0,0,0.38)", color: "#fff", fontWeight: 700 }}>{toast}</div>
           </div>
 
           <AnimatePresence>
@@ -1048,7 +1094,7 @@ function spawnLogic() {
               <polyline
                 points={slashTrail.map((point) => `${point.x},${point.y}`).join(" ")}
                 fill="none"
-                stroke="rgba(170,255,255,0.95)"
+                stroke="rgba(235,245,255,0.95)"
                 strokeWidth="7"
                 strokeLinecap="round"
                 strokeLinejoin="round"
