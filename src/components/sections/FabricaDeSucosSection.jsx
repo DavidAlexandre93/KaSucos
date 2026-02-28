@@ -14,6 +14,7 @@ const FRUITS = [
 const BOMB = { id: "bomb", emoji: "💣" };
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
+const ORDER_TIME_MIN = 10;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -132,8 +133,12 @@ async function insertSupabaseScore(name, score) {
   }
 }
 
-function createItem(width, height, speed = 1) {
-  const isBomb = Math.random() < 0.15;
+function orderTimeForWave(wave) {
+  return Math.max(ORDER_TIME_MIN, ORDER_TIME_LIMIT - Math.floor((wave - 1) / 2));
+}
+
+function createItem(width, height, speed = 1, bombChance = 0.15) {
+  const isBomb = Math.random() < bombChance;
   const fruit = isBomb ? BOMB : pick(FRUITS);
   const size = isBomb ? random(72, 88) : random(86, 112);
   return {
@@ -204,7 +209,7 @@ function JuiceFactoryNinja() {
   const [combo, setCombo] = useState(0);
   const [lives, setLives] = useState(3);
   const [wave, setWave] = useState(1);
-  const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_TIME_LIMIT);
+  const [orderTimeLeft, setOrderTimeLeft] = useState(orderTimeForWave(1));
   const [bottles, setBottles] = useState(buildOrder);
   const [toast, setToast] = useState("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
   const [katanaPose, setKatanaPose] = useState({ x: 0, y: 0, angle: 0, visible: false, sparkAt: 0 });
@@ -289,7 +294,7 @@ function JuiceFactoryNinja() {
     setCombo(0);
     setLives(3);
     setWave(1);
-    setOrderTimeLeft(ORDER_TIME_LIMIT);
+    setOrderTimeLeft(orderTimeForWave(1));
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
     setSlicedPieces([]);
@@ -394,18 +399,19 @@ function JuiceFactoryNinja() {
   function spawnLogic() {
     const now = performance.now();
     const currentWave = waveRef.current;
-    const spawnInterval = Math.max(700, 1250 - currentWave * 55);
+    const spawnInterval = Math.max(460, 1180 - currentWave * 65);
 
     setItems((prev) => {
       if (now - lastSpawnAtRef.current < spawnInterval) return prev;
 
-      const speed = 0.86 + currentWave * 0.05;
-      const max = Math.min(5, 2 + Math.floor(currentWave / 2));
+      const speed = 0.9 + currentWave * 0.07;
+      const max = Math.min(7, 2 + Math.floor(currentWave / 1.7));
+      const bombChance = Math.min(0.34, 0.13 + currentWave * 0.017);
       if (prev.length >= max) return prev;
 
       lastSpawnAtRef.current = now;
       const next = [...prev];
-      next.push(createItem(sizeRef.current.width, sizeRef.current.height, speed));
+      next.push(createItem(sizeRef.current.width, sizeRef.current.height, speed, bombChance));
       return next.slice(-max);
     });
   }
@@ -464,7 +470,9 @@ function JuiceFactoryNinja() {
       lastActiveItemsAtRef.current = Date.now();
       setItems((prev) => {
         if (prev.length > 0) return prev;
-        return [...prev, createItem(sizeRef.current.width, sizeRef.current.height, 0.95 + waveRef.current * 0.04)];
+        const currentWave = waveRef.current;
+        const bombChance = Math.min(0.34, 0.13 + currentWave * 0.017);
+        return [...prev, createItem(sizeRef.current.width, sizeRef.current.height, 0.95 + currentWave * 0.06, bombChance)];
       });
     }, 380);
 
@@ -546,11 +554,12 @@ function JuiceFactoryNinja() {
     if (phase !== "play") return;
 
     if (totalFill >= 1) {
+      const nextWave = wave + 1;
       setScore((old) => old + 250 + wave * 20);
-      setWave((old) => old + 1);
-      setOrderTimeLeft(ORDER_TIME_LIMIT);
+      setWave(nextWave);
+      setOrderTimeLeft(orderTimeForWave(nextWave));
       setBottles(buildOrder());
-      setToast("Pedido pronto! Novas garrafas na esteira 🚚");
+      setToast(`Pedido pronto! Onda ${nextWave} iniciada: mais velocidade e pressão ⏫`);
     }
   }, [totalFill, phase, wave]);
 
@@ -569,7 +578,7 @@ function JuiceFactoryNinja() {
 
     setCombo(0);
     setBottles(buildOrder());
-    setOrderTimeLeft(ORDER_TIME_LIMIT);
+    setOrderTimeLeft(orderTimeForWave(waveRef.current));
     setToast("⏳ Tempo esgotado! Você perdeu 1 vida e o pedido foi reiniciado.");
 
     setLives((old) => {
@@ -711,6 +720,7 @@ function JuiceFactoryNinja() {
                 <div>⚡ Combo: x{Math.max(1, combo)}</div>
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
+                <div>🔥 Dificuldade: {Math.min(10, wave)}</div>
                 <div style={{ color: orderTimeLeft <= 6 ? "#ff9a9a" : "#ffffff" }}>⏳ Tempo: {orderTimeLeft}s</div>
               </div>
             </div>
