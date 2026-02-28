@@ -75,7 +75,7 @@ export const translations = {
       paymentLabel: "Forma de pagamento",
       paymentOptions: { cash: "Dinheiro", debit: "Débito", credit: "Crédito" },
       totalLabel: "Total do pedido:",
-      cta: "Falar no WhatsApp",
+      cta: "Fechar pedido no WhatsApp",
     },
     contact: {
       title: "Precisa de ajuda para pedir?",

@@ -10,15 +10,23 @@ export function CheckoutSection({ checkout, total, items = [], whatsappPhone = "
 
   const whatsappHref = useMemo(() => {
     const lines = items.length
-      ? items.map((item) => `- ${item.quantity}x ${item.name} (${item.priceLabel})`)
+      ? items.map((item) => `• ${item.quantity}x ${item.name} — ${item.priceLabel}`)
       : [checkout.emptyOrderMessage ?? "Sem itens na cesta."];
 
     const rawMessage = [
       contact.whatsappIntro ?? "Olá! Quero fechar este pedido:",
+      "",
+      "🧾 *PEDIDO KA SUCOS*",
+      "",
+      "🍹 *Itens para produção:*",
       ...lines,
-      `${checkout.temperatureLabel}: ${storageType || checkout.chooseOption}`,
-      `${checkout.deliveryLabel}: ${deliveryType || checkout.chooseOption}`,
-      `${checkout.totalLabel} ${total}`,
+      "",
+      "📦 *Detalhes do pedido:*",
+      `• ${checkout.temperatureLabel}: *${storageType || checkout.chooseOption}*`,
+      `• ${checkout.deliveryLabel}: *${deliveryType || checkout.chooseOption}*`,
+      `• ${checkout.totalLabel} *${total}*`,
+      "",
+      "👩‍🍳 Pode preparar, por favor? Obrigado!",
     ].join("\n");
 
     return `https://wa.me/${whatsappPhone}?text=${encodeURIComponent(rawMessage)}`;
