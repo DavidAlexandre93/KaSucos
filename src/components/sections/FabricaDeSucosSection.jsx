@@ -847,21 +847,6 @@ function spawnLogic() {
             </span>
           </div>
 
-          <div style={{ position: "absolute", top: 14, right: 20, display: "flex", gap: 8, opacity: 0.7, zIndex: 4 }}>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div
-                key={`x-${index}`}
-                style={{
-                  width: 28,
-                  height: 28,
-                  border: "3px solid rgba(90, 157, 223, 0.95)",
-                  transform: `rotate(${18 + index * 9}deg)`,
-                  background: "rgba(58, 103, 159, 0.2)",
-                }}
-              />
-            ))}
-          </div>
-
           <div
             style={{
               position: "absolute",
