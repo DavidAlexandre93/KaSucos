@@ -26,7 +26,7 @@ import gsap from "../lib/gsap";
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
-const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || "5511000000000";
+const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || "5511967645721";
 
 const DEFAULT_THEME_COLORS = {
   "--purple-900": "#3b1575",
