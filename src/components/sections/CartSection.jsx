@@ -6,6 +6,17 @@ import { useGSAP } from "../../lib/useGSAP";
 export function CartSection({ labels, items, total, onRemoveItem, onFinalize }) {
   const sectionRef = useRef(null);
 
+  const handleRemoveItem = (event, id) => {
+    event.preventDefault();
+
+    const previousScrollY = window.scrollY;
+    onRemoveItem(id);
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: previousScrollY, left: 0, behavior: "auto" });
+    });
+  };
+
   useGSAP(
     ({ selector }) => {
       const box = selector(".cart-box")[0];
@@ -40,7 +51,7 @@ export function CartSection({ labels, items, total, onRemoveItem, onFinalize }) 
                   <button
                     type="button"
                     className="cart-remove"
-                    onClick={() => onRemoveItem(item.id)}
+                    onClick={(event) => handleRemoveItem(event, item.id)}
                     aria-label={labels.removeItemAria?.replace("{item}", item.name) ?? `Remover ${item.name}`}
                   >
                     {labels.removeItem}
