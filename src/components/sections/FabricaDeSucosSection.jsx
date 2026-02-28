@@ -579,26 +579,6 @@ function JuiceFactoryNinja() {
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 14px" }}>
         <h2 style={{ margin: 0, color: "#2a1f56", fontWeight: 900 }}>Fábrica de sucos</h2>
         <p style={{ marginTop: 10, color: "#473a75", fontSize: 30, fontWeight: 800 }}>Fruit Ninja KaSucos</p>
-        <p
-          style={{
-            marginTop: 4,
-            marginBottom: 0,
-            color: "#5a4c8f",
-            fontSize: 14,
-            fontWeight: 700,
-          }}
-        >
-          Código de referência para inspiração:{" "}
-          <a
-            href="https://github.com/shahvrushali22/Fruit-Ninja-Game"
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "#4f2bd8" }}
-          >
-            Fruit Ninja Game (GitHub)
-          </a>
-        </p>
-
         <div
           ref={arenaRef}
           onMouseDown={onPointerDown}
