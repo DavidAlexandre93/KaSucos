@@ -1795,7 +1795,7 @@ body.splash-lock {
 .juice-cup {
   position: absolute;
   z-index: 2;
-  bottom: 0;
+  bottom: 18px;
   width: 210px;
   height: 272px;
   border: 2px solid rgba(255, 255, 255, 0.78);
@@ -2188,7 +2188,7 @@ body.splash-lock {
   }
 
   .juice-cup {
-    bottom: 0;
+    bottom: 14px;
     width: 180px;
     height: 236px;
   }
