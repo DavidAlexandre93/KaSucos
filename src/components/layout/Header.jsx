@@ -69,17 +69,6 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
   const navRef = useRef(null);
 
   useGSAP(() => {
-    const mm = gsap.matchMedia();
-
-    mm.add("(min-width: 721px)", () => {
-      setIsMobileMenuOpen(false);
-      return undefined;
-    });
-
-    return () => mm.revert();
-  }, { dependencies: [] });
-
-  useGSAP(() => {
     const navItems = navRef.current?.querySelectorAll("a");
     if (!navItems?.length) return undefined;
 
