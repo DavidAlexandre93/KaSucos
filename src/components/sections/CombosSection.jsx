@@ -37,7 +37,7 @@ export function CombosSection({ combos, language, labels, onAddCombo }) {
   return (
     <section id="combos" className="section soft" ref={sectionRef}>
       <div className="container">
-        <h2 className="section-title section-title--combos">{labels.title}</h2>
+        <h2 className="section-title fruit-ninja-title">{labels.title}</h2>
         <div className="grid combos">
           {combos.map((combo) => (
             <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>

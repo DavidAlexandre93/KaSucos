@@ -2372,6 +2372,10 @@ body.splash-lock {
   transform: rotate(14deg);
 }
 
+.section-title--left {
+  justify-content: flex-start;
+}
+
 .tips-blog-list {
   display: grid;
   gap: 14px;

@@ -577,7 +577,7 @@ function JuiceFactoryNinja() {
   return (
     <section id="fabrica" style={{ padding: "48px 0 20px", background: "#f4f2fb" }}>
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 14px" }}>
-        <h2 style={{ margin: 0, color: "#2a1f56", fontWeight: 900 }}>Fábrica de sucos</h2>
+        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0 }}>Fábrica de sucos</h2>
         <p style={{ marginTop: 10, color: "#473a75", fontSize: 30, fontWeight: 800 }}>Fruit Ninja KaSucos</p>
         <p
           style={{
