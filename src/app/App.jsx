@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { BeneficiosSection } from "../components/sections/BeneficiosSection";
 import { SucosSection } from "../components/sections/SucosSection";
 import { sucos } from "../data/sucosData";
@@ -42,7 +42,6 @@ const DEFAULT_THEME_COLORS = {
 
 export default function App() {
   const siteRef = useRef(null);
-  const pendingScrollRestoreRef = useRef(null);
   const [cartItems, setCartItems] = useState([]);
   const [availableJuices, setAvailableJuices] = useState(sucos);
   const [showCart, setShowCart] = useState(false);
@@ -138,8 +137,6 @@ export default function App() {
   );
 
   const addItem = (product, typeLabel) => {
-    pendingScrollRestoreRef.current = window.scrollY;
-
     setCartItems((current) => {
       const id = product.title || product.name;
       const existing = current.find((item) => item.id === id);
@@ -162,14 +159,6 @@ export default function App() {
     });
   };
 
-  const removeAvailableJuice = (juice) => {
-    pendingScrollRestoreRef.current = window.scrollY;
-    const id = juice.title || juice.name;
-
-    setCartItems((current) => current.filter((item) => item.id !== id));
-    setAvailableJuices((current) => current.filter((item) => (item.title || item.name) !== id));
-  };
-
   const removeItemFromCart = (id) => {
     setCartItems((current) =>
       current.flatMap((item) => {
@@ -179,18 +168,6 @@ export default function App() {
       }),
     );
   };
-
-
-  useLayoutEffect(() => {
-    if (pendingScrollRestoreRef.current == null) return;
-
-    const targetScrollY = pendingScrollRestoreRef.current;
-    pendingScrollRestoreRef.current = null;
-
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ top: targetScrollY, behavior: "auto" });
-    });
-  }, [availableJuices, cartItems]);
 
   const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
   const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
