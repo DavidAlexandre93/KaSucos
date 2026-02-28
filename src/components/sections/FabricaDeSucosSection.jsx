@@ -15,6 +15,7 @@ const BOMB = { id: "bomb", emoji: "💣" };
 const STAR_FRUIT = { id: "star-fruit", emoji: "⭐", color: "#ffd84d" };
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
+const MIN_ORDER_TIME_LIMIT = 9;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -137,11 +138,11 @@ async function insertSupabaseScore(name, score) {
   }
 }
 
-function createItem(width, height, speed = 1) {
+function createItem(width, height, speed = 1, forcedKind) {
   const roll = Math.random();
-  const isBomb = roll < 0.12;
-  const isDoubleFruit = roll >= 0.12 && roll < 0.22;
-  const isStarFruit = roll >= 0.22 && roll < 0.31;
+  const isBomb = forcedKind ? forcedKind === "bomb" : roll < 0.12;
+  const isDoubleFruit = forcedKind ? forcedKind === "doubleFruit" : roll >= 0.12 && roll < 0.22;
+  const isStarFruit = forcedKind ? forcedKind === "starFruit" : roll >= 0.22 && roll < 0.31;
   const baseFruit = pick(FRUITS);
   const size = isBomb ? random(72, 88) : random(86, 112);
   return {
@@ -159,6 +160,42 @@ function createItem(width, height, speed = 1) {
     rotVel: random(-7, 7),
     cut: false,
   };
+}
+
+function getWaveSettings(wave) {
+  const normalizedWave = Math.max(1, wave);
+  const spawnInterval = Math.max(450, 1250 - normalizedWave * 70);
+  const speed = 0.86 + normalizedWave * 0.075;
+  const maxItems = Math.min(8, 2 + Math.floor(normalizedWave / 2));
+  const bombChance = Math.min(0.28, 0.1 + normalizedWave * 0.015);
+  const doubleFruitChance = Math.max(0.08, 0.13 - normalizedWave * 0.006);
+  const starFruitChance = Math.max(0.05, 0.12 - normalizedWave * 0.004);
+  const orderTimeLimit = Math.max(MIN_ORDER_TIME_LIMIT, ORDER_TIME_LIMIT - Math.floor((normalizedWave - 1) / 2));
+
+  return {
+    spawnInterval,
+    speed,
+    maxItems,
+    bombChance,
+    doubleFruitChance,
+    starFruitChance,
+    orderTimeLimit,
+  };
+}
+
+function createWaveItem(width, height, wave) {
+  const config = getWaveSettings(wave);
+  const roll = Math.random();
+  const isBomb = roll < config.bombChance;
+  const isDoubleFruit = !isBomb && roll < config.bombChance + config.doubleFruitChance;
+  const isStarFruit = !isBomb && !isDoubleFruit && roll < config.bombChance + config.doubleFruitChance + config.starFruitChance;
+
+  return createItem(
+    width,
+    height,
+    config.speed,
+    isBomb ? "bomb" : isDoubleFruit ? "doubleFruit" : isStarFruit ? "starFruit" : "fruit",
+  );
 }
 
 function intersectsSlash(item, a, b) {
@@ -429,22 +466,19 @@ function JuiceFactoryNinja() {
     osc.stop(now + 0.24);
   }
 
-  function spawnLogic() {
+function spawnLogic() {
     const now = performance.now();
     const currentWave = waveRef.current;
-    const spawnInterval = Math.max(700, 1250 - currentWave * 55);
+    const config = getWaveSettings(currentWave);
 
     setItems((prev) => {
-      if (now - lastSpawnAtRef.current < spawnInterval) return prev;
-
-      const speed = 0.86 + currentWave * 0.05;
-      const max = Math.min(5, 2 + Math.floor(currentWave / 2));
-      if (prev.length >= max) return prev;
+      if (now - lastSpawnAtRef.current < config.spawnInterval) return prev;
+      if (prev.length >= config.maxItems) return prev;
 
       lastSpawnAtRef.current = now;
       const next = [...prev];
-      next.push(createItem(sizeRef.current.width, sizeRef.current.height, speed));
-      return next.slice(-max);
+      next.push(createWaveItem(sizeRef.current.width, sizeRef.current.height, currentWave));
+      return next.slice(-config.maxItems);
     });
   }
 
@@ -502,7 +536,7 @@ function JuiceFactoryNinja() {
       lastActiveItemsAtRef.current = Date.now();
       setItems((prev) => {
         if (prev.length > 0) return prev;
-        return [...prev, createItem(sizeRef.current.width, sizeRef.current.height, 0.95 + waveRef.current * 0.04)];
+        return [...prev, createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current)];
       });
     }, 380);
 
@@ -602,10 +636,11 @@ function JuiceFactoryNinja() {
 
     if (totalFill >= 1) {
       setScore((old) => old + 250 + wave * 20);
-      setWave((old) => old + 1);
-      setOrderTimeLeft(ORDER_TIME_LIMIT);
+      const nextWave = wave + 1;
+      setWave(nextWave);
+      setOrderTimeLeft(getWaveSettings(nextWave).orderTimeLimit);
       setBottles(buildOrder());
-      setToast("Pedido pronto! Novas garrafas na esteira 🚚");
+      setToast(`Onda ${nextWave}! Mais frutas no ar e menos tempo ⏱️`);
     }
   }, [totalFill, phase, wave]);
 
@@ -633,7 +668,7 @@ function JuiceFactoryNinja() {
 
     setCombo(0);
     setBottles(buildOrder());
-    setOrderTimeLeft(ORDER_TIME_LIMIT);
+    setOrderTimeLeft(getWaveSettings(wave).orderTimeLimit);
     setToast("⏳ Tempo esgotado! Você perdeu 1 vida e o pedido foi reiniciado.");
 
     setLives((old) => {
