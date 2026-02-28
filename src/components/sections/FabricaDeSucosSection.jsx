@@ -15,6 +15,8 @@ const BOMB = { id: "bomb", emoji: "💣" };
 const STAR_FRUIT = { id: "star-fruit", emoji: "⭐", color: "#ffd84d" };
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
+const CUT_MARK_LIFETIME = 850;
+const JUICE_DROP_LIFETIME = 520;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -53,6 +55,43 @@ function createFruitSplits(item) {
       rotVel: random(3, 7),
     },
   ];
+}
+
+function createCutMark(pointA, pointB, color) {
+  const dx = pointB.x - pointA.x;
+  const dy = pointB.y - pointA.y;
+  const length = Math.max(54, Math.hypot(dx, dy) * random(0.7, 1.2));
+  const angle = Math.atan2(dy, dx) * (180 / Math.PI) + random(-8, 8);
+  const midX = (pointA.x + pointB.x) / 2 + random(-12, 12);
+  const midY = (pointA.y + pointB.y) / 2 + random(-12, 12);
+
+  return {
+    id: `${Date.now()}-cut-${Math.random()}`,
+    x: midX,
+    y: midY,
+    length,
+    angle,
+    color,
+    createdAt: Date.now(),
+  };
+}
+
+function createJuiceDrops(pointA, pointB, color) {
+  const center = {
+    x: (pointA.x + pointB.x) / 2,
+    y: (pointA.y + pointB.y) / 2,
+  };
+
+  return Array.from({ length: 8 }, (_, index) => ({
+    id: `${Date.now()}-drop-${index}-${Math.random()}`,
+    x: center.x + random(-22, 22),
+    y: center.y + random(-22, 22),
+    vx: random(-2.3, 2.3),
+    vy: random(-3.8, -1.2),
+    size: random(4, 9),
+    color,
+    createdAt: Date.now(),
+  }));
 }
 
 function KatanaCursor() {
@@ -221,6 +260,8 @@ function JuiceFactoryNinja() {
   const [rankingMessage, setRankingMessage] = useState("");
   const [slicedPieces, setSlicedPieces] = useState([]);
   const [sliceBursts, setSliceBursts] = useState([]);
+  const [cutMarks, setCutMarks] = useState([]);
+  const [juiceDrops, setJuiceDrops] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
 
   useEffect(() => {
@@ -303,6 +344,8 @@ function JuiceFactoryNinja() {
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
     setSlicedPieces([]);
     setSliceBursts([]);
+    setCutMarks([]);
+    setJuiceDrops([]);
     lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
@@ -478,6 +521,17 @@ function JuiceFactoryNinja() {
         }))
         .filter((piece) => piece.y < sizeRef.current.height + 140 && Date.now() - piece.createdAt < 850)
     );
+
+    setJuiceDrops((prev) =>
+      prev
+        .map((drop) => ({
+          ...drop,
+          x: drop.x + drop.vx,
+          y: drop.y + drop.vy,
+          vy: drop.vy + GRAVITY * 0.5,
+        }))
+        .filter((drop) => Date.now() - drop.createdAt < JUICE_DROP_LIFETIME)
+    );
   }
 
   useEffect(() => {
@@ -566,6 +620,10 @@ function JuiceFactoryNinja() {
     if (splitEffects.length > 0) {
       setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
       setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
+      const markColor = wrong > 0 ? "rgba(255,83,83,0.7)" : "rgba(225,29,72,0.62)";
+      setCutMarks((old) => [...old, createCutMark(pointA, pointB, markColor)].slice(-14));
+      const splashColor = wrong > 0 ? "rgba(255,93,93,0.86)" : "rgba(248,47,79,0.84)";
+      setJuiceDrops((old) => [...old, ...createJuiceDrops(pointA, pointB, splashColor)].slice(-72));
     }
 
     if (bombHits > 0) {
@@ -627,6 +685,15 @@ function JuiceFactoryNinja() {
 
     return () => window.clearTimeout(timer);
   }, [sliceBursts]);
+
+  useEffect(() => {
+    if (cutMarks.length === 0) return undefined;
+    const timer = window.setTimeout(() => {
+      setCutMarks((old) => old.filter((mark) => Date.now() - mark.createdAt < CUT_MARK_LIFETIME));
+    }, 110);
+
+    return () => window.clearTimeout(timer);
+  }, [cutMarks]);
 
   useEffect(() => {
     if (phase !== "play" || orderTimeLeft > 0) return;
@@ -719,6 +786,8 @@ function JuiceFactoryNinja() {
             boxShadow: "0 20px 55px rgba(30,18,46,0.4)",
             userSelect: "none",
             touchAction: "none",
+            backgroundImage:
+              "radial-gradient(900px 420px at 78% 4%, rgba(255,84,84,0.2), transparent 64%), radial-gradient(700px 320px at 16% 5%, rgba(255,171,64,0.18), transparent 66%), repeating-linear-gradient(90deg, rgba(94,44,17,0.96) 0px, rgba(94,44,17,0.96) 84px, rgba(110,54,23,0.95) 84px, rgba(110,54,23,0.95) 168px)",
           }}
         >
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
@@ -782,6 +851,31 @@ function JuiceFactoryNinja() {
 
             <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 12, background: "rgba(0,0,0,0.28)", color: "#fff", fontWeight: 700 }}>{toast}</div>
           </div>
+
+          <AnimatePresence>
+            {cutMarks.map((mark) => (
+              <motion.div
+                key={mark.id}
+                initial={{ opacity: 0.9, scaleX: 0.7 }}
+                animate={{ opacity: 0.3, scaleX: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.45 }}
+                style={{
+                  position: "absolute",
+                  left: mark.x,
+                  top: mark.y,
+                  width: mark.length,
+                  height: 10,
+                  transform: `translate(-50%, -50%) rotate(${mark.angle}deg)`,
+                  borderRadius: 999,
+                  background: `linear-gradient(90deg, transparent 0%, ${mark.color} 20%, rgba(77,8,8,0.9) 50%, ${mark.color} 80%, transparent 100%)`,
+                  boxShadow: "0 0 8px rgba(122,8,8,0.62)",
+                  pointerEvents: "none",
+                  mixBlendMode: "screen",
+                }}
+              />
+            ))}
+          </AnimatePresence>
 
           <AnimatePresence>
             {items.map((item) => (
@@ -864,6 +958,29 @@ function JuiceFactoryNinja() {
                   }}
                 />
               </motion.div>
+            ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {juiceDrops.map((drop) => (
+              <motion.div
+                key={drop.id}
+                initial={{ opacity: 0.95, scale: 0.4 }}
+                animate={{ opacity: 0.6, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  position: "absolute",
+                  left: drop.x,
+                  top: drop.y,
+                  width: drop.size,
+                  height: drop.size,
+                  borderRadius: "50%",
+                  background: drop.color,
+                  boxShadow: `0 0 8px ${drop.color}`,
+                  pointerEvents: "none",
+                }}
+              />
             ))}
           </AnimatePresence>
 
