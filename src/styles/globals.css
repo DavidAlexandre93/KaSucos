@@ -247,10 +247,11 @@ body.splash-lock {
 }
 
 
-.splash-v2-welcome-image {
-  display: block;
-  width: min(100%, 340px);
-  height: auto;
+.splash-v2-welcome-title {
+  font-size: clamp(1.1rem, 2vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.96);
 }
 
 .splash-v2-progress-line-wrap {

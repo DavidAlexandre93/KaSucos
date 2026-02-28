@@ -294,11 +294,7 @@ export function SplashScreen({ subtitle = "", onDone, onComplete }) {
 
             <div className="splash-v2-progress-wrap">
               <div className="splash-v2-progress-header">
-                <img
-                  className="splash-v2-welcome-image"
-                  src="/img/tela-splash/bem-vindo-kasucos.svg"
-                  alt="Bem-vindo a KaSucos"
-                />
+                <span className="splash-v2-welcome-title">Bem-vindo à KaSucos</span>
                 <span>{Math.round(progress)}%</span>
               </div>
 
