@@ -318,6 +318,10 @@ body.splash-lock {
   z-index: 2;
 }
 
+.site main {
+  padding-top: clamp(120px, 14vw, 224px);
+}
+
 .scroll-art {
   position: fixed;
   inset: 0;
