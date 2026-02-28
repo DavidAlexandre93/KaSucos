@@ -36,6 +36,8 @@ function createFruitSplits(item) {
     {
       ...base,
       half: "left",
+      peelGlow: item.color,
+      offsetX: -item.size * 0.16,
       vx: random(-3.4, -1.2),
       vy: random(-3.8, -1.6),
       rotVel: random(-7, -3),
@@ -43,6 +45,8 @@ function createFruitSplits(item) {
     {
       ...base,
       half: "right",
+      peelGlow: item.color,
+      offsetX: item.size * 0.16,
       vx: random(1.2, 3.4),
       vy: random(-3.8, -1.6),
       rotVel: random(3, 7),
@@ -212,6 +216,7 @@ function JuiceFactoryNinja() {
   const [rankingStatus, setRankingStatus] = useState("idle");
   const [rankingMessage, setRankingMessage] = useState("");
   const [slicedPieces, setSlicedPieces] = useState([]);
+  const [sliceBursts, setSliceBursts] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
 
   useEffect(() => {
@@ -293,6 +298,7 @@ function JuiceFactoryNinja() {
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
     setSlicedPieces([]);
+    setSliceBursts([]);
     lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
@@ -365,9 +371,14 @@ function JuiceFactoryNinja() {
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(820, now);
+    filter.Q.setValueAtTime(0.8, now);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(filter);
+    filter.connect(ctx.destination);
 
     if (type === "bomb") {
       osc.type = "sawtooth";
@@ -378,9 +389,32 @@ function JuiceFactoryNinja() {
       osc.frequency.setValueAtTime(260, now);
       osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
     } else {
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(680, now);
-      osc.frequency.exponentialRampToValueAtTime(280, now + 0.1);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(230, now + 0.13);
+
+      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.09), ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i += 1) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+      }
+
+      const noise = ctx.createBufferSource();
+      const noiseFilter = ctx.createBiquadFilter();
+      const noiseGain = ctx.createGain();
+
+      noise.buffer = buffer;
+      noiseFilter.type = "highpass";
+      noiseFilter.frequency.setValueAtTime(1200, now);
+      noiseGain.gain.setValueAtTime(0.001, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.11, now + 0.012);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.09);
     }
 
     gain.gain.setValueAtTime(0.0001, now);
@@ -479,6 +513,7 @@ function JuiceFactoryNinja() {
     let bombHit = false;
 
     const splitEffects = [];
+    const burstEffects = [];
 
     setItems((prev) =>
       prev.filter((item) => {
@@ -492,6 +527,13 @@ function JuiceFactoryNinja() {
 
         hits += 1;
         splitEffects.push(...createFruitSplits(item));
+        burstEffects.push({
+          id: `${item.uid}-burst-${Math.random()}`,
+          x: item.x + item.size / 2,
+          y: item.y + item.size / 2,
+          color: item.color,
+          createdAt: Date.now(),
+        });
         if (!expectedFruitIds.includes(item.fruitId)) {
           wrong += 1;
           return false;
@@ -512,6 +554,7 @@ function JuiceFactoryNinja() {
 
     if (splitEffects.length > 0) {
       setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
+      setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
     }
 
     if (bombHit) {
@@ -563,6 +606,15 @@ function JuiceFactoryNinja() {
 
     return () => window.clearInterval(timer);
   }, [phase]);
+
+  useEffect(() => {
+    if (sliceBursts.length === 0) return undefined;
+    const timer = window.setTimeout(() => {
+      setSliceBursts((old) => old.filter((burst) => Date.now() - burst.createdAt < 220));
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [sliceBursts]);
 
   useEffect(() => {
     if (phase !== "play" || orderTimeLeft > 0) return;
@@ -761,17 +813,50 @@ function JuiceFactoryNinja() {
                   top: piece.y,
                   width: piece.size,
                   height: piece.size,
-                  transform: `translate(-50%, -50%) rotate(${piece.rot}deg)`,
+                  transform: `translate(-50%, -50%) translateX(${piece.offsetX}px) rotate(${piece.rot}deg)`,
                   fontSize: piece.size * 0.62,
                   display: "grid",
                   placeItems: "center",
-                  clipPath: piece.half === "left" ? "polygon(0 0, 57% 0, 40% 100%, 0 100%)" : "polygon(57% 0, 100% 0, 100% 100%, 40% 100%)",
-                  filter: "drop-shadow(0 0 10px rgba(255,255,255,0.2))",
+                  clipPath: piece.half === "left" ? "polygon(0 0, 50% 0, 50% 100%, 0 100%)" : "polygon(50% 0, 100% 0, 100% 100%, 50% 100%)",
+                  filter: `drop-shadow(0 0 12px ${piece.peelGlow || "rgba(255,255,255,0.25)"})`,
                   pointerEvents: "none",
                 }}
               >
-                {piece.emoji}
+                <span style={{ transform: `translateX(${piece.half === "left" ? piece.size * 0.1 : -piece.size * 0.1}px)` }}>{piece.emoji}</span>
+                <span
+                  style={{
+                    position: "absolute",
+                    inset: "8% 47%",
+                    background: "rgba(255,255,255,0.55)",
+                    opacity: 0.85,
+                    boxShadow: "0 0 8px rgba(255,255,255,0.8)",
+                  }}
+                />
               </motion.div>
+            ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {sliceBursts.map((burst) => (
+              <motion.div
+                key={burst.id}
+                initial={{ opacity: 0.9, scale: 0.3 }}
+                animate={{ opacity: 0, scale: 1.6 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  position: "absolute",
+                  left: burst.x,
+                  top: burst.y,
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  transform: "translate(-50%, -50%)",
+                  background: `radial-gradient(circle, rgba(255,255,255,0.95), ${burst.color} 70%, transparent 100%)`,
+                  filter: `drop-shadow(0 0 12px ${burst.color})`,
+                  pointerEvents: "none",
+                }}
+              />
             ))}
           </AnimatePresence>
 
