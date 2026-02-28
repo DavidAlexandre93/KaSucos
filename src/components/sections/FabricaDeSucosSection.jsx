@@ -192,6 +192,7 @@ function JuiceFactoryNinja() {
   const phaseRef = useRef("idle");
   const waveRef = useRef(1);
   const sizeRef = useRef({ width: 980, height: 700 });
+  const lastActiveItemsAtRef = useRef(Date.now());
 
   const [size, setSize] = useState({ width: 980, height: 700 });
   const [phase, setPhase] = useState("idle");
@@ -224,6 +225,12 @@ function JuiceFactoryNinja() {
   useEffect(() => {
     sizeRef.current = size;
   }, [size]);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      lastActiveItemsAtRef.current = Date.now();
+    }
+  }, [items.length]);
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
@@ -286,6 +293,7 @@ function JuiceFactoryNinja() {
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
     setSlicedPieces([]);
+    lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
 
@@ -444,6 +452,23 @@ function JuiceFactoryNinja() {
     tick();
 
     return () => cancelAnimationFrame(rafRef.current);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "play") return;
+
+    const fallbackSpawner = window.setInterval(() => {
+      const arenaIsEmptyForTooLong = Date.now() - lastActiveItemsAtRef.current > 1200;
+      if (!arenaIsEmptyForTooLong) return;
+
+      lastActiveItemsAtRef.current = Date.now();
+      setItems((prev) => {
+        if (prev.length > 0) return prev;
+        return [...prev, createItem(sizeRef.current.width, sizeRef.current.height, 0.95 + waveRef.current * 0.04)];
+      });
+    }, 380);
+
+    return () => window.clearInterval(fallbackSpawner);
   }, [phase]);
 
   function applySlice(pointA, pointB) {
