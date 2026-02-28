@@ -143,9 +143,9 @@ function createItem(width, height, speed = 1) {
     emoji: fruit.emoji,
     color: fruit.color || "#fff",
     x: random(40, Math.max(45, width - 90)),
-    y: height + random(20, 90),
+    y: height + random(30, 120),
     vx: random(-1.8, 1.8),
-    vy: random(-9.2, -7.2) * speed,
+    vy: random(-11.6, -9.1) * speed,
     size,
     rot: random(-25, 25),
     rotVel: random(-7, 7),
@@ -260,7 +260,7 @@ function JuiceFactoryNinja() {
 
   function resetGame() {
     cancelAnimationFrame(rafRef.current);
-    lastSpawnAtRef.current = -Infinity;
+    lastSpawnAtRef.current = performance.now() - 1400;
     setItems([]);
     setSlashTrail([]);
     setScore(0);
@@ -371,13 +371,13 @@ function JuiceFactoryNinja() {
 
   function spawnLogic() {
     const now = performance.now();
-    const spawnInterval = Math.max(2200, 3600 - wave * 220);
+    const spawnInterval = Math.max(700, 1250 - wave * 55);
 
     setItems((prev) => {
       if (now - lastSpawnAtRef.current < spawnInterval) return prev;
 
-      const speed = 0.7 + wave * 0.04;
-      const max = 1;
+      const speed = 0.86 + wave * 0.05;
+      const max = Math.min(5, 2 + Math.floor(wave / 2));
       if (prev.length >= max) return prev;
 
       lastSpawnAtRef.current = now;
