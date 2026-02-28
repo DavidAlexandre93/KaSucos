@@ -12,6 +12,7 @@ const FRUITS = [
 ];
 
 const BOMB = { id: "bomb", emoji: "💣" };
+const STAR_FRUIT = { id: "star-fruit", emoji: "⭐", color: "#ffd84d" };
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
@@ -137,15 +138,18 @@ async function insertSupabaseScore(name, score) {
 }
 
 function createItem(width, height, speed = 1) {
-  const isBomb = Math.random() < 0.15;
-  const fruit = isBomb ? BOMB : pick(FRUITS);
+  const roll = Math.random();
+  const isBomb = roll < 0.12;
+  const isDoubleFruit = roll >= 0.12 && roll < 0.22;
+  const isStarFruit = roll >= 0.22 && roll < 0.31;
+  const baseFruit = pick(FRUITS);
   const size = isBomb ? random(72, 88) : random(86, 112);
   return {
     uid: `${Date.now()}-${Math.random()}`,
-    kind: isBomb ? "bomb" : "fruit",
-    fruitId: fruit.id,
-    emoji: fruit.emoji,
-    color: fruit.color || "#fff",
+    kind: isBomb ? "bomb" : isDoubleFruit ? "doubleFruit" : isStarFruit ? "starFruit" : "fruit",
+    fruitId: isBomb ? BOMB.id : baseFruit.id,
+    emoji: isBomb ? BOMB.emoji : isStarFruit ? STAR_FRUIT.emoji : baseFruit.emoji,
+    color: isBomb ? "#fff" : isStarFruit ? STAR_FRUIT.color : baseFruit.color || "#fff",
     x: random(40, Math.max(45, width - 90)),
     y: height + random(30, 120),
     vx: random(-1.8, 1.8),
@@ -510,7 +514,8 @@ function JuiceFactoryNinja() {
 
     let hits = 0;
     let wrong = 0;
-    let bombHit = false;
+    let bombHits = 0;
+    let earnedPoints = 0;
 
     const splitEffects = [];
     const burstEffects = [];
@@ -521,7 +526,7 @@ function JuiceFactoryNinja() {
         if (!hit) return true;
 
         if (item.kind === "bomb") {
-          bombHit = true;
+          bombHits += 1;
           return false;
         }
 
@@ -539,12 +544,18 @@ function JuiceFactoryNinja() {
           return false;
         }
 
+        const basePoints = 12 + combo * 2;
+        const pointMultiplier = item.kind === "doubleFruit" ? 2 : 1;
+        const starBonus = item.kind === "starFruit" ? 40 : 0;
+        earnedPoints += basePoints * pointMultiplier + starBonus;
+
         setBottles((old) => {
           let consumed = false;
           return old.map((bottle) => {
             if (consumed || bottle.fruitId !== item.fruitId || bottle.fill >= 1) return bottle;
             consumed = true;
-            return { ...bottle, fill: Math.min(1, bottle.fill + 0.34) };
+            const fillAmount = item.kind === "doubleFruit" ? 0.5 : item.kind === "starFruit" ? 0.4 : 0.34;
+            return { ...bottle, fill: Math.min(1, bottle.fill + fillAmount) };
           });
         });
 
@@ -557,10 +568,11 @@ function JuiceFactoryNinja() {
       setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
     }
 
-    if (bombHit) {
+    if (bombHits > 0) {
       playSliceSound("bomb");
-      endGame("💥 Você cortou uma bomba!");
-      return;
+      setCombo(0);
+      setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
+      setToast(`💣 Bomba cortada! -${bombHits * 2}s no pedido.`);
     }
 
     if (wrong > 0) {
@@ -580,8 +592,8 @@ function JuiceFactoryNinja() {
     if (hits > 0 && wrong === 0) {
       playSliceSound("slice");
       setCombo((old) => old + 1);
-      setScore((old) => old + hits * (12 + combo * 2));
-      setToast(hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
+      setScore((old) => old + earnedPoints);
+      setToast(earnedPoints > hits * (12 + combo * 2) ? `Especial! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
     }
   }
 
@@ -764,6 +776,7 @@ function JuiceFactoryNinja() {
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
                 <div style={{ color: orderTimeLeft <= 6 ? "#ff9a9a" : "#ffffff" }}>⏳ Tempo: {orderTimeLeft}s</div>
+                <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.85 }}>🟡 2x pontos • ⭐ bônus • 💣 -2s</div>
               </div>
             </div>
 
@@ -789,12 +802,30 @@ function JuiceFactoryNinja() {
                   placeItems: "center",
                   fontSize: item.size * 0.62,
                   background: item.kind === "bomb" ? "rgba(14,13,17,0.88)" : "rgba(255,255,255,0.08)",
-                  border: `1px solid ${item.kind === "bomb" ? "rgba(255,70,70,0.8)" : "rgba(255,255,255,0.2)"}`,
+                  border: `1px solid ${item.kind === "bomb"
+                    ? "rgba(255,70,70,0.8)"
+                    : item.kind === "doubleFruit"
+                      ? "rgba(255,226,121,0.95)"
+                      : item.kind === "starFruit"
+                        ? "rgba(255,244,156,0.95)"
+                        : "rgba(255,255,255,0.2)"}`,
                   transform: `rotate(${item.rot}deg)`,
-                  boxShadow: item.kind === "bomb" ? "0 0 16px rgba(255,60,60,0.45)" : "0 0 20px rgba(255,255,255,0.16)",
+                  boxShadow: item.kind === "bomb"
+                    ? "0 0 16px rgba(255,60,60,0.45)"
+                    : item.kind === "doubleFruit"
+                      ? "0 0 22px rgba(255,218,90,0.48)"
+                      : item.kind === "starFruit"
+                        ? "0 0 22px rgba(255,245,164,0.5)"
+                        : "0 0 20px rgba(255,255,255,0.16)",
                 }}
               >
                 {item.emoji}
+                {item.kind === "doubleFruit" && (
+                  <span style={{ position: "absolute", top: 4, right: 6, fontSize: 16, fontWeight: 900, color: "#fff3c3", textShadow: "0 0 10px rgba(255,214,109,0.95)" }}>2x</span>
+                )}
+                {item.kind === "starFruit" && (
+                  <span style={{ position: "absolute", top: 5, right: 8, fontSize: 16, fontWeight: 900, color: "#fff9d4", textShadow: "0 0 10px rgba(255,236,132,0.95)" }}>+</span>
+                )}
               </motion.div>
             ))}
           </AnimatePresence>
