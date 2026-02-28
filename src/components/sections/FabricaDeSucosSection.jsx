@@ -13,6 +13,15 @@ const FRUITS = [
 
 const BOMB = { id: "bomb", emoji: "💣" };
 const STAR_FRUIT = { id: "star-fruit", emoji: "⭐", color: "#ffd84d" };
+const WOOD_CRACKS = [
+  { x1: 0.08, y1: 0.28, x2: 0.21, y2: 0.36 },
+  { x1: 0.18, y1: 0.53, x2: 0.31, y2: 0.44 },
+  { x1: 0.33, y1: 0.31, x2: 0.43, y2: 0.46 },
+  { x1: 0.52, y1: 0.37, x2: 0.67, y2: 0.29 },
+  { x1: 0.61, y1: 0.66, x2: 0.77, y2: 0.61 },
+  { x1: 0.73, y1: 0.24, x2: 0.92, y2: 0.35 },
+  { x1: 0.75, y1: 0.73, x2: 0.91, y2: 0.62 },
+];
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
 const CUT_MARK_LIFETIME = 850;
@@ -807,10 +816,10 @@ function spawnLogic() {
   }
 
   return (
-    <section id="fabrica" style={{ padding: "48px 0 20px", background: "linear-gradient(180deg, #20140f 0%, #110d0b 100%)" }}>
+    <section id="fabrica" style={{ padding: "48px 0 20px", background: "linear-gradient(180deg, #2d1206 0%, #130905 100%)" }}>
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 14px" }}>
-        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#f7d662" }}>Fábrica de sucos</h2>
-        <p style={{ marginTop: 10, color: "#ffd447", fontSize: 30, fontWeight: 900, letterSpacing: 1, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>Fruit Ninja KaSucos</p>
+        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200" }}>Fábrica de sucos</h2>
+        <p style={{ marginTop: 10, color: "#ffd447", fontSize: 30, fontWeight: 900, letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 2px 0 #5f3200" }}>Fruit Ninja KaSucos</p>
         <div
           ref={arenaRef}
           onMouseDown={onPointerDown}
@@ -827,16 +836,40 @@ function spawnLogic() {
             minHeight: 560,
             overflow: "hidden",
             borderRadius: 28,
-            border: "2px solid rgba(50, 28, 15, 0.78)",
+            border: "2px solid rgba(67, 35, 14, 0.9)",
             background:
-              "radial-gradient(900px 400px at 70% 0%, rgba(255,104,104,0.3), transparent 60%), radial-gradient(700px 300px at 10% 0%, rgba(255,186,85,0.3), transparent 60%), linear-gradient(180deg, #34161d, #16183a)",
-            boxShadow: "0 20px 55px rgba(10, 4, 3, 0.62)",
+              "radial-gradient(900px 400px at 70% 0%, rgba(255,104,104,0.2), transparent 60%), radial-gradient(700px 300px at 10% 0%, rgba(255,186,85,0.22), transparent 60%), linear-gradient(180deg, #43230f, #2b170c)",
+            boxShadow: "0 26px 60px rgba(6, 2, 1, 0.7), inset 0 0 40px rgba(0,0,0,0.28)",
             userSelect: "none",
             touchAction: "none",
             backgroundImage:
-              "radial-gradient(1000px 480px at 52% -10%, rgba(255, 187, 79, 0.1), transparent 58%), linear-gradient(90deg, rgba(98,56,30,0.95) 0%, rgba(124,71,37,0.94) 22%, rgba(102,59,30,0.96) 41%, rgba(134,76,40,0.94) 62%, rgba(89,51,28,0.96) 100%), repeating-linear-gradient(90deg, rgba(62,36,18,0.4) 0px, rgba(62,36,18,0.4) 4px, transparent 4px, transparent 84px), repeating-linear-gradient(0deg, rgba(36,22,13,0.3) 0px, rgba(36,22,13,0.3) 2px, transparent 2px, transparent 138px)",
+              "radial-gradient(1000px 480px at 52% -10%, rgba(255, 187, 79, 0.16), transparent 58%), linear-gradient(90deg, rgba(92,47,20,0.96) 0%, rgba(127,70,33,0.95) 22%, rgba(97,50,21,0.97) 40%, rgba(138,77,38,0.95) 61%, rgba(83,45,21,0.97) 100%), repeating-linear-gradient(90deg, rgba(58,31,13,0.5) 0px, rgba(58,31,13,0.5) 4px, transparent 4px, transparent 88px), repeating-linear-gradient(0deg, rgba(34,17,8,0.32) 0px, rgba(34,17,8,0.32) 2px, transparent 2px, transparent 138px)",
           }}
         >
+          {WOOD_CRACKS.map((crack, index) => (
+            <div
+              key={`crack-${index}`}
+              style={{
+                position: "absolute",
+                left: `${crack.x1 * 100}%`,
+                top: `${crack.y1 * 100}%`,
+                width: `${Math.hypot(crack.x2 - crack.x1, crack.y2 - crack.y1) * 100}%`,
+                height: 2,
+                transform: `rotate(${Math.atan2(crack.y2 - crack.y1, crack.x2 - crack.x1) * (180 / Math.PI)}deg)`,
+                transformOrigin: "0 0",
+                background: "linear-gradient(90deg, rgba(35,16,8,0.95), rgba(12,7,4,0.95))",
+                opacity: 0.55,
+                pointerEvents: "none",
+              }}
+            />
+          ))}
+
+          <div style={{ position: "absolute", top: 20, left: 20, display: "grid", gap: 4, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 54, lineHeight: 1 }}>🍉</span>
+              <strong style={{ fontSize: 82, lineHeight: 0.85, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", color: "#ffd338", textShadow: "0 3px 0 #5b3900, 0 0 12px rgba(255,201,41,0.4)" }}>{score}</strong>
+            </div>
+            <span style={{ color: "#f6bc34", fontSize: 42, fontWeight: 900, lineHeight: 0.8, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif", textShadow: "0 2px 0 #4f2d00" }}>
           <div style={{ position: "absolute", bottom: 16, left: 90, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 38, lineHeight: 1 }}>🍉</span>
@@ -845,6 +878,24 @@ function spawnLogic() {
             <span style={{ color: "#79be46", fontSize: 24, fontWeight: 900, lineHeight: 0.85, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif" }}>
               Best:{bestScore}
             </span>
+          </div>
+
+          <div style={{ position: "absolute", top: 16, right: 22, display: "grid", gap: 8, justifyItems: "end", zIndex: 4 }}>
+            <div style={{ color: "#ffd339", fontSize: 84, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
+            <div style={{ display: "flex", gap: 8, opacity: 0.78 }}>
+              {Array.from({ length: 3 }).map((_, index) => (
+                <div
+                  key={`x-${index}`}
+                  style={{
+                    width: 26,
+                    height: 26,
+                    border: "3px solid rgba(70, 131, 205, 0.95)",
+                    transform: `rotate(${18 + index * 9}deg)`,
+                    background: index >= lives ? "rgba(34,54,90,0.8)" : "rgba(93, 147, 213, 0.35)",
+                  }}
+                />
+              ))}
+            </div>
           </div>
 
           <div
@@ -914,7 +965,7 @@ function spawnLogic() {
                 ))}
               </div>
 
-              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "white", fontWeight: 900, marginTop: 130 }}>
+              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "#fff5dd", fontWeight: 900, marginTop: 130, textShadow: "0 2px 0 rgba(62,31,2,0.95)" }}>
                 <div>⚡ Combo: x{Math.max(1, combo)}</div>
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
@@ -1083,12 +1134,12 @@ function spawnLogic() {
           </AnimatePresence>
 
           {slashTrail.length > 1 && (
-            <svg style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+            <svg style={{ position: "absolute", inset: 0, pointerEvents: "none", filter: "drop-shadow(0 0 8px rgba(228,245,255,0.65))" }}>
               <polyline
                 points={slashTrail.map((point) => `${point.x},${point.y}`).join(" ")}
                 fill="none"
-                stroke="rgba(235,245,255,0.95)"
-                strokeWidth="7"
+                stroke="rgba(235,245,255,0.97)"
+                strokeWidth="9"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
