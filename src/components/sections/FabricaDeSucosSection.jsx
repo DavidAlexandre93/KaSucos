@@ -12,6 +12,7 @@ const FRUITS = [
 ];
 
 const BOMB = { id: "bomb", emoji: "💣" };
+const STAR_FRUIT = { id: "star-fruit", emoji: "⭐", color: "#ffd84d" };
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
 const ORDER_TIME_MIN = 10;
@@ -37,6 +38,8 @@ function createFruitSplits(item) {
     {
       ...base,
       half: "left",
+      peelGlow: item.color,
+      offsetX: -item.size * 0.16,
       vx: random(-3.4, -1.2),
       vy: random(-3.8, -1.6),
       rotVel: random(-7, -3),
@@ -44,6 +47,8 @@ function createFruitSplits(item) {
     {
       ...base,
       half: "right",
+      peelGlow: item.color,
+      offsetX: item.size * 0.16,
       vx: random(1.2, 3.4),
       vy: random(-3.8, -1.6),
       rotVel: random(3, 7),
@@ -139,14 +144,18 @@ function orderTimeForWave(wave) {
 
 function createItem(width, height, speed = 1, bombChance = 0.15) {
   const isBomb = Math.random() < bombChance;
+   const roll = Math.random();
   const fruit = isBomb ? BOMB : pick(FRUITS);
+  const isDoubleFruit = roll >= 0.12 && roll < 0.22;
+  const isStarFruit = roll >= 0.22 && roll < 0.31;
+  const baseFruit = pick(FRUITS);
   const size = isBomb ? random(72, 88) : random(86, 112);
   return {
     uid: `${Date.now()}-${Math.random()}`,
-    kind: isBomb ? "bomb" : "fruit",
-    fruitId: fruit.id,
-    emoji: fruit.emoji,
-    color: fruit.color || "#fff",
+    kind: isBomb ? "bomb" : isDoubleFruit ? "doubleFruit" : isStarFruit ? "starFruit" : "fruit",
+    fruitId: isBomb ? BOMB.id : baseFruit.id,
+    emoji: isBomb ? BOMB.emoji : isStarFruit ? STAR_FRUIT.emoji : baseFruit.emoji,
+    color: isBomb ? "#fff" : isStarFruit ? STAR_FRUIT.color : baseFruit.color || "#fff",
     x: random(40, Math.max(45, width - 90)),
     y: height + random(30, 120),
     vx: random(-1.8, 1.8),
@@ -217,6 +226,7 @@ function JuiceFactoryNinja() {
   const [rankingStatus, setRankingStatus] = useState("idle");
   const [rankingMessage, setRankingMessage] = useState("");
   const [slicedPieces, setSlicedPieces] = useState([]);
+  const [sliceBursts, setSliceBursts] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
 
   useEffect(() => {
@@ -298,6 +308,7 @@ function JuiceFactoryNinja() {
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
     setSlicedPieces([]);
+    setSliceBursts([]);
     lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
@@ -370,9 +381,14 @@ function JuiceFactoryNinja() {
     const now = ctx.currentTime;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(820, now);
+    filter.Q.setValueAtTime(0.8, now);
 
     osc.connect(gain);
-    gain.connect(ctx.destination);
+    gain.connect(filter);
+    filter.connect(ctx.destination);
 
     if (type === "bomb") {
       osc.type = "sawtooth";
@@ -383,9 +399,32 @@ function JuiceFactoryNinja() {
       osc.frequency.setValueAtTime(260, now);
       osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
     } else {
-      osc.type = "triangle";
-      osc.frequency.setValueAtTime(680, now);
-      osc.frequency.exponentialRampToValueAtTime(280, now + 0.1);
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(230, now + 0.13);
+
+      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.09), ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < data.length; i += 1) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+      }
+
+      const noise = ctx.createBufferSource();
+      const noiseFilter = ctx.createBiquadFilter();
+      const noiseGain = ctx.createGain();
+
+      noise.buffer = buffer;
+      noiseFilter.type = "highpass";
+      noiseFilter.frequency.setValueAtTime(1200, now);
+      noiseGain.gain.setValueAtTime(0.001, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.11, now + 0.012);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start(now);
+      noise.stop(now + 0.09);
     }
 
     gain.gain.setValueAtTime(0.0001, now);
@@ -484,9 +523,11 @@ function JuiceFactoryNinja() {
 
     let hits = 0;
     let wrong = 0;
-    let bombHit = false;
+    let bombHits = 0;
+    let earnedPoints = 0;
 
     const splitEffects = [];
+    const burstEffects = [];
 
     setItems((prev) =>
       prev.filter((item) => {
@@ -494,23 +535,36 @@ function JuiceFactoryNinja() {
         if (!hit) return true;
 
         if (item.kind === "bomb") {
-          bombHit = true;
+          bombHits += 1;
           return false;
         }
 
         hits += 1;
         splitEffects.push(...createFruitSplits(item));
+        burstEffects.push({
+          id: `${item.uid}-burst-${Math.random()}`,
+          x: item.x + item.size / 2,
+          y: item.y + item.size / 2,
+          color: item.color,
+          createdAt: Date.now(),
+        });
         if (!expectedFruitIds.includes(item.fruitId)) {
           wrong += 1;
           return false;
         }
+
+        const basePoints = 12 + combo * 2;
+        const pointMultiplier = item.kind === "doubleFruit" ? 2 : 1;
+        const starBonus = item.kind === "starFruit" ? 40 : 0;
+        earnedPoints += basePoints * pointMultiplier + starBonus;
 
         setBottles((old) => {
           let consumed = false;
           return old.map((bottle) => {
             if (consumed || bottle.fruitId !== item.fruitId || bottle.fill >= 1) return bottle;
             consumed = true;
-            return { ...bottle, fill: Math.min(1, bottle.fill + 0.34) };
+            const fillAmount = item.kind === "doubleFruit" ? 0.5 : item.kind === "starFruit" ? 0.4 : 0.34;
+            return { ...bottle, fill: Math.min(1, bottle.fill + fillAmount) };
           });
         });
 
@@ -520,12 +574,14 @@ function JuiceFactoryNinja() {
 
     if (splitEffects.length > 0) {
       setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
+      setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
     }
 
-    if (bombHit) {
+    if (bombHits > 0) {
       playSliceSound("bomb");
-      endGame("💥 Você cortou uma bomba!");
-      return;
+      setCombo(0);
+      setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
+      setToast(`💣 Bomba cortada! -${bombHits * 2}s no pedido.`);
     }
 
     if (wrong > 0) {
@@ -545,8 +601,8 @@ function JuiceFactoryNinja() {
     if (hits > 0 && wrong === 0) {
       playSliceSound("slice");
       setCombo((old) => old + 1);
-      setScore((old) => old + hits * (12 + combo * 2));
-      setToast(hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
+      setScore((old) => old + earnedPoints);
+      setToast(earnedPoints > hits * (12 + combo * 2) ? `Especial! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
     }
   }
 
@@ -572,6 +628,15 @@ function JuiceFactoryNinja() {
 
     return () => window.clearInterval(timer);
   }, [phase]);
+
+  useEffect(() => {
+    if (sliceBursts.length === 0) return undefined;
+    const timer = window.setTimeout(() => {
+      setSliceBursts((old) => old.filter((burst) => Date.now() - burst.createdAt < 220));
+    }, 120);
+
+    return () => window.clearTimeout(timer);
+  }, [sliceBursts]);
 
   useEffect(() => {
     if (phase !== "play" || orderTimeLeft > 0) return;
@@ -722,6 +787,7 @@ function JuiceFactoryNinja() {
                 <div>🚚 Onda: {wave}</div>
                 <div>🔥 Dificuldade: {Math.min(10, wave)}</div>
                 <div style={{ color: orderTimeLeft <= 6 ? "#ff9a9a" : "#ffffff" }}>⏳ Tempo: {orderTimeLeft}s</div>
+                <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.85 }}>🟡 2x pontos • ⭐ bônus • 💣 -2s</div>
               </div>
             </div>
 
@@ -747,12 +813,30 @@ function JuiceFactoryNinja() {
                   placeItems: "center",
                   fontSize: item.size * 0.62,
                   background: item.kind === "bomb" ? "rgba(14,13,17,0.88)" : "rgba(255,255,255,0.08)",
-                  border: `1px solid ${item.kind === "bomb" ? "rgba(255,70,70,0.8)" : "rgba(255,255,255,0.2)"}`,
+                  border: `1px solid ${item.kind === "bomb"
+                    ? "rgba(255,70,70,0.8)"
+                    : item.kind === "doubleFruit"
+                      ? "rgba(255,226,121,0.95)"
+                      : item.kind === "starFruit"
+                        ? "rgba(255,244,156,0.95)"
+                        : "rgba(255,255,255,0.2)"}`,
                   transform: `rotate(${item.rot}deg)`,
-                  boxShadow: item.kind === "bomb" ? "0 0 16px rgba(255,60,60,0.45)" : "0 0 20px rgba(255,255,255,0.16)",
+                  boxShadow: item.kind === "bomb"
+                    ? "0 0 16px rgba(255,60,60,0.45)"
+                    : item.kind === "doubleFruit"
+                      ? "0 0 22px rgba(255,218,90,0.48)"
+                      : item.kind === "starFruit"
+                        ? "0 0 22px rgba(255,245,164,0.5)"
+                        : "0 0 20px rgba(255,255,255,0.16)",
                 }}
               >
                 {item.emoji}
+                {item.kind === "doubleFruit" && (
+                  <span style={{ position: "absolute", top: 4, right: 6, fontSize: 16, fontWeight: 900, color: "#fff3c3", textShadow: "0 0 10px rgba(255,214,109,0.95)" }}>2x</span>
+                )}
+                {item.kind === "starFruit" && (
+                  <span style={{ position: "absolute", top: 5, right: 8, fontSize: 16, fontWeight: 900, color: "#fff9d4", textShadow: "0 0 10px rgba(255,236,132,0.95)" }}>+</span>
+                )}
               </motion.div>
             ))}
           </AnimatePresence>
@@ -771,17 +855,50 @@ function JuiceFactoryNinja() {
                   top: piece.y,
                   width: piece.size,
                   height: piece.size,
-                  transform: `translate(-50%, -50%) rotate(${piece.rot}deg)`,
+                  transform: `translate(-50%, -50%) translateX(${piece.offsetX}px) rotate(${piece.rot}deg)`,
                   fontSize: piece.size * 0.62,
                   display: "grid",
                   placeItems: "center",
-                  clipPath: piece.half === "left" ? "polygon(0 0, 57% 0, 40% 100%, 0 100%)" : "polygon(57% 0, 100% 0, 100% 100%, 40% 100%)",
-                  filter: "drop-shadow(0 0 10px rgba(255,255,255,0.2))",
+                  clipPath: piece.half === "left" ? "polygon(0 0, 50% 0, 50% 100%, 0 100%)" : "polygon(50% 0, 100% 0, 100% 100%, 50% 100%)",
+                  filter: `drop-shadow(0 0 12px ${piece.peelGlow || "rgba(255,255,255,0.25)"})`,
                   pointerEvents: "none",
                 }}
               >
-                {piece.emoji}
+                <span style={{ transform: `translateX(${piece.half === "left" ? piece.size * 0.1 : -piece.size * 0.1}px)` }}>{piece.emoji}</span>
+                <span
+                  style={{
+                    position: "absolute",
+                    inset: "8% 47%",
+                    background: "rgba(255,255,255,0.55)",
+                    opacity: 0.85,
+                    boxShadow: "0 0 8px rgba(255,255,255,0.8)",
+                  }}
+                />
               </motion.div>
+            ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {sliceBursts.map((burst) => (
+              <motion.div
+                key={burst.id}
+                initial={{ opacity: 0.9, scale: 0.3 }}
+                animate={{ opacity: 0, scale: 1.6 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  position: "absolute",
+                  left: burst.x,
+                  top: burst.y,
+                  width: 24,
+                  height: 24,
+                  borderRadius: "50%",
+                  transform: "translate(-50%, -50%)",
+                  background: `radial-gradient(circle, rgba(255,255,255,0.95), ${burst.color} 70%, transparent 100%)`,
+                  filter: `drop-shadow(0 0 12px ${burst.color})`,
+                  pointerEvents: "none",
+                }}
+              />
             ))}
           </AnimatePresence>
 
