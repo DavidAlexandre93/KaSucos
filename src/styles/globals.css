@@ -438,8 +438,11 @@ body.splash-lock {
 }
 
 .topbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   z-index: 30;
   background: linear-gradient(100deg, rgba(59, 21, 117, 0.9), rgba(95, 39, 178, 0.82), rgba(95, 197, 45, 0.72));
   backdrop-filter: blur(12px);
