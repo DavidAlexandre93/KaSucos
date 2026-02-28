@@ -189,6 +189,9 @@ function JuiceFactoryNinja() {
   const lastSpawnAtRef = useRef(0);
   const audioCtxRef = useRef(null);
   const lastSliceSoundAtRef = useRef(0);
+  const phaseRef = useRef("idle");
+  const waveRef = useRef(1);
+  const sizeRef = useRef({ width: 980, height: 700 });
 
   const [size, setSize] = useState({ width: 980, height: 700 });
   const [phase, setPhase] = useState("idle");
@@ -209,6 +212,18 @@ function JuiceFactoryNinja() {
   const [rankingMessage, setRankingMessage] = useState("");
   const [slicedPieces, setSlicedPieces] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
+
+  useEffect(() => {
+    phaseRef.current = phase;
+  }, [phase]);
+
+  useEffect(() => {
+    waveRef.current = wave;
+  }, [wave]);
+
+  useEffect(() => {
+    sizeRef.current = size;
+  }, [size]);
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
@@ -288,7 +303,6 @@ function JuiceFactoryNinja() {
     setNameError("");
     resetGame();
     setPhase("play");
-    tick();
   }
 
   async function persistScore(finalScore) {
@@ -371,23 +385,26 @@ function JuiceFactoryNinja() {
 
   function spawnLogic() {
     const now = performance.now();
-    const spawnInterval = Math.max(700, 1250 - wave * 55);
+    const currentWave = waveRef.current;
+    const spawnInterval = Math.max(700, 1250 - currentWave * 55);
 
     setItems((prev) => {
       if (now - lastSpawnAtRef.current < spawnInterval) return prev;
 
-      const speed = 0.86 + wave * 0.05;
-      const max = Math.min(5, 2 + Math.floor(wave / 2));
+      const speed = 0.86 + currentWave * 0.05;
+      const max = Math.min(5, 2 + Math.floor(currentWave / 2));
       if (prev.length >= max) return prev;
 
       lastSpawnAtRef.current = now;
       const next = [...prev];
-      next.push(createItem(size.width, size.height, speed));
+      next.push(createItem(sizeRef.current.width, sizeRef.current.height, speed));
       return next.slice(-max);
     });
   }
 
   function tick() {
+    if (phaseRef.current !== "play") return;
+
     rafRef.current = requestAnimationFrame(tick);
 
     setItems((prev) =>
@@ -399,7 +416,7 @@ function JuiceFactoryNinja() {
           vy: item.vy + GRAVITY,
           rot: item.rot + item.rotVel,
         }))
-        .filter((item) => item.y < size.height + 120 && item.x > -140 && item.x < size.width + 140)
+        .filter((item) => item.y < sizeRef.current.height + 120 && item.x > -140 && item.x < sizeRef.current.width + 140)
     );
 
     spawnLogic();
@@ -413,9 +430,21 @@ function JuiceFactoryNinja() {
           vy: piece.vy + GRAVITY * 0.9,
           rot: piece.rot + piece.rotVel,
         }))
-        .filter((piece) => piece.y < size.height + 140 && Date.now() - piece.createdAt < 850)
+        .filter((piece) => piece.y < sizeRef.current.height + 140 && Date.now() - piece.createdAt < 850)
     );
   }
+
+  useEffect(() => {
+    if (phase !== "play") {
+      cancelAnimationFrame(rafRef.current);
+      return;
+    }
+
+    lastSpawnAtRef.current = performance.now() - 1400;
+    tick();
+
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [phase]);
 
   function applySlice(pointA, pointB) {
     if (phase !== "play") return;
