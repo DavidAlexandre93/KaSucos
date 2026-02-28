@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "kasucos-blog-likes";
+const USER_LIKES_STORAGE_KEY = "kasucos-blog-user-likes";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const SUPABASE_LIKES_TABLE = import.meta.env.VITE_SUPABASE_LIKES_TABLE || "blog_likes";
@@ -79,9 +80,25 @@ function getInitialLikes(posts) {
   }
 }
 
+function getInitialUserLikes(posts) {
+  const defaultUserLikes = Object.fromEntries(posts.map((post) => [post.id, false]));
+
+  if (typeof window === "undefined") {
+    return defaultUserLikes;
+  }
+
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(USER_LIKES_STORAGE_KEY) ?? "{}");
+    return { ...defaultUserLikes, ...saved };
+  } catch {
+    return defaultUserLikes;
+  }
+}
+
 export function DicasInformacoesSection({ blog }) {
   const posts = blog?.posts ?? [];
   const [likesByPost, setLikesByPost] = useState(() => getInitialLikes(posts));
+  const [userLikesByPost, setUserLikesByPost] = useState(() => getInitialUserLikes(posts));
   const [isSyncingLikes, setIsSyncingLikes] = useState(false);
   const sectionRef = useRef(null);
 
@@ -121,17 +138,34 @@ export function DicasInformacoesSection({ blog }) {
   if (!posts.length) {
     return null;
   }
+
   const handleLike = (postId) => {
-    setLikesByPost((previous) => {
-      const next = {
-        ...previous,
-        [postId]: (previous[postId] ?? 0) + 1,
+    setUserLikesByPost((previousUserLikes) => {
+      const userAlreadyLiked = Boolean(previousUserLikes[postId]);
+      const nextUserLikes = {
+        ...previousUserLikes,
+        [postId]: !userAlreadyLiked,
       };
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-      saveLikeToSupabase(postId, next[postId]).catch(() => {
-        // fallback keeps local likes when Supabase is unavailable
+
+      window.localStorage.setItem(USER_LIKES_STORAGE_KEY, JSON.stringify(nextUserLikes));
+
+      setLikesByPost((previousLikes) => {
+        const currentLikes = previousLikes[postId] ?? 0;
+        const nextLikeCount = userAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+        const nextLikes = {
+          ...previousLikes,
+          [postId]: nextLikeCount,
+        };
+
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextLikes));
+        saveLikeToSupabase(postId, nextLikeCount).catch(() => {
+          // fallback keeps local likes when Supabase is unavailable
+        });
+
+        return nextLikes;
       });
-      return next;
+
+      return nextUserLikes;
     });
   };
 
@@ -159,6 +193,7 @@ export function DicasInformacoesSection({ blog }) {
                 type="button"
                 className="tip-like-button"
                 onClick={() => handleLike(post.id)}
+                aria-pressed={Boolean(userLikesByPost[post.id])}
                 aria-label={`${blog.likeButtonLabel}: ${likesByPost[post.id] ?? 0}${isSyncingLikes ? " (sincronizando)" : ""}`}
                 title={`${blog.likeButtonLabel}: ${likesByPost[post.id] ?? 0}`}
               >
