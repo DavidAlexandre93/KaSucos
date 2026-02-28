@@ -34,6 +34,15 @@ function ComboMath({ combo, language }) {
 export function CombosSection({ combos, language, labels, onAddCombo }) {
   const sectionRef = useRef(null);
 
+  const handleAddCombo = (combo) => {
+    const currentScrollY = window.scrollY;
+    onAddCombo(combo);
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: currentScrollY, behavior: "auto" });
+    });
+  };
+
   return (
     <section id="combos" className="section soft" ref={sectionRef}>
       <div className="container">
@@ -46,7 +55,7 @@ export function CombosSection({ combos, language, labels, onAddCombo }) {
               <p>{combo.detail[language] ?? combo.detail.en ?? combo.detail.pt}</p>
               <ComboMath combo={combo} language={language} />
               <strong>{combo.price}</strong>
-              <button type="button" onClick={() => onAddCombo(combo)}>
+              <button type="button" onClick={() => handleAddCombo(combo)}>
                 {labels.action}
               </button>
             </article>
