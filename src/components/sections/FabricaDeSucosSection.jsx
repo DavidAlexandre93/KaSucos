@@ -616,6 +616,7 @@ function spawnLogic() {
     let hits = 0;
     let wrong = 0;
     let bombHits = 0;
+    let correctHits = 0;
     let earnedPoints = 0;
 
     const splitEffects = [];
@@ -648,6 +649,7 @@ function spawnLogic() {
         const basePoints = 12 + combo * 2;
         const pointMultiplier = item.kind === "doubleFruit" ? 2 : 1;
         const starBonus = item.kind === "starFruit" ? 40 : 0;
+        correctHits += 1;
         earnedPoints += basePoints * pointMultiplier + starBonus;
 
         setBottles((old) => {
@@ -694,11 +696,17 @@ function spawnLogic() {
       setToast("Fruta errada! Foque no pedido da fábrica.");
     }
 
-    if (hits > 0 && wrong === 0) {
-      playSliceSound("slice");
-      setCombo((old) => old + 1);
+    if (correctHits > 0) {
+      if (wrong === 0) {
+        playSliceSound("slice");
+        setCombo((old) => old + 1);
+      }
       setScore((old) => old + earnedPoints);
-      setToast(earnedPoints > hits * (12 + combo * 2) ? `Especial! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
+      if (wrong > 0) {
+        setToast(`+${earnedPoints} pts, mas você também cortou fruta errada.`);
+      } else {
+        setToast(earnedPoints > correctHits * (12 + combo * 2) ? `Especial! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
+      }
     }
   }
 
@@ -862,6 +870,12 @@ function spawnLogic() {
               <strong style={{ fontSize: 82, lineHeight: 0.85, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", color: "#ffd338", textShadow: "0 3px 0 #5b3900, 0 0 12px rgba(255,201,41,0.4)" }}>{score}</strong>
             </div>
             <span style={{ color: "#f6bc34", fontSize: 42, fontWeight: 900, lineHeight: 0.8, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif", textShadow: "0 2px 0 #4f2d00" }}>
+          <div style={{ position: "absolute", bottom: 16, left: 90, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 38, lineHeight: 1 }}>🍉</span>
+              <strong style={{ fontSize: 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
+            </div>
+            <span style={{ color: "#79be46", fontSize: 24, fontWeight: 900, lineHeight: 0.85, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif" }}>
               Best:{bestScore}
             </span>
           </div>
