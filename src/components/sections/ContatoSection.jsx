@@ -9,6 +9,22 @@ export function ContatoSection({ contact }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get("name") ?? "").trim();
+    const email = String(formData.get("email") ?? "").trim();
+    const message = String(formData.get("message") ?? "").trim();
+    const recipient = contact.emailRecipient ?? import.meta.env.VITE_CONTACT_EMAIL ?? "";
+    const subject = contact.emailSubject ?? "Contato pelo site KaSucos";
+    const body = [
+      `${contact.nameLabel ?? "Nome"}: ${name}`,
+      `${contact.emailLabel ?? "E-mail"}: ${email}`,
+      "",
+      `${contact.messageLabel ?? "Mensagem"}:`,
+      message,
+    ].join("\n");
+
+    window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   useGSAP(
