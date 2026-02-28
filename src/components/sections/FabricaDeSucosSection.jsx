@@ -870,6 +870,10 @@ function spawnLogic() {
               <strong style={{ fontSize: 82, lineHeight: 0.85, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", color: "#ffd338", textShadow: "0 3px 0 #5b3900, 0 0 12px rgba(255,201,41,0.4)" }}>{score}</strong>
             </div>
             <span style={{ color: "#f6bc34", fontSize: 42, fontWeight: 900, lineHeight: 0.8, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif", textShadow: "0 2px 0 #4f2d00" }}>
+              Best: {bestScore}
+            </span>
+          </div>
+
           <div style={{ position: "absolute", bottom: 16, left: 90, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 38, lineHeight: 1 }}>🍉</span>
