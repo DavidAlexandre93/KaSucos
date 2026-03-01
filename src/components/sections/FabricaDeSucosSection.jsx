@@ -914,18 +914,18 @@ function spawnLogic() {
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: isMobileArena ? 8 : 12, flexWrap: "wrap" }}>
-              <div style={{ display: "flex", gap: isMobileArena ? 6 : 8, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: isMobileArena ? 4 : 6, flexWrap: "wrap", alignItems: "flex-start" }}>
                 {bottles.map((bottle) => (
-                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 84 : isMobileArena ? 94 : 108, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: isMobileArena ? 7 : 9, background: "rgba(0,0,0,0.3)" }}>
-                    <div style={{ fontWeight: 900, color: "white", marginBottom: 8, fontSize: isMobileArena ? 14 : 16 }}>{bottle.emoji} Garrafa</div>
+                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 66 : isMobileArena ? 72 : 80, borderRadius: 10, border: "1px solid rgba(255,255,255,0.18)", padding: isMobileArena ? 4 : 5, background: "rgba(0,0,0,0.3)", height: "fit-content", alignSelf: "flex-start" }}>
+                    <div style={{ fontWeight: 900, color: "white", marginBottom: 3, fontSize: isMobileArena ? 12 : 13 }}>{bottle.emoji} Garrafa</div>
                     <div style={{ display: "grid", justifyItems: "center" }}>
                       <div
                         style={{
                           position: "relative",
-                          width: isMobileArena ? 30 : 34,
-                          height: isMobileArena ? 50 : 56,
+                          width: isMobileArena ? 24 : 28,
+                          height: isMobileArena ? 36 : 42,
                           borderRadius: "11px 11px 12px 12px",
-                          border: "2px solid rgba(255,255,255,0.68)",
+                          border: "1.5px solid rgba(255,255,255,0.68)",
                           background: "rgba(255,255,255,0.08)",
                           overflow: "hidden",
                           boxShadow: "inset 0 0 10px rgba(0,0,0,0.3)",
@@ -934,13 +934,13 @@ function spawnLogic() {
                         <div
                           style={{
                             position: "absolute",
-                            top: -7,
+                            top: -6,
                             left: "50%",
                             transform: "translateX(-50%)",
-                            width: 14,
-                            height: 9,
+                            width: 10,
+                            height: 7,
                             borderRadius: "7px 7px 2px 2px",
-                            border: "2px solid rgba(255,255,255,0.68)",
+                            border: "1.5px solid rgba(255,255,255,0.68)",
                             borderBottom: "none",
                             background: "rgba(255,255,255,0.08)",
                           }}
