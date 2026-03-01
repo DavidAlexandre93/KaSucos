@@ -944,24 +944,6 @@ function spawnLogic() {
             </div>
           </div>
 
-          <div
-            style={{
-              position: "absolute",
-              bottom: 16,
-              left: 16,
-              width: isMobileArena ? 48 : 60,
-              height: isMobileArena ? 48 : 60,
-              borderRadius: 14,
-              background: "rgba(255, 255, 255, 0.15)",
-              display: "grid",
-              placeItems: "center",
-              zIndex: 4,
-              boxShadow: "inset 0 0 10px rgba(255,255,255,0.16)",
-            }}
-          >
-            <span style={{ color: "#fff", fontSize: 34, fontWeight: 800, lineHeight: 1 }}>Ⅱ</span>
-          </div>
-
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: isMobileArena ? 8 : 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", gap: isMobileArena ? 4 : 6, flexWrap: "wrap", alignItems: "flex-start" }}>
