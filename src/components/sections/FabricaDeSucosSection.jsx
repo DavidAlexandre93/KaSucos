@@ -970,7 +970,24 @@ function spawnLogic() {
               </div>
             </div>
 
-            <div style={{ marginTop: 12, padding: isMobileArena ? "8px 10px" : "10px 14px", borderRadius: 12, background: "rgba(0,0,0,0.38)", color: "#fff", fontWeight: 700, fontSize: isMobileArena ? 16 : 20, lineHeight: 1.25 }}>{toast}</div>
+            <div
+              style={{
+                position: "absolute",
+                top: isMobileArena ? 4 : 6,
+                left: isMobileArena ? 8 : 12,
+                right: isMobileArena ? 8 : 12,
+                padding: isMobileArena ? "7px 10px" : "8px 14px",
+                borderRadius: 12,
+                background: "rgba(0,0,0,0.4)",
+                color: "#fff",
+                fontWeight: 700,
+                fontSize: isMobileArena ? 15 : 18,
+                lineHeight: 1.2,
+                textAlign: "center",
+              }}
+            >
+              {toast}
+            </div>
           </div>
 
           <AnimatePresence>
