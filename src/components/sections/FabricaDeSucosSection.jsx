@@ -898,21 +898,7 @@ function spawnLogic() {
           </div>
 
           <div style={{ position: "absolute", top: 16, right: isMobileArena ? 16 : 22, display: "grid", gap: 8, justifyItems: "end", zIndex: 4 }}>
-            <div style={{ color: "#ffd339", fontSize: isMobileArena ? 52 : 84, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
-            <div style={{ display: "flex", gap: 8, opacity: 0.78 }}>
-              {Array.from({ length: 3 }).map((_, index) => (
-                <div
-                  key={`x-${index}`}
-                  style={{
-                    width: isMobileArena ? 20 : 26,
-                    height: isMobileArena ? 20 : 26,
-                    border: "3px solid rgba(70, 131, 205, 0.95)",
-                    transform: `rotate(${18 + index * 9}deg)`,
-                    background: index >= lives ? "rgba(34,54,90,0.8)" : "rgba(93, 147, 213, 0.35)",
-                  }}
-                />
-              ))}
-            </div>
+            <div style={{ color: "#ffd339", fontSize: isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
           </div>
 
           <div
