@@ -202,7 +202,7 @@ function createItem(width, height, speed = 1, forcedKind) {
     x: random(40, Math.max(45, width - 90)),
     y: height + random(30, 120),
     vx: random(-1.8, 1.8),
-    vy: random(-11.6, -9.1) * speed,
+    vy: random(-13.4, -10.6) * speed,
     size,
     rot: random(-25, 25),
     rotVel: random(-7, 7),
@@ -914,9 +914,9 @@ function spawnLogic() {
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: isMobileArena ? 8 : 12, flexWrap: "wrap" }}>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: isMobileArena ? 6 : 8, flexWrap: "wrap" }}>
                 {bottles.map((bottle) => (
-                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 96 : isMobileArena ? 105 : 120, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: isMobileArena ? 8 : 10, background: "rgba(0,0,0,0.3)" }}>
+                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 84 : isMobileArena ? 94 : 108, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: isMobileArena ? 7 : 9, background: "rgba(0,0,0,0.3)" }}>
                     <div style={{ fontWeight: 900, color: "white", marginBottom: 8, fontSize: isMobileArena ? 14 : 16 }}>{bottle.emoji} Garrafa</div>
                     <div style={{ display: "grid", justifyItems: "center" }}>
                       <div
