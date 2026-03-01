@@ -301,6 +301,7 @@ function JuiceFactoryNinja() {
   const lastSliceSoundAtRef = useRef(0);
   const phaseRef = useRef("idle");
   const waveRef = useRef(1);
+  const advancingWaveRef = useRef(false);
   const sizeRef = useRef({ width: 980, height: 700 });
   const lastActiveItemsAtRef = useRef(Date.now());
 
@@ -348,6 +349,7 @@ function JuiceFactoryNinja() {
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
+  const isOrderComplete = useMemo(() => bottles.every((bottle) => bottle.fill >= 1), [bottles]);
   const isMobileArena = size.width <= 820;
   const isSmallMobileArena = size.width <= 520;
   const bestScore = useMemo(() => {
@@ -409,6 +411,8 @@ function JuiceFactoryNinja() {
     setCombo(0);
     setLives(3);
     setWave(1);
+    waveRef.current = 1;
+    advancingWaveRef.current = false;
     setOrderTimeLeft(ORDER_TIME_LIMIT);
     setBottles(buildOrder());
     setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
@@ -736,15 +740,24 @@ function spawnLogic() {
   useEffect(() => {
     if (phase !== "play") return;
 
-    if (totalFill >= 1) {
-      setScore((old) => old + 250 + wave * 20);
-      const nextWave = wave + 1;
-      setWave(nextWave);
-      setOrderTimeLeft(getWaveSettings(nextWave).orderTimeLimit);
-      setBottles(buildOrder());
-      setToast(`Onda ${nextWave}! Mais frutas no ar e menos tempo ⏱️`);
+    if (!isOrderComplete) {
+      advancingWaveRef.current = false;
+      return;
     }
-  }, [totalFill, phase, wave]);
+
+    if (advancingWaveRef.current) return;
+    advancingWaveRef.current = true;
+
+    const currentWave = waveRef.current;
+    const nextWave = currentWave + 1;
+    waveRef.current = nextWave;
+
+    setScore((old) => old + 250 + currentWave * 20);
+    setWave(nextWave);
+    setOrderTimeLeft(getWaveSettings(nextWave).orderTimeLimit);
+    setBottles(buildOrder());
+    setToast(`Onda ${nextWave}! Mais frutas no ar e menos tempo ⏱️`);
+  }, [isOrderComplete, phase]);
 
   useEffect(() => {
     if (phase !== "play") return;
