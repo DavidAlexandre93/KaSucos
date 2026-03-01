@@ -988,10 +988,17 @@ function spawnLogic() {
 
   function onPointerMove(ev) {
     if (phase !== "play") return;
-    if (slashRef.current.length === 0) return;
     if ("touches" in ev) ev.preventDefault();
 
     const point = toLocalPoint(ev);
+    if (slashRef.current.length === 0) {
+      if (!("touches" in ev)) {
+        slashRef.current = [point];
+        setSlashTrail([point]);
+      }
+      return;
+    }
+
     const arr = [...slashRef.current, point].slice(-8);
     slashRef.current = arr;
     setSlashTrail(arr);
