@@ -568,30 +568,6 @@ function JuiceFactoryNinja() {
     if (ctx.state === "suspended") ctx.resume();
 
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(820, now);
-    filter.Q.setValueAtTime(0.8, now);
-
-    osc.connect(gain);
-    gain.connect(filter);
-    filter.connect(ctx.destination);
-
-    if (type === "bomb") {
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(190, now);
-      osc.frequency.exponentialRampToValueAtTime(80, now + 0.24);
-    } else if (type === "wrong") {
-      osc.type = "square";
-      osc.frequency.setValueAtTime(260, now);
-      osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
-    } else {
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(980, now);
-      osc.frequency.exponentialRampToValueAtTime(230, now + 0.13);
-    }
 
     const createNoiseBurst = ({ duration = 0.1, highpass = 800, lowpass = 7000, attack = 0.01, peak = 0.1 }) => {
       const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.09), ctx.sampleRate);
@@ -658,6 +634,13 @@ function JuiceFactoryNinja() {
       return;
     }
 
+    if (type === "slash") {
+      const baseHz = 1050 + swipeVariantIndex * 85;
+      createTone({ wave: "sawtooth", startHz: baseHz, endHz: 280 + swipeVariantIndex * 20, duration: 0.12, peak: 0.16, band: 1480 + swipeVariantIndex * 52 });
+      createNoiseBurst({ duration: 0.065, highpass: 1700 + swipeVariantIndex * 110, lowpass: 7600, attack: 0.004, peak: 0.095 });
+      return;
+    }
+
     if (type === "swoosh") {
       createNoiseBurst({ duration: 0.09, highpass: 1300 + swipeVariantIndex * 75, lowpass: 5400 + swipeVariantIndex * 130, attack: 0.005, peak: 0.08 });
       return;
@@ -670,9 +653,14 @@ function JuiceFactoryNinja() {
       return;
     }
 
-    if (type === "bomb") {
+    if (type === "bomb" || type === "explosion") {
       createTone({ wave: "sawtooth", startHz: 180, endHz: 48, duration: 0.42, peak: 0.22, band: 180 });
       createNoiseBurst({ duration: 0.34, highpass: 90, lowpass: 1400, attack: 0.008, peak: 0.35 });
+      setTimeout(() => {
+        if (ctx.state === "running") {
+          createNoiseBurst({ duration: 0.2, highpass: 140, lowpass: 2200, attack: 0.007, peak: 0.26 });
+        }
+      }, 70);
       return;
     }
 
@@ -686,6 +674,7 @@ function JuiceFactoryNinja() {
       setTimeout(() => {
         if (ctx.state === "running") {
           createTone({ wave: "triangle", startHz: 760, endHz: 1260, duration: 0.16, peak: 0.12, band: 1240 });
+          createTone({ wave: "sine", startHz: 960, endHz: 1480, duration: 0.12, peak: 0.07, band: 1460 });
         }
       }, 60);
       return;
@@ -856,7 +845,7 @@ function spawnLogic() {
     }
 
     if (bombHits > 0) {
-      playSliceSound("bomb");
+      playSliceSound("explosion");
       setCombo(0);
       setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
       setToast(`💣 Bomba cortada! -${bombHits * 2}s no pedido.`);
