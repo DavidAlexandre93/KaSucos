@@ -910,8 +910,38 @@ function spawnLogic() {
             </span>
           </div>
 
-          <div style={{ position: "absolute", top: 16, right: isMobileArena ? 16 : 22, display: "grid", gap: 8, justifyItems: "end", zIndex: 4 }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 16,
+              right: isMobileArena ? 16 : 22,
+              display: "flex",
+              alignItems: "flex-start",
+              gap: isMobileArena ? 6 : 10,
+              zIndex: 4,
+            }}
+          >
             <div style={{ color: "#ffd339", fontSize: isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
+            <div
+              style={{
+                marginTop: 2,
+                display: "flex",
+                gap: isMobileArena ? 4 : 6,
+                alignItems: "center",
+                flexWrap: "wrap",
+                justifyContent: "flex-end",
+                maxWidth: isMobileArena ? 140 : 220,
+                color: "#fff5dd",
+                fontSize: isMobileArena ? 11 : 13,
+                fontWeight: 800,
+                textShadow: "0 2px 0 rgba(62,31,2,0.95)",
+              }}
+            >
+              <span>⚡x{Math.max(1, combo)}</span>
+              <span>🫀{"❤️".repeat(lives)}</span>
+              <span>🚚{wave}</span>
+              <span style={{ opacity: 0.85 }}>🟡2x • ⭐bônus • 💣-2s</span>
+            </div>
           </div>
 
           <div
@@ -981,12 +1011,7 @@ function spawnLogic() {
                 ))}
               </div>
 
-              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "#fff5dd", fontWeight: 900, marginTop: isMobileArena ? 10 : 130, marginLeft: "auto", fontSize: isMobileArena ? 15 : 18, textShadow: "0 2px 0 rgba(62,31,2,0.95)" }}>
-                <div>⚡ Combo: x{Math.max(1, combo)}</div>
-                <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
-                <div>🚚 Onda: {wave}</div>
-                <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.85 }}>🟡 2x pontos • ⭐ bônus • 💣 -2s</div>
-              </div>
+              <div style={{ marginLeft: "auto" }} />
             </div>
 
             <div
