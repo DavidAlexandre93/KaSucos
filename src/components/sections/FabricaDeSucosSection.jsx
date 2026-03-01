@@ -330,6 +330,8 @@ function JuiceFactoryNinja() {
 
   const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
   const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
+  const isMobileArena = size.width <= 820;
+  const isSmallMobileArena = size.width <= 520;
   const bestScore = useMemo(() => {
     const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
     return Math.max(score, rankingBest);
@@ -832,8 +834,8 @@ function spawnLogic() {
           style={{
             marginTop: 16,
             position: "relative",
-            height: "76vh",
-            minHeight: 560,
+            height: isSmallMobileArena ? "68vh" : isMobileArena ? "72vh" : "76vh",
+            minHeight: isSmallMobileArena ? 440 : isMobileArena ? 500 : 560,
             overflow: "hidden",
             borderRadius: 28,
             border: "2px solid rgba(67, 35, 14, 0.9)",
@@ -864,25 +866,25 @@ function spawnLogic() {
             />
           ))}
 
-          <div style={{ position: "absolute", bottom: 16, left: 90, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span style={{ fontSize: 38, lineHeight: 1 }}>🍉</span>
-              <strong style={{ fontSize: 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
+          <div style={{ position: "absolute", bottom: 16, left: isMobileArena ? 16 : 90, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: isMobileArena ? 6 : 10 }}>
+              <span style={{ fontSize: isMobileArena ? 28 : 38, lineHeight: 1 }}>🍉</span>
+              <strong style={{ fontSize: isMobileArena ? 42 : 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
             </div>
-            <span style={{ color: "#79be46", fontSize: 24, fontWeight: 900, lineHeight: 0.85, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif" }}>
+            <span style={{ color: "#79be46", fontSize: isMobileArena ? 18 : 24, fontWeight: 900, lineHeight: 0.85, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif" }}>
               Best:{bestScore}
             </span>
           </div>
 
-          <div style={{ position: "absolute", top: 16, right: 22, display: "grid", gap: 8, justifyItems: "end", zIndex: 4 }}>
-            <div style={{ color: "#ffd339", fontSize: 84, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
+          <div style={{ position: "absolute", top: 16, right: isMobileArena ? 16 : 22, display: "grid", gap: 8, justifyItems: "end", zIndex: 4 }}>
+            <div style={{ color: "#ffd339", fontSize: isMobileArena ? 52 : 84, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
             <div style={{ display: "flex", gap: 8, opacity: 0.78 }}>
               {Array.from({ length: 3 }).map((_, index) => (
                 <div
                   key={`x-${index}`}
                   style={{
-                    width: 26,
-                    height: 26,
+                    width: isMobileArena ? 20 : 26,
+                    height: isMobileArena ? 20 : 26,
                     border: "3px solid rgba(70, 131, 205, 0.95)",
                     transform: `rotate(${18 + index * 9}deg)`,
                     background: index >= lives ? "rgba(34,54,90,0.8)" : "rgba(93, 147, 213, 0.35)",
@@ -897,8 +899,8 @@ function spawnLogic() {
               position: "absolute",
               bottom: 16,
               left: 16,
-              width: 60,
-              height: 60,
+              width: isMobileArena ? 48 : 60,
+              height: isMobileArena ? 48 : 60,
               borderRadius: 14,
               background: "rgba(255, 255, 255, 0.15)",
               display: "grid",
@@ -911,17 +913,17 @@ function spawnLogic() {
           </div>
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: isMobileArena ? 8 : 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                 {bottles.map((bottle) => (
-                  <div key={bottle.slot} style={{ width: 120, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: 10, background: "rgba(0,0,0,0.3)" }}>
-                    <div style={{ fontWeight: 900, color: "white", marginBottom: 8 }}>{bottle.emoji} Garrafa</div>
+                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 96 : isMobileArena ? 105 : 120, borderRadius: 16, border: "1px solid rgba(255,255,255,0.24)", padding: isMobileArena ? 8 : 10, background: "rgba(0,0,0,0.3)" }}>
+                    <div style={{ fontWeight: 900, color: "white", marginBottom: 8, fontSize: isMobileArena ? 14 : 16 }}>{bottle.emoji} Garrafa</div>
                     <div style={{ display: "grid", justifyItems: "center" }}>
                       <div
                         style={{
                           position: "relative",
-                          width: 34,
-                          height: 56,
+                          width: isMobileArena ? 30 : 34,
+                          height: isMobileArena ? 50 : 56,
                           borderRadius: "11px 11px 12px 12px",
                           border: "2px solid rgba(255,255,255,0.68)",
                           background: "rgba(255,255,255,0.08)",
@@ -959,7 +961,7 @@ function spawnLogic() {
                 ))}
               </div>
 
-              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "#fff5dd", fontWeight: 900, marginTop: 130, textShadow: "0 2px 0 rgba(62,31,2,0.95)" }}>
+              <div style={{ display: "grid", gap: 8, justifyItems: "end", color: "#fff5dd", fontWeight: 900, marginTop: isMobileArena ? 10 : 130, marginLeft: "auto", fontSize: isMobileArena ? 15 : 18, textShadow: "0 2px 0 rgba(62,31,2,0.95)" }}>
                 <div>⚡ Combo: x{Math.max(1, combo)}</div>
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
@@ -968,7 +970,7 @@ function spawnLogic() {
               </div>
             </div>
 
-            <div style={{ marginTop: 12, padding: "10px 14px", borderRadius: 12, background: "rgba(0,0,0,0.38)", color: "#fff", fontWeight: 700 }}>{toast}</div>
+            <div style={{ marginTop: 12, padding: isMobileArena ? "8px 10px" : "10px 14px", borderRadius: 12, background: "rgba(0,0,0,0.38)", color: "#fff", fontWeight: 700, fontSize: isMobileArena ? 16 : 20, lineHeight: 1.25 }}>{toast}</div>
           </div>
 
           <AnimatePresence>
