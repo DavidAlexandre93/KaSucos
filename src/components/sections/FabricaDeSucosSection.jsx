@@ -1073,7 +1073,7 @@ function spawnLogic() {
             />
           ))}
 
-          <div style={{ position: "absolute", bottom: 16, left: isMobileArena ? 16 : 90, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
+          <div style={{ position: "absolute", bottom: 16, left: isMobileArena ? 12 : 18, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
             <div style={{ display: "flex", alignItems: "center", gap: isMobileArena ? 6 : 10 }}>
               <span style={{ fontSize: isMobileArena ? 28 : 38, lineHeight: 1 }}>🍉</span>
               <strong style={{ fontSize: isMobileArena ? 42 : 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
