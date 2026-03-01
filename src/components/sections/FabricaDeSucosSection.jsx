@@ -137,17 +137,6 @@ function createJuiceDrops(pointA, pointB, color) {
   }));
 }
 
-function KatanaCursor() {
-  return (
-    <svg width="94" height="94" viewBox="0 0 94 94" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-      <path d="M60 13C62 11 65 12 66 14C68 17 67 20 65 22L24 63L15 54L60 13Z" fill="#B8DADE" />
-      <path d="M23 62L15 54L10 58C8 60 8 63 10 65L13 68C15 70 18 70 20 68L23 65V62Z" fill="#32344D" />
-      <path d="M18 56L14 60L24 70L28 66L18 56Z" fill="#282A3D" />
-      <path d="M22 51C24 49 28 49 30 51L36 57C38 59 38 63 36 65L32 69C30 71 26 71 24 69L18 63C16 61 16 57 18 55L22 51Z" fill="#F1C240" />
-    </svg>
-  );
-}
-
 function normalizePlayerName(name) {
   return name.replace(/\s+/g, " ").trim().slice(0, 24);
 }
@@ -368,7 +357,6 @@ function JuiceFactoryNinja() {
   const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_TIME_LIMIT);
   const [bottles, setBottles] = useState(buildOrder);
   const [toast, setToast] = useState("");
-  const [katanaPose, setKatanaPose] = useState({ x: 0, y: 0, angle: 0, visible: false, sparkAt: 0 });
   const [ranking, setRanking] = useState([]);
   const [rankingStatus, setRankingStatus] = useState("idle");
   const [rankingMessage, setRankingMessage] = useState("");
@@ -991,15 +979,17 @@ function spawnLogic() {
 
   function onPointerDown(ev) {
     if (phase !== "play") return;
+    if ("touches" in ev) ev.preventDefault();
+
     const point = toLocalPoint(ev);
     slashRef.current = [point];
     setSlashTrail([point]);
-    setKatanaPose((old) => ({ ...old, x: point.x, y: point.y, visible: true }));
   }
 
   function onPointerMove(ev) {
     if (phase !== "play") return;
     if (slashRef.current.length === 0) return;
+    if ("touches" in ev) ev.preventDefault();
 
     const point = toLocalPoint(ev);
     const arr = [...slashRef.current, point].slice(-8);
@@ -1008,9 +998,6 @@ function spawnLogic() {
 
     const previous = arr[arr.length - 2];
     if (previous) {
-      const angle = Math.atan2(point.y - previous.y, point.x - previous.x) * (180 / Math.PI);
-      setKatanaPose({ x: point.x, y: point.y, angle, visible: true, sparkAt: Date.now() });
-
       const distance = Math.hypot(point.x - previous.x, point.y - previous.y);
       const now = Date.now();
       if (distance > 14 && now - lastSliceSoundAtRef.current > 90) {
@@ -1024,8 +1011,7 @@ function spawnLogic() {
 
   function onPointerUp() {
     slashRef.current = [];
-    setKatanaPose((old) => ({ ...old, visible: false }));
-    setTimeout(() => setSlashTrail([]), 40);
+    setTimeout(() => setSlashTrail([]), 160);
   }
 
   async function expandArena() {
@@ -1427,48 +1413,31 @@ function spawnLogic() {
           </AnimatePresence>
 
           {slashTrail.length > 1 && (
-            <svg style={{ position: "absolute", inset: 0, pointerEvents: "none", filter: "drop-shadow(0 0 8px rgba(228,245,255,0.65))" }}>
+            <svg
+              style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                filter: "drop-shadow(0 0 10px rgba(228,245,255,0.75))",
+              }}
+            >
               <polyline
                 points={slashTrail.map((point) => `${point.x},${point.y}`).join(" ")}
                 fill="none"
-                stroke="rgba(235,245,255,0.97)"
-                strokeWidth="9"
+                stroke="rgba(129, 200, 255, 0.45)"
+                strokeWidth="14"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <polyline
+                points={slashTrail.map((point) => `${point.x},${point.y}`).join(" ")}
+                fill="none"
+                stroke="rgba(245,252,255,0.97)"
+                strokeWidth="8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
-          )}
-
-          {katanaPose.visible && (
-            <div
-              style={{
-                position: "absolute",
-                left: katanaPose.x,
-                top: katanaPose.y,
-                transform: `translate(-50%, -50%) rotate(${katanaPose.angle}deg)`,
-                pointerEvents: "none",
-                filter: "drop-shadow(0 0 14px rgba(173,249,255,0.95))",
-              }}
-            >
-              <KatanaCursor />
-            </div>
-          )}
-
-          {Date.now() - katanaPose.sparkAt < 80 && (
-            <div
-              style={{
-                position: "absolute",
-                left: katanaPose.x,
-                top: katanaPose.y,
-                transform: "translate(-50%, -50%)",
-                pointerEvents: "none",
-                color: "#c9fbff",
-                fontWeight: 900,
-                textShadow: "0 0 14px rgba(108,233,255,0.95)",
-              }}
-            >
-              ✦
-            </div>
           )}
 
           {phase !== "play" && (
