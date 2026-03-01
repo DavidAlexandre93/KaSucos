@@ -28,6 +28,7 @@ const CUT_MARK_LIFETIME = 850;
 const JUICE_DROP_LIFETIME = 520;
 const MIN_ORDER_TIME_LIMIT = 9;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
+const BEST_SCORE_STORAGE_KEY = "kasucos-fabrica-best-score";
 const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -143,6 +144,19 @@ function loadLocalRanking() {
 function saveLocalRanking(entries) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(entries)));
+}
+
+function loadBestScore() {
+  if (typeof window === "undefined") return 0;
+  const parsed = Number(window.localStorage.getItem(BEST_SCORE_STORAGE_KEY));
+  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+}
+
+function saveBestScore(score) {
+  if (typeof window === "undefined") return;
+  const normalized = Number(score);
+  if (!Number.isFinite(normalized) || normalized < 0) return;
+  window.localStorage.setItem(BEST_SCORE_STORAGE_KEY, String(Math.floor(normalized)));
 }
 
 function loadSavedPlayerName() {
@@ -310,6 +324,7 @@ function JuiceFactoryNinja() {
   const [items, setItems] = useState([]);
   const [slashTrail, setSlashTrail] = useState([]);
   const [score, setScore] = useState(0);
+  const [bestScoreLocal, setBestScoreLocal] = useState(loadBestScore);
   const [playerName, setPlayerName] = useState(loadSavedPlayerName);
   const [hasStoredPlayerName, setHasStoredPlayerName] = useState(() => Boolean(loadSavedPlayerName()));
   const [nameError, setNameError] = useState("");
@@ -354,8 +369,16 @@ function JuiceFactoryNinja() {
   const isSmallMobileArena = size.width <= 520;
   const bestScore = useMemo(() => {
     const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
-    return Math.max(score, rankingBest);
-  }, [ranking, score]);
+    return Math.max(score, rankingBest, bestScoreLocal);
+  }, [ranking, score, bestScoreLocal]);
+
+  useEffect(() => {
+    setBestScoreLocal((oldBest) => {
+      if (score <= oldBest) return oldBest;
+      saveBestScore(score);
+      return score;
+    });
+  }, [score]);
 
   useEffect(() => {
     const updateSize = () => {
@@ -454,6 +477,9 @@ function JuiceFactoryNinja() {
       try {
         await insertSupabaseScore(normalizedName, finalScore);
         const freshRanking = await fetchSupabaseRanking();
+        const persistedBest = Math.max(finalScore, ...freshRanking.map((entry) => Number(entry.score) || 0), bestScoreLocal);
+        saveBestScore(persistedBest);
+        setBestScoreLocal((oldBest) => Math.max(oldBest, persistedBest));
         setRanking(freshRanking);
         setRankingStatus("ready");
         setRankingMessage("Pontuação salva no Supabase ✅");
@@ -469,6 +495,8 @@ function JuiceFactoryNinja() {
       { player_name: normalizedName, score: finalScore, date: new Date().toISOString() },
     ]);
     saveLocalRanking(updated);
+    saveBestScore(Math.max(finalScore, ...updated.map((entry) => Number(entry.score) || 0), bestScoreLocal));
+    setBestScoreLocal((oldBest) => Math.max(oldBest, finalScore, ...updated.map((entry) => Number(entry.score) || 0)));
     setRanking(updated);
     setRankingStatus("ready");
   }
