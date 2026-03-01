@@ -36,6 +36,35 @@ const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_score
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
+const FRUIT_JUMP_PROFILES = [
+  { weight: 0.34, minHeightRatio: 0.02, maxHeightRatio: 0.2 },
+  { weight: 0.43, minHeightRatio: 0.34, maxHeightRatio: 0.58 },
+  { weight: 0.23, minHeightRatio: 0.62, maxHeightRatio: 0.84 },
+];
+
+function pickJumpProfile() {
+  const totalWeight = FRUIT_JUMP_PROFILES.reduce((sum, profile) => sum + profile.weight, 0);
+  let roll = Math.random() * totalWeight;
+
+  for (const profile of FRUIT_JUMP_PROFILES) {
+    roll -= profile.weight;
+    if (roll <= 0) return profile;
+  }
+
+  return FRUIT_JUMP_PROFILES[0];
+}
+
+function calculateLaunchVelocity({ arenaHeight, spawnY, speed }) {
+  const profile = pickJumpProfile();
+  const apexY = random(arenaHeight * profile.minHeightRatio, arenaHeight * profile.maxHeightRatio);
+  const riseDistance = Math.max(120, spawnY - apexY);
+  const waveSpeedFactor = 1 + Math.max(0, speed - 1) * 0.5;
+  const baseVelocity = Math.sqrt(2 * GRAVITY * riseDistance);
+  const adjustedVelocity = baseVelocity * waveSpeedFactor * random(0.94, 1.08);
+
+  return -Math.min(21, Math.max(6.6, adjustedVelocity));
+}
+
 function createFruitSplits(item) {
   const base = {
     id: `${item.uid}-split-${Math.random()}`,
@@ -224,6 +253,8 @@ function createItem(width, height, speed = 1, forcedKind) {
   const isStarFruit = forcedKind ? forcedKind === "starFruit" : roll >= 0.22 && roll < 0.31;
   const baseFruit = pick(FRUITS);
   const size = isBomb ? random(72, 88) : random(86, 112);
+  const spawnY = height + random(30, 120);
+
   return {
     uid: `${Date.now()}-${Math.random()}`,
     kind: isBomb ? "bomb" : isDoubleFruit ? "doubleFruit" : isStarFruit ? "starFruit" : "fruit",
@@ -231,9 +262,9 @@ function createItem(width, height, speed = 1, forcedKind) {
     emoji: isBomb ? BOMB.emoji : isStarFruit ? STAR_FRUIT.emoji : baseFruit.emoji,
     color: isBomb ? "#fff" : isStarFruit ? STAR_FRUIT.color : baseFruit.color || "#fff",
     x: random(40, Math.max(45, width - 90)),
-    y: height + random(30, 120),
+    y: spawnY,
     vx: random(-1.8, 1.8),
-    vy: random(-13.4, -10.6) * speed,
+    vy: calculateLaunchVelocity({ arenaHeight: height, spawnY, speed }),
     size,
     rot: random(-25, 25),
     rotVel: random(-7, 7),
