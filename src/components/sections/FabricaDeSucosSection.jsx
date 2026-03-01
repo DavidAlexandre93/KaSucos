@@ -33,6 +33,16 @@ const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
+const SWIPE_SOUND_FILES = [
+  "/Sound/Sword-swipe-1.wav",
+  "/Sound/Sword-swipe-2.wav",
+  "/Sound/Sword-swipe-3.wav",
+  "/Sound/Sword-swipe-4.wav",
+  "/Sound/Sword-swipe-5.wav",
+  "/Sound/Sword-swipe-6.wav",
+  "/Sound/Sword-swipe-7.wav",
+];
+const CLEAN_SLICE_SOUND_FILES = ["/Sound/Clean-Slice-1.wav", "/Sound/Clean-Slice-2.wav", "/Sound/Clean-Slice-3.wav"];
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -312,6 +322,8 @@ function JuiceFactoryNinja() {
   const slashRef = useRef([]);
   const lastSpawnAtRef = useRef(0);
   const audioCtxRef = useRef(null);
+  const gameAudioRef = useRef({ swipe: [], cleanSlice: [] });
+  const lastPlayedAudioIndexRef = useRef({ swipe: -1, cleanSlice: -1 });
   const lastSliceSoundAtRef = useRef(0);
   const phaseRef = useRef("idle");
   const waveRef = useRef(1);
@@ -508,7 +520,39 @@ function JuiceFactoryNinja() {
     void persistScore(score);
   }
 
-  function playSliceSound(type = "slash") {
+  function getNextAudioIndex(type, size) {
+    if (size <= 1) return 0;
+    const lastIndex = lastPlayedAudioIndexRef.current[type];
+    let nextIndex = Math.floor(Math.random() * size);
+
+    if (nextIndex === lastIndex) {
+      nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (size - 1))) % size;
+    }
+
+    lastPlayedAudioIndexRef.current[type] = nextIndex;
+    return nextIndex;
+  }
+
+  function playGameAudio(type) {
+    if (typeof window === "undefined") return false;
+
+    const sources = gameAudioRef.current[type] || [];
+    if (sources.length === 0) return false;
+
+    const index = getNextAudioIndex(type, sources.length);
+    const selected = sources[index];
+    if (!selected) return false;
+
+    try {
+      selected.currentTime = 0;
+      void selected.play();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function playSliceSound(type = "slice") {
     if (typeof window === "undefined") return;
 
     if (!audioCtxRef.current) {
@@ -521,8 +565,41 @@ function JuiceFactoryNinja() {
     if (ctx.state === "suspended") ctx.resume();
 
     const now = ctx.currentTime;
-    const createNoiseBurst = ({ duration = 0.1, highpass = 800, lowpass = 7000, attack = 0.01, peak = 0.1 }) => {
-      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.setValueAtTime(820, now);
+    filter.Q.setValueAtTime(0.8, now);
+
+    osc.connect(gain);
+    gain.connect(filter);
+    filter.connect(ctx.destination);
+
+    if (type === "slice") {
+      if (playGameAudio("swipe")) return;
+    }
+
+    if (type === "cleanSlice") {
+      if (playGameAudio("cleanSlice")) return;
+      if (playGameAudio("swipe")) return;
+    }
+
+    if (type === "bomb") {
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(190, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.24);
+    } else if (type === "wrong") {
+      osc.type = "square";
+      osc.frequency.setValueAtTime(260, now);
+      osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
+    } else {
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(980, now);
+      osc.frequency.exponentialRampToValueAtTime(230, now + 0.13);
+
+      const createNoiseBurst = ({ duration = 0.1, highpass = 800, lowpass = 7000, attack = 0.01, peak = 0.1 }) => {
+      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.09), ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < data.length; i += 1) {
         data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
@@ -611,6 +688,34 @@ function JuiceFactoryNinja() {
     createTone({ wave: "sawtooth", startHz: 980, endHz: 220, duration: 0.16, peak: 0.14, band: 1200 });
     createNoiseBurst({ duration: 0.08, highpass: 1500, lowpass: 7000, attack: 0.007, peak: 0.11 });
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    gameAudioRef.current.swipe = SWIPE_SOUND_FILES.map((src) => {
+      const audio = new Audio(src);
+      audio.preload = "auto";
+      audio.volume = 0.58;
+      return audio;
+    });
+
+    gameAudioRef.current.cleanSlice = CLEAN_SLICE_SOUND_FILES.map((src) => {
+      const audio = new Audio(src);
+      audio.preload = "auto";
+      audio.volume = 0.65;
+      return audio;
+    });
+
+    return () => {
+      Object.values(gameAudioRef.current)
+        .flat()
+        .forEach((audio) => {
+          audio.pause();
+          audio.src = "";
+        });
+      gameAudioRef.current = { swipe: [], cleanSlice: [] };
+    };
+  }, []);
 
 function spawnLogic() {
     const now = performance.now();
@@ -788,6 +893,7 @@ function spawnLogic() {
 
     if (correctHits > 0) {
       if (wrong === 0) {
+        playSliceSound("cleanSlice");
         playSliceSound("slash");
         playSliceSound("splat");
         if (hits > 1 || combo + 1 >= 3) {
