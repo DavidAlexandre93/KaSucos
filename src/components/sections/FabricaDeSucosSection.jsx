@@ -1122,13 +1122,13 @@ function spawnLogic() {
               <div style={{ display: "flex", gap: isMobileArena ? 4 : 6, flexWrap: "wrap", alignItems: "flex-start" }}>
                 {bottles.map((bottle) => (
                   <div key={bottle.slot} style={{ width: isSmallMobileArena ? 66 : isMobileArena ? 72 : 80, borderRadius: 10, border: "1px solid rgba(255,255,255,0.18)", padding: isMobileArena ? 4 : 5, background: "rgba(0,0,0,0.3)", height: "fit-content", alignSelf: "flex-start" }}>
-                    <div style={{ fontWeight: 900, color: "white", marginBottom: 3, fontSize: isMobileArena ? 12 : 13 }}>{bottle.emoji} Garrafa</div>
+                    <div style={{ fontWeight: 900, color: "white", marginBottom: 3, fontSize: isMobileArena ? 14 : 15, textAlign: "center" }}>{bottle.emoji}</div>
                     <div style={{ display: "grid", justifyItems: "center" }}>
                       <div
                         style={{
                           position: "relative",
-                          width: isMobileArena ? 24 : 28,
-                          height: isMobileArena ? 36 : 42,
+                          width: isMobileArena ? 28 : 32,
+                          height: isMobileArena ? 40 : 46,
                           borderRadius: "11px 11px 12px 12px",
                           border: "1.5px solid rgba(255,255,255,0.68)",
                           background: "rgba(255,255,255,0.08)",
@@ -1142,8 +1142,8 @@ function spawnLogic() {
                             top: -6,
                             left: "50%",
                             transform: "translateX(-50%)",
-                            width: 10,
-                            height: 7,
+                            width: 12,
+                            height: 8,
                             borderRadius: "7px 7px 2px 2px",
                             border: "1.5px solid rgba(255,255,255,0.68)",
                             borderBottom: "none",
