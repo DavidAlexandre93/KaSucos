@@ -508,7 +508,7 @@ function JuiceFactoryNinja() {
     void persistScore(score);
   }
 
-  function playSliceSound(type = "slice") {
+  function playSliceSound(type = "slash") {
     if (typeof window === "undefined") return;
 
     if (!audioCtxRef.current) {
@@ -521,60 +521,95 @@ function JuiceFactoryNinja() {
     if (ctx.state === "suspended") ctx.resume();
 
     const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    const filter = ctx.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.setValueAtTime(820, now);
-    filter.Q.setValueAtTime(0.8, now);
-
-    osc.connect(gain);
-    gain.connect(filter);
-    filter.connect(ctx.destination);
-
-    if (type === "bomb") {
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(190, now);
-      osc.frequency.exponentialRampToValueAtTime(80, now + 0.24);
-    } else if (type === "wrong") {
-      osc.type = "square";
-      osc.frequency.setValueAtTime(260, now);
-      osc.frequency.exponentialRampToValueAtTime(150, now + 0.18);
-    } else {
-      osc.type = "sawtooth";
-      osc.frequency.setValueAtTime(980, now);
-      osc.frequency.exponentialRampToValueAtTime(230, now + 0.13);
-
-      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.09), ctx.sampleRate);
+    const createNoiseBurst = ({ duration = 0.1, highpass = 800, lowpass = 7000, attack = 0.01, peak = 0.1 }) => {
+      const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < data.length; i += 1) {
         data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
       }
 
-      const noise = ctx.createBufferSource();
-      const noiseFilter = ctx.createBiquadFilter();
-      const noiseGain = ctx.createGain();
+      const source = ctx.createBufferSource();
+      const hp = ctx.createBiquadFilter();
+      const lp = ctx.createBiquadFilter();
+      const g = ctx.createGain();
+      source.buffer = buffer;
 
-      noise.buffer = buffer;
-      noiseFilter.type = "highpass";
-      noiseFilter.frequency.setValueAtTime(1200, now);
-      noiseGain.gain.setValueAtTime(0.001, now);
-      noiseGain.gain.exponentialRampToValueAtTime(0.11, now + 0.012);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      hp.type = "highpass";
+      hp.frequency.setValueAtTime(highpass, now);
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(lowpass, now);
 
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(ctx.destination);
-      noise.start(now);
-      noise.stop(now + 0.09);
+      g.gain.setValueAtTime(0.0001, now);
+      g.gain.exponentialRampToValueAtTime(peak, now + attack);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      source.connect(hp);
+      hp.connect(lp);
+      lp.connect(g);
+      g.connect(ctx.destination);
+
+      source.start(now);
+      source.stop(now + duration);
+    };
+
+    const createTone = ({ wave = "sawtooth", startHz = 600, endHz = 140, duration = 0.2, peak = 0.12, band = 900 }) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+
+      osc.type = wave;
+      osc.frequency.setValueAtTime(startHz, now);
+      osc.frequency.exponentialRampToValueAtTime(endHz, now + duration);
+
+      filter.type = "bandpass";
+      filter.frequency.setValueAtTime(band, now);
+      filter.Q.setValueAtTime(0.8, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(peak, now + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(filter);
+      filter.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + duration);
+    };
+
+    if (type === "bomb") {
+      createTone({ wave: "sawtooth", startHz: 180, endHz: 48, duration: 0.42, peak: 0.22, band: 180 });
+      createNoiseBurst({ duration: 0.34, highpass: 90, lowpass: 1400, attack: 0.008, peak: 0.35 });
+      return;
     }
 
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.13, now + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+    if (type === "wrong") {
+      createTone({ wave: "square", startHz: 260, endHz: 140, duration: 0.2, peak: 0.12, band: 350 });
+      return;
+    }
 
-    osc.start(now);
-    osc.stop(now + 0.24);
+    if (type === "combo") {
+      createTone({ wave: "triangle", startHz: 540, endHz: 920, duration: 0.18, peak: 0.13, band: 880 });
+      setTimeout(() => {
+        if (ctx.state === "running") {
+          createTone({ wave: "triangle", startHz: 760, endHz: 1260, duration: 0.16, peak: 0.12, band: 1240 });
+        }
+      }, 60);
+      return;
+    }
+
+    if (type === "splat") {
+      createNoiseBurst({ duration: 0.18, highpass: 160, lowpass: 1200, attack: 0.012, peak: 0.2 });
+      createTone({ wave: "triangle", startHz: 200, endHz: 120, duration: 0.17, peak: 0.07, band: 330 });
+      return;
+    }
+
+    if (type === "swoosh") {
+      createNoiseBurst({ duration: 0.09, highpass: 1300, lowpass: 5400, attack: 0.005, peak: 0.08 });
+      return;
+    }
+
+    createTone({ wave: "sawtooth", startHz: 980, endHz: 220, duration: 0.16, peak: 0.14, band: 1200 });
+    createNoiseBurst({ duration: 0.08, highpass: 1500, lowpass: 7000, attack: 0.007, peak: 0.11 });
   }
 
 function spawnLogic() {
@@ -753,7 +788,11 @@ function spawnLogic() {
 
     if (correctHits > 0) {
       if (wrong === 0) {
-        playSliceSound("slice");
+        playSliceSound("slash");
+        playSliceSound("splat");
+        if (hits > 1 || combo + 1 >= 3) {
+          playSliceSound("combo");
+        }
         setCombo((old) => old + 1);
       }
       setScore((old) => old + earnedPoints);
@@ -865,7 +904,7 @@ function spawnLogic() {
       const distance = Math.hypot(point.x - previous.x, point.y - previous.y);
       const now = Date.now();
       if (distance > 14 && now - lastSliceSoundAtRef.current > 90) {
-        playSliceSound("slice");
+        playSliceSound("swoosh");
         lastSliceSoundAtRef.current = now;
       }
 
