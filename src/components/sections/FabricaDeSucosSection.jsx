@@ -318,7 +318,7 @@ function JuiceFactoryNinja() {
   const [wave, setWave] = useState(1);
   const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_TIME_LIMIT);
   const [bottles, setBottles] = useState(buildOrder);
-  const [toast, setToast] = useState("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
+  const [toast, setToast] = useState("");
   const [katanaPose, setKatanaPose] = useState({ x: 0, y: 0, angle: 0, visible: false, sparkAt: 0 });
   const [ranking, setRanking] = useState([]);
   const [rankingStatus, setRankingStatus] = useState("idle");
@@ -415,7 +415,7 @@ function JuiceFactoryNinja() {
     advancingWaveRef.current = false;
     setOrderTimeLeft(ORDER_TIME_LIMIT);
     setBottles(buildOrder());
-    setToast("Corte as frutas certas antes do tempo acabar para encher as garrafas 🧃");
+    setToast("");
     setSlicedPieces([]);
     setSliceBursts([]);
     setCutMarks([]);
@@ -1014,28 +1014,30 @@ function spawnLogic() {
               <div style={{ marginLeft: "auto" }} />
             </div>
 
-            <div
-              style={{
-                position: "absolute",
-                top: isMobileArena ? 4 : 6,
-                left: isMobileArena ? 8 : 12,
-                right: isMobileArena ? 8 : 12,
-                margin: "0 auto",
-                maxWidth: isMobileArena ? "96%" : "74%",
-                padding: isMobileArena ? "4px 8px" : "5px 10px",
-                borderRadius: 10,
-                background: "rgba(0,0,0,0.2)",
-                color: "rgba(255,255,255,0.78)",
-                fontWeight: 600,
-                fontSize: isMobileArena ? 11 : 12,
-                lineHeight: 1.15,
-                textAlign: "center",
-                backdropFilter: "blur(1px)",
-                pointerEvents: "none",
-              }}
-            >
-              {toast}
-            </div>
+            {toast && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: isMobileArena ? 4 : 6,
+                  left: isMobileArena ? 8 : 12,
+                  right: isMobileArena ? 8 : 12,
+                  margin: "0 auto",
+                  maxWidth: isMobileArena ? "96%" : "74%",
+                  padding: isMobileArena ? "4px 8px" : "5px 10px",
+                  borderRadius: 10,
+                  background: "rgba(0,0,0,0.2)",
+                  color: "rgba(255,255,255,0.78)",
+                  fontWeight: 600,
+                  fontSize: isMobileArena ? 11 : 12,
+                  lineHeight: 1.15,
+                  textAlign: "center",
+                  backdropFilter: "blur(1px)",
+                  pointerEvents: "none",
+                }}
+              >
+                {toast}
+              </div>
+            )}
           </div>
 
           <AnimatePresence>
