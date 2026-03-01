@@ -928,12 +928,12 @@ function spawnLogic() {
                 display: "flex",
                 gap: isMobileArena ? 4 : 6,
                 alignItems: "center",
-                flexWrap: "wrap",
+                flexWrap: "nowrap",
                 justifyContent: "flex-end",
-                maxWidth: isMobileArena ? 140 : 220,
                 color: "#fff5dd",
-                fontSize: isMobileArena ? 11 : 13,
+                fontSize: isMobileArena ? 10 : 13,
                 fontWeight: 800,
+                whiteSpace: "nowrap",
                 textShadow: "0 2px 0 rgba(62,31,2,0.95)",
               }}
             >
