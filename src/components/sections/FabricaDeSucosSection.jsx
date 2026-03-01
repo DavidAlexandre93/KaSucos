@@ -403,6 +403,7 @@ function JuiceFactoryNinja() {
   const isOrderComplete = useMemo(() => bottles.every((bottle) => bottle.fill >= 1), [bottles]);
   const isMobileArena = size.width <= 820;
   const isSmallMobileArena = size.width <= 520;
+  const isCompactArena = size.width <= 680;
   const isFullscreenActive = isArenaExpanded || isNativeFullscreen;
   const bestScore = useMemo(() => {
     const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
@@ -1061,10 +1062,10 @@ function spawnLogic() {
   }
 
   return (
-    <section id="fabrica" style={{ padding: "48px 0 20px", background: "linear-gradient(180deg, #2d1206 0%, #130905 100%)" }}>
-      <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 14px" }}>
-        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200" }}>Fábrica de sucos</h2>
-        <p style={{ marginTop: 10, color: "#ffd447", fontSize: 30, fontWeight: 900, letterSpacing: 1.2, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 2px 0 #5f3200" }}>Fruit Ninja KaSucos</p>
+    <section id="fabrica" style={{ padding: isSmallMobileArena ? "30px 0 12px" : "48px 0 20px", background: "linear-gradient(180deg, #2d1206 0%, #130905 100%)" }}>
+      <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: isSmallMobileArena ? "0 10px" : "0 14px" }}>
+        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200", fontSize: "clamp(1.7rem, 4vw, 2.8rem)", lineHeight: 1.05 }}>Fábrica de sucos</h2>
+        <p style={{ marginTop: isSmallMobileArena ? 6 : 10, color: "#ffd447", fontSize: "clamp(1.05rem, 3.6vw, 1.9rem)", fontWeight: 900, letterSpacing: isSmallMobileArena ? 0.3 : 1.2, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 2px 0 #5f3200" }}>Fruit Ninja KaSucos</p>
         <div
           ref={arenaRef}
           onMouseDown={onPointerDown}
@@ -1077,8 +1078,8 @@ function spawnLogic() {
           style={{
             marginTop: isFullscreenActive ? 0 : 16,
             position: "relative",
-            height: isFullscreenActive ? "100vh" : isSmallMobileArena ? "68vh" : isMobileArena ? "72vh" : "76vh",
-            minHeight: isSmallMobileArena ? 440 : isMobileArena ? 500 : 560,
+            height: isFullscreenActive ? "100dvh" : isSmallMobileArena ? "62vh" : isCompactArena ? "66vh" : isMobileArena ? "70vh" : "76vh",
+            minHeight: isSmallMobileArena ? 330 : isCompactArena ? 400 : isMobileArena ? 480 : 560,
             width: "100%",
             overflow: "hidden",
             borderRadius: isFullscreenActive ? 0 : 28,
@@ -1092,7 +1093,7 @@ function spawnLogic() {
               position: "fixed",
               inset: 0,
               width: "100vw",
-              minHeight: "100vh",
+              minHeight: "100dvh",
               zIndex: 1200,
             } : null),
             backgroundImage:
@@ -1145,12 +1146,12 @@ function spawnLogic() {
             />
           ))}
 
-          <div style={{ position: "absolute", bottom: 16, left: isMobileArena ? 12 : 18, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900" }}>
+          <div style={{ position: "absolute", bottom: isCompactArena ? 10 : 16, left: isMobileArena ? 10 : 18, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900", maxWidth: isSmallMobileArena ? "54vw" : "unset" }}>
             <div style={{ display: "flex", alignItems: "center", gap: isMobileArena ? 6 : 10 }}>
-              <span style={{ fontSize: isMobileArena ? 28 : 38, lineHeight: 1 }}>🍉</span>
-              <strong style={{ fontSize: isMobileArena ? 42 : 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
+              <span style={{ fontSize: isSmallMobileArena ? 24 : isMobileArena ? 28 : 38, lineHeight: 1 }}>🍉</span>
+              <strong style={{ fontSize: isSmallMobileArena ? 34 : isMobileArena ? 42 : 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
             </div>
-            <span style={{ color: "#79be46", fontSize: isMobileArena ? 18 : 24, fontWeight: 900, lineHeight: 0.85, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif" }}>
+            <span style={{ color: "#79be46", fontSize: isSmallMobileArena ? 14 : isMobileArena ? 18 : 24, fontWeight: 900, lineHeight: 0.95, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif", overflowWrap: "anywhere" }}>
               Best:{bestScore}
             </span>
           </div>
@@ -1161,25 +1162,27 @@ function spawnLogic() {
               top: 16,
               right: isMobileArena ? 16 : 22,
               display: "flex",
-              alignItems: "flex-start",
+              alignItems: isCompactArena ? "flex-end" : "flex-start",
               gap: isMobileArena ? 6 : 10,
               zIndex: 4,
+              maxWidth: isSmallMobileArena ? "62vw" : "unset",
             }}
           >
-            <div style={{ color: "#ffd339", fontSize: isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
+            <div style={{ color: "#ffd339", fontSize: isSmallMobileArena ? 30 : isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
             <div
               style={{
                 marginTop: 2,
                 display: "flex",
                 gap: isMobileArena ? 4 : 6,
                 alignItems: "center",
-                flexWrap: "nowrap",
+                flexWrap: isCompactArena ? "wrap" : "nowrap",
                 justifyContent: "flex-end",
                 color: "#fff5dd",
-                fontSize: isMobileArena ? 10 : 13,
+                fontSize: isSmallMobileArena ? 9 : isMobileArena ? 10 : 13,
                 fontWeight: 800,
-                whiteSpace: "nowrap",
+                whiteSpace: isCompactArena ? "normal" : "nowrap",
                 textShadow: "0 2px 0 rgba(62,31,2,0.95)",
+                maxWidth: isCompactArena ? 130 : "unset",
               }}
             >
               <span>⚡x{Math.max(1, combo)}</span>
@@ -1193,14 +1196,14 @@ function spawnLogic() {
             <div style={{ display: "flex", justifyContent: "space-between", gap: isMobileArena ? 8 : 12, flexWrap: "wrap" }}>
               <div style={{ display: "flex", gap: isMobileArena ? 4 : 6, flexWrap: "wrap", alignItems: "flex-start" }}>
                 {bottles.map((bottle) => (
-                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 66 : isMobileArena ? 72 : 80, borderRadius: 10, border: "1px solid rgba(255,255,255,0.18)", padding: isMobileArena ? 4 : 5, background: "rgba(0,0,0,0.3)", height: "fit-content", alignSelf: "flex-start" }}>
+                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 54 : isCompactArena ? 62 : isMobileArena ? 72 : 80, borderRadius: 10, border: "1px solid rgba(255,255,255,0.18)", padding: isSmallMobileArena ? 3 : isMobileArena ? 4 : 5, background: "rgba(0,0,0,0.3)", height: "fit-content", alignSelf: "flex-start" }}>
                     <div style={{ fontWeight: 900, color: "white", marginBottom: 3, fontSize: isMobileArena ? 14 : 15, textAlign: "center" }}>{bottle.emoji}</div>
                     <div style={{ display: "grid", justifyItems: "center" }}>
                       <div
                         style={{
                           position: "relative",
-                          width: isMobileArena ? 28 : 32,
-                          height: isMobileArena ? 40 : 46,
+                          width: isSmallMobileArena ? 22 : isMobileArena ? 28 : 32,
+                          height: isSmallMobileArena ? 32 : isMobileArena ? 40 : 46,
                           borderRadius: "11px 11px 12px 12px",
                           border: "1.5px solid rgba(255,255,255,0.68)",
                           background: "rgba(255,255,255,0.08)",
@@ -1214,8 +1217,8 @@ function spawnLogic() {
                             top: -6,
                             left: "50%",
                             transform: "translateX(-50%)",
-                            width: 12,
-                            height: 8,
+                              width: isSmallMobileArena ? 10 : 12,
+                              height: isSmallMobileArena ? 7 : 8,
                             borderRadius: "7px 7px 2px 2px",
                             border: "1.5px solid rgba(255,255,255,0.68)",
                             borderBottom: "none",
@@ -1470,7 +1473,7 @@ function spawnLogic() {
 
           {phase !== "play" && (
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
-              <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: "22px 24px", textAlign: "center", color: "white" }}>
+              <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
                 <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte frutas do pedido, encha as garrafas a tempo e evite bombas." : `Pontuação final: ${score}`}</p>
                 {!hasStoredPlayerName && (
@@ -1482,7 +1485,7 @@ function spawnLogic() {
                       maxLength={24}
                       onChange={(ev) => setPlayerName(ev.target.value)}
                       placeholder="Digite seu nome"
-                      style={{ borderRadius: 10, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.08)", color: "white", padding: "10px 12px", fontWeight: 600 }}
+                      style={{ borderRadius: 10, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.08)", color: "white", padding: "10px 12px", fontWeight: 600, width: "100%" }}
                     />
                   </label>
                 )}
@@ -1502,7 +1505,7 @@ function spawnLogic() {
                   {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>Ainda sem pontuações registradas.</p>}
                   {ranking.map((entry, index) => (
                     <div key={`${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
-                      <span>{index + 1}. {entry.player_name}</span>
+                      <span style={{ overflowWrap: "anywhere" }}>{index + 1}. {entry.player_name}</span>
                       <span>{entry.score} pts</span>
                     </div>
                   ))}
