@@ -33,6 +33,16 @@ const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
+const SWIPE_SOUND_FILES = [
+  "/Sound/Sword-swipe-1.wav",
+  "/Sound/Sword-swipe-2.wav",
+  "/Sound/Sword-swipe-3.wav",
+  "/Sound/Sword-swipe-4.wav",
+  "/Sound/Sword-swipe-5.wav",
+  "/Sound/Sword-swipe-6.wav",
+  "/Sound/Sword-swipe-7.wav",
+];
+const CLEAN_SLICE_SOUND_FILES = ["/Sound/Clean-Slice-1.wav", "/Sound/Clean-Slice-2.wav", "/Sound/Clean-Slice-3.wav"];
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -312,6 +322,8 @@ function JuiceFactoryNinja() {
   const slashRef = useRef([]);
   const lastSpawnAtRef = useRef(0);
   const audioCtxRef = useRef(null);
+  const gameAudioRef = useRef({ swipe: [], cleanSlice: [] });
+  const lastPlayedAudioIndexRef = useRef({ swipe: -1, cleanSlice: -1 });
   const lastSliceSoundAtRef = useRef(0);
   const phaseRef = useRef("idle");
   const waveRef = useRef(1);
@@ -508,6 +520,38 @@ function JuiceFactoryNinja() {
     void persistScore(score);
   }
 
+  function getNextAudioIndex(type, size) {
+    if (size <= 1) return 0;
+    const lastIndex = lastPlayedAudioIndexRef.current[type];
+    let nextIndex = Math.floor(Math.random() * size);
+
+    if (nextIndex === lastIndex) {
+      nextIndex = (nextIndex + 1 + Math.floor(Math.random() * (size - 1))) % size;
+    }
+
+    lastPlayedAudioIndexRef.current[type] = nextIndex;
+    return nextIndex;
+  }
+
+  function playGameAudio(type) {
+    if (typeof window === "undefined") return false;
+
+    const sources = gameAudioRef.current[type] || [];
+    if (sources.length === 0) return false;
+
+    const index = getNextAudioIndex(type, sources.length);
+    const selected = sources[index];
+    if (!selected) return false;
+
+    try {
+      selected.currentTime = 0;
+      void selected.play();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   function playSliceSound(type = "slice") {
     if (typeof window === "undefined") return;
 
@@ -531,6 +575,15 @@ function JuiceFactoryNinja() {
     osc.connect(gain);
     gain.connect(filter);
     filter.connect(ctx.destination);
+
+    if (type === "slice") {
+      if (playGameAudio("swipe")) return;
+    }
+
+    if (type === "cleanSlice") {
+      if (playGameAudio("cleanSlice")) return;
+      if (playGameAudio("swipe")) return;
+    }
 
     if (type === "bomb") {
       osc.type = "sawtooth";
@@ -576,6 +629,34 @@ function JuiceFactoryNinja() {
     osc.start(now);
     osc.stop(now + 0.24);
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    gameAudioRef.current.swipe = SWIPE_SOUND_FILES.map((src) => {
+      const audio = new Audio(src);
+      audio.preload = "auto";
+      audio.volume = 0.58;
+      return audio;
+    });
+
+    gameAudioRef.current.cleanSlice = CLEAN_SLICE_SOUND_FILES.map((src) => {
+      const audio = new Audio(src);
+      audio.preload = "auto";
+      audio.volume = 0.65;
+      return audio;
+    });
+
+    return () => {
+      Object.values(gameAudioRef.current)
+        .flat()
+        .forEach((audio) => {
+          audio.pause();
+          audio.src = "";
+        });
+      gameAudioRef.current = { swipe: [], cleanSlice: [] };
+    };
+  }, []);
 
 function spawnLogic() {
     const now = performance.now();
@@ -753,7 +834,7 @@ function spawnLogic() {
 
     if (correctHits > 0) {
       if (wrong === 0) {
-        playSliceSound("slice");
+        playSliceSound("cleanSlice");
         setCombo((old) => old + 1);
       }
       setScore((old) => old + earnedPoints);
