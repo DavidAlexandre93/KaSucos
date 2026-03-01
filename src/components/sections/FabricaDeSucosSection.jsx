@@ -33,16 +33,8 @@ const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
-const SWIPE_SOUND_FILES = [
-  "/Sound/Sword-swipe-1.wav",
-  "/Sound/Sword-swipe-2.wav",
-  "/Sound/Sword-swipe-3.wav",
-  "/Sound/Sword-swipe-4.wav",
-  "/Sound/Sword-swipe-5.wav",
-  "/Sound/Sword-swipe-6.wav",
-  "/Sound/Sword-swipe-7.wav",
-];
-const CLEAN_SLICE_SOUND_FILES = ["/Sound/Clean-Slice-1.wav", "/Sound/Clean-Slice-2.wav", "/Sound/Clean-Slice-3.wav"];
+const SWIPE_VARIANT_COUNT = 7;
+const CLEAN_SLICE_VARIANT_COUNT = 3;
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -353,7 +345,6 @@ function JuiceFactoryNinja() {
   const slashRef = useRef([]);
   const lastSpawnAtRef = useRef(0);
   const audioCtxRef = useRef(null);
-  const gameAudioRef = useRef({ swipe: [], cleanSlice: [] });
   const lastPlayedAudioIndexRef = useRef({ swipe: -1, cleanSlice: -1 });
   const lastSliceSoundAtRef = useRef(0);
   const phaseRef = useRef("idle");
@@ -564,25 +555,6 @@ function JuiceFactoryNinja() {
     return nextIndex;
   }
 
-  function playGameAudio(type) {
-    if (typeof window === "undefined") return false;
-
-    const sources = gameAudioRef.current[type] || [];
-    if (sources.length === 0) return false;
-
-    const index = getNextAudioIndex(type, sources.length);
-    const selected = sources[index];
-    if (!selected) return false;
-
-    try {
-      selected.currentTime = 0;
-      void selected.play();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
   function playSliceSound(type = "slice") {
     if (typeof window === "undefined") return;
 
@@ -607,15 +579,6 @@ function JuiceFactoryNinja() {
     gain.connect(filter);
     filter.connect(ctx.destination);
 
-    if (type === "slice") {
-      if (playGameAudio("swipe")) return;
-    }
-
-    if (type === "cleanSlice") {
-      if (playGameAudio("cleanSlice")) return;
-      if (playGameAudio("swipe")) return;
-    }
-
     if (type === "bomb") {
       osc.type = "sawtooth";
       osc.frequency.setValueAtTime(190, now);
@@ -628,8 +591,9 @@ function JuiceFactoryNinja() {
       osc.type = "sawtooth";
       osc.frequency.setValueAtTime(980, now);
       osc.frequency.exponentialRampToValueAtTime(230, now + 0.13);
+    }
 
-      const createNoiseBurst = ({ duration = 0.1, highpass = 800, lowpass = 7000, attack = 0.01, peak = 0.1 }) => {
+    const createNoiseBurst = ({ duration = 0.1, highpass = 800, lowpass = 7000, attack = 0.01, peak = 0.1 }) => {
       const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.09), ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < data.length; i += 1) {
@@ -684,6 +648,28 @@ function JuiceFactoryNinja() {
       osc.stop(now + duration);
     };
 
+    const swipeVariantIndex = getNextAudioIndex("swipe", SWIPE_VARIANT_COUNT);
+    const cleanSliceVariantIndex = getNextAudioIndex("cleanSlice", CLEAN_SLICE_VARIANT_COUNT);
+
+    if (type === "slice") {
+      const baseHz = 880 + swipeVariantIndex * 70;
+      createTone({ wave: "sawtooth", startHz: baseHz, endHz: 210 + swipeVariantIndex * 8, duration: 0.16, peak: 0.13, band: 1100 + swipeVariantIndex * 45 });
+      createNoiseBurst({ duration: 0.09, highpass: 1200 + swipeVariantIndex * 90, lowpass: 5200 + swipeVariantIndex * 120, attack: 0.006, peak: 0.09 });
+      return;
+    }
+
+    if (type === "swoosh") {
+      createNoiseBurst({ duration: 0.09, highpass: 1300 + swipeVariantIndex * 75, lowpass: 5400 + swipeVariantIndex * 130, attack: 0.005, peak: 0.08 });
+      return;
+    }
+
+    if (type === "cleanSlice") {
+      const baseHz = 1250 + cleanSliceVariantIndex * 120;
+      createTone({ wave: "triangle", startHz: baseHz, endHz: 350 + cleanSliceVariantIndex * 25, duration: 0.14, peak: 0.14, band: 1500 + cleanSliceVariantIndex * 60 });
+      createNoiseBurst({ duration: 0.06, highpass: 1800 + cleanSliceVariantIndex * 140, lowpass: 7600, attack: 0.004, peak: 0.07 });
+      return;
+    }
+
     if (type === "bomb") {
       createTone({ wave: "sawtooth", startHz: 180, endHz: 48, duration: 0.42, peak: 0.22, band: 180 });
       createNoiseBurst({ duration: 0.34, highpass: 90, lowpass: 1400, attack: 0.008, peak: 0.35 });
@@ -711,42 +697,10 @@ function JuiceFactoryNinja() {
       return;
     }
 
-    if (type === "swoosh") {
-      createNoiseBurst({ duration: 0.09, highpass: 1300, lowpass: 5400, attack: 0.005, peak: 0.08 });
-      return;
-    }
-
     createTone({ wave: "sawtooth", startHz: 980, endHz: 220, duration: 0.16, peak: 0.14, band: 1200 });
     createNoiseBurst({ duration: 0.08, highpass: 1500, lowpass: 7000, attack: 0.007, peak: 0.11 });
   }
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    gameAudioRef.current.swipe = SWIPE_SOUND_FILES.map((src) => {
-      const audio = new Audio(src);
-      audio.preload = "auto";
-      audio.volume = 0.58;
-      return audio;
-    });
-
-    gameAudioRef.current.cleanSlice = CLEAN_SLICE_SOUND_FILES.map((src) => {
-      const audio = new Audio(src);
-      audio.preload = "auto";
-      audio.volume = 0.65;
-      return audio;
-    });
-
-    return () => {
-      Object.values(gameAudioRef.current)
-        .flat()
-        .forEach((audio) => {
-          audio.pause();
-          audio.src = "";
-        });
-      gameAudioRef.current = { swipe: [], cleanSlice: [] };
-    };
-  }, []);
 
 function spawnLogic() {
     const now = performance.now();
