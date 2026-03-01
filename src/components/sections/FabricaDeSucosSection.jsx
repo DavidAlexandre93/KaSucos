@@ -972,7 +972,6 @@ function spawnLogic() {
                 <div>⚡ Combo: x{Math.max(1, combo)}</div>
                 <div>🫀 Vidas: {"❤️".repeat(lives)}</div>
                 <div>🚚 Onda: {wave}</div>
-                <div style={{ color: orderTimeLeft <= 6 ? "#ff9a9a" : "#ffffff" }}>⏳ Tempo: {orderTimeLeft}s</div>
                 <div style={{ fontSize: 12, fontWeight: 700, opacity: 0.85 }}>🟡 2x pontos • ⭐ bônus • 💣 -2s</div>
               </div>
             </div>
