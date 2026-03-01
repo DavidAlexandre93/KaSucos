@@ -1431,6 +1431,9 @@ function spawnLogic() {
               style={{
                 position: "absolute",
                 inset: 0,
+                width: "100%",
+                height: "100%",
+                display: "block",
                 pointerEvents: "none",
                 filter: "drop-shadow(0 0 10px rgba(228,245,255,0.75))",
               }}
