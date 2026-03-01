@@ -28,6 +28,7 @@ const CUT_MARK_LIFETIME = 850;
 const JUICE_DROP_LIFETIME = 520;
 const MIN_ORDER_TIME_LIMIT = 9;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
+const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
@@ -142,6 +143,22 @@ function loadLocalRanking() {
 function saveLocalRanking(entries) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(entries)));
+}
+
+function loadSavedPlayerName() {
+  if (typeof window === "undefined") return "";
+  return normalizePlayerName(window.localStorage.getItem(PLAYER_NAME_STORAGE_KEY) || "");
+}
+
+function savePlayerName(name) {
+  if (typeof window === "undefined") return;
+  const normalizedName = normalizePlayerName(name);
+  if (!normalizedName) {
+    window.localStorage.removeItem(PLAYER_NAME_STORAGE_KEY);
+    return;
+  }
+
+  window.localStorage.setItem(PLAYER_NAME_STORAGE_KEY, normalizedName);
 }
 
 async function fetchSupabaseRanking() {
@@ -292,7 +309,8 @@ function JuiceFactoryNinja() {
   const [items, setItems] = useState([]);
   const [slashTrail, setSlashTrail] = useState([]);
   const [score, setScore] = useState(0);
-  const [playerName, setPlayerName] = useState("");
+  const [playerName, setPlayerName] = useState(loadSavedPlayerName);
+  const [hasStoredPlayerName, setHasStoredPlayerName] = useState(() => Boolean(loadSavedPlayerName()));
   const [nameError, setNameError] = useState("");
   const [combo, setCombo] = useState(0);
   const [lives, setLives] = useState(3);
@@ -408,6 +426,9 @@ function JuiceFactoryNinja() {
       setNameError("Informe seu nome para iniciar a partida.");
       return;
     }
+
+    savePlayerName(normalizedName);
+    setHasStoredPlayerName(true);
 
     if (normalizedName !== playerName) {
       setPlayerName(normalizedName);
@@ -1179,17 +1200,20 @@ function spawnLogic() {
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: "22px 24px", textAlign: "center", color: "white" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
                 <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte frutas do pedido, encha as garrafas a tempo e evite bombas." : `Pontuação final: ${score}`}</p>
-                <label style={{ display: "grid", gap: 6, textAlign: "left", marginBottom: 12 }}>
-                  <span style={{ fontWeight: 700 }}>Nome para registro</span>
-                  <input
-                    type="text"
-                    value={playerName}
-                    maxLength={24}
-                    onChange={(ev) => setPlayerName(ev.target.value)}
-                    placeholder="Digite seu nome"
-                    style={{ borderRadius: 10, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.08)", color: "white", padding: "10px 12px", fontWeight: 600 }}
-                  />
-                </label>
+                {!hasStoredPlayerName && (
+                  <label style={{ display: "grid", gap: 6, textAlign: "left", marginBottom: 12 }}>
+                    <span style={{ fontWeight: 700 }}>Nome para registro</span>
+                    <input
+                      type="text"
+                      value={playerName}
+                      maxLength={24}
+                      onChange={(ev) => setPlayerName(ev.target.value)}
+                      placeholder="Digite seu nome"
+                      style={{ borderRadius: 10, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(255,255,255,0.08)", color: "white", padding: "10px 12px", fontWeight: 600 }}
+                    />
+                  </label>
+                )}
+                {hasStoredPlayerName && <p style={{ margin: "4px 0 12px", opacity: 0.9 }}>Jogando como <strong>{playerName}</strong>.</p>}
                 {nameError && <p style={{ marginTop: -4, marginBottom: 12, color: "#ff9a9a", fontWeight: 700 }}>{nameError}</p>}
                 <button
                   type="button"
