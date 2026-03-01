@@ -376,6 +376,8 @@ function JuiceFactoryNinja() {
   const [sliceBursts, setSliceBursts] = useState([]);
   const [cutMarks, setCutMarks] = useState([]);
   const [juiceDrops, setJuiceDrops] = useState([]);
+  const [isArenaExpanded, setIsArenaExpanded] = useState(false);
+  const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
   const hasSubmittedScoreRef = useRef(false);
 
   useEffect(() => {
@@ -401,6 +403,7 @@ function JuiceFactoryNinja() {
   const isOrderComplete = useMemo(() => bottles.every((bottle) => bottle.fill >= 1), [bottles]);
   const isMobileArena = size.width <= 820;
   const isSmallMobileArena = size.width <= 520;
+  const isFullscreenActive = isArenaExpanded || isNativeFullscreen;
   const bestScore = useMemo(() => {
     const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
     return Math.max(score, rankingBest, bestScoreLocal);
@@ -426,6 +429,32 @@ function JuiceFactoryNinja() {
     window.addEventListener("resize", updateSize);
     return () => window.removeEventListener("resize", updateSize);
   }, []);
+
+  useEffect(() => {
+    const syncFullscreenState = () => {
+      const nativeFullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+      setIsNativeFullscreen(nativeFullscreenElement === arenaRef.current);
+    };
+
+    document.addEventListener("fullscreenchange", syncFullscreenState);
+    document.addEventListener("webkitfullscreenchange", syncFullscreenState);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", syncFullscreenState);
+      document.removeEventListener("webkitfullscreenchange", syncFullscreenState);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isFullscreenActive) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isFullscreenActive]);
 
 
   useEffect(() => {
@@ -998,6 +1027,39 @@ function spawnLogic() {
     setTimeout(() => setSlashTrail([]), 40);
   }
 
+  async function expandArena() {
+    const node = arenaRef.current;
+    if (!node) return;
+
+    const requestFullscreen = node.requestFullscreen || node.webkitRequestFullscreen;
+    if (requestFullscreen) {
+      try {
+        await requestFullscreen.call(node);
+        return;
+      } catch {
+        // fallback para expansão via CSS quando fullscreen nativo não estiver disponível.
+      }
+    }
+
+    setIsArenaExpanded(true);
+  }
+
+  async function minimizeArena() {
+    const nativeFullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+    if (nativeFullscreenElement) {
+      const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exitFullscreen) {
+        try {
+          await exitFullscreen.call(document);
+        } catch {
+          // ignora falha e aplica fallback local.
+        }
+      }
+    }
+
+    setIsArenaExpanded(false);
+  }
+
   return (
     <section id="fabrica" style={{ padding: "48px 0 20px", background: "linear-gradient(180deg, #2d1206 0%, #130905 100%)" }}>
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: "0 14px" }}>
@@ -1013,22 +1075,58 @@ function spawnLogic() {
           onTouchMove={onPointerMove}
           onTouchEnd={onPointerUp}
           style={{
-            marginTop: 16,
+            marginTop: isFullscreenActive ? 0 : 16,
             position: "relative",
-            height: isSmallMobileArena ? "68vh" : isMobileArena ? "72vh" : "76vh",
+            height: isFullscreenActive ? "100vh" : isSmallMobileArena ? "68vh" : isMobileArena ? "72vh" : "76vh",
             minHeight: isSmallMobileArena ? 440 : isMobileArena ? 500 : 560,
+            width: "100%",
             overflow: "hidden",
-            borderRadius: 28,
+            borderRadius: isFullscreenActive ? 0 : 28,
             border: "2px solid rgba(67, 35, 14, 0.9)",
             background:
               "radial-gradient(900px 400px at 70% 0%, rgba(255,104,104,0.2), transparent 60%), radial-gradient(700px 300px at 10% 0%, rgba(255,186,85,0.22), transparent 60%), linear-gradient(180deg, #43230f, #2b170c)",
             boxShadow: "0 26px 60px rgba(6, 2, 1, 0.7), inset 0 0 40px rgba(0,0,0,0.28)",
             userSelect: "none",
             touchAction: "none",
+            ...(isFullscreenActive ? {
+              position: "fixed",
+              inset: 0,
+              width: "100vw",
+              minHeight: "100vh",
+              zIndex: 1200,
+            } : null),
             backgroundImage:
               "radial-gradient(1000px 480px at 52% -10%, rgba(255, 187, 79, 0.16), transparent 58%), linear-gradient(90deg, rgba(92,47,20,0.96) 0%, rgba(127,70,33,0.95) 22%, rgba(97,50,21,0.97) 40%, rgba(138,77,38,0.95) 61%, rgba(83,45,21,0.97) 100%), repeating-linear-gradient(90deg, rgba(58,31,13,0.5) 0px, rgba(58,31,13,0.5) 4px, transparent 4px, transparent 88px), repeating-linear-gradient(0deg, rgba(34,17,8,0.32) 0px, rgba(34,17,8,0.32) 2px, transparent 2px, transparent 138px)",
           }}
         >
+          {isMobileArena && (
+            <button
+              type="button"
+              onClick={isFullscreenActive ? minimizeArena : expandArena}
+              aria-label={isFullscreenActive ? "Minimizar tela do jogo" : "Expandir tela do jogo"}
+              title={isFullscreenActive ? "Minimizar" : "Expandir"}
+              style={{
+                position: "absolute",
+                top: 14,
+                right: 14,
+                width: 44,
+                height: 44,
+                borderRadius: 12,
+                border: "1px solid rgba(255,255,255,0.4)",
+                background: "rgba(15, 8, 4, 0.62)",
+                color: "#fff",
+                fontSize: 22,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "grid",
+                placeItems: "center",
+                zIndex: 1201,
+                boxShadow: "0 8px 20px rgba(0,0,0,0.35)",
+              }}
+            >
+              {isFullscreenActive ? "🗕" : "⛶"}
+            </button>
+          )}
           {WOOD_CRACKS.map((crack, index) => (
             <div
               key={`crack-${index}`}
