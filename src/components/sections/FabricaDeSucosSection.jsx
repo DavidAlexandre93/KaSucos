@@ -1048,7 +1048,14 @@ function spawnLogic() {
   }
 
   return (
-    <section id="fabrica" style={{ padding: isSmallMobileArena ? "30px 0 12px" : "48px 0 20px", background: "linear-gradient(180deg, #2d1206 0%, #130905 100%)" }}>
+    <section
+      id="fabrica"
+      style={{
+        padding: isSmallMobileArena ? "30px 0 12px" : "48px 0 20px",
+        background: "linear-gradient(180deg, #2d1206 0%, #130905 100%)",
+        scrollMarginTop: isMobileArena ? 112 : 88,
+      }}
+    >
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: isSmallMobileArena ? "0 10px" : "0 14px" }}>
         <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200", fontSize: "clamp(1.7rem, 4vw, 2.8rem)", lineHeight: 1.05 }}>Fábrica de sucos</h2>
         <p style={{ marginTop: isSmallMobileArena ? 6 : 10, color: "#ffd447", fontSize: "clamp(1.05rem, 3.6vw, 1.9rem)", fontWeight: 900, letterSpacing: isSmallMobileArena ? 0.3 : 1.2, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 2px 0 #5f3200" }}>Fruit Ninja KaSucos</p>
