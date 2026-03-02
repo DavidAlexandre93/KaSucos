@@ -27,6 +27,8 @@ const ORDER_TIME_LIMIT = 20;
 const FRUITS_PER_WAVE = 18;
 const CUT_MARK_LIFETIME = 850;
 const JUICE_DROP_LIFETIME = 520;
+const EXPLOSION_SPARK_LIFETIME = 420;
+const ARENA_FLASH_LIFETIME = 260;
 const MIN_ORDER_TIME_LIMIT = 9;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const BEST_SCORE_STORAGE_KEY = "kasucos-fabrica-best-score";
@@ -134,6 +136,22 @@ function createJuiceDrops(pointA, pointB, color) {
     vy: random(-3.8, -1.2),
     size: random(4, 9),
     color,
+    createdAt: Date.now(),
+  }));
+}
+
+
+function createExplosionSparks(item) {
+  const centerX = item.x + item.size / 2;
+  const centerY = item.y + item.size / 2;
+
+  return Array.from({ length: 16 }, (_, index) => ({
+    id: `${item.uid}-explosion-${index}-${Math.random()}`,
+    x: centerX + random(-8, 8),
+    y: centerY + random(-8, 8),
+    vx: random(-5.8, 5.8),
+    vy: random(-6.4, -1.8),
+    size: random(5, 14),
     createdAt: Date.now(),
   }));
 }
@@ -355,6 +373,8 @@ function JuiceFactoryNinja() {
   const [sliceBursts, setSliceBursts] = useState([]);
   const [cutMarks, setCutMarks] = useState([]);
   const [juiceDrops, setJuiceDrops] = useState([]);
+  const [explosionSparks, setExplosionSparks] = useState([]);
+  const [arenaFlash, setArenaFlash] = useState([]);
   const [isArenaExpanded, setIsArenaExpanded] = useState(false);
   const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
   const hasSubmittedScoreRef = useRef(false);
@@ -484,6 +504,8 @@ function JuiceFactoryNinja() {
     setSliceBursts([]);
     setCutMarks([]);
     setJuiceDrops([]);
+    setExplosionSparks([]);
+    setArenaFlash([]);
     lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
@@ -760,6 +782,17 @@ function spawnLogic() {
         }))
         .filter((drop) => Date.now() - drop.createdAt < JUICE_DROP_LIFETIME)
     );
+
+    setExplosionSparks((prev) =>
+      prev
+        .map((spark) => ({
+          ...spark,
+          x: spark.x + spark.vx,
+          y: spark.y + spark.vy,
+          vy: spark.vy + GRAVITY * 0.45,
+        }))
+        .filter((spark) => Date.now() - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
+    );
   }
 
   useEffect(() => {
@@ -803,6 +836,8 @@ function spawnLogic() {
 
     const splitEffects = [];
     const burstEffects = [];
+    const bombSparkEffects = [];
+    const bombFlashEffects = [];
 
     const remainingItems = [];
     for (const item of itemsRef.current) {
@@ -814,6 +849,13 @@ function spawnLogic() {
 
         if (item.kind === "bomb") {
           bombHits += 1;
+          bombSparkEffects.push(...createExplosionSparks(item));
+          bombFlashEffects.push({
+            id: `${item.uid}-flash-${Math.random()}`,
+            x: item.x + item.size / 2,
+            y: item.y + item.size / 2,
+            createdAt: Date.now(),
+          });
           continue;
         }
 
@@ -846,6 +888,9 @@ function spawnLogic() {
 
     if (bombHits > 0) {
       playSliceSound("explosion");
+      setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-80));
+      setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-8));
+      setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-14));
       setCombo(0);
       setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
       setToast(`💣 Bomba cortada! -${bombHits * 2}s.`);
@@ -905,6 +950,16 @@ function spawnLogic() {
 
     return () => window.clearTimeout(timer);
   }, [cutMarks]);
+
+  useEffect(() => {
+    if (arenaFlash.length === 0) return undefined;
+    const timer = window.setTimeout(() => {
+      setArenaFlash((old) => old.filter((flash) => Date.now() - flash.createdAt < ARENA_FLASH_LIFETIME));
+    }, 90);
+
+    return () => window.clearTimeout(timer);
+  }, [arenaFlash]);
+
 
   useEffect(() => {
     if (phase !== "play" || orderTimeLeft > 0) return;
@@ -1182,6 +1237,30 @@ function spawnLogic() {
           </div>
 
           <AnimatePresence>
+            {arenaFlash.map((flash) => (
+              <motion.div
+                key={flash.id}
+                initial={{ opacity: 0.55, scale: 0.2 }}
+                animate={{ opacity: 0, scale: 3.3 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.24 }}
+                style={{
+                  position: "absolute",
+                  left: flash.x,
+                  top: flash.y,
+                  width: 220,
+                  height: 220,
+                  borderRadius: "50%",
+                  transform: "translate(-50%, -50%)",
+                  background: "radial-gradient(circle, rgba(255,244,170,0.7), rgba(255,153,71,0.46) 38%, rgba(255,82,64,0.2) 66%, transparent 100%)",
+                  pointerEvents: "none",
+                  mixBlendMode: "screen",
+                }}
+              />
+            ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
             {cutMarks.map((mark) => (
               <motion.div
                 key={mark.id}
@@ -1287,6 +1366,29 @@ function spawnLogic() {
                   }}
                 />
               </motion.div>
+            ))}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {explosionSparks.map((spark) => (
+              <motion.div
+                key={spark.id}
+                initial={{ opacity: 0.95, scale: 0.35 }}
+                animate={{ opacity: 0.05, scale: 1.25 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.28 }}
+                style={{
+                  position: "absolute",
+                  left: spark.x,
+                  top: spark.y,
+                  width: spark.size,
+                  height: spark.size,
+                  borderRadius: "50%",
+                  background: "radial-gradient(circle, rgba(255,247,186,0.96), rgba(255,156,61,0.92) 58%, rgba(255,86,55,0.15) 100%)",
+                  boxShadow: "0 0 14px rgba(255,140,70,0.72)",
+                  pointerEvents: "none",
+                }}
+              />
             ))}
           </AnimatePresence>
 
