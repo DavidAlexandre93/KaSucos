@@ -330,6 +330,7 @@ function JuiceFactoryNinja() {
   const phaseRef = useRef("idle");
   const waveRef = useRef(1);
   const sizeRef = useRef({ width: 980, height: 700 });
+  const itemsRef = useRef([]);
   const lastActiveItemsAtRef = useRef(Date.now());
 
   const [size, setSize] = useState({ width: 980, height: 700 });
@@ -371,6 +372,7 @@ function JuiceFactoryNinja() {
   }, [size]);
 
   useEffect(() => {
+    itemsRef.current = items;
     if (items.length > 0) {
       lastActiveItemsAtRef.current = Date.now();
     }
@@ -468,6 +470,7 @@ function JuiceFactoryNinja() {
     cancelAnimationFrame(rafRef.current);
     lastSpawnAtRef.current = performance.now() - 1400;
     setItems([]);
+    itemsRef.current = [];
     setSlashTrail([]);
     setScore(0);
     setCombo(0);
@@ -707,7 +710,9 @@ function spawnLogic() {
       lastSpawnAtRef.current = now;
       const next = [...prev];
       next.push(createWaveItem(sizeRef.current.width, sizeRef.current.height, currentWave));
-      return next.slice(-config.maxItems);
+      const normalizedItems = next.slice(-config.maxItems);
+      itemsRef.current = normalizedItems;
+      return normalizedItems;
     });
   }
 
@@ -716,8 +721,8 @@ function spawnLogic() {
 
     rafRef.current = requestAnimationFrame(tick);
 
-    setItems((prev) =>
-      prev
+    setItems((prev) => {
+      const nextItems = prev
         .map((item) => ({
           ...item,
           x: item.x + item.vx,
@@ -725,8 +730,11 @@ function spawnLogic() {
           vy: item.vy + GRAVITY,
           rot: item.rot + item.rotVel,
         }))
-        .filter((item) => item.y < sizeRef.current.height + 120 && item.x > -140 && item.x < sizeRef.current.width + 140)
-    );
+        .filter((item) => item.y < sizeRef.current.height + 120 && item.x > -140 && item.x < sizeRef.current.width + 140);
+
+      itemsRef.current = nextItems;
+      return nextItems;
+    });
 
     spawnLogic();
 
@@ -776,7 +784,9 @@ function spawnLogic() {
       lastActiveItemsAtRef.current = Date.now();
       setItems((prev) => {
         if (prev.length > 0) return prev;
-        return [...prev, createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current)];
+        const nextItems = [...prev, createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current)];
+        itemsRef.current = nextItems;
+        return nextItems;
       });
     }, 380);
 
@@ -794,14 +804,17 @@ function spawnLogic() {
     const splitEffects = [];
     const burstEffects = [];
 
-    setItems((prev) =>
-      prev.filter((item) => {
+    const remainingItems = [];
+    for (const item of itemsRef.current) {
         const hit = intersectsSlash(item, pointA, pointB);
-        if (!hit) return true;
+        if (!hit) {
+          remainingItems.push(item);
+          continue;
+        }
 
         if (item.kind === "bomb") {
           bombHits += 1;
-          return false;
+          continue;
         }
 
         hits += 1;
@@ -817,10 +830,10 @@ function spawnLogic() {
         const pointMultiplier = item.kind === "doubleFruit" ? 2 : item.kind === "starFruit" ? 3 : 1;
         correctHits += 1;
         earnedPoints += basePoints * pointMultiplier;
+      }
 
-        return false;
-      })
-    );
+    itemsRef.current = remainingItems;
+    setItems(remainingItems);
 
     if (splitEffects.length > 0) {
       setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
