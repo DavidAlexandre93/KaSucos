@@ -24,6 +24,7 @@ const WOOD_CRACKS = [
 ];
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
+const FRUITS_PER_WAVE = 18;
 const CUT_MARK_LIFETIME = 850;
 const JUICE_DROP_LIFETIME = 520;
 const MIN_ORDER_TIME_LIMIT = 9;
@@ -318,16 +319,6 @@ function intersectsSlash(item, a, b) {
   return Math.hypot(cx - px, cy - py) <= radius;
 }
 
-function buildOrder() {
-  const pool = [...FRUITS].sort(() => Math.random() - 0.5);
-  return pool.slice(0, 3).map((fruit, index) => ({
-    slot: index,
-    fruitId: fruit.id,
-    emoji: fruit.emoji,
-    fill: 0,
-  }));
-}
-
 function JuiceFactoryNinja() {
   const arenaRef = useRef(null);
   const rafRef = useRef(null);
@@ -338,7 +329,6 @@ function JuiceFactoryNinja() {
   const lastSliceSoundAtRef = useRef(0);
   const phaseRef = useRef("idle");
   const waveRef = useRef(1);
-  const advancingWaveRef = useRef(false);
   const sizeRef = useRef({ width: 980, height: 700 });
   const lastActiveItemsAtRef = useRef(Date.now());
 
@@ -354,8 +344,8 @@ function JuiceFactoryNinja() {
   const [combo, setCombo] = useState(0);
   const [lives, setLives] = useState(3);
   const [wave, setWave] = useState(1);
+  const [waveProgress, setWaveProgress] = useState(0);
   const [orderTimeLeft, setOrderTimeLeft] = useState(ORDER_TIME_LIMIT);
-  const [bottles, setBottles] = useState(buildOrder);
   const [toast, setToast] = useState("");
   const [ranking, setRanking] = useState([]);
   const [rankingStatus, setRankingStatus] = useState("idle");
@@ -386,9 +376,6 @@ function JuiceFactoryNinja() {
     }
   }, [items.length]);
 
-  const expectedFruitIds = useMemo(() => bottles.map((x) => x.fruitId), [bottles]);
-  const totalFill = useMemo(() => bottles.reduce((acc, bottle) => acc + bottle.fill, 0) / 3, [bottles]);
-  const isOrderComplete = useMemo(() => bottles.every((bottle) => bottle.fill >= 1), [bottles]);
   const isMobileArena = size.width <= 820;
   const isSmallMobileArena = size.width <= 520;
   const isCompactArena = size.width <= 680;
@@ -486,10 +473,9 @@ function JuiceFactoryNinja() {
     setCombo(0);
     setLives(3);
     setWave(1);
+    setWaveProgress(0);
     waveRef.current = 1;
-    advancingWaveRef.current = false;
     setOrderTimeLeft(ORDER_TIME_LIMIT);
-    setBottles(buildOrder());
     setToast("");
     setSlicedPieces([]);
     setSliceBursts([]);
@@ -801,7 +787,6 @@ function spawnLogic() {
     if (phase !== "play") return;
 
     let hits = 0;
-    let wrong = 0;
     let bombHits = 0;
     let correctHits = 0;
     let earnedPoints = 0;
@@ -828,26 +813,10 @@ function spawnLogic() {
           color: item.color,
           createdAt: Date.now(),
         });
-        if (!expectedFruitIds.includes(item.fruitId)) {
-          wrong += 1;
-          return false;
-        }
-
-        const basePoints = 12 + combo * 2;
-        const pointMultiplier = item.kind === "doubleFruit" ? 2 : 1;
-        const starBonus = item.kind === "starFruit" ? 40 : 0;
+        const basePoints = 10 + combo * 2;
+        const pointMultiplier = item.kind === "doubleFruit" ? 2 : item.kind === "starFruit" ? 3 : 1;
         correctHits += 1;
-        earnedPoints += basePoints * pointMultiplier + starBonus;
-
-        setBottles((old) => {
-          let consumed = false;
-          return old.map((bottle) => {
-            if (consumed || bottle.fruitId !== item.fruitId || bottle.fill >= 1) return bottle;
-            consumed = true;
-            const fillAmount = item.kind === "doubleFruit" ? 0.5 : item.kind === "starFruit" ? 0.4 : 0.34;
-            return { ...bottle, fill: Math.min(1, bottle.fill + fillAmount) };
-          });
-        });
+        earnedPoints += basePoints * pointMultiplier;
 
         return false;
       })
@@ -856,9 +825,9 @@ function spawnLogic() {
     if (splitEffects.length > 0) {
       setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
       setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
-      const markColor = wrong > 0 ? "rgba(255,83,83,0.7)" : "rgba(225,29,72,0.62)";
+      const markColor = "rgba(225,29,72,0.62)";
       setCutMarks((old) => [...old, createCutMark(pointA, pointB, markColor)].slice(-14));
-      const splashColor = wrong > 0 ? "rgba(255,93,93,0.86)" : "rgba(248,47,79,0.84)";
+      const splashColor = "rgba(248,47,79,0.84)";
       setJuiceDrops((old) => [...old, ...createJuiceDrops(pointA, pointB, splashColor)].slice(-72));
     }
 
@@ -866,63 +835,35 @@ function spawnLogic() {
       playSliceSound("explosion");
       setCombo(0);
       setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
-      setToast(`💣 Bomba cortada! -${bombHits * 2}s no pedido.`);
-    }
-
-    if (wrong > 0) {
-      playSliceSound("wrong");
-      setLives((old) => {
-        const next = old - 1;
-        if (next <= 0) {
-          endGame("Fim de jogo: só corte as frutas do pedido!");
-          return 0;
-        }
-        return next;
-      });
-      setCombo(0);
-      setToast("Fruta errada! Foque no pedido da fábrica.");
+      setToast(`💣 Bomba cortada! -${bombHits * 2}s.`);
     }
 
     if (correctHits > 0) {
-      if (wrong === 0) {
-        playSliceSound("cleanSlice");
-        playSliceSound("slash");
-        playSliceSound("splat");
-        if (hits > 1 || combo + 1 >= 3) {
-          playSliceSound("combo");
-        }
-        setCombo((old) => old + 1);
+      playSliceSound("cleanSlice");
+      playSliceSound("slash");
+      playSliceSound("splat");
+      if (hits > 1 || combo + 1 >= 3) {
+        playSliceSound("combo");
       }
+      setCombo((old) => old + 1);
       setScore((old) => old + earnedPoints);
-      if (wrong > 0) {
-        setToast(`+${earnedPoints} pts, mas você também cortou fruta errada.`);
-      } else {
-        setToast(earnedPoints > correctHits * (12 + combo * 2) ? `Especial! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : "Corte perfeito!");
-      }
+      const hasMultiplier = earnedPoints > correctHits * (10 + combo * 2);
+      setToast(hasMultiplier ? `Especial x2/x3! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : `+${earnedPoints} pts`);
+      setWaveProgress((old) => {
+        const next = old + correctHits;
+        if (next < FRUITS_PER_WAVE) return next;
+
+        const extraWaves = Math.floor(next / FRUITS_PER_WAVE);
+        const updatedWave = waveRef.current + extraWaves;
+        waveRef.current = updatedWave;
+        setWave(updatedWave);
+        setScore((oldScore) => oldScore + extraWaves * (220 + waveRef.current * 18));
+        setOrderTimeLeft(getWaveSettings(updatedWave).orderTimeLimit);
+        setToast(`Onda ${updatedWave}! Frutas mais rápidas 🍍`);
+        return next % FRUITS_PER_WAVE;
+      });
     }
   }
-
-  useEffect(() => {
-    if (phase !== "play") return;
-
-    if (!isOrderComplete) {
-      advancingWaveRef.current = false;
-      return;
-    }
-
-    if (advancingWaveRef.current) return;
-    advancingWaveRef.current = true;
-
-    const currentWave = waveRef.current;
-    const nextWave = currentWave + 1;
-    waveRef.current = nextWave;
-
-    setScore((old) => old + 250 + currentWave * 20);
-    setWave(nextWave);
-    setOrderTimeLeft(getWaveSettings(nextWave).orderTimeLimit);
-    setBottles(buildOrder());
-    setToast(`Onda ${nextWave}! Mais frutas no ar e menos tempo ⏱️`);
-  }, [isOrderComplete, phase]);
 
   useEffect(() => {
     if (phase !== "play") return;
@@ -956,9 +897,8 @@ function spawnLogic() {
     if (phase !== "play" || orderTimeLeft > 0) return;
 
     setCombo(0);
-    setBottles(buildOrder());
     setOrderTimeLeft(getWaveSettings(wave).orderTimeLimit);
-    setToast("⏳ Tempo esgotado! Você perdeu 1 vida e o pedido foi reiniciado.");
+    setToast("⏳ Tempo esgotado! Você perdeu 1 vida.");
 
     setLives((old) => {
       const next = old - 1;
@@ -1188,60 +1128,18 @@ function spawnLogic() {
               <span>⚡x{Math.max(1, combo)}</span>
               <span>🫀{"❤️".repeat(lives)}</span>
               <span>🚚{wave}</span>
-              <span style={{ opacity: 0.85 }}>🟡2x • ⭐bônus • 💣-2s</span>
+              <span style={{ opacity: 0.85 }}>🟡 x2 • ⭐ x3 • 💣 -2s</span>
             </div>
           </div>
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: isMobileArena ? 8 : 12, flexWrap: "wrap" }}>
-              <div style={{ display: "flex", gap: isMobileArena ? 4 : 6, flexWrap: "wrap", alignItems: "flex-start" }}>
-                {bottles.map((bottle) => (
-                  <div key={bottle.slot} style={{ width: isSmallMobileArena ? 54 : isCompactArena ? 62 : isMobileArena ? 72 : 80, borderRadius: 10, border: "1px solid rgba(255,255,255,0.18)", padding: isSmallMobileArena ? 3 : isMobileArena ? 4 : 5, background: "rgba(0,0,0,0.3)", height: "fit-content", alignSelf: "flex-start" }}>
-                    <div style={{ fontWeight: 900, color: "white", marginBottom: 3, fontSize: isMobileArena ? 14 : 15, textAlign: "center" }}>{bottle.emoji}</div>
-                    <div style={{ display: "grid", justifyItems: "center" }}>
-                      <div
-                        style={{
-                          position: "relative",
-                          width: isSmallMobileArena ? 22 : isMobileArena ? 28 : 32,
-                          height: isSmallMobileArena ? 32 : isMobileArena ? 40 : 46,
-                          borderRadius: "11px 11px 12px 12px",
-                          border: "1.5px solid rgba(255,255,255,0.68)",
-                          background: "rgba(255,255,255,0.08)",
-                          overflow: "hidden",
-                          boxShadow: "inset 0 0 10px rgba(0,0,0,0.3)",
-                        }}
-                      >
-                        <div
-                          style={{
-                            position: "absolute",
-                            top: -6,
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                              width: isSmallMobileArena ? 10 : 12,
-                              height: isSmallMobileArena ? 7 : 8,
-                            borderRadius: "7px 7px 2px 2px",
-                            border: "1.5px solid rgba(255,255,255,0.68)",
-                            borderBottom: "none",
-                            background: "rgba(255,255,255,0.08)",
-                          }}
-                        />
-                        <div
-                          style={{
-                            position: "absolute",
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            height: `${Math.max(0, Math.min(1, bottle.fill)) * 100}%`,
-                          background: "linear-gradient(180deg,#ffe08a,#f5ab35)",
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
+            <div style={{ display: "grid", gap: 8, width: isSmallMobileArena ? 150 : 190 }}>
+              <div style={{ color: "#fff6df", fontWeight: 800, fontSize: isMobileArena ? 11 : 13, textShadow: "0 2px 0 rgba(62,31,2,0.95)" }}>
+                Progresso da onda: {waveProgress}/{FRUITS_PER_WAVE}
               </div>
-
-              <div style={{ marginLeft: "auto" }} />
+              <div style={{ height: 10, borderRadius: 999, border: "1px solid rgba(255,255,255,0.35)", background: "rgba(12,6,4,0.45)", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${(waveProgress / FRUITS_PER_WAVE) * 100}%`, background: "linear-gradient(90deg,#ffd544,#ff8c37)" }} />
+              </div>
             </div>
 
             {toast && (
@@ -1461,7 +1359,7 @@ function spawnLogic() {
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
-                <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte frutas do pedido, encha as garrafas a tempo e evite bombas." : `Pontuação final: ${score}`}</p>
+                <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte o máximo de frutas possível, ganhe mais pontos por sequência e desvie das bombas." : `Pontuação final: ${score}`}</p>
                 {!hasStoredPlayerName && (
                   <label style={{ display: "grid", gap: 6, textAlign: "left", marginBottom: 12 }}>
                     <span style={{ fontWeight: 700 }}>Nome para registro</span>
