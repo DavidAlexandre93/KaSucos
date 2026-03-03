@@ -3031,6 +3031,10 @@ body.site-party-mode::after {
 }
 
 @media (max-width: 860px) {
+  .site main {
+    padding-top: clamp(196px, 52vw, 232px);
+  }
+
   .brand {
     width: 100%;
     justify-content: center;
