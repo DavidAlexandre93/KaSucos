@@ -33,11 +33,32 @@ const MIN_ORDER_TIME_LIMIT = 9;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const BEST_SCORE_STORAGE_KEY = "kasucos-fabrica-best-score";
 const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
+const SETTINGS_STORAGE_KEY = "kasucos-fabrica-settings";
+const MISSION_PROGRESS_STORAGE_KEY = "kasucos-fabrica-mission-progress";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
 const SWIPE_VARIANT_COUNT = 7;
 const CLEAN_SLICE_VARIANT_COUNT = 3;
+const GAME_MODES = {
+  arcade: {
+    label: "Arcade",
+    description: "Cronômetro correndo, bombas tiram tempo e frutas perdidas tiram 2s.",
+    usesTimer: true,
+  },
+  classic: {
+    label: "Clássico",
+    description: "Sem cronômetro, mas perdeu fruta ou acertou bomba = perde vida.",
+    usesTimer: false,
+  },
+};
+const DAILY_MISSIONS = [
+  { id: "score-450", label: "Marque 450 pontos na partida", rewardText: "+200 pontos bônus", check: ({ score }) => score >= 450 },
+  { id: "combo-8", label: "Alcance combo x8", rewardText: "+1 vida (Clássico) / +6s (Arcade)", check: ({ maxCombo }) => maxCombo >= 8 },
+  { id: "wave-4", label: "Chegue até a onda 4", rewardText: "+220 pontos bônus", check: ({ wave }) => wave >= 4 },
+  { id: "clean-run", label: "Corte 20 frutas sem acertar bomba", rewardText: "+250 pontos bônus", check: ({ fruitsSliced, bombsSliced }) => fruitsSliced >= 20 && bombsSliced === 0 },
+];
+
 const random = (min, max) => Math.random() * (max - min) + min;
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -256,6 +277,54 @@ async function insertSupabaseScore(name, score) {
   }
 }
 
+
+function loadSettings() {
+  if (typeof window === "undefined") return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: true };
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}");
+    return {
+      mode: parsed.mode === "classic" ? "classic" : "arcade",
+      reducedEffects: Boolean(parsed.reducedEffects),
+      muteAudio: Boolean(parsed.muteAudio),
+      highContrast: Boolean(parsed.highContrast),
+      showTutorial: parsed.showTutorial !== false,
+    };
+  } catch {
+    return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: true };
+  }
+}
+
+function saveSettings(settings) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+}
+
+
+function getDailyMission() {
+  const dayNumber = Math.floor(Date.now() / 86400000);
+  return DAILY_MISSIONS[dayNumber % DAILY_MISSIONS.length];
+}
+
+function loadMissionProgress() {
+  if (typeof window === "undefined") return { completedCount: 0, lastCompletedMissionId: "" };
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(MISSION_PROGRESS_STORAGE_KEY) || "{}");
+    return {
+      completedCount: Number.isFinite(parsed.completedCount) ? Math.max(0, Math.floor(parsed.completedCount)) : 0,
+      lastCompletedMissionId: typeof parsed.lastCompletedMissionId === "string" ? parsed.lastCompletedMissionId : "",
+    };
+  } catch {
+    return { completedCount: 0, lastCompletedMissionId: "" };
+  }
+}
+
+function saveMissionProgress(progress) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(MISSION_PROGRESS_STORAGE_KEY, JSON.stringify(progress));
+}
+
 function createItem(width, height, speed = 1, forcedKind) {
   const roll = Math.random();
   const isBomb = forcedKind ? forcedKind === "bomb" : roll < 0.12;
@@ -377,6 +446,12 @@ function JuiceFactoryNinja() {
   const [arenaFlash, setArenaFlash] = useState([]);
   const [isArenaExpanded, setIsArenaExpanded] = useState(false);
   const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [missedStreak, setMissedStreak] = useState(0);
+  const [settings, setSettings] = useState(loadSettings);
+  const [runStats, setRunStats] = useState({ fruitsSliced: 0, bombsSliced: 0, maxCombo: 0 });
+  const [missionProgress, setMissionProgress] = useState(loadMissionProgress);
+  const [missionCompletedInRun, setMissionCompletedInRun] = useState(false);
   const hasSubmittedScoreRef = useRef(false);
 
   useEffect(() => {
@@ -399,9 +474,12 @@ function JuiceFactoryNinja() {
   }, [items.length]);
 
   const isMobileArena = size.width <= 820;
+  const isClassicMode = settings.mode === "classic";
+  const usesTimer = GAME_MODES[settings.mode]?.usesTimer ?? true;
   const isSmallMobileArena = size.width <= 520;
   const isCompactArena = size.width <= 680;
   const isFullscreenActive = isArenaExpanded || isNativeFullscreen;
+  const dailyMission = useMemo(() => getDailyMission(), []);
   const bestScore = useMemo(() => {
     const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
     return Math.max(score, rankingBest, bestScoreLocal);
@@ -442,6 +520,14 @@ function JuiceFactoryNinja() {
       document.removeEventListener("webkitfullscreenchange", syncFullscreenState);
     };
   }, []);
+
+  useEffect(() => {
+    saveSettings(settings);
+  }, [settings]);
+
+  useEffect(() => {
+    saveMissionProgress(missionProgress);
+  }, [missionProgress]);
 
   useEffect(() => {
     if (!isFullscreenActive) return undefined;
@@ -516,6 +602,10 @@ function JuiceFactoryNinja() {
     setJuiceDrops([]);
     setExplosionSparks([]);
     setArenaFlash([]);
+    setIsPaused(false);
+    setMissedStreak(0);
+    setRunStats({ fruitsSliced: 0, bombsSliced: 0, maxCombo: 0 });
+    setMissionCompletedInRun(false);
     lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
@@ -535,6 +625,7 @@ function JuiceFactoryNinja() {
     }
 
     setNameError("");
+    setSettings((old) => ({ ...old, showTutorial: false }));
     resetGame();
     setPhase("play");
   }
@@ -595,7 +686,7 @@ function JuiceFactoryNinja() {
   }
 
   function playSliceSound(type = "slice") {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || settings.muteAudio) return;
 
     if (!audioCtxRef.current) {
       const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -731,6 +822,7 @@ function JuiceFactoryNinja() {
 
 
 function spawnLogic() {
+    if (isPaused) return;
     const now = performance.now();
     const currentWave = waveRef.current;
     const config = getWaveSettings(currentWave);
@@ -749,20 +841,40 @@ function spawnLogic() {
   }
 
   function tick() {
-    if (phaseRef.current !== "play") return;
+    if (phaseRef.current !== "play" || isPaused) return;
 
     rafRef.current = requestAnimationFrame(tick);
 
     setItems((prev) => {
-      const nextItems = prev
-        .map((item) => ({
-          ...item,
-          x: item.x + item.vx,
-          y: item.y + item.vy,
-          vy: item.vy + GRAVITY,
-          rot: item.rot + item.rotVel,
-        }))
-        .filter((item) => item.y < sizeRef.current.height + 120 && item.x > -140 && item.x < sizeRef.current.width + 140);
+      const movedItems = prev.map((item) => ({
+        ...item,
+        x: item.x + item.vx,
+        y: item.y + item.vy,
+        vy: item.vy + GRAVITY,
+        rot: item.rot + item.rotVel,
+      }));
+
+      const escapedItems = movedItems.filter((item) => item.y >= sizeRef.current.height + 120 && item.kind !== "bomb");
+      const nextItems = movedItems.filter((item) => item.y < sizeRef.current.height + 120 && item.x > -140 && item.x < sizeRef.current.width + 140);
+
+      if (escapedItems.length > 0) {
+        setCombo(0);
+        if (isClassicMode) {
+          setToast(`❌ ${escapedItems.length} fruta(s) escaparam! -${escapedItems.length} vida(s).`);
+          setLives((old) => {
+            const next = Math.max(0, old - escapedItems.length);
+            if (next <= 0) {
+              endGame("Fim de jogo: frutas demais escaparam da esteira!");
+            }
+            return next;
+          });
+        } else {
+          const penalty = escapedItems.length * 2;
+          setToast(`⏱️ Frutas escaparam! -${penalty}s.`);
+          setOrderTimeLeft((old) => Math.max(0, old - penalty));
+          setMissedStreak((old) => old + escapedItems.length);
+        }
+      }
 
       itemsRef.current = nextItems;
       return nextItems;
@@ -815,10 +927,10 @@ function spawnLogic() {
     tick();
 
     return () => cancelAnimationFrame(rafRef.current);
-  }, [phase]);
+  }, [phase, isPaused]);
 
   useEffect(() => {
-    if (phase !== "play") return;
+    if (phase !== "play" || isPaused) return;
 
     const fallbackSpawner = window.setInterval(() => {
       const arenaIsEmptyForTooLong = Date.now() - lastActiveItemsAtRef.current > 1200;
@@ -837,7 +949,7 @@ function spawnLogic() {
   }, [phase]);
 
   function applySlice(pointA, pointB) {
-    if (phase !== "play") return;
+    if (phase !== "play" || isPaused) return;
 
     let hits = 0;
     let bombHits = 0;
@@ -897,13 +1009,23 @@ function spawnLogic() {
     }
 
     if (bombHits > 0) {
+      setRunStats((old) => ({ ...old, bombsSliced: old.bombsSliced + bombHits }));
       playSliceSound("explosion");
       setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-80));
       setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-8));
       setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-14));
       setCombo(0);
-      setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
-      setToast(`💣 Bomba cortada! -${bombHits * 2}s.`);
+      if (isClassicMode) {
+        setToast(`💣 Bomba cortada! -${bombHits} vida(s).`);
+        setLives((old) => {
+          const next = Math.max(0, old - bombHits);
+          if (next <= 0) endGame("Fim de jogo: você acertou bombas demais.");
+          return next;
+        });
+      } else {
+        setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
+        setToast(`💣 Bomba cortada! -${bombHits * 2}s.`);
+      }
     }
 
     if (correctHits > 0) {
@@ -914,6 +1036,11 @@ function spawnLogic() {
         playSliceSound("combo");
       }
       setCombo((old) => old + 1);
+      setRunStats((old) => ({
+        ...old,
+        fruitsSliced: old.fruitsSliced + correctHits,
+        maxCombo: Math.max(old.maxCombo, combo + 1),
+      }));
       setScore((old) => old + earnedPoints);
       const hasMultiplier = earnedPoints > correctHits * (10 + combo * 2);
       setToast(hasMultiplier ? `Especial x2/x3! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : `+${earnedPoints} pts`);
@@ -934,14 +1061,14 @@ function spawnLogic() {
   }
 
   useEffect(() => {
-    if (phase !== "play") return;
+    if (phase !== "play" || isPaused || !usesTimer) return;
 
     const timer = window.setInterval(() => {
       setOrderTimeLeft((old) => Math.max(0, old - 1));
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [phase]);
+  }, [phase, isPaused, usesTimer]);
 
   useEffect(() => {
     if (sliceBursts.length === 0) return undefined;
@@ -972,7 +1099,7 @@ function spawnLogic() {
 
 
   useEffect(() => {
-    if (phase !== "play" || orderTimeLeft > 0) return;
+    if (phase !== "play" || isPaused || !usesTimer || orderTimeLeft > 0) return;
 
     setCombo(0);
     setOrderTimeLeft(getWaveSettings(wave).orderTimeLimit);
@@ -986,7 +1113,55 @@ function spawnLogic() {
       }
       return next;
     });
-  }, [orderTimeLeft, phase]);
+  }, [orderTimeLeft, phase, isPaused, usesTimer, wave]);
+
+  useEffect(() => {
+    if (phase !== "play" || missionCompletedInRun) return;
+
+    const achieved = dailyMission.check({
+      score,
+      wave,
+      fruitsSliced: runStats.fruitsSliced,
+      bombsSliced: runStats.bombsSliced,
+      maxCombo: runStats.maxCombo,
+    });
+
+    if (!achieved) return;
+
+    setMissionCompletedInRun(true);
+    setMissionProgress((old) => ({
+      completedCount: old.completedCount + 1,
+      lastCompletedMissionId: dailyMission.id,
+    }));
+
+    if (isClassicMode) {
+      setLives((old) => Math.min(5, old + 1));
+      setScore((old) => old + 140);
+      setToast(`🎯 Missão concluída! +1 vida e +140 pts.`);
+      return;
+    }
+
+    setOrderTimeLeft((old) => old + 6);
+    setScore((old) => old + 200);
+    setToast(`🎯 Missão concluída! +6s e +200 pts.`);
+  }, [dailyMission, isClassicMode, missionCompletedInRun, phase, runStats, score, wave]);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.code === "Space" && phase === "play") {
+        event.preventDefault();
+        setIsPaused((old) => !old);
+      }
+
+      if (event.code === "Enter" && phase !== "play") {
+        event.preventDefault();
+        startGame();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [phase, playerName, settings.mode]);
 
   function toLocalPoint(ev) {
     const rect = arenaRef.current?.getBoundingClientRect();
@@ -996,7 +1171,7 @@ function spawnLogic() {
   }
 
   function onPointerDown(ev) {
-    if (phase !== "play") return;
+    if (phase !== "play" || isPaused) return;
     if ("touches" in ev) ev.preventDefault();
 
     const point = toLocalPoint(ev);
@@ -1005,7 +1180,7 @@ function spawnLogic() {
   }
 
   function onPointerMove(ev) {
-    if (phase !== "play") return;
+    if (phase !== "play" || isPaused) return;
     if ("touches" in ev) ev.preventDefault();
 
     const point = toLocalPoint(ev);
@@ -1101,10 +1276,10 @@ function spawnLogic() {
             width: "100%",
             overflow: "hidden",
             borderRadius: isFullscreenActive ? 0 : 28,
-            border: "2px solid rgba(67, 35, 14, 0.9)",
+            border: settings.highContrast ? "3px solid #fff" : "2px solid rgba(67, 35, 14, 0.9)",
             background:
               "radial-gradient(900px 400px at 70% 0%, rgba(255,104,104,0.2), transparent 60%), radial-gradient(700px 300px at 10% 0%, rgba(255,186,85,0.22), transparent 60%), linear-gradient(180deg, #43230f, #2b170c)",
-            boxShadow: "0 26px 60px rgba(6, 2, 1, 0.7), inset 0 0 40px rgba(0,0,0,0.28)",
+            boxShadow: settings.highContrast ? "0 0 0 2px #000 inset" : "0 26px 60px rgba(6, 2, 1, 0.7), inset 0 0 40px rgba(0,0,0,0.28)",
             userSelect: "none",
             touchAction: "none",
             ...(isFullscreenActive ? {
@@ -1147,6 +1322,28 @@ function spawnLogic() {
               {isFullscreenActive ? "🗕" : "⛶"}
             </button>
           )}
+
+          <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8, zIndex: 8 }}>
+            {phase === "play" && (
+              <button
+                type="button"
+                onClick={() => setIsPaused((old) => !old)}
+                style={{ border: "1px solid rgba(255,255,255,0.35)", borderRadius: 10, background: "rgba(15, 8, 4, 0.62)", color: "#fff", fontWeight: 800, padding: "6px 10px", cursor: "pointer" }}
+              >
+                {isPaused ? "▶ Retomar" : "⏸ Pausar"}
+              </button>
+            )}
+            {phase !== "play" && (
+              <button
+                type="button"
+                onClick={() => setSettings((old) => ({ ...old, showTutorial: !old.showTutorial }))}
+                style={{ border: "1px solid rgba(255,255,255,0.35)", borderRadius: 10, background: "rgba(15, 8, 4, 0.62)", color: "#fff", fontWeight: 800, padding: "6px 10px", cursor: "pointer" }}
+              >
+                {settings.showTutorial ? "Ocultar tutorial" : "Mostrar tutorial"}
+              </button>
+            )}
+          </div>
+
           {WOOD_CRACKS.map((crack, index) => (
             <div
               key={`crack-${index}`}
@@ -1168,7 +1365,7 @@ function spawnLogic() {
           <div style={{ position: "absolute", bottom: isCompactArena ? 10 : 16, left: isMobileArena ? 10 : 18, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900", maxWidth: isSmallMobileArena ? "54vw" : "unset" }}>
             <div style={{ display: "flex", alignItems: "center", gap: isMobileArena ? 6 : 10 }}>
               <span style={{ fontSize: isSmallMobileArena ? 24 : isMobileArena ? 28 : 38, lineHeight: 1 }}>🍉</span>
-              <strong style={{ fontSize: isSmallMobileArena ? 34 : isMobileArena ? 42 : 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>{score}</strong>
+<strong style={{ fontSize: isSmallMobileArena ? 34 : isMobileArena ? 42 : 58, lineHeight: 0.9, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", color: settings.highContrast ? "#fff" : undefined }}>{score}</strong>
             </div>
             <span style={{ color: "#79be46", fontSize: isSmallMobileArena ? 14 : isMobileArena ? 18 : 24, fontWeight: 900, lineHeight: 0.95, textTransform: "uppercase", fontFamily: "'Trebuchet MS', sans-serif", overflowWrap: "anywhere" }}>
               Best:{bestScore}
@@ -1187,7 +1384,7 @@ function spawnLogic() {
               maxWidth: isSmallMobileArena ? "62vw" : "unset",
             }}
           >
-            <div style={{ color: "#ffd339", fontSize: isSmallMobileArena ? 30 : isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{Math.floor(orderTimeLeft / 60)}:{String(orderTimeLeft % 60).padStart(2, "0")}</div>
+            <div style={{ color: "#ffd339", fontSize: isSmallMobileArena ? 30 : isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(orderTimeLeft % 60).padStart(2, "0")}` : "∞"}</div>
             <div
               style={{
                 marginTop: 2,
@@ -1207,17 +1404,23 @@ function spawnLogic() {
               <span>⚡x{Math.max(1, combo)}</span>
               <span>🫀{"❤️".repeat(lives)}</span>
               <span>🚚{wave}</span>
-              <span style={{ opacity: 0.85 }}>🟡 x2 • ⭐ x3 • 💣 -2s</span>
+              {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
+              <span style={{ opacity: 0.85 }}>🟡 x2 • ⭐ x3 • 💣 {isClassicMode ? "-1 vida" : "-2s"}</span>
             </div>
           </div>
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
-            <div style={{ display: "grid", gap: 8, width: isSmallMobileArena ? 150 : 190 }}>
+            <div style={{ display: "grid", gap: 8, width: isSmallMobileArena ? 170 : 260 }}>
               <div style={{ color: "#fff6df", fontWeight: 800, fontSize: isMobileArena ? 11 : 13, textShadow: "0 2px 0 rgba(62,31,2,0.95)" }}>
                 Progresso da onda: {waveProgress}/{FRUITS_PER_WAVE}
               </div>
               <div style={{ height: 10, borderRadius: 999, border: "1px solid rgba(255,255,255,0.35)", background: "rgba(12,6,4,0.45)", overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${(waveProgress / FRUITS_PER_WAVE) * 100}%`, background: "linear-gradient(90deg,#ffd544,#ff8c37)" }} />
+              </div>
+              <div style={{ border: "1px solid rgba(255,255,255,0.25)", background: "rgba(7,5,4,0.45)", borderRadius: 10, padding: "6px 8px", color: "#fff6df", fontSize: isMobileArena ? 10 : 12 }}>
+                <div style={{ fontWeight: 800 }}>🎯 Missão do dia</div>
+                <div>{dailyMission.label}</div>
+                <div style={{ opacity: 0.82 }}>{missionCompletedInRun ? "Concluída nesta rodada ✅" : dailyMission.rewardText}</div>
               </div>
             </div>
 
@@ -1247,7 +1450,7 @@ function spawnLogic() {
             )}
           </div>
 
-          <AnimatePresence>
+          {!settings.reducedEffects && <AnimatePresence>
             {arenaFlash.map((flash) => (
               <motion.div
                 key={flash.id}
@@ -1269,9 +1472,9 @@ function spawnLogic() {
                 }}
               />
             ))}
-          </AnimatePresence>
+          </AnimatePresence>}
 
-          <AnimatePresence>
+          {!settings.reducedEffects && <AnimatePresence>
             {cutMarks.map((mark) => (
               <motion.div
                 key={mark.id}
@@ -1294,7 +1497,7 @@ function spawnLogic() {
                 }}
               />
             ))}
-          </AnimatePresence>
+          </AnimatePresence>}
 
           <AnimatePresence>
             {items.map((item) => (
@@ -1380,7 +1583,7 @@ function spawnLogic() {
             ))}
           </AnimatePresence>
 
-          <AnimatePresence>
+          {!settings.reducedEffects && <AnimatePresence>
             {explosionSparks.map((spark) => (
               <motion.div
                 key={spark.id}
@@ -1401,9 +1604,9 @@ function spawnLogic() {
                 }}
               />
             ))}
-          </AnimatePresence>
+          </AnimatePresence>}
 
-          <AnimatePresence>
+          {!settings.reducedEffects && <AnimatePresence>
             {juiceDrops.map((drop) => (
               <motion.div
                 key={drop.id}
@@ -1424,9 +1627,9 @@ function spawnLogic() {
                 }}
               />
             ))}
-          </AnimatePresence>
+          </AnimatePresence>}
 
-          <AnimatePresence>
+          {!settings.reducedEffects && <AnimatePresence>
             {sliceBursts.map((burst) => (
               <motion.div
                 key={burst.id}
@@ -1448,7 +1651,7 @@ function spawnLogic() {
                 }}
               />
             ))}
-          </AnimatePresence>
+          </AnimatePresence>}
 
           {slashTrail.length > 1 && (
             <svg
@@ -1481,6 +1684,15 @@ function spawnLogic() {
             </svg>
           )}
 
+          {phase === "play" && isPaused && (
+            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(4,5,10,0.45)", zIndex: 20 }}>
+              <div style={{ padding: "14px 18px", borderRadius: 14, border: "1px solid rgba(255,255,255,0.3)", background: "rgba(24,20,44,0.92)", color: "#fff", textAlign: "center" }}>
+                <p style={{ margin: "0 0 10px", fontWeight: 800 }}>Pausado</p>
+                <button type="button" onClick={() => setIsPaused(false)} style={{ border: "none", borderRadius: 10, padding: "8px 12px", fontWeight: 800, cursor: "pointer", background: "#ff8a48", color: "#fff" }}>Continuar</button>
+              </div>
+            </div>
+          )}
+
           {phase !== "play" && (
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
@@ -1501,6 +1713,35 @@ function spawnLogic() {
                 )}
                 {hasStoredPlayerName && <p style={{ margin: "4px 0 12px", opacity: 0.9 }}>Jogando como <strong>{playerName}</strong>.</p>}
                 {nameError && <p style={{ marginTop: -4, marginBottom: 12, color: "#ff9a9a", fontWeight: 700 }}>{nameError}</p>}
+
+                <div style={{ display: "grid", gap: 8, textAlign: "left", marginBottom: 12 }}>
+                  <p style={{ margin: 0, fontWeight: 800 }}>Modo de jogo</p>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {Object.entries(GAME_MODES).map(([key, mode]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setSettings((old) => ({ ...old, mode: key }))}
+                        style={{
+                          border: "1px solid rgba(255,255,255,0.3)",
+                          borderRadius: 10,
+                          padding: "8px 10px",
+                          background: settings.mode === key ? "rgba(255,180,64,0.25)" : "rgba(255,255,255,0.06)",
+                          color: "white",
+                          fontWeight: 800,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {mode.label}
+                      </button>
+                    ))}
+                  </div>
+                  <p style={{ margin: 0, opacity: 0.9, fontSize: 12 }}>{GAME_MODES[settings.mode]?.description}</p>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.muteAudio} onChange={(ev) => setSettings((old) => ({ ...old, muteAudio: ev.target.checked }))} /> Sem áudio</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.reducedEffects} onChange={(ev) => setSettings((old) => ({ ...old, reducedEffects: ev.target.checked }))} /> Reduzir efeitos visuais</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.highContrast} onChange={(ev) => setSettings((old) => ({ ...old, highContrast: ev.target.checked }))} /> Alto contraste</label>
+                </div>
+
                 <button
                   type="button"
                   onClick={startGame}
@@ -1508,6 +1749,18 @@ function spawnLogic() {
                 >
                   {phase === "idle" ? "Começar" : "Jogar novamente"}
                 </button>
+
+                {(phase === "idle" || settings.showTutorial) && (
+                  <div style={{ marginTop: 14, marginBottom: 12, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
+                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>Tutorial rápido</p>
+                    <ul style={{ margin: 0, paddingLeft: 18 }}>
+                      <li>Deslize para cortar frutas e manter combos.</li>
+                      <li>💣 Bomba tira {isClassicMode ? "1 vida" : "2 segundos"}.</li>
+                      <li>Fruta perdida tira {isClassicMode ? "1 vida" : "2 segundos"}.</li>
+                      <li>🟡 vale x2 pontos e ⭐ vale x3 pontos.</li>
+                    </ul>
+                  </div>
+                )}
 
                 <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
                   <p style={{ margin: "0 0 8px", fontWeight: 800 }}>🏆 Top 10 pontuadores</p>
@@ -1520,6 +1773,7 @@ function spawnLogic() {
                     </div>
                   ))}
                   {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
+                  <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>Missões concluídas no perfil: {missionProgress.completedCount}</p>
                 </div>
               </div>
             </div>
