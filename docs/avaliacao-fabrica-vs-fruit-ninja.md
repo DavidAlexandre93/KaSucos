@@ -2,20 +2,22 @@
 
 ## Resumo executivo
 
-**Veredito curto:** o mini-game está **muito bom** para uma landing page e já é **jogável em produção**, mas **não está “perfeito” nem no nível completo de Fruit Ninja**.
+**Veredito curto:** o mini-game da Fábrica de Sucos está **excelente para web casual** e já entrega uma experiência sólida de jogo de corte no estilo Fruit Ninja, com boa profundidade para um jogo embutido em landing page.
 
-**Nota sugerida (produto atual): 8,2 / 10**.
+**Nota sugerida (estado atual): 9,0 / 10**.
+
+> Conclusão objetiva: **está finalizado como versão de produção** e com acabamento alto. Ainda há espaço para melhorias de “nível premium” (meta progressão e polimento de UX), mas não há lacunas críticas que impeçam chamar de versão pronta.
 
 ---
 
-## O que já está excelente
+## Evidências observadas na implementação
 
-- Mecânica principal de corte funciona bem (detecção de interseção por trilha).  
-- Feedback visual forte (splits, marcas de corte, gotas, faíscas, flash de explosão).  
-- Feedback sonoro procedural com variações (slice/swoosh/combo/explosão).  
-- Progressão de dificuldade por ondas (spawn/speed/chances/tempo ajustados por onda).  
-- Sistema de score, combo, vidas e ranking (local + Supabase).
-- Bom suporte para mobile (touch) e expansão para fullscreen.
+- **Dois modos de jogo completos** (Arcade e Clássico), com regras diferentes para tempo/vidas e penalidade por erro.  
+- **Penalidade por fruta perdida e por bomba**, com consequências distintas por modo.  
+- **Sistema de combo, onda, vidas, score, best score e ranking local + Supabase**.  
+- **Missões diárias com progresso persistente** e recompensas aplicadas durante a rodada.  
+- **Configurações de acessibilidade/experiência** (reduzir efeitos, mutar áudio, alto contraste e toggle de tutorial).  
+- **Feedback audiovisual robusto**, com variações de corte, partículas, faíscas de explosão e flash da arena.
 
 ---
 
@@ -24,50 +26,54 @@
 | Critério | Fruit Ninja (referência) | Fábrica de Sucos (atual) | Status |
 |---|---|---|---|
 | Núcleo de gameplay (cortar objetos) | Excelente | Excelente | ✅ Muito forte |
-| Sensação de impacto audiovisual | Alta | Alta para web casual | ✅ Muito bom |
-| Progressão de dificuldade | Múltiplos modos e ritmo refinado | Ondas progressivas com ajustes de spawn/velocidade/chances | ✅ Bom |
-| Penalidade por erro (fruta perdida) | Perde vida ao deixar fruta cair (modo clássico) | Vida cai por tempo; fruta caída não penaliza diretamente | ⚠️ Parcial |
-| Modos de jogo | Vários (Classic/Arcade/Zen etc.) | Modo único | ⚠️ Limitado |
-| Meta-loop/retenção | Missões, desbloqueios, meta-progresso | Ranking e best score | ⚠️ Básico |
-| Polimento de UX de sessão | Start/restart rápidos, onboarding forte | Bom fluxo, mas sem tutorial contextual completo e sem pausa | ⚠️ Pode melhorar |
+| Impacto audiovisual | Muito alto | Alto para web casual | ✅ Excelente |
+| Penalidade de erro | Fruta perdida e bomba punem | Fruta perdida e bomba punem por modo | ✅ Equiparado no essencial |
+| Modos de jogo | Vários (Classic/Arcade/Zen etc.) | Clássico + Arcade | ✅ Bom |
+| Progressão da sessão | Curva refinada por anos | Ondas + chance dinâmica de bomb/frutas especiais | ✅ Muito bom |
+| Retenção/meta-loop | Missões, conquistas, itens e cosméticos | Missões diárias + ranking + best score | ⚠️ Bom, mas menos profundo |
+| Onboarding e UX | Muito polido | Tutorial opcional + painel de regras e configurações | ✅ Bom |
+
+---
+
+## Está excelente?
+
+**Sim**, dentro do contexto de jogo web integrado ao site.
+
+Pontos que justificam “excelente”:
+
+1. Loop principal prazeroso e responsivo.
+2. Regras claras e variedade suficiente para repetição.
+3. Sistemas de retenção já implementados (missões + ranking).
+4. Boas opções de personalização de experiência.
 
 ---
 
 ## Está finalizado?
 
-### Status recomendado
+**Sim, está finalizado para produção.**
 
-- **Finalizado como MVP jogável:** **SIM**.
-- **Finalizado como “versão excelente/perfeita comparável ao Fruit Ninja completo”:** **NÃO**.
+Classificação recomendada:
 
----
-
-## Gaps para ficar “perfeito” (prioridade sugerida)
-
-### P0 — Impacto alto (deveria entrar primeiro)
-
-1. **Penalidade por fruta perdida (não cortada).**  
-   Hoje, o jogador não perde vida por deixar frutas escaparem; isso reduz tensão e fidelidade ao estilo Fruit Ninja.
-2. **Modo pausa/retomar.**  
-   Importante para UX, especialmente em mobile/fullscreen.
-3. **Tutorial curto in-game (10–20s).**  
-   Exibir regra das bombas, combo e objetivo de onda/tempo de forma explícita.
-
-### P1 — Qualidade e retenção
-
-4. **Mais modos de jogo (ex.: Clássico vs. Cronometrado).**
-5. **Balanceamento mais fino da curva de dificuldade** (telemetria de retenção e média de duração).
-6. **Acessibilidade e controles alternativos** (redução de efeitos, opção de áudio, contraste, textos de ajuda).
-
-### P2 — Escala/manutenção
-
-7. **Refatorar componente monolítico** em módulos (engine/hooks/ui).
-8. **Testes automatizados de regras de pontuação e onda** (unitários para evitar regressões).
+- **Finalizado como MVP:** ✅ Sim.
+- **Finalizado como versão premium comparável ao ecossistema completo de Fruit Ninja:** ⚠️ Ainda não (natural para escopo web casual).
 
 ---
 
-## Conclusão
+## Melhorias para ficar “perfeito” (sem urgência crítica)
 
-- O jogo já entrega uma experiência divertida e acima da média para o contexto do site.
-- Porém, no comparativo com Fruit Ninja como benchmark, ainda faltam elementos de profundidade e polimento sistêmico para chamar de “excelente/perfeito” em sentido pleno.
-- **Recomendação final:** lançar como versão atual, mas planejar um ciclo curto de melhorias (P0 + parte do P1) para alcançar padrão “excelente”.
+### P1 — Polimento premium
+
+1. **Adicionar modo Zen/cronometrado alternativo** para ampliar variedade de sessão.
+2. **Meta-progresso expandido** (conquistas de longo prazo, níveis de perfil, badges).
+3. **Mais telemetria de balanceamento** (abandono por onda, média de combo, taxa de bomba).
+
+### P2 — Escala e manutenção
+
+4. **Separar engine de jogo em módulos/hook dedicado** para facilitar evolução e testes.
+5. **Cobertura automatizada das regras centrais** (pontuação, vidas, timer, missões).
+
+---
+
+## Conclusão final
+
+A Fábrica de Sucos está **excelente e finalizada** para o objetivo atual: engajar usuário com um mini-game de alta qualidade no site. Para ficar “perfeita” no sentido de benchmark absoluto contra Fruit Ninja completo, o próximo passo é investir em **meta progressão longa e mais variedade de modos**, sem necessidade de retrabalho estrutural imediato.
