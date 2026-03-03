@@ -303,17 +303,19 @@ async function insertSupabaseScore(name, score, mode) {
 function loadSettings() {
   if (typeof window === "undefined") return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: true };
 
+  const isMobileDevice = window.matchMedia?.("(pointer: coarse)")?.matches || window.innerWidth <= 820;
+
   try {
     const parsed = JSON.parse(window.localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}");
     return {
       mode: parsed.mode === "classic" || parsed.mode === "zen" ? parsed.mode : "arcade",
       reducedEffects: Boolean(parsed.reducedEffects),
-      muteAudio: Boolean(parsed.muteAudio),
+      muteAudio: isMobileDevice ? true : Boolean(parsed.muteAudio),
       highContrast: Boolean(parsed.highContrast),
       showTutorial: parsed.showTutorial !== false,
     };
   } catch {
-    return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: true };
+    return { mode: "arcade", reducedEffects: false, muteAudio: isMobileDevice, highContrast: false, showTutorial: true };
   }
 }
 
@@ -533,6 +535,7 @@ function JuiceFactoryNinja() {
   }, [items.length]);
 
   const isMobileArena = size.width <= 820;
+  const isMobileDevice = typeof window !== "undefined" && (window.matchMedia?.("(pointer: coarse)")?.matches || window.innerWidth <= 820);
   const modeConfig = GAME_MODES[settings.mode] || GAME_MODES.arcade;
   const isClassicMode = settings.mode === "classic";
   const isZenMode = settings.mode === "zen";
@@ -581,6 +584,11 @@ function JuiceFactoryNinja() {
       document.removeEventListener("webkitfullscreenchange", syncFullscreenState);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isMobileDevice || settings.muteAudio) return;
+    setSettings((old) => ({ ...old, muteAudio: true }));
+  }, [isMobileDevice, settings.muteAudio]);
 
   useEffect(() => {
     saveSettings(settings);
@@ -781,7 +789,7 @@ function JuiceFactoryNinja() {
   }
 
   function playSliceSound(type = "slice") {
-    if (typeof window === "undefined" || settings.muteAudio) return;
+    if (typeof window === "undefined" || isMobileDevice || settings.muteAudio) return;
 
     if (!audioCtxRef.current) {
       const Ctx = window.AudioContext || window.webkitAudioContext;
