@@ -2,13 +2,13 @@ export const combos = [
   {
     title: { pt: "Combo Semana Leve", en: "Light Week Combo", es: "Combo Semana Ligera", fr: "Combo Semaine Légère" },
     detail: {
-      pt: "7 sucos + 3 bônus (10 no total)",
-      en: "7 juices + 3 bonus (10 total)",
-      es: "7 jugos + 3 bonus (10 en total)",
-      fr: "7 jus + 3 bonus (10 au total)",
+      pt: "10 sucos + 8 bônus (18 no total) • 500ml",
+      en: "10 juices + 8 bonus (18 total) • 500ml",
+      es: "10 jugos + 8 bonus (18 en total) • 500ml",
+      fr: "10 jus + 8 bonus (18 au total) • 500ml",
     },
-    visualMath: { base: 7, bonus: 3 },
-    price: "R$ 89,90",
+    visualMath: { base: 10, bonus: 8 },
+    price: "R$ 99,00",
   },
   {
     title: { pt: "Combo Performance", en: "Performance Combo", es: "Combo Rendimiento", fr: "Combo Performance" },
