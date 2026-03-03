@@ -203,13 +203,17 @@ function normalizePlayerName(name) {
   return name.replace(/\s+/g, " ").trim().slice(0, 24);
 }
 
-function sortRanking(entries = []) {
+function normalizeGameMode(mode) {
+  return mode === "classic" || mode === "zen" ? mode : "arcade";
+}
+
+function sortRanking(entries = [], limit = 10) {
   return [...entries]
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return new Date(a.date || 0).getTime() - new Date(b.date || 0).getTime();
     })
-    .slice(0, 10);
+    .slice(0, limit);
 }
 
 function loadLocalRanking() {
@@ -217,7 +221,10 @@ function loadLocalRanking() {
   try {
     const parsed = JSON.parse(window.localStorage.getItem(RANKING_STORAGE_KEY) || "[]");
     if (!Array.isArray(parsed)) return [];
-    return sortRanking(parsed);
+    return sortRanking(parsed.map((entry) => ({
+      ...entry,
+      mode: normalizeGameMode(entry.mode),
+    })), Number.POSITIVE_INFINITY);
   } catch {
     return [];
   }
@@ -225,7 +232,7 @@ function loadLocalRanking() {
 
 function saveLocalRanking(entries) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(entries)));
+  window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(entries, Number.POSITIVE_INFINITY)));
 }
 
 function loadBestScore() {
@@ -259,9 +266,9 @@ function savePlayerName(name) {
 
 async function fetchSupabaseRanking() {
   const url = new URL(`${SUPABASE_URL}/rest/v1/${RANKING_TABLE}`);
-  url.searchParams.set("select", "player_name,score,date");
+  url.searchParams.set("select", "player_name,score,date,mode");
   url.searchParams.set("order", "score.desc,date.asc");
-  url.searchParams.set("limit", "10");
+  url.searchParams.set("limit", "200");
 
   const response = await fetch(url.toString(), {
     headers: {
@@ -279,7 +286,8 @@ async function fetchSupabaseRanking() {
     player_name: item.player_name,
     score: Number(item.score) || 0,
     date: item.date,
-  })));
+    mode: normalizeGameMode(item.mode),
+  })), Number.POSITIVE_INFINITY);
 }
 
 async function insertSupabaseScore(name, score, mode) {
@@ -548,6 +556,24 @@ function JuiceFactoryNinja() {
     const rankingBest = ranking.reduce((max, entry) => Math.max(max, Number(entry.score) || 0), 0);
     return Math.max(score, rankingBest, bestScoreLocal);
   }, [ranking, score, bestScoreLocal]);
+  const rankingByMode = useMemo(() => {
+    const grouped = {
+      arcade: [],
+      classic: [],
+      zen: [],
+    };
+
+    ranking.forEach((entry) => {
+      const mode = normalizeGameMode(entry.mode);
+      grouped[mode].push(entry);
+    });
+
+    return {
+      arcade: sortRanking(grouped.arcade),
+      classic: sortRanking(grouped.classic),
+      zen: sortRanking(grouped.zen),
+    };
+  }, [ranking]);
 
   useEffect(() => {
     setBestScoreLocal((oldBest) => {
@@ -644,7 +670,7 @@ function JuiceFactoryNinja() {
         const entries = await fetchSupabaseRanking();
         setRanking(entries);
         setRankingStatus("ready");
-        setRankingMessage("Top 10 global carregado do Supabase.");
+        setRankingMessage("Top 10 por modo carregado do Supabase.");
       } catch {
         setRanking(loadLocalRanking());
         setRankingStatus("ready");
@@ -750,8 +776,8 @@ function JuiceFactoryNinja() {
     const localEntries = loadLocalRanking();
     const updated = sortRanking([
       ...localEntries,
-      { player_name: normalizedName, score: finalScore, date: new Date().toISOString() },
-    ]);
+      { player_name: normalizedName, score: finalScore, date: new Date().toISOString(), mode: settings.mode },
+    ], Number.POSITIVE_INFINITY);
     saveLocalRanking(updated);
     saveBestScore(Math.max(finalScore, ...updated.map((entry) => Number(entry.score) || 0), bestScoreLocal));
     setBestScoreLocal((oldBest) => Math.max(oldBest, finalScore, ...updated.map((entry) => Number(entry.score) || 0)));
@@ -1876,15 +1902,25 @@ function spawnLogic() {
                 )}
 
                 <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
-                  <p style={{ margin: "0 0 8px", fontWeight: 800 }}>🏆 Top 10 pontuadores</p>
+                  <p style={{ margin: "0 0 8px", fontWeight: 800 }}>🏆 Top 10 pontuadores por modo</p>
                   {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>Carregando ranking...</p>}
                   {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>Ainda sem pontuações registradas.</p>}
-                  {ranking.map((entry, index) => (
-                    <div key={`${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
-                      <span style={{ overflowWrap: "anywhere" }}>{index + 1}. {entry.player_name}</span>
-                      <span>{entry.score} pts</span>
-                    </div>
-                  ))}
+                  {Object.entries(GAME_MODES).map(([modeKey, modeData]) => {
+                    const modeRanking = rankingByMode[modeKey] || [];
+                    if (rankingStatus === "loading" || modeRanking.length === 0) return null;
+
+                    return (
+                      <div key={modeKey} style={{ marginTop: 10 }}>
+                        <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 800, opacity: 0.9 }}>{modeData.label}</p>
+                        {modeRanking.map((entry, index) => (
+                          <div key={`${modeKey}-${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
+                            <span style={{ overflowWrap: "anywhere" }}>{index + 1}. {entry.player_name}</span>
+                            <span>{entry.score} pts</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
                   {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
                   <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>Missões concluídas no perfil: {missionProgress.completedCount}</p>
                   <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>Conquistas desbloqueadas: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
