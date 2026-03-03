@@ -202,12 +202,12 @@ export default function App() {
   const openJuicesCatalog = (event) => {
     event?.preventDefault();
 
-    const juicesSection = document.getElementById("catalogo");
+    const juicesSection = document.getElementById("sucos-disponiveis-para-venda") || document.getElementById("catalogo");
     if (!juicesSection) return;
 
     juicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    const heading = juicesSection.querySelector(".section-title");
+    const heading = juicesSection.querySelector?.(".section-title") || juicesSection.closest("section")?.querySelector(".section-title");
     if (heading instanceof HTMLElement) {
       heading.setAttribute("tabindex", "-1");
       heading.focus({ preventScroll: true });
