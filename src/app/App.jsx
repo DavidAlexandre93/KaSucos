@@ -219,7 +219,11 @@ export default function App() {
 
     juicesSection.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    const heading = juicesSection.querySelector?.(".section-title") || juicesSection.closest("section")?.querySelector(".section-title");
+    if (typeof window !== "undefined" && window.location.hash !== "#catalogo") {
+      window.history.replaceState(null, "", "#catalogo");
+    }
+
+    const heading = juicesSection.querySelector(".section-title");
     if (heading instanceof HTMLElement) {
       heading.setAttribute("tabindex", "-1");
       heading.focus({ preventScroll: true });
