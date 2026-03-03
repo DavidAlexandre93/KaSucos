@@ -7,7 +7,7 @@ const bottleWord = {
   fr: "bouteilles",
 };
 
-function ComboMath({ combo, language }) {
+function ComboMath({ combo, language, title }) {
   const base = combo.visualMath?.base ?? 0;
   const bonus = combo.visualMath?.bonus ?? 0;
   const total = base + bonus;
@@ -18,7 +18,7 @@ function ComboMath({ combo, language }) {
       <div className="combo-bottles" aria-hidden="true">
         {Array.from({ length: total }).map((_, index) => (
           <span
-            key={`${combo.title}-bottle-${index}`}
+            key={`${title}-bottle-${index}`}
             className={`combo-bottle ${index >= base ? "bonus" : ""}`}
           />
         ))}
@@ -48,18 +48,22 @@ export function CombosSection({ combos, language, labels, onAddCombo }) {
       <div className="container">
         <h2 className="section-title fruit-ninja-title">{labels.title}</h2>
         <div className="grid combos">
-          {combos.map((combo) => (
-            <article key={combo.title} className={`combo ${combo.highlight ? "highlight" : ""}`}>
+          {combos.map((combo) => {
+            const localizedTitle = combo.title?.[language] ?? combo.title?.en ?? combo.title?.pt ?? combo.title;
+
+            return (
+            <article key={combo.id ?? localizedTitle} className={`combo ${combo.highlight ? "highlight" : ""}`}>
               {combo.highlight ? <span className="badge">{labels.mostOrdered}</span> : null}
-              <h3>{combo.title}</h3>
+              <h3>{localizedTitle}</h3>
               <p>{combo.detail[language] ?? combo.detail.en ?? combo.detail.pt}</p>
-              <ComboMath combo={combo} language={language} />
+              <ComboMath combo={combo} language={language} title={localizedTitle} />
               <strong>{combo.price}</strong>
               <button type="button" onClick={() => handleAddCombo(combo)}>
                 {labels.action}
               </button>
             </article>
-          ))}
+          );
+          })}
         </div>
       </div>
     </section>
