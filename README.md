@@ -90,3 +90,7 @@ Sem essas variáveis, o app funciona com ranking local (localStorage).
 - **CI (`.github/workflows/ci.yml`)**: valida apenas mudanças importantes do app (código, build/config e workflows), instalando dependências com `npm ci` e executando `npm run build`.
 - **CD (`.github/workflows/cd.yml`)**: em push na `main`, gera o build e publica automaticamente no GitHub Pages.
 - **Dependabot (`.github/dependabot.yml`)**: atualizações semanais para dependências npm e GitHub Actions.
+
+## Avaliação do mini-game (Fábrica de Sucos)
+
+- Relatório comparativo com Fruit Ninja e recomendações de evolução: `docs/avaliacao-fabrica-vs-fruit-ninja.md`.
