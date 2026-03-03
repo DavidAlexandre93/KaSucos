@@ -232,6 +232,7 @@ export default function App() {
         onLanguageChange={setLanguage}
         labels={t.nav}
         onBasketClick={openCart}
+        onJuicesClick={openJuicesCatalog}
         basketCount={totalItems}
       />
       <main>
