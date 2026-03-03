@@ -31,7 +31,7 @@ export const translations = {
       price: "R$ 16,00",
     },
     juices: { title: "sucos disponíveis para venda", availableToday: "Disponível hoje", lastUnits: "Últimas unidades", addToBasket: "Adicionar à cesta" },
-    combos: { title: "combos para economizar", mostOrdered: "Mais pedido", action: "Quero este" },
+    combos: { title: "Combos", mostOrdered: "Mais pedido", action: "Quero este" },
     benefits: {
       badge: "Escolha inteligente para o seu dia",
       title: "Por que escolher a KaSucos?",
@@ -122,7 +122,7 @@ export const translations = {
       price: "R$ 16,00",
     },
     juices: { title: "Juices available for sale", availableToday: "Available today", lastUnits: "Last units", addToBasket: "Add to basket" },
-    combos: { title: "Combos to save more", mostOrdered: "Most ordered", action: "I want this" },
+    combos: { title: "Combos", mostOrdered: "Most ordered", action: "I want this" },
     benefits: {
       title: "Why choose KaSucos?",
       items: [
@@ -210,7 +210,7 @@ export const translations = {
       price: "R$ 16,00",
     },
     juices: { title: "Jugos disponibles para la venta", availableToday: "Disponible hoy", lastUnits: "Últimas unidades", addToBasket: "Agregar a la cesta" },
-    combos: { title: "Combos para ahorrar", mostOrdered: "Más pedido", action: "Quiero este" },
+    combos: { title: "Combos", mostOrdered: "Más pedido", action: "Quiero este" },
     benefits: {
       title: "¿Por qué elegir KaSucos?",
       items: [
@@ -298,7 +298,7 @@ export const translations = {
       price: "R$ 16,00",
     },
     juices: { title: "Jus disponibles à la vente", availableToday: "Disponible aujourd'hui", lastUnits: "Dernières unités", addToBasket: "Ajouter au panier" },
-    combos: { title: "Combos pour économiser", mostOrdered: "Le plus demandé", action: "Je le veux" },
+    combos: { title: "Combos", mostOrdered: "Le plus demandé", action: "Je le veux" },
     benefits: {
       title: "Pourquoi choisir KaSucos ?",
       items: [
