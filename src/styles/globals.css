@@ -479,6 +479,10 @@ body.game-fullscreen-active .topbar nav {
   color: var(--white);
   font-weight: 700;
   text-decoration: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
 }
 
 .brand-logo {
