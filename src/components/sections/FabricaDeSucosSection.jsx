@@ -282,7 +282,7 @@ async function fetchSupabaseRanking() {
   })));
 }
 
-async function insertSupabaseScore(name, score) {
+async function insertSupabaseScore(name, score, mode) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${RANKING_TABLE}`, {
     method: "POST",
     headers: {
@@ -291,7 +291,7 @@ async function insertSupabaseScore(name, score) {
       apikey: SUPABASE_KEY,
       Authorization: `Bearer ${SUPABASE_KEY}`,
     },
-    body: JSON.stringify([{ player_name: name, score }]),
+    body: JSON.stringify([{ player_name: name, score, mode }]),
   });
 
   if (!response.ok) {
@@ -725,7 +725,7 @@ function JuiceFactoryNinja() {
 
     if (canUseSupabase) {
       try {
-        await insertSupabaseScore(normalizedName, finalScore);
+        await insertSupabaseScore(normalizedName, finalScore, settings.mode);
         const freshRanking = await fetchSupabaseRanking();
         const persistedBest = Math.max(finalScore, ...freshRanking.map((entry) => Number(entry.score) || 0), bestScoreLocal);
         saveBestScore(persistedBest);
