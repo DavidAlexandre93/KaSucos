@@ -194,9 +194,18 @@ export default function App() {
   };
 
   const viewCombos = () => {
-    setTimeout(() => {
-      document.getElementById("combos")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 0);
+    const combosSection = document.getElementById("combos");
+    if (!combosSection) return;
+
+    combosSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    window.history.replaceState(null, "", "#combos");
+
+    const heading = combosSection.querySelector(".section-title");
+    if (heading instanceof HTMLElement) {
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    }
   };
 
   const openJuicesCatalog = (event) => {
