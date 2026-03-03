@@ -88,7 +88,7 @@ export function InicioSection({ hero, onViewCombos, onBuyNow }) {
           <p className="hero-description">{hero.description}</p>
           <div className="hero-actions">
             <motion.a
-              href="#catalogo"
+              href="#sucos-disponiveis-para-venda"
               className="btn-primary"
               onClick={(event) => {
                 onBuyNow?.(event);

@@ -125,8 +125,8 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
   return (
     <header className="topbar">
       <div className="container topbar-inner">
-        <motion.a
-          href="#inicio"
+        <motion.button
+          type="button"
           className="brand"
           onClick={handleHomeClick}
           whileHover={{ scale: 1.02 }}
@@ -134,7 +134,7 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
         >
           <img className="brand-logo" src="/img/nav/logo.jpeg" alt="KaSucos" />
           <KaSucosWordmark className="brand-wordmark" />
-        </motion.a>
+        </motion.button>
 
         <div className="topbar-right">
           <button
