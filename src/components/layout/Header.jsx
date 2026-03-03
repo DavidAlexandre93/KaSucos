@@ -64,7 +64,7 @@ const COMPACT_NAV_LABELS = {
   },
 };
 
-export function Header({ language, onLanguageChange, labels, onBasketClick, basketCount = 0 }) {
+export function Header({ language, onLanguageChange, labels, onBasketClick, onJuicesClick, basketCount = 0 }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navRef = useRef(null);
 
@@ -170,7 +170,15 @@ export function Header({ language, onLanguageChange, labels, onBasketClick, bask
                 key={item.key}
                 href={item.href}
                 title={navLabels[item.key]}
-                onClick={(event) => scrollToSectionWithoutHash(event, item.href.slice(1))}
+                onClick={(event) => {
+                  if (item.key === "juices" && onJuicesClick) {
+                    onJuicesClick(event);
+                    closeMobileMenu();
+                    return;
+                  }
+
+                  scrollToSectionWithoutHash(event, item.href.slice(1));
+                }}
               >
                 {compactLabels[item.key]}
               </a>
