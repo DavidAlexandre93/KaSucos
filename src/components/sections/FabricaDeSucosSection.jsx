@@ -35,6 +35,7 @@ const BEST_SCORE_STORAGE_KEY = "kasucos-fabrica-best-score";
 const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
 const SETTINGS_STORAGE_KEY = "kasucos-fabrica-settings";
 const MISSION_PROGRESS_STORAGE_KEY = "kasucos-fabrica-mission-progress";
+const ACHIEVEMENTS_STORAGE_KEY = "kasucos-fabrica-achievements";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
@@ -45,13 +46,34 @@ const GAME_MODES = {
     label: "Arcade",
     description: "Cronômetro correndo, bombas tiram tempo e frutas perdidas tiram 2s.",
     usesTimer: true,
+    allowBombs: true,
+    penalizeMisses: true,
   },
   classic: {
     label: "Clássico",
     description: "Sem cronômetro, mas perdeu fruta ou acertou bomba = perde vida.",
     usesTimer: false,
+    allowBombs: true,
+    penalizeMisses: true,
+  },
+  zen: {
+    label: "Zen",
+    description: "90s sem bombas e sem penalidade por fruta perdida. Foque em combos.",
+    usesTimer: true,
+    roundTime: 90,
+    allowBombs: false,
+    penalizeMisses: false,
   },
 };
+const ACHIEVEMENT_DEFINITIONS = [
+  { id: "first-run", label: "Primeira produção", check: ({ totalRuns }) => totalRuns >= 1 },
+  { id: "score-800", label: "Mestre da mistura (800+ pts)", check: ({ score }) => score >= 800 },
+  { id: "wave-6", label: "Supervisor da esteira (onda 6)", check: ({ wave }) => wave >= 6 },
+  { id: "combo-10", label: "Combo lendário x10", check: ({ maxCombo }) => maxCombo >= 10 },
+  { id: "bomb-free", label: "Rodada limpa (25 frutas, sem bomba)", check: ({ fruitsSliced, bombsSliced }) => fruitsSliced >= 25 && bombsSliced === 0 },
+  { id: "mission-master", label: "Missão diária concluída", check: ({ missionCompletedInRun }) => missionCompletedInRun },
+  { id: "zen-pro", label: "Zen Pro (500+ no modo Zen)", check: ({ mode, score }) => mode === "zen" && score >= 500 },
+];
 const DAILY_MISSIONS = [
   { id: "score-450", label: "Marque 450 pontos na partida", rewardText: "+200 pontos bônus", check: ({ score }) => score >= 450 },
   { id: "combo-8", label: "Alcance combo x8", rewardText: "+1 vida (Clássico) / +6s (Arcade)", check: ({ maxCombo }) => maxCombo >= 8 },
@@ -284,7 +306,7 @@ function loadSettings() {
   try {
     const parsed = JSON.parse(window.localStorage.getItem(SETTINGS_STORAGE_KEY) || "{}");
     return {
-      mode: parsed.mode === "classic" ? "classic" : "arcade",
+      mode: parsed.mode === "classic" || parsed.mode === "zen" ? parsed.mode : "arcade",
       reducedEffects: Boolean(parsed.reducedEffects),
       muteAudio: Boolean(parsed.muteAudio),
       highContrast: Boolean(parsed.highContrast),
@@ -300,6 +322,26 @@ function saveSettings(settings) {
   window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
 }
 
+
+
+function loadAchievementsProgress() {
+  if (typeof window === "undefined") return { totalRuns: 0, unlockedIds: [] };
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(ACHIEVEMENTS_STORAGE_KEY) || "{}");
+    return {
+      totalRuns: Number.isFinite(parsed.totalRuns) ? Math.max(0, Math.floor(parsed.totalRuns)) : 0,
+      unlockedIds: Array.isArray(parsed.unlockedIds) ? parsed.unlockedIds.filter((id) => typeof id === "string") : [],
+    };
+  } catch {
+    return { totalRuns: 0, unlockedIds: [] };
+  }
+}
+
+function saveAchievementsProgress(progress) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ACHIEVEMENTS_STORAGE_KEY, JSON.stringify(progress));
+}
 
 function getDailyMission() {
   const dayNumber = Math.floor(Date.now() / 86400000);
@@ -372,8 +414,23 @@ function getWaveSettings(wave) {
   };
 }
 
-function createWaveItem(width, height, wave) {
+function createWaveItem(width, height, wave, options = {}) {
   const config = getWaveSettings(wave);
+  const allowBombs = options.allowBombs !== false;
+
+  if (!allowBombs) {
+    const specialRoll = Math.random();
+    const isDoubleFruit = specialRoll < config.doubleFruitChance;
+    const isStarFruit = !isDoubleFruit && specialRoll < config.doubleFruitChance + config.starFruitChance;
+
+    return createItem(
+      width,
+      height,
+      config.speed,
+      isDoubleFruit ? "doubleFruit" : isStarFruit ? "starFruit" : "fruit",
+    );
+  }
+
   const roll = Math.random();
   const isBomb = roll < config.bombChance;
   const isDoubleFruit = !isBomb && roll < config.bombChance + config.doubleFruitChance;
@@ -452,6 +509,8 @@ function JuiceFactoryNinja() {
   const [runStats, setRunStats] = useState({ fruitsSliced: 0, bombsSliced: 0, maxCombo: 0 });
   const [missionProgress, setMissionProgress] = useState(loadMissionProgress);
   const [missionCompletedInRun, setMissionCompletedInRun] = useState(false);
+  const [achievementsProgress, setAchievementsProgress] = useState(loadAchievementsProgress);
+  const [newAchievementsUnlocked, setNewAchievementsUnlocked] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
 
   useEffect(() => {
@@ -474,8 +533,10 @@ function JuiceFactoryNinja() {
   }, [items.length]);
 
   const isMobileArena = size.width <= 820;
+  const modeConfig = GAME_MODES[settings.mode] || GAME_MODES.arcade;
   const isClassicMode = settings.mode === "classic";
-  const usesTimer = GAME_MODES[settings.mode]?.usesTimer ?? true;
+  const isZenMode = settings.mode === "zen";
+  const usesTimer = modeConfig.usesTimer ?? true;
   const isSmallMobileArena = size.width <= 520;
   const isCompactArena = size.width <= 680;
   const isFullscreenActive = isArenaExpanded || isNativeFullscreen;
@@ -528,6 +589,10 @@ function JuiceFactoryNinja() {
   useEffect(() => {
     saveMissionProgress(missionProgress);
   }, [missionProgress]);
+
+  useEffect(() => {
+    saveAchievementsProgress(achievementsProgress);
+  }, [achievementsProgress]);
 
   useEffect(() => {
     if (!isFullscreenActive) return undefined;
@@ -594,7 +659,7 @@ function JuiceFactoryNinja() {
     setWave(1);
     setWaveProgress(0);
     waveRef.current = 1;
-    setOrderTimeLeft(ORDER_TIME_LIMIT);
+    setOrderTimeLeft(modeConfig.roundTime || ORDER_TIME_LIMIT);
     setToast("");
     setSlicedPieces([]);
     setSliceBursts([]);
@@ -606,6 +671,7 @@ function JuiceFactoryNinja() {
     setMissedStreak(0);
     setRunStats({ fruitsSliced: 0, bombsSliced: 0, maxCombo: 0 });
     setMissionCompletedInRun(false);
+    setNewAchievementsUnlocked([]);
     lastActiveItemsAtRef.current = Date.now();
     hasSubmittedScoreRef.current = false;
   }
@@ -628,6 +694,26 @@ function JuiceFactoryNinja() {
     setSettings((old) => ({ ...old, showTutorial: false }));
     resetGame();
     setPhase("play");
+  }
+
+
+  function updateAchievements(runSummary) {
+    setAchievementsProgress((old) => {
+      const unlockedSet = new Set(old.unlockedIds);
+      const nextRuns = old.totalRuns + 1;
+      const summary = { ...runSummary, totalRuns: nextRuns };
+      const newlyUnlocked = ACHIEVEMENT_DEFINITIONS
+        .filter((achievement) => !unlockedSet.has(achievement.id) && achievement.check(summary))
+        .map((achievement) => achievement.id);
+
+      newlyUnlocked.forEach((id) => unlockedSet.add(id));
+      setNewAchievementsUnlocked(newlyUnlocked);
+
+      return {
+        totalRuns: nextRuns,
+        unlockedIds: Array.from(unlockedSet),
+      };
+    });
   }
 
   async function persistScore(finalScore) {
@@ -669,6 +755,15 @@ function JuiceFactoryNinja() {
     setToast(message);
     setPhase("over");
     cancelAnimationFrame(rafRef.current);
+    updateAchievements({
+      mode: settings.mode,
+      score,
+      wave,
+      maxCombo: runStats.maxCombo,
+      fruitsSliced: runStats.fruitsSliced,
+      bombsSliced: runStats.bombsSliced,
+      missionCompletedInRun,
+    });
     void persistScore(score);
   }
 
@@ -833,7 +928,7 @@ function spawnLogic() {
 
       lastSpawnAtRef.current = now;
       const next = [...prev];
-      next.push(createWaveItem(sizeRef.current.width, sizeRef.current.height, currentWave));
+      next.push(createWaveItem(sizeRef.current.width, sizeRef.current.height, currentWave, { allowBombs: modeConfig.allowBombs }));
       const normalizedItems = next.slice(-config.maxItems);
       itemsRef.current = normalizedItems;
       return normalizedItems;
@@ -859,7 +954,10 @@ function spawnLogic() {
 
       if (escapedItems.length > 0) {
         setCombo(0);
-        if (isClassicMode) {
+        if (!modeConfig.penalizeMisses) {
+          setToast(`🥝 ${escapedItems.length} fruta(s) escaparam (modo Zen sem penalidade).`);
+          setMissedStreak((old) => old + escapedItems.length);
+        } else if (isClassicMode) {
           setToast(`❌ ${escapedItems.length} fruta(s) escaparam! -${escapedItems.length} vida(s).`);
           setLives((old) => {
             const next = Math.max(0, old - escapedItems.length);
@@ -939,7 +1037,7 @@ function spawnLogic() {
       lastActiveItemsAtRef.current = Date.now();
       setItems((prev) => {
         if (prev.length > 0) return prev;
-        const nextItems = [...prev, createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current)];
+        const nextItems = [...prev, createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current, { allowBombs: modeConfig.allowBombs })];
         itemsRef.current = nextItems;
         return nextItems;
       });
@@ -1053,7 +1151,9 @@ function spawnLogic() {
         waveRef.current = updatedWave;
         setWave(updatedWave);
         setScore((oldScore) => oldScore + extraWaves * (220 + waveRef.current * 18));
-        setOrderTimeLeft(getWaveSettings(updatedWave).orderTimeLimit);
+        if (!isZenMode) {
+          setOrderTimeLeft(getWaveSettings(updatedWave).orderTimeLimit);
+        }
         setToast(`Onda ${updatedWave}! Frutas mais rápidas 🍍`);
         return next % FRUITS_PER_WAVE;
       });
@@ -1101,6 +1201,11 @@ function spawnLogic() {
   useEffect(() => {
     if (phase !== "play" || isPaused || !usesTimer || orderTimeLeft > 0) return;
 
+    if (isZenMode) {
+      endGame("Fim de jogo: o turno Zen acabou! 🧘");
+      return;
+    }
+
     setCombo(0);
     setOrderTimeLeft(getWaveSettings(wave).orderTimeLimit);
     setToast("⏳ Tempo esgotado! Você perdeu 1 vida.");
@@ -1113,7 +1218,7 @@ function spawnLogic() {
       }
       return next;
     });
-  }, [orderTimeLeft, phase, isPaused, usesTimer, wave]);
+  }, [isZenMode, orderTimeLeft, phase, isPaused, usesTimer, wave]);
 
   useEffect(() => {
     if (phase !== "play" || missionCompletedInRun) return;
@@ -1402,10 +1507,10 @@ function spawnLogic() {
               }}
             >
               <span>⚡x{Math.max(1, combo)}</span>
-              <span>🫀{"❤️".repeat(lives)}</span>
+              <span>{isZenMode ? "🫀♾️" : `🫀${"❤️".repeat(lives)}`}</span>
               <span>🚚{wave}</span>
               {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
-              <span style={{ opacity: 0.85 }}>🟡 x2 • ⭐ x3 • 💣 {isClassicMode ? "-1 vida" : "-2s"}</span>
+              <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : `🟡 x2 • ⭐ x3 • 💣 ${isClassicMode ? "-1 vida" : "-2s"}`}</span>
             </div>
           </div>
 
@@ -1755,8 +1860,8 @@ function spawnLogic() {
                     <p style={{ margin: "0 0 6px", fontWeight: 900 }}>Tutorial rápido</p>
                     <ul style={{ margin: 0, paddingLeft: 18 }}>
                       <li>Deslize para cortar frutas e manter combos.</li>
-                      <li>💣 Bomba tira {isClassicMode ? "1 vida" : "2 segundos"}.</li>
-                      <li>Fruta perdida tira {isClassicMode ? "1 vida" : "2 segundos"}.</li>
+                      <li>{isZenMode ? "Sem bombas no modo Zen." : `💣 Bomba tira ${isClassicMode ? "1 vida" : "2 segundos"}.`}</li>
+                      <li>{isZenMode ? "Fruta perdida não penaliza no Zen." : `Fruta perdida tira ${isClassicMode ? "1 vida" : "2 segundos"}.`}</li>
                       <li>🟡 vale x2 pontos e ⭐ vale x3 pontos.</li>
                     </ul>
                   </div>
@@ -1774,6 +1879,12 @@ function spawnLogic() {
                   ))}
                   {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
                   <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>Missões concluídas no perfil: {missionProgress.completedCount}</p>
+                  <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>Conquistas desbloqueadas: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
+                  {newAchievementsUnlocked.length > 0 && (
+                    <p style={{ margin: "6px 0 0", fontSize: 12, color: "#9ff5aa", fontWeight: 700 }}>
+                      🏅 Nova(s): {newAchievementsUnlocked.map((id) => ACHIEVEMENT_DEFINITIONS.find((item) => item.id === id)?.label || id).join(" • ")}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
