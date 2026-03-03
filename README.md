@@ -85,6 +85,47 @@ VITE_SUPABASE_RANKING_TABLE=game_scores
 
 Sem essas variáveis, o app funciona com ranking local (localStorage).
 
+
+## Likes do blog (Supabase)
+
+Para persistir e carregar os likes das postagens em `Dicas e Informações`:
+
+1. Execute este SQL no editor SQL do Supabase:
+
+```sql
+create table if not exists public.blog_likes (
+  post_id text primary key,
+  likes integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.blog_likes enable row level security;
+
+create policy "read_blog_likes" on public.blog_likes
+for select
+to anon
+using (true);
+
+create policy "upsert_blog_likes" on public.blog_likes
+for insert
+to anon
+with check (true);
+
+create policy "update_blog_likes" on public.blog_likes
+for update
+to anon
+using (true)
+with check (true);
+```
+
+2. Configure também no `.env`:
+
+```bash
+VITE_SUPABASE_LIKES_TABLE=blog_likes
+```
+
+Sem essa tabela/variável, os likes continuam funcionando localmente com `localStorage`.
+
 ## CI/CD
 
 - **CI (`.github/workflows/ci.yml`)**: valida apenas mudanças importantes do app (código, build/config e workflows), instalando dependências com `npm ci` e executando `npm run build`.
