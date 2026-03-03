@@ -1,6 +1,6 @@
 export const combos = [
   {
-    title: "Combo Semana Leve",
+    title: { pt: "Combo Semana Leve", en: "Light Week Combo", es: "Combo Semana Ligera", fr: "Combo Semaine Légère" },
     detail: {
       pt: "7 sucos + 3 bônus (10 no total)",
       en: "7 juices + 3 bonus (10 total)",
@@ -11,7 +11,7 @@ export const combos = [
     price: "R$ 89,90",
   },
   {
-    title: "Combo Performance",
+    title: { pt: "Combo Performance", en: "Performance Combo", es: "Combo Rendimiento", fr: "Combo Performance" },
     detail: {
       pt: "10 sucos + 5 bônus (15 no total)",
       en: "10 juices + 5 bonus (15 total)",
@@ -23,7 +23,7 @@ export const combos = [
     highlight: true,
   },
   {
-    title: "Combo Família",
+    title: { pt: "Combo Família", en: "Family Combo", es: "Combo Familia", fr: "Combo Famille" },
     detail: {
       pt: "14 sucos + 7 bônus (21 no total)",
       en: "14 juices + 7 bonus (21 total)",
