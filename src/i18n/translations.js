@@ -23,7 +23,7 @@ export const translations = {
     customJuice: {
       title: "Monte seu Suco",
       description: "Escolha até duas frutas para criar sua combinação perfeita.",
-      fruits: ["Acerola", "Laranja", "Abacaxi", "Limão", "Maracujá", "Morango"],
+      fruits: ["Laranja", "Abacaxi", "Goiaba", "Maracujá", "Melancia"],
       limitMessage: "Selecione 2 frutas para montar seu suco.",
       resultPlaceholder: "Selecione 2 frutas para ver sua mistura.",
       resultReady: "Seu suco personalizado: {combo}",
@@ -122,7 +122,7 @@ export const translations = {
     customJuice: {
       title: "Build your Juice",
       description: "Choose up to two fruits to create your perfect blend.",
-      fruits: ["Acerola", "Orange", "Pineapple", "Lemon", "Passion Fruit", "Strawberry"],
+      fruits: ["Orange", "Pineapple", "Guava", "Passion Fruit", "Watermelon"],
       limitMessage: "Select 2 fruits to build your juice.",
       resultPlaceholder: "Select 2 fruits to preview your blend.",
       resultReady: "Your custom juice: {combo}",
@@ -219,7 +219,7 @@ export const translations = {
     customJuice: {
       title: "Arma tu Jugo",
       description: "Elige hasta dos frutas para crear tu combinación perfecta.",
-      fruits: ["Acerola", "Naranja", "Piña", "Limón", "Maracuyá", "Fresa"],
+      fruits: ["Naranja", "Piña", "Guayaba", "Maracuyá", "Sandía"],
       limitMessage: "Selecciona 2 frutas para armar tu jugo.",
       resultPlaceholder: "Selecciona 2 frutas para ver tu mezcla.",
       resultReady: "Tu jugo personalizado: {combo}",
@@ -316,7 +316,7 @@ export const translations = {
     customJuice: {
       title: "Composez votre Jus",
       description: "Choisissez jusqu'à deux fruits pour créer votre mélange parfait.",
-      fruits: ["Acérola", "Orange", "Ananas", "Citron", "Fruit de la passion", "Fraise"],
+      fruits: ["Orange", "Ananas", "Goyave", "Fruit de la passion", "Pastèque"],
       limitMessage: "Sélectionnez 2 fruits pour composer votre jus.",
       resultPlaceholder: "Sélectionnez 2 fruits pour voir votre mélange.",
       resultReady: "Votre jus personnalisé : {combo}",
