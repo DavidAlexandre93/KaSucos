@@ -36,16 +36,17 @@ export function SucosSection({ sucos, language, title, labels, onAddJuice, getJu
         <div className="grid cards">
           {sucos.map((suco) => {
             const quantity = getJuiceQuantity?.(suco) ?? 0;
+            const juiceName = typeof suco.name === "string" ? suco.name : suco.name?.[language] ?? suco.name?.en ?? suco.name?.pt ?? "";
 
             return (
-              <motion.article key={suco.name} className="card" {...cardMotion}>
+              <motion.article key={juiceName} className="card" {...cardMotion}>
                 <span className="card-slash" aria-hidden="true" />
                 <div className="card-media">
-                  <img className="card-bottle" src={suco.image} alt={suco.name} loading="lazy" />
+                  <img className="card-bottle" src={suco.image} alt={juiceName} loading="lazy" />
                 </div>
                 <div className="card-body">
                   <span className="tag">{suco.tag[language] ?? suco.tag.en ?? suco.tag.pt}</span>
-                  <h3>{suco.name}</h3>
+                  <h3>{juiceName}</h3>
                   <p>{suco.description[language] ?? suco.description.en ?? suco.description.pt}</p>
                   <small className="availability">{labels[suco.availabilityKey]}</small>
                   <div className="card-footer">

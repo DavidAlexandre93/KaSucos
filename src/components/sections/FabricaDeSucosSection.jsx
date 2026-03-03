@@ -473,7 +473,127 @@ function intersectsSlash(item, a, b) {
   return Math.hypot(cx - px, cy - py) <= radius;
 }
 
-function JuiceFactoryNinja() {
+
+const FACTORY_I18N = {
+  pt: {
+    title: "Fábrica de sucos",
+    gameTitleIdle: "Fruit Ninja da Fábrica",
+    gameOver: "Fim da partida",
+    gameDescIdle: "Corte o máximo de frutas possível, ganhe mais pontos por sequência e desvie das bombas.",
+    nameLabel: "Nome para registro",
+    gameMode: "Modo de jogo",
+    muteAudio: "Sem áudio",
+    reduceEffects: "Reduzir efeitos visuais",
+    highContrast: "Alto contraste",
+    start: "Começar",
+    playAgain: "Jogar novamente",
+    tutorial: "Tutorial rápido",
+    tutorialCut: "Deslize para cortar frutas e manter combos.",
+    noBombsZen: "Sem bombas no modo Zen.",
+    bombPenaltyClassic: "1 vida",
+    bombPenaltyArcade: "2 segundos",
+    missPenaltyClassic: "1 vida",
+    missPenaltyArcade: "2 segundos",
+    bonusText: "🟡 vale x2 pontos e ⭐ vale x3 pontos.",
+    top10: "🏆 Top 10 pontuadores por modo",
+    loading: "Carregando ranking...",
+    noScores: "Ainda sem pontuações registradas.",
+    profileMissions: "Missões concluídas no perfil",
+    achievements: "Conquistas desbloqueadas",
+    newOnes: "🏅 Nova(s)",
+    points: "pts",
+    missionDone: "Concluída nesta rodada ✅",
+  },
+  en: {
+    title: "Juice Factory",
+    gameTitleIdle: "Factory Fruit Ninja",
+    gameOver: "Game over",
+    gameDescIdle: "Slice as many fruits as you can, earn more points with streaks and dodge bombs.",
+    nameLabel: "Name for ranking",
+    gameMode: "Game mode",
+    muteAudio: "Mute audio",
+    reduceEffects: "Reduce visual effects",
+    highContrast: "High contrast",
+    start: "Start",
+    playAgain: "Play again",
+    tutorial: "Quick tutorial",
+    tutorialCut: "Swipe to slice fruits and keep combos.",
+    noBombsZen: "No bombs in Zen mode.",
+    bombPenaltyClassic: "1 life",
+    bombPenaltyArcade: "2 seconds",
+    missPenaltyClassic: "1 life",
+    missPenaltyArcade: "2 seconds",
+    bonusText: "🟡 is worth x2 points and ⭐ is worth x3 points.",
+    top10: "🏆 Top 10 players by mode",
+    loading: "Loading ranking...",
+    noScores: "No scores yet.",
+    profileMissions: "Missions completed on profile",
+    achievements: "Unlocked achievements",
+    newOnes: "🏅 New",
+    points: "pts",
+    missionDone: "Completed in this run ✅",
+  },
+  es: {
+    title: "Fábrica de jugos",
+    gameTitleIdle: "Fruit Ninja de la Fábrica",
+    gameOver: "Fin de la partida",
+    gameDescIdle: "Corta la mayor cantidad de frutas posible, gana más puntos por rachas y evita las bombas.",
+    nameLabel: "Nombre para ranking",
+    gameMode: "Modo de juego",
+    muteAudio: "Sin audio",
+    reduceEffects: "Reducir efectos visuales",
+    highContrast: "Alto contraste",
+    start: "Comenzar",
+    playAgain: "Jugar de nuevo",
+    tutorial: "Tutorial rápido",
+    tutorialCut: "Desliza para cortar frutas y mantener combos.",
+    noBombsZen: "Sin bombas en el modo Zen.",
+    bombPenaltyClassic: "1 vida",
+    bombPenaltyArcade: "2 segundos",
+    missPenaltyClassic: "1 vida",
+    missPenaltyArcade: "2 segundos",
+    bonusText: "🟡 vale x2 puntos y ⭐ vale x3 puntos.",
+    top10: "🏆 Top 10 puntuadores por modo",
+    loading: "Cargando ranking...",
+    noScores: "Aún no hay puntuaciones registradas.",
+    profileMissions: "Misiones completadas en el perfil",
+    achievements: "Logros desbloqueados",
+    newOnes: "🏅 Nuevo(s)",
+    points: "pts",
+    missionDone: "Completada en esta ronda ✅",
+  },
+  fr: {
+    title: "Usine à jus",
+    gameTitleIdle: "Fruit Ninja de l'Usine",
+    gameOver: "Fin de partie",
+    gameDescIdle: "Coupez un maximum de fruits, gagnez plus de points en série et évitez les bombes.",
+    nameLabel: "Nom pour le classement",
+    gameMode: "Mode de jeu",
+    muteAudio: "Sans audio",
+    reduceEffects: "Réduire les effets visuels",
+    highContrast: "Contraste élevé",
+    start: "Commencer",
+    playAgain: "Rejouer",
+    tutorial: "Tutoriel rapide",
+    tutorialCut: "Glissez pour couper les fruits et maintenir les combos.",
+    noBombsZen: "Pas de bombes en mode Zen.",
+    bombPenaltyClassic: "1 vie",
+    bombPenaltyArcade: "2 secondes",
+    missPenaltyClassic: "1 vie",
+    missPenaltyArcade: "2 secondes",
+    bonusText: "🟡 vaut x2 points et ⭐ vaut x3 points.",
+    top10: "🏆 Top 10 des scores par mode",
+    loading: "Chargement du classement...",
+    noScores: "Pas encore de scores enregistrés.",
+    profileMissions: "Missions complétées sur le profil",
+    achievements: "Succès débloqués",
+    newOnes: "🏅 Nouveau(x)",
+    points: "pts",
+    missionDone: "Terminée pendant cette partie ✅",
+  },
+};
+
+function JuiceFactoryNinja({ language = "pt" }) {
   const arenaRef = useRef(null);
   const rafRef = useRef(null);
   const slashRef = useRef([]);
@@ -522,6 +642,7 @@ function JuiceFactoryNinja() {
   const [achievementsProgress, setAchievementsProgress] = useState(loadAchievementsProgress);
   const [newAchievementsUnlocked, setNewAchievementsUnlocked] = useState([]);
   const hasSubmittedScoreRef = useRef(false);
+  const ui = FACTORY_I18N[language] ?? FACTORY_I18N.en;
 
   useEffect(() => {
     phaseRef.current = phase;
@@ -1175,7 +1296,7 @@ function spawnLogic() {
       }));
       setScore((old) => old + earnedPoints);
       const hasMultiplier = earnedPoints > correctHits * (10 + combo * 2);
-      setToast(hasMultiplier ? `Especial x2/x3! +${earnedPoints} pts` : hits > 1 ? `Combo x${combo + 1}!` : `+${earnedPoints} pts`);
+      setToast(hasMultiplier ? `Especial x2/x3! +${earnedPoints} ${ui.points}` : hits > 1 ? `Combo x${combo + 1}!` : `+${earnedPoints} ${ui.points}`);
       setWaveProgress((old) => {
         const next = old + correctHits;
         if (next < FRUITS_PER_WAVE) return next;
@@ -1276,13 +1397,13 @@ function spawnLogic() {
     if (isClassicMode) {
       setLives((old) => Math.min(5, old + 1));
       setScore((old) => old + 140);
-      setToast(`🎯 Missão concluída! +1 vida e +140 pts.`);
+      setToast(`🎯 Missão concluída! +1 vida e +140 ${ui.points}.`);
       return;
     }
 
     setOrderTimeLeft((old) => old + 6);
     setScore((old) => old + 200);
-    setToast(`🎯 Missão concluída! +6s e +200 pts.`);
+    setToast(`🎯 Missão concluída! +6s e +200 ${ui.points}.`);
   }, [dailyMission, isClassicMode, missionCompletedInRun, phase, runStats, score, wave]);
 
   useEffect(() => {
@@ -1396,7 +1517,7 @@ function spawnLogic() {
       }}
     >
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: isSmallMobileArena ? "0 10px" : "0 14px" }}>
-        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200", fontSize: "clamp(1.7rem, 4vw, 2.8rem)", lineHeight: 1.05 }}>Fábrica de sucos</h2>
+        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200", fontSize: "clamp(1.7rem, 4vw, 2.8rem)", lineHeight: 1.05 }}>{ui.title}</h2>
         <p style={{ marginTop: isSmallMobileArena ? 6 : 10, color: "#ffd447", fontSize: "clamp(1.05rem, 3.6vw, 1.9rem)", fontWeight: 900, letterSpacing: isSmallMobileArena ? 0.3 : 1.2, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 2px 0 #5f3200" }}>Fruit Ninja KaSucos</p>
         <div
           ref={arenaRef}
@@ -1559,7 +1680,7 @@ function spawnLogic() {
               <div style={{ border: "1px solid rgba(255,255,255,0.25)", background: "rgba(7,5,4,0.45)", borderRadius: 10, padding: "6px 8px", color: "#fff6df", fontSize: isMobileArena ? 10 : 12 }}>
                 <div style={{ fontWeight: 800 }}>🎯 Missão do dia</div>
                 <div>{dailyMission.label}</div>
-                <div style={{ opacity: 0.82 }}>{missionCompletedInRun ? "Concluída nesta rodada ✅" : dailyMission.rewardText}</div>
+                <div style={{ opacity: 0.82 }}>{missionCompletedInRun ? ui.missionDone : dailyMission.rewardText}</div>
               </div>
             </div>
 
@@ -1835,11 +1956,11 @@ function spawnLogic() {
           {phase !== "play" && (
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
-                <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
-                <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte o máximo de frutas possível, ganhe mais pontos por sequência e desvie das bombas." : `Pontuação final: ${score}`}</p>
+                <h3 style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameTitleIdle : ui.gameOver}</h3>
+                <p style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameDescIdle : `Pontuação final: ${score}`}</p>
                 {!hasStoredPlayerName && (
                   <label style={{ display: "grid", gap: 6, textAlign: "left", marginBottom: 12 }}>
-                    <span style={{ fontWeight: 700 }}>Nome para registro</span>
+                    <span style={{ fontWeight: 700 }}>{ui.nameLabel}</span>
                     <input
                       type="text"
                       value={playerName}
@@ -1854,7 +1975,7 @@ function spawnLogic() {
                 {nameError && <p style={{ marginTop: -4, marginBottom: 12, color: "#ff9a9a", fontWeight: 700 }}>{nameError}</p>}
 
                 <div style={{ display: "grid", gap: 8, textAlign: "left", marginBottom: 12 }}>
-                  <p style={{ margin: 0, fontWeight: 800 }}>Modo de jogo</p>
+                  <p style={{ margin: 0, fontWeight: 800 }}>{ui.gameMode}</p>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {Object.entries(GAME_MODES).map(([key, mode]) => (
                       <button
@@ -1876,9 +1997,9 @@ function spawnLogic() {
                     ))}
                   </div>
                   <p style={{ margin: 0, opacity: 0.9, fontSize: 12 }}>{GAME_MODES[settings.mode]?.description}</p>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.muteAudio} onChange={(ev) => setSettings((old) => ({ ...old, muteAudio: ev.target.checked }))} /> Sem áudio</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.reducedEffects} onChange={(ev) => setSettings((old) => ({ ...old, reducedEffects: ev.target.checked }))} /> Reduzir efeitos visuais</label>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.highContrast} onChange={(ev) => setSettings((old) => ({ ...old, highContrast: ev.target.checked }))} /> Alto contraste</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.muteAudio} onChange={(ev) => setSettings((old) => ({ ...old, muteAudio: ev.target.checked }))} /> {ui.muteAudio}</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.reducedEffects} onChange={(ev) => setSettings((old) => ({ ...old, reducedEffects: ev.target.checked }))} /> {ui.reduceEffects}</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700 }}><input type="checkbox" checked={settings.highContrast} onChange={(ev) => setSettings((old) => ({ ...old, highContrast: ev.target.checked }))} /> {ui.highContrast}</label>
                 </div>
 
                 <button
@@ -1886,25 +2007,25 @@ function spawnLogic() {
                   onClick={startGame}
                   style={{ border: "none", padding: "12px 20px", borderRadius: 12, background: "linear-gradient(90deg,#ff7a3b,#f4465a)", color: "white", fontWeight: 900, cursor: "pointer" }}
                 >
-                  {phase === "idle" ? "Começar" : "Jogar novamente"}
+                  {phase === "idle" ? ui.start : ui.playAgain}
                 </button>
 
                 {(phase === "idle" || settings.showTutorial) && (
                   <div style={{ marginTop: 14, marginBottom: 12, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
-                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>Tutorial rápido</p>
+                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
                     <ul style={{ margin: 0, paddingLeft: 18 }}>
-                      <li>Deslize para cortar frutas e manter combos.</li>
-                      <li>{isZenMode ? "Sem bombas no modo Zen." : `💣 Bomba tira ${isClassicMode ? "1 vida" : "2 segundos"}.`}</li>
-                      <li>{isZenMode ? "Fruta perdida não penaliza no Zen." : `Fruta perdida tira ${isClassicMode ? "1 vida" : "2 segundos"}.`}</li>
-                      <li>🟡 vale x2 pontos e ⭐ vale x3 pontos.</li>
+                      <li>{ui.tutorialCut}</li>
+                      <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
+                      <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
+                      <li>{ui.bonusText}</li>
                     </ul>
                   </div>
                 )}
 
                 <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
-                  <p style={{ margin: "0 0 8px", fontWeight: 800 }}>🏆 Top 10 pontuadores por modo</p>
-                  {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>Carregando ranking...</p>}
-                  {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>Ainda sem pontuações registradas.</p>}
+                  <p style={{ margin: "0 0 8px", fontWeight: 800 }}>{ui.top10}</p>
+                  {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>{ui.loading}</p>}
+                  {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>{ui.noScores}</p>}
                   {Object.entries(GAME_MODES).map(([modeKey, modeData]) => {
                     const modeRanking = rankingByMode[modeKey] || [];
                     if (rankingStatus === "loading" || modeRanking.length === 0) return null;
@@ -1915,18 +2036,18 @@ function spawnLogic() {
                         {modeRanking.map((entry, index) => (
                           <div key={`${modeKey}-${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
                             <span style={{ overflowWrap: "anywhere" }}>{index + 1}. {entry.player_name}</span>
-                            <span>{entry.score} pts</span>
+                            <span>{entry.score} {ui.points}</span>
                           </div>
                         ))}
                       </div>
                     );
                   })}
                   {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
-                  <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>Missões concluídas no perfil: {missionProgress.completedCount}</p>
-                  <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>Conquistas desbloqueadas: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
+                  <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.profileMissions}: {missionProgress.completedCount}</p>
+                  <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.achievements}: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
                   {newAchievementsUnlocked.length > 0 && (
                     <p style={{ margin: "6px 0 0", fontSize: 12, color: "#9ff5aa", fontWeight: 700 }}>
-                      🏅 Nova(s): {newAchievementsUnlocked.map((id) => ACHIEVEMENT_DEFINITIONS.find((item) => item.id === id)?.label || id).join(" • ")}
+                      {ui.newOnes}: {newAchievementsUnlocked.map((id) => ACHIEVEMENT_DEFINITIONS.find((item) => item.id === id)?.label || id).join(" • ")}
                     </p>
                   )}
                 </div>
@@ -1939,6 +2060,6 @@ function spawnLogic() {
   );
 }
 
-export function FabricaDeSucosSection() {
-  return <JuiceFactoryNinja />;
+export function FabricaDeSucosSection({ language }) {
+  return <JuiceFactoryNinja language={language} />;
 }

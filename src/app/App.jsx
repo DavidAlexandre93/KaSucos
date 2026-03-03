@@ -136,9 +136,16 @@ export default function App() {
     { scope: siteRef, dependencies: [] },
   );
 
+
+  const getLocalizedProductName = (product) => {
+    const rawName = product.title ?? product.name;
+    if (typeof rawName === "string") return rawName;
+    return rawName?.[language] ?? rawName?.en ?? rawName?.pt ?? "";
+  };
+
   const addItem = (product, typeLabel) => {
     setCartItems((current) => {
-      const id = product.title || product.name;
+      const id = getLocalizedProductName(product);
       const existing = current.find((item) => item.id === id);
 
       if (existing) {
@@ -174,7 +181,7 @@ export default function App() {
   const totalLabel = formatBRL(totalAmount);
 
   const getJuiceQuantity = (juice) => {
-    const id = juice.title || juice.name;
+    const id = getLocalizedProductName(juice);
     return cartItems.find((item) => item.id === id)?.quantity ?? 0;
   };
 
@@ -290,7 +297,7 @@ export default function App() {
             <CheckoutSection checkout={t.checkout} total={totalLabel} items={cartItems} whatsappPhone={WHATSAPP_PHONE} contact={t.contact} />
           </MotionSection>
         ) : null}
-        <FabricaDeSucosSection />
+        <FabricaDeSucosSection language={language} />
         <MotionSection>
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
