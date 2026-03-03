@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "kasucos-blog-likes";
 const USER_LIKES_STORAGE_KEY = "kasucos-blog-user-likes";
@@ -65,8 +65,12 @@ async function saveLikeToSupabase(postId, likes) {
   });
 }
 
+function getDefaultLikes(posts) {
+  return Object.fromEntries(posts.map((post) => [post.id, 0]));
+}
+
 function getInitialLikes(posts) {
-  const defaultLikes = Object.fromEntries(posts.map((post) => [post.id, 0]));
+  const defaultLikes = getDefaultLikes(posts);
 
   if (typeof window === "undefined") {
     return defaultLikes;
@@ -102,38 +106,31 @@ export function DicasInformacoesSection({ blog }) {
   const [isSyncingLikes, setIsSyncingLikes] = useState(false);
   const sectionRef = useRef(null);
 
-  useEffect(() => {
-    let isMounted = true;
+  const syncLikes = useCallback(async () => {
+    if (!posts.length) return;
 
-    const syncLikes = async () => {
-      if (!posts.length) return;
+    setIsSyncingLikes(true);
+    try {
+      const defaults = getDefaultLikes(posts);
+      const remoteLikes = await fetchLikesFromSupabase(posts.map((post) => post.id));
+      const merged = { ...defaults, ...remoteLikes };
 
-      setIsSyncingLikes(true);
-      try {
-        const remoteLikes = await fetchLikesFromSupabase(posts.map((post) => post.id));
-        if (!isMounted || !Object.keys(remoteLikes).length) return;
-
-        setLikesByPost((previous) => {
-          const merged = { ...previous, ...remoteLikes };
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-          return merged;
-        });
-      } catch {
-        // fallback keeps local likes when Supabase is unavailable
-      } finally {
-        if (isMounted) {
-          setIsSyncingLikes(false);
-        }
-      }
-    };
-
-    syncLikes();
-
-    return () => {
-      isMounted = false;
-    };
+      setLikesByPost(merged);
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    } catch {
+      // fallback keeps local likes when Supabase is unavailable
+    } finally {
+      setIsSyncingLikes(false);
+    }
   }, [posts]);
 
+  useEffect(() => {
+    if (!posts.length) return;
+
+    setLikesByPost(getInitialLikes(posts));
+    setUserLikesByPost(getInitialUserLikes(posts));
+    syncLikes();
+  }, [posts, syncLikes]);
 
   if (!posts.length) {
     return null;
@@ -142,25 +139,31 @@ export function DicasInformacoesSection({ blog }) {
   const handleLike = (postId) => {
     setUserLikesByPost((previousUserLikes) => {
       const userAlreadyLiked = Boolean(previousUserLikes[postId]);
+      if (userAlreadyLiked) {
+        return previousUserLikes;
+      }
+
       const nextUserLikes = {
         ...previousUserLikes,
-        [postId]: !userAlreadyLiked,
+        [postId]: true,
       };
 
       window.localStorage.setItem(USER_LIKES_STORAGE_KEY, JSON.stringify(nextUserLikes));
 
       setLikesByPost((previousLikes) => {
         const currentLikes = previousLikes[postId] ?? 0;
-        const nextLikeCount = userAlreadyLiked ? Math.max(0, currentLikes - 1) : currentLikes + 1;
+        const nextLikeCount = currentLikes + 1;
         const nextLikes = {
           ...previousLikes,
           [postId]: nextLikeCount,
         };
 
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextLikes));
-        saveLikeToSupabase(postId, nextLikeCount).catch(() => {
-          // fallback keeps local likes when Supabase is unavailable
-        });
+        saveLikeToSupabase(postId, nextLikeCount)
+          .then(() => syncLikes())
+          .catch(() => {
+            // fallback keeps local likes when Supabase is unavailable
+          });
 
         return nextLikes;
       });
