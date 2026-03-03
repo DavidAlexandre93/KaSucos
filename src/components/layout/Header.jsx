@@ -15,7 +15,7 @@ const COMPACT_NAV_LABELS = {
   pt: {
     home: "Início",
     juices: "Sucos",
-    buildYourJuice: "Monte",
+    buildYourJuice: "Monte seu Suco",
     combos: "Combos",
     tipsInfo: "Dicas",
     testimonials: "Avaliações",
