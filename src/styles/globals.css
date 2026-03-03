@@ -453,6 +453,17 @@ body.splash-lock {
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+body.game-fullscreen-active .topbar {
+  background: transparent;
+  backdrop-filter: none;
+  border-bottom-color: transparent;
+  z-index: 1;
+}
+
+body.game-fullscreen-active .topbar nav {
+  background: rgba(40, 18, 84, 0.35);
+}
+
 .topbar-inner {
   min-height: clamp(120px, 14vw, 224px);
   display: flex;

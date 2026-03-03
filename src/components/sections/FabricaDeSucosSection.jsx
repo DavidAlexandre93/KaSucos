@@ -454,6 +454,16 @@ function JuiceFactoryNinja() {
     };
   }, [isFullscreenActive]);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+
+    document.body.classList.toggle("game-fullscreen-active", isFullscreenActive);
+
+    return () => {
+      document.body.classList.remove("game-fullscreen-active");
+    };
+  }, [isFullscreenActive]);
+
 
   useEffect(() => {
     return () => cancelAnimationFrame(rafRef.current);
@@ -1101,7 +1111,8 @@ function spawnLogic() {
               position: "fixed",
               inset: 0,
               width: "100vw",
-              minHeight: "100dvh",
+              height: "100svh",
+              minHeight: "100svh",
               zIndex: 1200,
             } : null),
             backgroundImage:
