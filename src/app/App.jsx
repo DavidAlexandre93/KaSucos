@@ -273,9 +273,7 @@ export default function App() {
             <CheckoutSection checkout={t.checkout} total={totalLabel} items={cartItems} whatsappPhone={WHATSAPP_PHONE} contact={t.contact} />
           </MotionSection>
         ) : null}
-        <MotionSection delay={0.12}>
-          <FabricaDeSucosSection />
-        </MotionSection>
+        <FabricaDeSucosSection />
         <MotionSection>
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
