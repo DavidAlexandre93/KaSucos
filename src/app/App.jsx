@@ -180,9 +180,12 @@ export default function App() {
 
   const openCart = () => {
     setShowCart(true);
-    setShowCheckout(totalItems > 0);
+    const hasItems = totalItems > 0;
+    setShowCheckout(hasItems);
+
+    const targetSectionId = hasItems ? "finalizar" : "cesta";
     setTimeout(() => {
-      document.getElementById("cesta")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById(targetSectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 0);
   };
 
