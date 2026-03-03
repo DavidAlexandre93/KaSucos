@@ -74,6 +74,49 @@ const ACHIEVEMENT_DEFINITIONS = [
   { id: "mission-master", label: "Missão diária concluída", check: ({ missionCompletedInRun }) => missionCompletedInRun },
   { id: "zen-pro", label: "Zen Pro (500+ no modo Zen)", check: ({ mode, score }) => mode === "zen" && score >= 500 },
 ];
+const GAME_UI_TEXT = {
+  pt: {
+    sectionTitle: "Fábrica de sucos",
+    gameTitleIdle: "Fruit Ninja da Fábrica",
+    gameOverTitle: "Fim da partida",
+    gameDescription: "Corte o máximo de frutas possível, ganhe mais pontos por sequência e desvie das bombas.",
+    finalScore: "Pontuação final: {score}",
+    modeLabel: "Modo de jogo",
+    start: "Começar",
+    restart: "Jogar novamente",
+  },
+  en: {
+    sectionTitle: "Juice Factory",
+    gameTitleIdle: "Factory Fruit Ninja",
+    gameOverTitle: "Match over",
+    gameDescription: "Slice as many fruits as possible, earn more points for streaks, and avoid bombs.",
+    finalScore: "Final score: {score}",
+    modeLabel: "Game mode",
+    start: "Start",
+    restart: "Play again",
+  },
+  es: {
+    sectionTitle: "Fábrica de jugos",
+    gameTitleIdle: "Fruit Ninja de la Fábrica",
+    gameOverTitle: "Fin de la partida",
+    gameDescription: "Corta la mayor cantidad de frutas posible, gana más puntos por rachas y evita las bombas.",
+    finalScore: "Puntuación final: {score}",
+    modeLabel: "Modo de juego",
+    start: "Comenzar",
+    restart: "Jugar de nuevo",
+  },
+  fr: {
+    sectionTitle: "Usine à jus",
+    gameTitleIdle: "Fruit Ninja de l'Usine",
+    gameOverTitle: "Fin de partie",
+    gameDescription: "Coupez un maximum de fruits, gagnez plus de points avec les séries et évitez les bombes.",
+    finalScore: "Score final : {score}",
+    modeLabel: "Mode de jeu",
+    start: "Commencer",
+    restart: "Rejouer",
+  },
+};
+
 const DAILY_MISSIONS = [
   { id: "score-450", label: "Marque 450 pontos na partida", rewardText: "+200 pontos bônus", check: ({ score }) => score >= 450 },
   { id: "combo-8", label: "Alcance combo x8", rewardText: "+1 vida (Clássico) / +6s (Arcade)", check: ({ maxCombo }) => maxCombo >= 8 },
@@ -465,7 +508,7 @@ function intersectsSlash(item, a, b) {
   return Math.hypot(cx - px, cy - py) <= radius;
 }
 
-function JuiceFactoryNinja() {
+function JuiceFactoryNinja({ ui }) {
   const arenaRef = useRef(null);
   const rafRef = useRef(null);
   const slashRef = useRef([]);
@@ -1370,7 +1413,7 @@ function spawnLogic() {
       }}
     >
       <div className="container" style={{ maxWidth: 1240, margin: "0 auto", padding: isSmallMobileArena ? "0 10px" : "0 14px" }}>
-        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200", fontSize: "clamp(1.7rem, 4vw, 2.8rem)", lineHeight: 1.05 }}>Fábrica de sucos</h2>
+        <h2 className="section-title fruit-ninja-title section-title--left" style={{ margin: 0, color: "#ffcf43", textShadow: "0 2px 0 #5f3200", fontSize: "clamp(1.7rem, 4vw, 2.8rem)", lineHeight: 1.05 }}>{ui.sectionTitle}</h2>
         <p style={{ marginTop: isSmallMobileArena ? 6 : 10, color: "#ffd447", fontSize: "clamp(1.05rem, 3.6vw, 1.9rem)", fontWeight: 900, letterSpacing: isSmallMobileArena ? 0.3 : 1.2, textTransform: "uppercase", fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 2px 0 #5f3200" }}>Fruit Ninja KaSucos</p>
         <div
           ref={arenaRef}
@@ -1809,8 +1852,8 @@ function spawnLogic() {
           {phase !== "play" && (
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
               <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
-                <h3 style={{ marginTop: 0 }}>{phase === "idle" ? "Fruit Ninja da Fábrica" : "Fim da partida"}</h3>
-                <p style={{ marginTop: 0 }}>{phase === "idle" ? "Corte o máximo de frutas possível, ganhe mais pontos por sequência e desvie das bombas." : `Pontuação final: ${score}`}</p>
+                <h3 style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameTitleIdle : ui.gameOverTitle}</h3>
+                <p style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameDescription : ui.finalScore.replace("{score}", String(score))}</p>
                 {!hasStoredPlayerName && (
                   <label style={{ display: "grid", gap: 6, textAlign: "left", marginBottom: 12 }}>
                     <span style={{ fontWeight: 700 }}>Nome para registro</span>
@@ -1828,7 +1871,7 @@ function spawnLogic() {
                 {nameError && <p style={{ marginTop: -4, marginBottom: 12, color: "#ff9a9a", fontWeight: 700 }}>{nameError}</p>}
 
                 <div style={{ display: "grid", gap: 8, textAlign: "left", marginBottom: 12 }}>
-                  <p style={{ margin: 0, fontWeight: 800 }}>Modo de jogo</p>
+                  <p style={{ margin: 0, fontWeight: 800 }}>{ui.modeLabel}</p>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {Object.entries(GAME_MODES).map(([key, mode]) => (
                       <button
@@ -1860,7 +1903,7 @@ function spawnLogic() {
                   onClick={startGame}
                   style={{ border: "none", padding: "12px 20px", borderRadius: 12, background: "linear-gradient(90deg,#ff7a3b,#f4465a)", color: "white", fontWeight: 900, cursor: "pointer" }}
                 >
-                  {phase === "idle" ? "Começar" : "Jogar novamente"}
+                  {phase === "idle" ? ui.start : ui.restart}
                 </button>
 
                 {(phase === "idle" || settings.showTutorial) && (
@@ -1903,6 +1946,7 @@ function spawnLogic() {
   );
 }
 
-export function FabricaDeSucosSection() {
-  return <JuiceFactoryNinja />;
+export function FabricaDeSucosSection({ language = "pt" }) {
+  const ui = GAME_UI_TEXT[language] ?? GAME_UI_TEXT.en;
+  return <JuiceFactoryNinja ui={ui} />;
 }

@@ -138,7 +138,8 @@ export default function App() {
 
   const addItem = (product, typeLabel) => {
     setCartItems((current) => {
-      const id = product.title || product.name;
+      const id = product.id || product.title?.pt || product.name?.pt || product.title || product.name;
+      const localizedName = product.title?.[language] ?? product.name?.[language] ?? product.title?.en ?? product.name?.en ?? product.title?.pt ?? product.name?.pt ?? product.title ?? product.name;
       const existing = current.find((item) => item.id === id);
 
       if (existing) {
@@ -149,7 +150,7 @@ export default function App() {
         ...current,
         {
           id,
-          name: id,
+          name: localizedName,
           price: parsePrice(product.price),
           priceLabel: product.price,
           quantity: 1,
@@ -174,7 +175,7 @@ export default function App() {
   const totalLabel = formatBRL(totalAmount);
 
   const getJuiceQuantity = (juice) => {
-    const id = juice.title || juice.name;
+    const id = juice.id || juice.title?.pt || juice.name?.pt || juice.title || juice.name;
     return cartItems.find((item) => item.id === id)?.quantity ?? 0;
   };
 
@@ -273,7 +274,7 @@ export default function App() {
             <CheckoutSection checkout={t.checkout} total={totalLabel} items={cartItems} whatsappPhone={WHATSAPP_PHONE} contact={t.contact} />
           </MotionSection>
         ) : null}
-        <FabricaDeSucosSection />
+        <FabricaDeSucosSection language={language} />
         <MotionSection>
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
