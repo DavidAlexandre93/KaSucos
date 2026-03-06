@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchWithRetry } from "../../lib/http";
+import { logWarn } from "../../lib/logger";
 
 const STORAGE_KEY = "kasucos-blog-likes";
 const USER_LIKES_STORAGE_KEY = "kasucos-blog-user-likes";
@@ -11,14 +13,14 @@ function hasSupabaseConfig() {
 }
 
 async function requestSupabase(path, options = {}) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+  const response = await fetchWithRetry(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
     headers: {
       apikey: SUPABASE_PUBLISHABLE_KEY,
       Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
       ...(options.headers || {}),
     },
-  });
+  }, { retries: 1, timeoutMs: 4500, retryDelayMs: 250 });
 
   if (!response.ok) {
     let details = "";
@@ -117,8 +119,8 @@ export function DicasInformacoesSection({ blog }) {
 
       setLikesByPost(merged);
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-    } catch {
-      // fallback keeps local likes when Supabase is unavailable
+    } catch (error) {
+      logWarn("Falha ao sincronizar likes com Supabase", { error: String(error) });
     } finally {
       setIsSyncingLikes(false);
     }
@@ -161,8 +163,8 @@ export function DicasInformacoesSection({ blog }) {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextLikes));
         saveLikeToSupabase(postId, nextLikeCount)
           .then(() => syncLikes())
-          .catch(() => {
-            // fallback keeps local likes when Supabase is unavailable
+          .catch((error) => {
+            logWarn("Falha ao salvar like no Supabase", { error: String(error), postId });
           });
 
         return nextLikes;

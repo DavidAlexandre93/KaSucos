@@ -8,28 +8,24 @@ Projeto React + Vite para vitrine e venda de sucos, com foco em catálogo, combo
 src/
 ├── app/
 │   └── App.jsx
-├── features/
-│   ├── benefits/
-│   ├── catalog/
-│   │   ├── components/
-│   │   └── data/
-│   ├── combos/
-│   │   ├── components/
-│   │   └── data/
-│   ├── contact/
-│   ├── hero/
+├── components/
 │   ├── layout/
-│   │   ├── components/
-│   │   ├── constants/
-│   │   └── hooks/
-│   ├── testimonials/
-│   └── theme/
-│       ├── components/
-│       └── data/
+│   ├── sections/
+│   └── ui/
+├── constants/
+├── data/
+├── hooks/
+├── i18n/
+├── lib/
 ├── styles/
 │   └── globals.css
 └── main.jsx
 ```
+
+## Requisitos
+
+- Node.js 20.x (ver `.nvmrc`)
+- npm 10+
 
 ## Rodando localmente
 
@@ -43,6 +39,21 @@ npm run dev
 - `npm run dev`: inicia servidor de desenvolvimento
 - `npm run build`: gera build de produção
 - `npm run preview`: serve build localmente
+- `npm run lint`: valida padrão de código com checks automatizados de estilo
+- `npm run test`: executa testes automatizados com Node Test Runner
+- `npm run validate:code`: relatório de arquivos órfãos/duplicação estrutural
+
+## Variáveis de ambiente
+
+Copie `.env.example` para `.env` e ajuste os valores quando necessário.
+
+```bash
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_PUBLISHABLE_KEY=...
+VITE_SUPABASE_RANKING_TABLE=game_scores
+VITE_SUPABASE_LIKES_TABLE=blog_likes
+VITE_WHATSAPP_PHONE=5511999999999
+```
 
 ## Ranking global (Supabase)
 
@@ -73,34 +84,9 @@ to anon
 with check (true);
 ```
 
-Se você já criou a tabela com a coluna antiga `skin`, rode esta migração:
-
-```sql
-alter table public.game_scores
-  drop column if exists skin;
-
-alter table public.game_scores
-  drop constraint if exists game_scores_mode_check,
-  add constraint game_scores_mode_check check (mode in ('arcade', 'classic', 'zen'));
-```
-
-3. Copie `.env.example` para `.env` e configure:
-
-```bash
-VITE_SUPABASE_URL=...
-VITE_SUPABASE_PUBLISHABLE_KEY=...
-# opcional (compatibilidade legada): VITE_SUPABASE_ANON_KEY=...
-VITE_SUPABASE_RANKING_TABLE=game_scores
-```
-
-Sem essas variáveis, o app funciona com ranking local (localStorage).
-
-
 ## Likes do blog (Supabase)
 
 Para persistir e carregar os likes das postagens em `Dicas e Informações`:
-
-1. Execute este SQL no editor SQL do Supabase:
 
 ```sql
 create table if not exists public.blog_likes (
@@ -110,38 +96,15 @@ create table if not exists public.blog_likes (
 );
 
 alter table public.blog_likes enable row level security;
-
-create policy "read_blog_likes" on public.blog_likes
-for select
-to anon
-using (true);
-
-create policy "upsert_blog_likes" on public.blog_likes
-for insert
-to anon
-with check (true);
-
-create policy "update_blog_likes" on public.blog_likes
-for update
-to anon
-using (true)
-with check (true);
 ```
-
-2. Configure também no `.env`:
-
-```bash
-VITE_SUPABASE_LIKES_TABLE=blog_likes
-```
-
-Sem essa tabela/variável, os likes continuam funcionando localmente com `localStorage`.
 
 ## CI/CD
 
-- **CI (`.github/workflows/ci.yml`)**: valida apenas mudanças importantes do app (código, build/config e workflows), instalando dependências com `npm ci` e executando `npm run build`.
-- **CD (`.github/workflows/cd.yml`)**: em push na `main`, gera o build e publica automaticamente no GitHub Pages.
+- **CI (`.github/workflows/ci.yml`)**: executa `npm run lint`, `npm run test` e `npm run build`.
+- **CD (`.github/workflows/cd.yml`)**: em push na `main`, gera o build e publica no GitHub Pages.
 - **Dependabot (`.github/dependabot.yml`)**: atualizações semanais para dependências npm e GitHub Actions.
 
-## Avaliação do mini-game (Fábrica de Sucos)
+## Troubleshooting
 
-- Relatório comparativo com Fruit Ninja e recomendações de evolução: `docs/avaliacao-fabrica-vs-fruit-ninja.md`.
+- Se o ranking/likes não sincronizar, confira se `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` estão definidos.
+- Se `npm audit` falhar com `403`, execute em ambiente com acesso ao endpoint de advisory do npm.

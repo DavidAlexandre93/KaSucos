@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BeneficiosSection } from "../components/sections/BeneficiosSection";
 import { SucosSection } from "../components/sections/SucosSection";
 import { sucos } from "../data/sucosData";
@@ -13,6 +13,7 @@ import { DepoimentosSection } from "../components/sections/DepoimentosSection";
 import { DicasInformacoesSection } from "../components/sections/DicasInformacoesSection";
 import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
 import { useLanguage } from "../hooks/useLanguage";
+import { useCart } from "../hooks/useCart";
 import { translations } from "../i18n/translations";
 import { CartSection } from "../components/sections/CartSection";
 import { CheckoutSection } from "../components/sections/CheckoutSection";
@@ -42,13 +43,32 @@ const DEFAULT_THEME_COLORS = {
 
 export default function App() {
   const siteRef = useRef(null);
-  const [cartItems, setCartItems] = useState([]);
-  const [availableJuices, setAvailableJuices] = useState(sucos);
+  const availableJuices = sucos;
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
+
+  const getLocalizedProductName = (product, currentLanguage = language) => {
+    const rawName = product.title ?? product.name;
+    if (typeof rawName === "string") return rawName;
+    return rawName?.[currentLanguage] ?? rawName?.en ?? rawName?.pt ?? "";
+  };
+
+  const {
+    items: cartItems,
+    addItem,
+    removeItem,
+    getItemQuantity,
+    totalItems,
+    totalAmount,
+  } = useCart({
+    language,
+    getLocalizedProductName,
+    parsePrice,
+  });
+  const totalLabel = formatBRL(totalAmount);
 
   useEffect(() => {
     document.body.classList.toggle("splash-lock", showSplash);
@@ -137,54 +157,6 @@ export default function App() {
   );
 
 
-  const getLocalizedProductName = (product) => {
-    const rawName = product.title ?? product.name;
-    if (typeof rawName === "string") return rawName;
-    return rawName?.[language] ?? rawName?.en ?? rawName?.pt ?? "";
-  };
-
-  const addItem = (product, typeLabel) => {
-    setCartItems((current) => {
-      const id = getLocalizedProductName(product);
-      const existing = current.find((item) => item.id === id);
-
-      if (existing) {
-        return current.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
-      }
-
-      return [
-        ...current,
-        {
-          id,
-          name: id,
-          price: parsePrice(product.price),
-          priceLabel: product.price,
-          quantity: 1,
-          typeLabel,
-        },
-      ];
-    });
-  };
-
-  const removeItemFromCart = (id) => {
-    setCartItems((current) =>
-      current.flatMap((item) => {
-        if (item.id !== id) return item;
-        if (item.quantity <= 1) return [];
-        return { ...item, quantity: item.quantity - 1 };
-      }),
-    );
-  };
-
-  const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
-  const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
-  const totalLabel = formatBRL(totalAmount);
-
-  const getJuiceQuantity = (juice) => {
-    const id = getLocalizedProductName(juice);
-    return cartItems.find((item) => item.id === id)?.quantity ?? 0;
-  };
-
   const openCart = () => {
     setShowCart(true);
     const hasItems = totalItems > 0;
@@ -269,7 +241,7 @@ export default function App() {
             title={t.juices.title}
             labels={t.juices}
             onAddJuice={(juice) => addItem(juice, t.cart.unit)}
-            getJuiceQuantity={getJuiceQuantity}
+            getJuiceQuantity={getItemQuantity}
           />
         </MotionSection>
         <MotionSection delay={0.08}>
@@ -287,7 +259,7 @@ export default function App() {
               labels={t.cart}
               items={cartItems}
               total={totalLabel}
-              onRemoveItem={removeItemFromCart}
+              onRemoveItem={removeItem}
               onFinalize={finalizePurchase}
             />
           </MotionSection>

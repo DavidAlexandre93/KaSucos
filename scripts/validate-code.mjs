@@ -12,7 +12,7 @@ function walk(dir) {
     const abs = join(dir, name);
     const st = statSync(abs);
     if (st.isDirectory()) out.push(...walk(abs));
-    else if (extensions.has(extname(abs))) out.push(abs);
+    else if (extensions.has(extname(abs)) && !abs.endsWith('.test.mjs')) out.push(abs);
   }
   return out;
 }
