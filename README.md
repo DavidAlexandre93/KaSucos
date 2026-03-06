@@ -8,19 +8,30 @@ Projeto React + Vite para vitrine e venda de sucos, com foco em catálogo, combo
 src/
 ├── app/
 │   └── App.jsx
-├── components/
-│   ├── layout/
-│   ├── sections/
-│   └── ui/
+├── features/
+│   ├── inicio/
+│   ├── catalogo/
+│   ├── customizacao/
+│   ├── combos/
+│   ├── carrinho/
+│   ├── fabrica/
+│   ├── beneficios/
+│   ├── blog/
+│   ├── depoimentos/
+│   ├── contato/
+│   └── idioma/
+├── layout/
+│   └── components/
+├── shared/
+│   ├── components/
+│   └── lib/
 ├── constants/
-├── data/
-├── hooks/
-├── i18n/
-├── lib/
 ├── styles/
 │   └── globals.css
 └── main.jsx
 ```
+
+A estrutura agora está organizada por **domínio de tela/negócio** (features), facilitando localizar componentes, dados e hooks de cada área e simplificando inclusão de novas funcionalidades sem espalhar arquivos por pastas genéricas.
 
 ## Requisitos
 

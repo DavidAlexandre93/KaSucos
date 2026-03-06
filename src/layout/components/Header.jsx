@@ -1,0 +1,232 @@
+import { KaSucosWordmark } from "@/shared/components/KaSucosWordmark";
+import gsap from "@/shared/lib/gsap";
+import { motion } from "@/shared/lib/motion";
+import { useRef, useState } from "react";
+import { useGSAP } from "@/shared/lib/useGSAP";
+
+const LANGUAGE_OPTIONS = [
+  { code: "en", label: "English", flagSrc: "/img/flags/us.svg" },
+  { code: "pt", label: "Português", flagSrc: "/img/flags/br.svg" },
+  { code: "es", label: "Español", flagSrc: "/img/flags/es.svg" },
+  { code: "fr", label: "Français", flagSrc: "/img/flags/fr.svg" },
+];
+
+const COMPACT_NAV_LABELS = {
+  pt: {
+    home: "Início",
+    juices: "Sucos",
+    buildYourJuice: "Monte seu Suco",
+    combos: "Combos",
+    tipsInfo: "Dicas",
+    testimonials: "Avaliações",
+    findUs: "Onde",
+    contact: "Contato",
+  },
+  en: {
+    home: "Home",
+    juices: "Juices",
+    buildYourJuice: "Build",
+    combos: "Combos",
+    tipsInfo: "Tips",
+    testimonials: "Reviews",
+    findUs: "Find us",
+    contact: "Contact",
+  },
+  es: {
+    home: "Inicio",
+    juices: "Jugos",
+    buildYourJuice: "Arma",
+    combos: "Combos",
+    tipsInfo: "Consejos",
+    testimonials: "Reseñas",
+    findUs: "Dónde",
+    contact: "Contacto",
+  },
+  fr: {
+    home: "Accueil",
+    juices: "Jus",
+    buildYourJuice: "Composer",
+    combos: "Combos",
+    tipsInfo: "Conseils",
+    testimonials: "Avis",
+    findUs: "Adresse",
+    contact: "Contact",
+  },
+  ja: {
+    home: "ホーム",
+    juices: "ジュース",
+    buildYourJuice: "カスタム",
+    combos: "セット",
+    tipsInfo: "ヒント",
+    testimonials: "レビュー",
+    findUs: "店舗",
+    contact: "連絡",
+  },
+};
+
+export function Header({ language, onLanguageChange, labels, onBasketClick, onJuicesClick, basketCount = 0 }) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navRef = useRef(null);
+
+  useGSAP(() => {
+    const navItems = navRef.current?.querySelectorAll("a");
+    if (!navItems?.length) return undefined;
+
+    gsap.fromTo(
+      navItems,
+      { y: 18, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power2.out" },
+    );
+
+    return undefined;
+  }, { dependencies: [isMobileMenuOpen] });
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  const scrollToSectionWithoutHash = (event, targetId) => {
+    event.preventDefault();
+    closeMobileMenu();
+
+    if (targetId === "inicio") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    const targetElement = document.getElementById(targetId);
+    targetElement?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleHomeClick = (event) => {
+    scrollToSectionWithoutHash(event, "inicio");
+  };
+  const navLabels = {
+    home: labels.home ?? "Início",
+    juices: labels.juices ?? "Sucos",
+    buildYourJuice: labels.buildYourJuice ?? "Monte seu Suco",
+    combos: labels.combos ?? "Combos",
+    tipsInfo: labels.tipsInfo ?? "Dicas e Informações",
+    testimonials: labels.testimonials ?? "Depoimentos",
+    findUs: labels.findUs ?? "Onde nos encontrar",
+    contact: labels.contact ?? "Contato",
+  };
+
+  const compactLabels = COMPACT_NAV_LABELS[language] ?? COMPACT_NAV_LABELS.pt;
+
+  const menuItems = [
+    { href: "#inicio", key: "home" },
+    { href: "#catalogo", key: "juices" },
+    { href: "#monte-seu-suco", key: "buildYourJuice" },
+    { href: "#combos", key: "combos" },
+    { href: "#dicas", key: "tipsInfo" },
+    { href: "#onde-nos-encontrar", key: "findUs" },
+    { href: "#contato", key: "contact" },
+  ];
+
+  return (
+    <header className="topbar">
+      <div className="container topbar-inner">
+        <motion.button
+          type="button"
+          className="brand"
+          onClick={handleHomeClick}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <img className="brand-logo" src="/img/nav/logo.jpeg" alt="KaSucos" />
+          <KaSucosWordmark className="brand-wordmark" />
+        </motion.button>
+
+        <div className="topbar-right">
+          <button
+            type="button"
+            className="menu-toggle"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="primary-navigation"
+            aria-label={isMobileMenuOpen ? "Fechar menu" : "Abrir menu"}
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
+
+          <nav
+            id="primary-navigation"
+            ref={navRef}
+            className={isMobileMenuOpen ? "open" : ""}
+            aria-label={labels.title ?? "Main navigation"}
+          >
+            <button
+              type="button"
+              className="mobile-menu-close"
+              aria-label="Fechar menu"
+              onClick={closeMobileMenu}
+            >
+              ×
+            </button>
+
+            {menuItems.map((item) => (
+              <a
+                key={item.key}
+                href={item.href}
+                title={navLabels[item.key]}
+                onClick={(event) => {
+                  if (item.key === "juices" && onJuicesClick) {
+                    onJuicesClick(event);
+                    closeMobileMenu();
+                    return;
+                  }
+
+                  scrollToSectionWithoutHash(event, item.href.slice(1));
+                }}
+              >
+                {compactLabels[item.key]}
+              </a>
+            ))}
+          </nav>
+
+          <div className="language-switcher" aria-label="Language selector">
+            {LANGUAGE_OPTIONS.map((option) => (
+              <motion.button
+                key={option.code}
+                type="button"
+                title={option.label}
+                aria-label={option.label}
+                className={language === option.code ? "active" : ""}
+                aria-pressed={language === option.code}
+                onClick={() => onLanguageChange(option.code)}
+              >
+                <img
+                  className="language-flag"
+                  src={option.flagSrc}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </motion.button>
+            ))}
+          </div>
+
+          <motion.button
+            type="button"
+            className="basket-button"
+            onClick={onBasketClick}
+            aria-label={`${labels.basket ?? "Cesta"}${basketCount > 0 ? ` (${basketCount})` : ""}`}
+            whileHover={{ y: -2, scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            <span className="basket-button-icon" aria-hidden="true">
+              <img src="/img/icons/icon-cesta.png" alt="" loading="lazy" decoding="async" />
+            </span>
+            {basketCount > 0 ? (
+              <span className="basket-count" aria-live="polite">
+                {basketCount}
+              </span>
+            ) : null}
+          </motion.button>
+        </div>
+      </div>
+    </header>
+  );
+}
