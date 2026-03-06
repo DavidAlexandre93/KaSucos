@@ -1,26 +1,27 @@
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
-import { BeneficiosSection } from "../features/beneficios/components/BeneficiosSection";
-import { SucosSection } from "../features/catalogo/components/SucosSection";
-import { sucos } from "../features/catalogo/data/sucosData";
-import { CombosSection } from "../features/combos/components/CombosSection";
-import { combos } from "../features/combos/data/combosData";
-import { ContatoSection } from "../features/contato/components/ContatoSection";
-import { InicioSection } from "../features/inicio/components/InicioSection";
-import { Footer } from "../layout/components/Footer";
-import { Header } from "../layout/components/Header";
-import { ScrollArtLayer } from "../layout/components/ScrollArtLayer";
-import { MonteSeuSucoSection } from "../features/customizacao/components/MonteSeuSucoSection";
-import { useLanguage } from "../features/idioma/hooks/useLanguage";
-import { useCart } from "../features/carrinho/hooks/useCart";
-import { translations } from "../features/idioma/i18n/translations";
-import { CartSection } from "../features/carrinho/components/CartSection";
-import { CheckoutSection } from "../features/carrinho/components/CheckoutSection";
-import { dicasBlogData } from "../features/blog/data/dicasBlogData";
-import { MotionSection } from "@/shared/components/MotionPrimitives";
-import { SplashScreen } from "../layout/components/SplashScreen";
-import { useGSAP } from "@/shared/lib/useGSAP";
-import gsap from "@/shared/lib/gsap";
-import { flushMetricsToConsole, recordPerformanceMark } from "@/shared/lib/observability";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { BeneficiosSection } from "../components/sections/BeneficiosSection";
+import { SucosSection } from "../components/sections/SucosSection";
+import { sucos } from "../data/sucosData";
+import { CombosSection } from "../components/sections/CombosSection";
+import { combos } from "../data/combosData";
+import { ContatoSection } from "../components/sections/ContatoSection";
+import { InicioSection } from "../components/sections/InicioSection";
+import { Footer } from "../components/layout/Footer";
+import { Header } from "../components/layout/Header";
+import { ScrollArtLayer } from "../components/layout/ScrollArtLayer";
+import { DepoimentosSection } from "../components/sections/DepoimentosSection";
+import { DicasInformacoesSection } from "../components/sections/DicasInformacoesSection";
+import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
+import { useLanguage } from "../hooks/useLanguage";
+import { translations } from "../i18n/translations";
+import { CartSection } from "../components/sections/CartSection";
+import { CheckoutSection } from "../components/sections/CheckoutSection";
+import { FabricaDeSucosSection } from "../components/sections/FabricaDeSucosSection";
+import { dicasBlogData } from "../data/dicasBlogData";
+import { MotionSection } from "../components/ui/MotionPrimitives";
+import { SplashScreen } from "../components/layout/SplashScreen";
+import { useGSAP } from "../lib/useGSAP";
+import gsap from "../lib/gsap";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
@@ -122,7 +123,9 @@ function SeoHead({ metadata, organizationSchema }) {
 
 export default function App() {
   const siteRef = useRef(null);
-  const availableJuices = sucos;
+  const pendingScrollRestoreRef = useRef(null);
+  const [cartItems, setCartItems] = useState([]);
+  const [availableJuices, setAvailableJuices] = useState(sucos);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
@@ -288,6 +291,57 @@ export default function App() {
     { scope: siteRef, dependencies: [] },
   );
 
+  const addItem = (product, typeLabel) => {
+    setCartItems((current) => {
+      const id = product.title || product.name;
+      const existing = current.find((item) => item.id === id);
+
+      if (existing) {
+        return current.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
+      }
+
+      return [
+        ...current,
+        {
+          id,
+          name: id,
+          price: parsePrice(product.price),
+          priceLabel: product.price,
+          quantity: 1,
+          typeLabel,
+        },
+      ];
+    });
+  };
+
+  const removeAvailableJuice = (juice) => {
+    pendingScrollRestoreRef.current = window.scrollY;
+    const id = juice.title || juice.name;
+
+    setCartItems((current) => current.filter((item) => item.id !== id));
+    setAvailableJuices((current) => current.filter((item) => (item.title || item.name) !== id));
+  };
+
+
+  useLayoutEffect(() => {
+    if (pendingScrollRestoreRef.current == null) return;
+
+    const targetScrollY = pendingScrollRestoreRef.current;
+    pendingScrollRestoreRef.current = null;
+
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: targetScrollY, behavior: "auto" });
+    });
+  }, [availableJuices.length, cartItems.length]);
+
+  const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
+  const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
+  const totalLabel = formatBRL(totalAmount);
+
+  const getJuiceQuantity = (juice) => {
+    const id = juice.title || juice.name;
+    return cartItems.find((item) => item.id === id)?.quantity ?? 0;
+  };
 
   const openCart = () => {
     setShowCart(true);
