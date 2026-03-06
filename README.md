@@ -119,3 +119,14 @@ alter table public.blog_likes enable row level security;
 
 - Se o ranking/likes não sincronizar, confira se `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` estão definidos.
 - Se `npm audit` falhar com `403`, execute em ambiente com acesso ao endpoint de advisory do npm.
+
+## SEO e visibilidade (implementado)
+
+- Metatags essenciais (title/description/canonical/OG/Twitter) no `index.html` para fallback sem JS.
+- Injeção dinâmica de SEO no SPA via `SeoHead` (atualiza title, canonical, OG, Twitter e JSON-LD Organization).
+- `public/robots.txt` com liberação global e apontamento de sitemap.
+- `public/sitemap.xml` inicial para indexação da URL principal.
+
+### Próximo upgrade recomendado (alto impacto)
+
+Para alcançar máxima indexação e escala orgânica, o próximo passo é migrar para **Next.js com SSG/SSR** (ou pré-render no build para rotas públicas). Em SPA puro, a indexação melhora com as ações acima, mas ainda fica abaixo do potencial de SSR/SSG.
