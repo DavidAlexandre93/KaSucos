@@ -11,7 +11,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "node scripts/lint.mjs",
-    "test": "node --test src/**/*.test.mjs",
+    "test": "node scripts/run-tests.mjs",
     "validate:code": "node scripts/validate-code.mjs",
     "autofix": "node scripts/autofix.mjs"
   },
