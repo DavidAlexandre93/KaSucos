@@ -112,7 +112,7 @@ alter table public.blog_likes enable row level security;
 
 ## CI/CD
 
-- **CI focado em PR (`.github/workflows/ci.yml`)**: valida arquitetura, lint, testes e build apenas em pull requests (com disparo manual opcional), evitando duplicidade de checks no push.
+- **CI manual (`.github/workflows/ci.yml`)**: valida arquitetura, lint, testes e build apenas quando acionado manualmente, sem criar check obrigatório em pull requests.
 - **CD enxuto (`.github/workflows/cd.yml`)**: build e deploy no GitHub Pages sem etapa extra de attestation, reduzindo complexidade para uma aplicação estática.
 - **Security Suite pontual (`.github/workflows/security.yml`)**: varreduras de segurança (CodeQL, Trivy, Gitleaks e `npm audit`) executadas por agendamento diário ou disparo manual, sem bloquear PRs com ruído desnecessário.
 - **Auto Remediation (`.github/workflows/auto-remediation.yml`)**: tenta corrigir vulnerabilidades e problemas de código automaticamente, valida e abre PR com as correções.
