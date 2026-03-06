@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { BeneficiosSection } from "../features/beneficios/components/BeneficiosSection";
 import { SucosSection } from "../features/catalogo/components/SucosSection";
 import { sucos } from "../features/catalogo/data/sucosData";
@@ -27,6 +27,19 @@ const formatBRL = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
 const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || "5511967645721";
 
+const SITE_BASE_URL = import.meta.env.VITE_SITE_URL || "https://kasucos.com";
+const OG_IMAGE_PATH = "/img/banner/banner-apresentação.png";
+const SOCIAL_LINKS = [
+  "https://www.instagram.com/kasucos",
+  "https://www.facebook.com/kasucos",
+];
+
+const createAbsoluteUrl = (path = "/") => {
+  const normalizedBase = SITE_BASE_URL.endsWith("/") ? SITE_BASE_URL : `${SITE_BASE_URL}/`;
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return new URL(normalizedPath, normalizedBase).toString();
+};
+
 
 const FabricaDeSucosSection = lazy(() => import("../features/fabrica/components/FabricaDeSucosSection").then((module) => ({ default: module.FabricaDeSucosSection })));
 const DicasInformacoesSection = lazy(() => import("../features/blog/components/DicasInformacoesSection").then((module) => ({ default: module.DicasInformacoesSection })));
@@ -44,6 +57,69 @@ const DEFAULT_THEME_COLORS = {
   "--bg-base": "#f7f2ff",
 };
 
+function SeoHead({ metadata, organizationSchema }) {
+  useEffect(() => {
+    document.title = metadata.title;
+    document.documentElement.lang = "pt-BR";
+
+    const upsertMeta = (selector, attributes) => {
+      let element = document.head.querySelector(selector);
+      if (!element) {
+        element = document.createElement("meta");
+        Object.entries(attributes).forEach(([key, value]) => {
+          if (key !== "content") {
+            element.setAttribute(key, value);
+          }
+        });
+        document.head.appendChild(element);
+      }
+      element.setAttribute("content", attributes.content);
+    };
+
+    const upsertLink = (selector, rel, href) => {
+      let element = document.head.querySelector(selector);
+      if (!element) {
+        element = document.createElement("link");
+        element.setAttribute("rel", rel);
+        document.head.appendChild(element);
+      }
+      element.setAttribute("href", href);
+    };
+
+    const upsertJsonLd = (id, payload) => {
+      let element = document.head.querySelector(`#${id}`);
+      if (!element) {
+        element = document.createElement("script");
+        element.setAttribute("type", "application/ld+json");
+        element.setAttribute("id", id);
+        document.head.appendChild(element);
+      }
+      element.textContent = JSON.stringify(payload);
+    };
+
+    upsertMeta('meta[name="description"]', { name: "description", content: metadata.description });
+    upsertMeta('meta[name="robots"]', { name: "robots", content: "index,follow" });
+    upsertLink('link[rel="canonical"]', "canonical", metadata.canonical);
+
+    upsertMeta('meta[property="og:type"]', { property: "og:type", content: "website" });
+    upsertMeta('meta[property="og:locale"]', { property: "og:locale", content: "pt_BR" });
+    upsertMeta('meta[property="og:site_name"]', { property: "og:site_name", content: "KaSucos" });
+    upsertMeta('meta[property="og:title"]', { property: "og:title", content: metadata.title });
+    upsertMeta('meta[property="og:description"]', { property: "og:description", content: metadata.description });
+    upsertMeta('meta[property="og:url"]', { property: "og:url", content: metadata.canonical });
+    upsertMeta('meta[property="og:image"]', { property: "og:image", content: metadata.ogImage });
+
+    upsertMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
+    upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: metadata.title });
+    upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: metadata.description });
+    upsertMeta('meta[name="twitter:image"]', { name: "twitter:image", content: metadata.ogImage });
+
+    upsertJsonLd("kasucos-org-schema", organizationSchema);
+  }, [metadata, organizationSchema]);
+
+  return null;
+}
+
 export default function App() {
   const siteRef = useRef(null);
   const availableJuices = sucos;
@@ -52,6 +128,40 @@ export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const { language, setLanguage } = useLanguage();
   const t = translations[language] ?? translations.pt;
+  const seoMetadata = useMemo(() => {
+    const title = "KaSucos — Sucos naturais, combos e pedidos rápidos no WhatsApp";
+    const description = "Conheça a KaSucos: sucos naturais, combos exclusivos e opções personalizadas para um dia mais saudável.";
+    const canonical = createAbsoluteUrl("/");
+    const ogImage = createAbsoluteUrl(OG_IMAGE_PATH);
+
+    return {
+      title,
+      description,
+      canonical,
+      ogImage,
+    };
+  }, []);
+
+  const organizationSchema = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "KaSucos",
+      url: createAbsoluteUrl("/"),
+      logo: createAbsoluteUrl("/img/nav/logo.jpeg"),
+      sameAs: SOCIAL_LINKS,
+      contactPoint: [
+        {
+          "@type": "ContactPoint",
+          telephone: `+${WHATSAPP_PHONE}`,
+          contactType: "customer service",
+          availableLanguage: ["pt-BR", "en", "es", "fr", "ja"],
+        },
+      ],
+    }),
+    [],
+  );
+
 
   const getLocalizedProductName = (product, currentLanguage = language) => {
     const rawName = product.title ?? product.name;
@@ -243,6 +353,7 @@ export default function App() {
 
   return (
     <div className="site" style={DEFAULT_THEME_COLORS} ref={siteRef}>
+      <SeoHead metadata={seoMetadata} organizationSchema={organizationSchema} />
       <ScrollArtLayer />
       <Header
         language={language}
