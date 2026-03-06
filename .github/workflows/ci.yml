@@ -3,42 +3,27 @@ name: CI
 on:
   pull_request:
     branches: ["main"]
-    paths:
-      - "src/**"
-      - "public/**"
-      - "index.html"
-      - "package.json"
-      - "package-lock.json"
-      - "vite.config.js"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/cd.yml"
   push:
     branches: ["main"]
-    paths:
-      - "src/**"
-      - "public/**"
-      - "index.html"
-      - "package.json"
-      - "package-lock.json"
-      - "vite.config.js"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/cd.yml"
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
-  build:
-    name: Build validation
+  validate:
+    name: Validate (Node 20)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -46,5 +31,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Validate architecture and standards
+        run: npm run validate:code
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test
+
+      - name: Production build
         run: npm run build
+
+      - name: Upload dist artifact
+        if: success()
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist
+          if-no-files-found: error

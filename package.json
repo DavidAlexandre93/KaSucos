@@ -10,15 +10,18 @@
     "reinstall:clean": "npm run clean:deps && npm install",
     "build": "vite build",
     "preview": "vite preview",
-    "validate:code": "node scripts/validate-code.mjs"
+    "lint": "node scripts/lint.mjs",
+    "test": "node scripts/run-tests.mjs",
+    "validate:code": "node scripts/validate-code.mjs",
+    "autofix": "node scripts/autofix.mjs"
   },
   "dependencies": {
-    "react": "^18.3.1",
+    "react": "^19.2.4",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "4.7.0",
-    "vite": "5.4.21"
+    "vite": "7.3.1"
   },
   "engines": {
     "node": "20.x"
