@@ -33,6 +33,8 @@ const COUNTRY_LANGUAGE_MAP = {
 };
 
 const SUPPORTED_LANGUAGES = ["pt", "en", "es", "fr", "ja"];
+const GEO_LANGUAGE_CACHE_KEY = "kasucos-geo-language";
+const GEO_LANGUAGE_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
 
 function normalizeLanguage(language) {
   return SUPPORTED_LANGUAGES.includes(language) ? language : "pt";
@@ -43,6 +45,28 @@ function getBrowserLanguage() {
   return normalizeLanguage(language);
 }
 
+function readCachedGeoLanguage() {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const cached = JSON.parse(window.localStorage.getItem(GEO_LANGUAGE_CACHE_KEY) || "null");
+    if (!cached?.language || !cached?.ts) return null;
+    if (Date.now() - cached.ts > GEO_LANGUAGE_CACHE_TTL_MS) return null;
+    return normalizeLanguage(cached.language);
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedGeoLanguage(language) {
+  if (typeof window === "undefined" || !language) return;
+
+  window.localStorage.setItem(
+    GEO_LANGUAGE_CACHE_KEY,
+    JSON.stringify({ language: normalizeLanguage(language), ts: Date.now() }),
+  );
+}
+
 async function getCountryLanguage() {
   try {
     const response = await fetchWithRetry("https://ipapi.co/json/", {}, { retries: 1, timeoutMs: 3500, retryDelayMs: 200 });
@@ -51,7 +75,9 @@ async function getCountryLanguage() {
     }
 
     const data = await response.json();
-    return COUNTRY_LANGUAGE_MAP[data.country_code] ?? null;
+    const detectedLanguage = COUNTRY_LANGUAGE_MAP[data.country_code] ?? null;
+    if (detectedLanguage) writeCachedGeoLanguage(detectedLanguage);
+    return detectedLanguage;
   } catch (error) {
     logWarn("Falha ao detectar idioma por geolocalização", { error: String(error) });
     return null;
@@ -66,6 +92,12 @@ export function useLanguage() {
 
     if (savedLanguage && SUPPORTED_LANGUAGES.includes(savedLanguage)) {
       setLanguage(savedLanguage);
+      return;
+    }
+
+    const cachedGeoLanguage = readCachedGeoLanguage();
+    if (cachedGeoLanguage) {
+      setLanguage(cachedGeoLanguage);
       return;
     }
 

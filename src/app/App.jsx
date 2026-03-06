@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { BeneficiosSection } from "../features/beneficios/components/BeneficiosSection";
 import { SucosSection } from "../features/catalogo/components/SucosSection";
 import { sucos } from "../features/catalogo/data/sucosData";
@@ -9,25 +9,28 @@ import { InicioSection } from "../features/inicio/components/InicioSection";
 import { Footer } from "../layout/components/Footer";
 import { Header } from "../layout/components/Header";
 import { ScrollArtLayer } from "../layout/components/ScrollArtLayer";
-import { DepoimentosSection } from "../features/depoimentos/components/DepoimentosSection";
-import { DicasInformacoesSection } from "../features/blog/components/DicasInformacoesSection";
 import { MonteSeuSucoSection } from "../features/customizacao/components/MonteSeuSucoSection";
 import { useLanguage } from "../features/idioma/hooks/useLanguage";
 import { useCart } from "../features/carrinho/hooks/useCart";
 import { translations } from "../features/idioma/i18n/translations";
 import { CartSection } from "../features/carrinho/components/CartSection";
 import { CheckoutSection } from "../features/carrinho/components/CheckoutSection";
-import { FabricaDeSucosSection } from "../features/fabrica/components/FabricaDeSucosSection";
 import { dicasBlogData } from "../features/blog/data/dicasBlogData";
 import { MotionSection } from "@/shared/components/MotionPrimitives";
 import { SplashScreen } from "../layout/components/SplashScreen";
 import { useGSAP } from "@/shared/lib/useGSAP";
 import gsap from "@/shared/lib/gsap";
+import { flushMetricsToConsole, recordPerformanceMark } from "@/shared/lib/observability";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(value || 0));
 const WHATSAPP_PHONE = import.meta.env.VITE_WHATSAPP_PHONE || "5511967645721";
+
+
+const FabricaDeSucosSection = lazy(() => import("../features/fabrica/components/FabricaDeSucosSection").then((module) => ({ default: module.FabricaDeSucosSection })));
+const DicasInformacoesSection = lazy(() => import("../features/blog/components/DicasInformacoesSection").then((module) => ({ default: module.DicasInformacoesSection })));
+const DepoimentosSection = lazy(() => import("../features/depoimentos/components/DepoimentosSection").then((module) => ({ default: module.DepoimentosSection })));
 
 const DEFAULT_THEME_COLORS = {
   "--purple-900": "#3b1575",
@@ -74,6 +77,25 @@ export default function App() {
     document.body.classList.toggle("splash-lock", showSplash);
     return () => document.body.classList.remove("splash-lock");
   }, [showSplash]);
+
+  useEffect(() => {
+    if (typeof performance === "undefined") return;
+
+    const navigationEntry = performance.getEntriesByType("navigation")?.[0];
+    if (navigationEntry) {
+      recordPerformanceMark("app_navigation", navigationEntry.duration, {
+        domInteractive: navigationEntry.domInteractive,
+        domComplete: navigationEntry.domComplete,
+        loadEventEnd: navigationEntry.loadEventEnd,
+      });
+    }
+
+    const flushTimeout = window.setTimeout(() => {
+      flushMetricsToConsole();
+    }, 12000);
+
+    return () => window.clearTimeout(flushTimeout);
+  }, []);
 
   useGSAP(
     ({ selector }) => {
@@ -269,15 +291,21 @@ export default function App() {
             <CheckoutSection checkout={t.checkout} total={totalLabel} items={cartItems} whatsappPhone={WHATSAPP_PHONE} contact={t.contact} />
           </MotionSection>
         ) : null}
-        <FabricaDeSucosSection language={language} />
+        <Suspense fallback={null}>
+          <FabricaDeSucosSection language={language} />
+        </Suspense>
         <MotionSection>
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
         <MotionSection>
-          <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.en ?? dicasBlogData.pt} />
+          <Suspense fallback={null}>
+            <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.en ?? dicasBlogData.pt} />
+          </Suspense>
         </MotionSection>
         <MotionSection>
-          <DepoimentosSection testimonials={t.testimonials} />
+          <Suspense fallback={null}>
+            <DepoimentosSection testimonials={t.testimonials} />
+          </Suspense>
         </MotionSection>
         <ContatoSection contact={t.contact} />
       </main>
