@@ -1,0 +1,79 @@
+name: Auto Remediation
+
+on:
+  workflow_run:
+    workflows: ["CI", "Security Suite"]
+    types: [completed]
+  schedule:
+    - cron: "37 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-remediation
+  cancel-in-progress: false
+
+jobs:
+  remediation:
+    name: Attempt automated fixes
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion != 'success'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Apply dependency remediation
+        run: |
+          npm audit fix --package-lock-only || true
+          npm dedupe || true
+
+      - name: Reinstall dependencies after lockfile changes
+        run: npm ci
+
+      - name: Apply automatic code fixes
+        run: node scripts/autofix.mjs
+
+      - name: Validate after remediation
+        run: |
+          npm run lint
+          npm run test
+          npm run build
+
+      - name: Create pull request with remediations
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "chore(ci): automatic remediation"
+          branch: ci/automatic-remediation
+          delete-branch: true
+          title: "chore(ci): automatic remediation for vulnerabilities and lint bugs"
+          body: |
+            ## 🤖 Automated Remediation PR
+
+            This PR was generated automatically by the **Auto Remediation** workflow.
+
+            ### Included fixes
+            - Applied dependency remediation (`npm audit fix --package-lock-only` and `npm dedupe`).
+            - Reinstalled dependencies to validate the updated lockfile in a clean tree.
+            - Applied safe source code cleanups (`scripts/autofix.mjs`).
+            - Revalidated lint, tests and production build.
+
+            > If no fix was possible, this PR is not opened.
+          labels: |
+            dependencies
+            security
+            automated-pr
