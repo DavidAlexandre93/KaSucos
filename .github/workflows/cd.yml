@@ -3,21 +3,13 @@ name: CD
 on:
   push:
     branches: ["main"]
-    paths:
-      - "src/**"
-      - "public/**"
-      - "index.html"
-      - "package.json"
-      - "package-lock.json"
-      - "vite.config.js"
-      - ".github/workflows/ci.yml"
-      - ".github/workflows/cd.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
   pages: write
   id-token: write
+  attestations: write
 
 concurrency:
   group: cd-pages
@@ -43,6 +35,11 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: dist/**
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

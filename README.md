@@ -53,6 +53,7 @@ npm run dev
 - `npm run lint`: valida padrão de código com checks automatizados de estilo
 - `npm run test`: executa testes automatizados com Node Test Runner
 - `npm run validate:code`: relatório de arquivos órfãos/duplicação estrutural
+- `npm run autofix`: aplica correções automáticas seguras (tabs/espaços em branco)
 
 ## Variáveis de ambiente
 
@@ -111,9 +112,12 @@ alter table public.blog_likes enable row level security;
 
 ## CI/CD
 
-- **CI (`.github/workflows/ci.yml`)**: executa `npm run lint`, `npm run test` e `npm run build`.
-- **CD (`.github/workflows/cd.yml`)**: em push na `main`, gera o build e publica no GitHub Pages.
-- **Dependabot (`.github/dependabot.yml`)**: atualizações semanais para dependências npm e GitHub Actions.
+- **CI reforçado (`.github/workflows/ci.yml`)**: valida arquitetura, lint, testes, build e publica artefatos.
+- **CD com proveniência (`.github/workflows/cd.yml`)**: build com attestation SLSA-like e deploy no GitHub Pages.
+- **Security Suite (`.github/workflows/security.yml`)**: Dependency Review, CodeQL, Trivy, Gitleaks, `npm audit` e OSV Scanner em PR/push + agendamento diário.
+- **Auto Remediation (`.github/workflows/auto-remediation.yml`)**: tenta corrigir vulnerabilidades e problemas de código automaticamente, valida e abre PR com as correções.
+- **Dependabot avançado (`.github/dependabot.yml`)**: atualização diária para npm e GitHub Actions com labels e agrupamento.
+- **Dependabot Auto Merge (`.github/workflows/dependabot-auto-merge.yml`)**: aprova e habilita auto-merge para updates patch/minor após os checks obrigatórios.
 
 ## Troubleshooting
 
