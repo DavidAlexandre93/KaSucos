@@ -1,11 +1,30 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { execSync } from "node:child_process";
+import { readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { extname, join } from "node:path";
 
-const files = execSync("rg --files src scripts", { encoding: "utf8" })
-  .split("\n")
-  .filter(Boolean)
-  .filter((file) => file.endsWith(".js") || file.endsWith(".jsx") || file.endsWith(".mjs"));
+const SOURCE_DIRS = ["src", "scripts"];
+const VALID_EXTENSIONS = new Set([".js", ".jsx", ".mjs"]);
+const SKIP_DIRS = new Set(["node_modules", ".git", "dist"]);
 
+function walk(dir) {
+  const files = [];
+
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      if (!SKIP_DIRS.has(entry.name)) {
+        files.push(...walk(join(dir, entry.name)));
+      }
+      continue;
+    }
+
+    if (VALID_EXTENSIONS.has(extname(entry.name))) {
+      files.push(join(dir, entry.name));
+    }
+  }
+
+  return files;
+}
+
+const files = SOURCE_DIRS.flatMap((dir) => walk(dir));
 let changedFiles = 0;
 
 for (const file of files) {

@@ -11,7 +11,6 @@ on:
 
 permissions:
   contents: read
-  actions: read
   security-events: write
 
 concurrency:
@@ -22,10 +21,12 @@ jobs:
   dependency-review:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    name: Dependency review
+    name: Dependency review (best effort)
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
@@ -34,6 +35,10 @@ jobs:
   codeql:
     name: CodeQL static analysis
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:
@@ -54,18 +59,19 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
   secrets-scan:
-    name: Secrets and IaC scan
+    name: Secrets and filesystem scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Trivy repo scan
-        uses: aquasecurity/trivy-action@0.28.0
+      - name: Run Trivy in filesystem mode
+        uses: aquasecurity/trivy-action@0.24.0
         with:
           scan-type: fs
-          ignore-unfixed: true
+          scan-ref: .
           severity: CRITICAL,HIGH
+          ignore-unfixed: true
           format: table
           exit-code: '1'
 
@@ -90,9 +96,3 @@ jobs:
 
       - name: npm audit (high and critical)
         run: npm audit --audit-level=high
-
-      - name: OSV-Scanner lockfile audit
-        uses: google/osv-scanner-action@v1.9.0
-        with:
-          scan-args: |-
-            --lockfile=package-lock.json

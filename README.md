@@ -114,7 +114,7 @@ alter table public.blog_likes enable row level security;
 
 - **CI reforçado (`.github/workflows/ci.yml`)**: valida arquitetura, lint, testes, build e publica artefatos.
 - **CD com proveniência (`.github/workflows/cd.yml`)**: build com attestation SLSA-like e deploy no GitHub Pages.
-- **Security Suite (`.github/workflows/security.yml`)**: Dependency Review, CodeQL, Trivy, Gitleaks, `npm audit` e OSV Scanner em PR/push + agendamento diário.
+- **Security Suite (`.github/workflows/security.yml`)**: Dependency Review (best-effort), CodeQL, Trivy, Gitleaks e `npm audit` em PR/push + agendamento diário.
 - **Auto Remediation (`.github/workflows/auto-remediation.yml`)**: tenta corrigir vulnerabilidades e problemas de código automaticamente, valida e abre PR com as correções.
 - **Dependabot avançado (`.github/dependabot.yml`)**: atualização diária para npm e GitHub Actions com labels e agrupamento.
 - **Dependabot Auto Merge (`.github/workflows/dependabot-auto-merge.yml`)**: aprova e habilita auto-merge para updates patch/minor após os checks obrigatórios.
