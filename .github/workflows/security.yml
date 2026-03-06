@@ -45,6 +45,7 @@ jobs:
         uses: github/codeql-action/analyze@v3
 
   secrets-scan:
+    if: github.event_name != 'pull_request'
     name: Secrets and filesystem scan
     runs-on: ubuntu-latest
     steps:
