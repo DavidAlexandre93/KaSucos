@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "../../lib/motionCompat";
+import { fetchWithRetry } from "../../lib/http";
+import { logWarn } from "../../lib/logger";
 
 const FRUITS = [
   { id: "morango", emoji: "🍓", color: "#ff4d7d" },
@@ -270,12 +272,12 @@ async function fetchSupabaseRanking() {
   url.searchParams.set("order", "score.desc,date.asc");
   url.searchParams.set("limit", "200");
 
-  const response = await fetch(url.toString(), {
+  const response = await fetchWithRetry(url.toString(), {
     headers: {
       apikey: SUPABASE_KEY,
       Authorization: `Bearer ${SUPABASE_KEY}`,
     },
-  });
+  }, { retries: 1, timeoutMs: 4500, retryDelayMs: 250 });
 
   if (!response.ok) {
     throw new Error(`Erro ao buscar ranking: ${response.status}`);
@@ -291,7 +293,7 @@ async function fetchSupabaseRanking() {
 }
 
 async function insertSupabaseScore(name, score, mode) {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${RANKING_TABLE}`, {
+  const response = await fetchWithRetry(`${SUPABASE_URL}/rest/v1/${RANKING_TABLE}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -300,7 +302,7 @@ async function insertSupabaseScore(name, score, mode) {
       Authorization: `Bearer ${SUPABASE_KEY}`,
     },
     body: JSON.stringify([{ player_name: name, score, mode }]),
-  });
+  }, { retries: 1, timeoutMs: 4500, retryDelayMs: 250 });
 
   if (!response.ok) {
     throw new Error(`Erro ao salvar pontuação: ${response.status}`);
@@ -792,7 +794,8 @@ function JuiceFactoryNinja({ language = "pt" }) {
         setRanking(entries);
         setRankingStatus("ready");
         setRankingMessage("Top 10 por modo carregado do Supabase.");
-      } catch {
+      } catch (error) {
+        logWarn("Falha ao carregar ranking do Supabase", { error: String(error) });
         setRanking(loadLocalRanking());
         setRankingStatus("ready");
         setRankingMessage("Não foi possível acessar o Supabase. Exibindo ranking local.");
@@ -889,7 +892,8 @@ function JuiceFactoryNinja({ language = "pt" }) {
         setRankingStatus("ready");
         setRankingMessage("Pontuação salva no Supabase ✅");
         return;
-      } catch {
+      } catch (error) {
+        logWarn("Falha ao persistir score no Supabase", { error: String(error), mode: settings.mode });
         setRankingMessage("Falha ao salvar no Supabase. Pontuação salva localmente.");
       }
     }

@@ -10,6 +10,8 @@
     "reinstall:clean": "npm run clean:deps && npm install",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "node scripts/lint.mjs",
+    "test": "node --test src/**/*.test.mjs",
     "validate:code": "node scripts/validate-code.mjs"
   },
   "dependencies": {

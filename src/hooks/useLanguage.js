@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { fetchWithRetry } from "../lib/http";
+import { logWarn } from "../lib/logger";
 
 const COUNTRY_LANGUAGE_MAP = {
   BR: "pt",
@@ -43,14 +45,15 @@ function getBrowserLanguage() {
 
 async function getCountryLanguage() {
   try {
-    const response = await fetch("https://ipapi.co/json/");
+    const response = await fetchWithRetry("https://ipapi.co/json/", {}, { retries: 1, timeoutMs: 3500, retryDelayMs: 200 });
     if (!response.ok) {
       return null;
     }
 
     const data = await response.json();
     return COUNTRY_LANGUAGE_MAP[data.country_code] ?? null;
-  } catch {
+  } catch (error) {
+    logWarn("Falha ao detectar idioma por geolocalização", { error: String(error) });
     return null;
   }
 }
