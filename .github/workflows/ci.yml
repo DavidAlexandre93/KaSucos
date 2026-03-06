@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   validate:
-    name: Validate, test and build
+    name: Validate (Node 20)
     runs-on: ubuntu-latest
 
     steps:
