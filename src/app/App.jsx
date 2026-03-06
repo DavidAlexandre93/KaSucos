@@ -1,27 +1,29 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { BeneficiosSection } from "../components/sections/BeneficiosSection";
-import { SucosSection } from "../components/sections/SucosSection";
-import { sucos } from "../data/sucosData";
-import { CombosSection } from "../components/sections/CombosSection";
-import { combos } from "../data/combosData";
-import { ContatoSection } from "../components/sections/ContatoSection";
-import { InicioSection } from "../components/sections/InicioSection";
-import { Footer } from "../components/layout/Footer";
-import { Header } from "../components/layout/Header";
-import { ScrollArtLayer } from "../components/layout/ScrollArtLayer";
-import { DepoimentosSection } from "../components/sections/DepoimentosSection";
-import { DicasInformacoesSection } from "../components/sections/DicasInformacoesSection";
-import { MonteSeuSucoSection } from "../components/sections/MonteSeuSucoSection";
-import { useLanguage } from "../hooks/useLanguage";
-import { translations } from "../i18n/translations";
-import { CartSection } from "../components/sections/CartSection";
-import { CheckoutSection } from "../components/sections/CheckoutSection";
-import { FabricaDeSucosSection } from "../components/sections/FabricaDeSucosSection";
-import { dicasBlogData } from "../data/dicasBlogData";
-import { MotionSection } from "../components/ui/MotionPrimitives";
-import { SplashScreen } from "../components/layout/SplashScreen";
-import { useGSAP } from "../lib/useGSAP";
-import gsap from "../lib/gsap";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { BeneficiosSection } from "../features/beneficios/components/BeneficiosSection";
+import { SucosSection } from "../features/catalogo/components/SucosSection";
+import { sucos } from "../features/catalogo/data/sucosData";
+import { CombosSection } from "../features/combos/components/CombosSection";
+import { combos } from "../features/combos/data/combosData";
+import { ContatoSection } from "../features/contato/components/ContatoSection";
+import { InicioSection } from "../features/inicio/components/InicioSection";
+import { Footer } from "../layout/components/Footer";
+import { Header } from "../layout/components/Header";
+import { ScrollArtLayer } from "../layout/components/ScrollArtLayer";
+import { DepoimentosSection } from "../features/depoimentos/components/DepoimentosSection";
+import { DicasInformacoesSection } from "../features/blog/components/DicasInformacoesSection";
+import { MonteSeuSucoSection } from "../features/customizacao/components/MonteSeuSucoSection";
+import { useLanguage } from "../features/idioma/hooks/useLanguage";
+import { translations } from "../features/idioma/i18n/translations";
+import { CartSection } from "../features/carrinho/components/CartSection";
+import { CheckoutSection } from "../features/carrinho/components/CheckoutSection";
+import { FabricaDeSucosSection } from "../features/fabrica/components/FabricaDeSucosSection";
+import { dicasBlogData } from "../features/blog/data/dicasBlogData";
+import { MotionSection } from "../shared/components/MotionPrimitives";
+import { SplashScreen } from "../layout/components/SplashScreen";
+import { useGSAP } from "../shared/lib/useGSAP";
+import gsap from "../shared/lib/gsap";
+import { recordPerformanceMark, flushMetricsToConsole } from "../shared/lib/observability";
+import { useCart } from "../features/carrinho/hooks/useCart";
 
 const parsePrice = (priceText) => Number(priceText.replace("R$", "").replace(".", "").replace(",", ".").trim());
 const formatBRL = (value) =>
@@ -40,12 +42,6 @@ const createAbsoluteUrl = (path = "/") => {
   const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
   return new URL(normalizedPath, normalizedBase).toString();
 };
-
-
-const FabricaDeSucosSection = lazy(() => import("../features/fabrica/components/FabricaDeSucosSection").then((module) => ({ default: module.FabricaDeSucosSection })));
-const DicasInformacoesSection = lazy(() => import("../features/blog/components/DicasInformacoesSection").then((module) => ({ default: module.DicasInformacoesSection })));
-const DepoimentosSection = lazy(() => import("../features/depoimentos/components/DepoimentosSection").then((module) => ({ default: module.DepoimentosSection })));
-
 const DEFAULT_THEME_COLORS = {
   "--purple-900": "#3b1575",
   "--purple-700": "#5f27b2",
@@ -123,9 +119,6 @@ function SeoHead({ metadata, organizationSchema }) {
 
 export default function App() {
   const siteRef = useRef(null);
-  const pendingScrollRestoreRef = useRef(null);
-  const [cartItems, setCartItems] = useState([]);
-  const [availableJuices, setAvailableJuices] = useState(sucos);
   const [showCart, setShowCart] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
@@ -290,59 +283,6 @@ export default function App() {
     },
     { scope: siteRef, dependencies: [] },
   );
-
-  const addItem = (product, typeLabel) => {
-    setCartItems((current) => {
-      const id = product.title || product.name;
-      const existing = current.find((item) => item.id === id);
-
-      if (existing) {
-        return current.map((item) => (item.id === id ? { ...item, quantity: item.quantity + 1 } : item));
-      }
-
-      return [
-        ...current,
-        {
-          id,
-          name: id,
-          price: parsePrice(product.price),
-          priceLabel: product.price,
-          quantity: 1,
-          typeLabel,
-        },
-      ];
-    });
-  };
-
-  const removeAvailableJuice = (juice) => {
-    pendingScrollRestoreRef.current = window.scrollY;
-    const id = juice.title || juice.name;
-
-    setCartItems((current) => current.filter((item) => item.id !== id));
-    setAvailableJuices((current) => current.filter((item) => (item.title || item.name) !== id));
-  };
-
-
-  useLayoutEffect(() => {
-    if (pendingScrollRestoreRef.current == null) return;
-
-    const targetScrollY = pendingScrollRestoreRef.current;
-    pendingScrollRestoreRef.current = null;
-
-    window.requestAnimationFrame(() => {
-      window.scrollTo({ top: targetScrollY, behavior: "auto" });
-    });
-  }, [availableJuices.length, cartItems.length]);
-
-  const totalItems = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);
-  const totalAmount = useMemo(() => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0), [cartItems]);
-  const totalLabel = formatBRL(totalAmount);
-
-  const getJuiceQuantity = (juice) => {
-    const id = juice.title || juice.name;
-    return cartItems.find((item) => item.id === id)?.quantity ?? 0;
-  };
-
   const openCart = () => {
     setShowCart(true);
     const hasItems = totalItems > 0;
@@ -423,7 +363,7 @@ export default function App() {
         </MotionSection>
         <MotionSection delay={0.06}>
           <SucosSection
-            sucos={availableJuices}
+            sucos={sucos}
             language={language}
             title={t.juices.title}
             labels={t.juices}
@@ -456,21 +396,15 @@ export default function App() {
             <CheckoutSection checkout={t.checkout} total={totalLabel} items={cartItems} whatsappPhone={WHATSAPP_PHONE} contact={t.contact} />
           </MotionSection>
         ) : null}
-        <Suspense fallback={null}>
-          <FabricaDeSucosSection language={language} />
-        </Suspense>
+        <FabricaDeSucosSection language={language} />
         <MotionSection>
           <BeneficiosSection benefits={t.benefits} />
         </MotionSection>
         <MotionSection>
-          <Suspense fallback={null}>
-            <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.en ?? dicasBlogData.pt} />
-          </Suspense>
+          <DicasInformacoesSection blog={dicasBlogData[language] ?? dicasBlogData.en ?? dicasBlogData.pt} />
         </MotionSection>
         <MotionSection>
-          <Suspense fallback={null}>
-            <DepoimentosSection testimonials={t.testimonials} />
-          </Suspense>
+          <DepoimentosSection testimonials={t.testimonials} />
         </MotionSection>
         <ContatoSection contact={t.contact} />
       </main>
