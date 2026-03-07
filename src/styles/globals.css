@@ -500,8 +500,8 @@ body.game-fullscreen-active .topbar nav {
 }
 
 .brand-logo {
-  width: clamp(120px, 15vw, 224px);
-  height: clamp(120px, 15vw, 224px);
+  width: clamp(108px, 13.5vw, 200px);
+  height: clamp(108px, 13.5vw, 200px);
   border-radius: 50%;
   border: 3px solid rgba(255, 255, 255, 0.96);
   box-shadow:
@@ -3095,8 +3095,8 @@ body.site-party-mode::after {
   }
 
   .brand-logo {
-    width: clamp(88px, 28vw, 136px);
-    height: clamp(88px, 28vw, 136px);
+    width: clamp(80px, 24vw, 124px);
+    height: clamp(80px, 24vw, 124px);
   }
 
   .menu-toggle {
@@ -3344,8 +3344,8 @@ body.site-party-mode::after {
   }
 
   .brand-logo {
-    width: clamp(78px, 24vw, 110px);
-    height: clamp(78px, 24vw, 110px);
+    width: clamp(72px, 22vw, 100px);
+    height: clamp(72px, 22vw, 100px);
   }
 
   .brand-wordmark {
