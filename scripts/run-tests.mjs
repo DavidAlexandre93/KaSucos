@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -22,6 +22,7 @@ function walk(dir) {
   return files;
 }
 
+const coverageMode = process.argv.includes("--coverage");
 const testFiles = walk("src").sort();
 
 if (testFiles.length === 0) {
@@ -29,8 +30,28 @@ if (testFiles.length === 0) {
   process.exit(1);
 }
 
-const result = spawnSync(process.execPath, ["--test", ...testFiles], {
+if (coverageMode) {
+  rmSync("coverage", { recursive: true, force: true });
+  mkdirSync("coverage", { recursive: true });
+}
+
+const args = coverageMode
+  ? [
+      "--test",
+      "--experimental-test-coverage",
+      "--test-coverage-lines=70",
+      "--test-coverage-functions=70",
+      "--test-coverage-branches=60",
+      "--test-coverage-include=src/**/*.js",
+      "--test-coverage-include=src/**/*.jsx",
+      "--test-coverage-include=src/**/*.mjs",
+      ...testFiles,
+    ]
+  : ["--test", ...testFiles];
+
+const result = spawnSync(process.execPath, args, {
   stdio: "inherit",
+  env: coverageMode ? { ...process.env, NODE_V8_COVERAGE: "coverage" } : process.env,
 });
 
 process.exit(result.status ?? 1);

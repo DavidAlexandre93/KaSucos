@@ -112,12 +112,13 @@ alter table public.blog_likes enable row level security;
 
 ## CI/CD
 
-- **CI manual (`.github/workflows/ci.yml`)**: valida arquitetura, lint, testes e build apenas quando acionado manualmente, sem criar check obrigatório em pull requests.
-- **CD enxuto (`.github/workflows/cd.yml`)**: build e deploy no GitHub Pages sem etapa extra de attestation, reduzindo complexidade para uma aplicação estática.
-- **Security Suite pontual (`.github/workflows/security.yml`)**: varreduras de segurança (CodeQL, Trivy, Gitleaks e `npm audit`) executadas por agendamento diário ou disparo manual, sem bloquear PRs com ruído desnecessário.
-- **Auto Remediation (`.github/workflows/auto-remediation.yml`)**: tenta corrigir vulnerabilidades e problemas de código automaticamente, valida e abre PR com as correções.
-- **Dependabot avançado (`.github/dependabot.yml`)**: atualização diária para npm e GitHub Actions com labels e agrupamento.
-- **Dependabot Auto Merge (`.github/workflows/dependabot-auto-merge.yml`)**: aprova e habilita auto-merge para updates patch/minor após os checks obrigatórios.
+- **Frontend CI (`.github/workflows/ci.yml`)**: executa instalação reprodutível (`npm ci`), validação arquitetural, formatação, lint, testes unitários, cobertura com gate mínimo, validação de build e upload de artefatos (`dist`, cobertura e SBOM).
+- **Análise de vulnerabilidades no CI**: `npm audit` para dependências de produção em paralelo com geração de SBOM CycloneDX para rastreabilidade de supply chain.
+- **Frontend CD (`.github/workflows/cd.yml`)**: pipeline de deploy multiambiente com promoção progressiva (`development` → `staging` → `production`) usando artefato único de build.
+- **Regras de promoção para produção**: produção só é liberada por tag semântica (`v*`) ou `workflow_dispatch` com ambiente `production`, sempre dependendo de deploy prévio em `staging` no mesmo fluxo.
+- **Security Suite (`.github/workflows/security.yml`)**: varreduras agendadas de profundidade (CodeQL, Trivy, Gitleaks e auditoria de dependências), complementando o gate de segurança do CI.
+- **Auto Remediation (`.github/workflows/auto-remediation.yml`)**: tenta corrigir vulnerabilidades e problemas de estilo automaticamente e abre PR com as remediações.
+- **Dependabot (`.github/dependabot.yml`) + Auto Merge**: mantém dependências e actions atualizadas com aprovação automática para updates patch/minor.
 
 ## Troubleshooting
 
