@@ -11,7 +11,11 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "node scripts/lint.mjs",
+    "format": "node scripts/format-code.mjs --write",
+    "format:check": "node scripts/format-code.mjs --check",
     "test": "node scripts/run-tests.mjs",
+    "test:coverage": "node scripts/run-tests.mjs --coverage",
+    "coverage:check": "node scripts/check-coverage.mjs",
     "validate:code": "node scripts/validate-code.mjs",
     "autofix": "node scripts/autofix.mjs"
   },

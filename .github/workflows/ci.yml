@@ -1,6 +1,10 @@
-name: CI
+name: Frontend CI
 
 on:
+  pull_request:
+    branches: ["main", "develop"]
+  push:
+    branches: ["main", "develop", "release/**"]
   workflow_dispatch:
 
 concurrency:
@@ -9,10 +13,11 @@ concurrency:
 
 permissions:
   contents: read
+  security-events: write
 
 jobs:
-  validate:
-    name: Quality checks (manual)
+  quality-gate:
+    name: Quality Gate (lint, format, tests, coverage, build)
     runs-on: ubuntu-latest
 
     steps:
@@ -31,19 +36,69 @@ jobs:
       - name: Validate architecture and standards
         run: npm run validate:code
 
+      - name: Check formatting
+        run: npm run format:check
+
       - name: Lint
         run: npm run lint
 
       - name: Unit tests
         run: npm run test
 
-      - name: Production build
+      - name: Coverage
+        run: npm run test:coverage
+
+      - name: Coverage quality gate
+        run: npm run coverage:check
+
+      - name: Validate production build
         run: npm run build
 
-      - name: Upload dist artifact
-        if: success()
-        uses: actions/upload-artifact@v7
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: dist
+          name: coverage-report
+          path: coverage
+          if-no-files-found: warn
+
+      - name: Upload build artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
           path: dist
           if-no-files-found: error
+
+  vulnerability-scan:
+    name: Vulnerability Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: npm audit (prod deps)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Generate SBOM (CycloneDX)
+        run: npx --yes @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json
+
+      - name: Upload security artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-artifacts
+          path: |
+            sbom.cdx.json
+            package-lock.json
+          if-no-files-found: warn
