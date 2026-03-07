@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchWithRetry } from "@/shared/lib/http";
 import { logWarn } from "@/shared/lib/logger";
+import { normalizeLanguage, resolveLanguageFromCandidates, SUPPORTED_LANGUAGES } from "./languageDetection";
 
 const COUNTRY_LANGUAGE_MAP = {
   BR: "pt",
@@ -32,17 +33,11 @@ const COUNTRY_LANGUAGE_MAP = {
   JP: "ja",
 };
 
-const SUPPORTED_LANGUAGES = ["pt", "en", "es", "fr", "ja"];
 const GEO_LANGUAGE_CACHE_KEY = "kasucos-geo-language";
 const GEO_LANGUAGE_CACHE_TTL_MS = 1000 * 60 * 60 * 24;
 
-function normalizeLanguage(language) {
-  return SUPPORTED_LANGUAGES.includes(language) ? language : "pt";
-}
-
 function getBrowserLanguage() {
-  const language = navigator.language?.slice(0, 2)?.toLowerCase();
-  return normalizeLanguage(language);
+  return resolveLanguageFromCandidates([navigator.languages ?? [], navigator.language], "pt");
 }
 
 function readCachedGeoLanguage() {
@@ -75,7 +70,11 @@ async function getCountryLanguage() {
     }
 
     const data = await response.json();
-    const detectedLanguage = COUNTRY_LANGUAGE_MAP[data.country_code] ?? null;
+    const detectedLanguage = resolveLanguageFromCandidates(
+      [data.languages, COUNTRY_LANGUAGE_MAP[data.country_code]],
+      null,
+    );
+
     if (detectedLanguage) writeCachedGeoLanguage(detectedLanguage);
     return detectedLanguage;
   } catch (error) {
