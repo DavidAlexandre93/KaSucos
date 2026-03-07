@@ -8,6 +8,28 @@ import "./styles/globals.css";
 const ROOT_PATHS = new Set(["/", "/index.html"]);
 const NOT_FOUND_PATHS = new Set([NOT_FOUND_ROUTE, "/404.html"]);
 
+const VERCEL_ANALYTICS_SCRIPT_ID = "vercel-analytics-script";
+
+const initializeVercelAnalytics = () => {
+  if (typeof window === "undefined" || typeof document === "undefined") {
+    return;
+  }
+
+  window.va = window.va || function (...args) {
+    (window.vaq = window.vaq || []).push(args);
+  };
+
+  if (document.getElementById(VERCEL_ANALYTICS_SCRIPT_ID)) {
+    return;
+  }
+
+  const analyticsScript = document.createElement("script");
+  analyticsScript.id = VERCEL_ANALYTICS_SCRIPT_ID;
+  analyticsScript.defer = true;
+  analyticsScript.src = "/_vercel/insights/script.js";
+  document.head.appendChild(analyticsScript);
+};
+
 const resolveShouldShow404 = (pathname) => !ROOT_PATHS.has(pathname) || NOT_FOUND_PATHS.has(pathname);
 
 function Root() {
@@ -52,5 +74,7 @@ function Root() {
     </AppErrorBoundary>
   );
 }
+
+initializeVercelAnalytics();
 
 createRoot(document.getElementById("root")).render(<Root />);
