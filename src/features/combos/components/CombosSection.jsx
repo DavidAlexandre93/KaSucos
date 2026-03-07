@@ -24,10 +24,6 @@ function ComboMath({ combo, language }) {
           />
         ))}
       </div>
-      <p className="combo-equation">
-        {base}
-        {bonus > 0 ? ` + ${bonus} = ${total}` : ""} {word}
-      </p>
     </div>
   );
 }
