@@ -32,6 +32,8 @@ const JUICE_DROP_LIFETIME = 520;
 const EXPLOSION_SPARK_LIFETIME = 420;
 const ARENA_FLASH_LIFETIME = 260;
 const MIN_ORDER_TIME_LIMIT = 9;
+const PERFORMANCE_FRAME_MS = 40;
+const NORMAL_FRAME_MS = 20;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const BEST_SCORE_STORAGE_KEY = "kasucos-fabrica-best-score";
 const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
@@ -185,6 +187,12 @@ function createJuiceDrops(pointA, pointB, color) {
   }));
 }
 
+function limitEffects(list, max) {
+  if (!Array.isArray(list)) return [];
+  if (list.length <= max) return list;
+  return list.slice(0, max);
+}
+
 
 function createExplosionSparks(item) {
   const centerX = item.x + item.size / 2;
@@ -311,7 +319,7 @@ async function insertSupabaseScore(name, score, mode) {
 
 
 function loadSettings() {
-  if (typeof window === "undefined") return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: true };
+  if (typeof window === "undefined") return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: false };
 
   const isMobileDevice = window.matchMedia?.("(pointer: coarse)")?.matches || window.innerWidth <= 820;
 
@@ -322,10 +330,10 @@ function loadSettings() {
       reducedEffects: Boolean(parsed.reducedEffects),
       muteAudio: isMobileDevice ? true : Boolean(parsed.muteAudio),
       highContrast: Boolean(parsed.highContrast),
-      showTutorial: parsed.showTutorial !== false,
+      showTutorial: Boolean(parsed.showTutorial),
     };
   } catch {
-    return { mode: "arcade", reducedEffects: false, muteAudio: isMobileDevice, highContrast: false, showTutorial: true };
+    return { mode: "arcade", reducedEffects: false, muteAudio: isMobileDevice, highContrast: false, showTutorial: false };
   }
 }
 
@@ -497,7 +505,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 vida",
     missPenaltyArcade: "2 segundos",
     bonusText: "🟡 vale x2 pontos e ⭐ vale x3 pontos.",
-    top10: "🏆 Top 10 pontuadores por modo",
+    top10: "🏆 Top 3 pontuadores",
     loading: "Carregando ranking...",
     noScores: "Ainda sem pontuações registradas.",
     profileMissions: "Missões concluídas no perfil",
@@ -526,7 +534,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 life",
     missPenaltyArcade: "2 seconds",
     bonusText: "🟡 is worth x2 points and ⭐ is worth x3 points.",
-    top10: "🏆 Top 10 players by mode",
+    top10: "🏆 Top 3 players",
     loading: "Loading ranking...",
     noScores: "No scores yet.",
     profileMissions: "Missions completed on profile",
@@ -555,7 +563,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 vida",
     missPenaltyArcade: "2 segundos",
     bonusText: "🟡 vale x2 puntos y ⭐ vale x3 puntos.",
-    top10: "🏆 Top 10 puntuadores por modo",
+    top10: "🏆 Top 3 puntuadores",
     loading: "Cargando ranking...",
     noScores: "Aún no hay puntuaciones registradas.",
     profileMissions: "Misiones completadas en el perfil",
@@ -584,7 +592,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 vie",
     missPenaltyArcade: "2 secondes",
     bonusText: "🟡 vaut x2 points et ⭐ vaut x3 points.",
-    top10: "🏆 Top 10 des scores par mode",
+    top10: "🏆 Top 3 des scores",
     loading: "Chargement du classement...",
     noScores: "Pas encore de scores enregistrés.",
     profileMissions: "Missions complétées sur le profil",
@@ -608,6 +616,9 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const sizeRef = useRef({ width: 980, height: 700 });
   const itemsRef = useRef([]);
   const lastActiveItemsAtRef = useRef(Date.now());
+  const frameTimeRef = useRef(0);
+  const pointerMoveRafRef = useRef(null);
+  const pendingPointerEventRef = useRef(null);
 
   const [size, setSize] = useState({ width: 980, height: 700 });
   const [phase, setPhase] = useState("idle");
@@ -626,7 +637,6 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const [toast, setToast] = useState("");
   const [ranking, setRanking] = useState([]);
   const [rankingStatus, setRankingStatus] = useState("idle");
-  const [rankingMessage, setRankingMessage] = useState("");
   const [slicedPieces, setSlicedPieces] = useState([]);
   const [sliceBursts, setSliceBursts] = useState([]);
   const [cutMarks, setCutMarks] = useState([]);
@@ -667,6 +677,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
 
   const isMobileArena = size.width <= 820;
   const isMobileDevice = typeof window !== "undefined" && (window.matchMedia?.("(pointer: coarse)")?.matches || window.innerWidth <= 820);
+  const isPerformanceMode = settings.reducedEffects || isMobileDevice;
   const modeConfig = GAME_MODES[settings.mode] || GAME_MODES.arcade;
   const isClassicMode = settings.mode === "classic";
   const isZenMode = settings.mode === "zen";
@@ -692,9 +703,9 @@ function JuiceFactoryNinja({ language = "pt" }) {
     });
 
     return {
-      arcade: sortRanking(grouped.arcade),
-      classic: sortRanking(grouped.classic),
-      zen: sortRanking(grouped.zen),
+      arcade: sortRanking(grouped.arcade).slice(0, 3),
+      classic: sortRanking(grouped.classic).slice(0, 3),
+      zen: sortRanking(grouped.zen).slice(0, 3),
     };
   }, [ranking]);
 
@@ -785,7 +796,6 @@ function JuiceFactoryNinja({ language = "pt" }) {
       if (!canUseSupabase) {
         setRanking(loadLocalRanking());
         setRankingStatus("ready");
-        setRankingMessage("Ranking local (configure o Supabase para ranking global).");
         return;
       }
 
@@ -793,12 +803,10 @@ function JuiceFactoryNinja({ language = "pt" }) {
         const entries = await fetchSupabaseRanking();
         setRanking(entries);
         setRankingStatus("ready");
-        setRankingMessage("Top 10 por modo carregado do Supabase.");
       } catch (error) {
         logWarn("Falha ao carregar ranking do Supabase", { error: String(error) });
         setRanking(loadLocalRanking());
         setRankingStatus("ready");
-        setRankingMessage("Não foi possível acessar o Supabase. Exibindo ranking local.");
       }
     }
 
@@ -1099,6 +1107,12 @@ function spawnLogic() {
 
     rafRef.current = requestAnimationFrame(tick);
 
+    const now = performance.now();
+    const targetFrameMs = isPerformanceMode ? PERFORMANCE_FRAME_MS : NORMAL_FRAME_MS;
+    if (now - frameTimeRef.current < targetFrameMs) return;
+    frameTimeRef.current = now;
+    const currentTime = Date.now();
+
     setItems((prev) => {
       const movedItems = prev.map((item) => ({
         ...item,
@@ -1148,7 +1162,7 @@ function spawnLogic() {
           vy: piece.vy + GRAVITY * 0.9,
           rot: piece.rot + piece.rotVel,
         }))
-        .filter((piece) => piece.y < sizeRef.current.height + 140 && Date.now() - piece.createdAt < 850)
+        .filter((piece) => piece.y < sizeRef.current.height + 140 && currentTime - piece.createdAt < 850)
     );
 
     setJuiceDrops((prev) =>
@@ -1159,7 +1173,7 @@ function spawnLogic() {
           y: drop.y + drop.vy,
           vy: drop.vy + GRAVITY * 0.5,
         }))
-        .filter((drop) => Date.now() - drop.createdAt < JUICE_DROP_LIFETIME)
+        .filter((drop) => currentTime - drop.createdAt < JUICE_DROP_LIFETIME)
     );
 
     setExplosionSparks((prev) =>
@@ -1170,7 +1184,7 @@ function spawnLogic() {
           y: spark.y + spark.vy,
           vy: spark.vy + GRAVITY * 0.45,
         }))
-        .filter((spark) => Date.now() - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
+        .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
     );
   }
 
@@ -1181,6 +1195,7 @@ function spawnLogic() {
     }
 
     lastSpawnAtRef.current = performance.now() - 1400;
+    frameTimeRef.current = 0;
     tick();
 
     return () => cancelAnimationFrame(rafRef.current);
@@ -1228,7 +1243,7 @@ function spawnLogic() {
 
         if (item.kind === "bomb") {
           bombHits += 1;
-          bombSparkEffects.push(...createExplosionSparks(item));
+          bombSparkEffects.push(...limitEffects(createExplosionSparks(item), isPerformanceMode ? 8 : 16));
           bombFlashEffects.push({
             id: `${item.uid}-flash-${Math.random()}`,
             x: item.x + item.size / 2,
@@ -1239,7 +1254,7 @@ function spawnLogic() {
         }
 
         hits += 1;
-        splitEffects.push(...createFruitSplits(item));
+        splitEffects.push(...limitEffects(createFruitSplits(item), isPerformanceMode ? 1 : 2));
         burstEffects.push({
           id: `${item.uid}-burst-${Math.random()}`,
           x: item.x + item.size / 2,
@@ -1257,20 +1272,21 @@ function spawnLogic() {
     setItems(remainingItems);
 
     if (splitEffects.length > 0) {
-      setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
-      setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
+      setSlicedPieces((old) => [...old, ...splitEffects].slice(-(isPerformanceMode ? 12 : 24)));
+      setSliceBursts((old) => [...old, ...burstEffects].slice(-(isPerformanceMode ? 8 : 16)));
       const markColor = "rgba(225,29,72,0.62)";
-      setCutMarks((old) => [...old, createCutMark(pointA, pointB, markColor)].slice(-14));
+      setCutMarks((old) => [...old, createCutMark(pointA, pointB, markColor)].slice(-(isPerformanceMode ? 8 : 14)));
       const splashColor = "rgba(248,47,79,0.84)";
-      setJuiceDrops((old) => [...old, ...createJuiceDrops(pointA, pointB, splashColor)].slice(-72));
+      const drops = limitEffects(createJuiceDrops(pointA, pointB, splashColor), isPerformanceMode ? 3 : 8);
+      setJuiceDrops((old) => [...old, ...drops].slice(-(isPerformanceMode ? 20 : 72)));
     }
 
     if (bombHits > 0) {
       setRunStats((old) => ({ ...old, bombsSliced: old.bombsSliced + bombHits }));
       playSliceSound("explosion");
-      setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-80));
-      setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-8));
-      setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-14));
+      setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-(isPerformanceMode ? 28 : 80)));
+      setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-(isPerformanceMode ? 4 : 8)));
+      setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-(isPerformanceMode ? 8 : 14)));
       setCombo(0);
       if (isClassicMode) {
         setToast(`💣 Bomba cortada! -${bombHits} vida(s).`);
@@ -1287,9 +1303,11 @@ function spawnLogic() {
 
     if (correctHits > 0) {
       playSliceSound("cleanSlice");
-      playSliceSound("slash");
-      playSliceSound("splat");
-      if (hits > 1 || combo + 1 >= 3) {
+      if (!isPerformanceMode) {
+        playSliceSound("slash");
+        playSliceSound("splat");
+      }
+      if ((hits > 1 || combo + 1 >= 3) && !isPerformanceMode) {
         playSliceSound("combo");
       }
       setCombo((old) => old + 1);
@@ -1443,9 +1461,8 @@ function spawnLogic() {
     setSlashTrail([point]);
   }
 
-  function onPointerMove(ev) {
+  function processPointerMove(ev) {
     if (phase !== "play" || isPaused) return;
-    if ("touches" in ev) ev.preventDefault();
 
     const point = toLocalPoint(ev);
     if (slashRef.current.length === 0) {
@@ -1473,7 +1490,28 @@ function spawnLogic() {
     }
   }
 
+  function onPointerMove(ev) {
+    if (phase !== "play" || isPaused) return;
+    if ("touches" in ev) ev.preventDefault();
+
+    pendingPointerEventRef.current = ev;
+    if (pointerMoveRafRef.current) return;
+
+    pointerMoveRafRef.current = requestAnimationFrame(() => {
+      pointerMoveRafRef.current = null;
+      const latestEvent = pendingPointerEventRef.current;
+      pendingPointerEventRef.current = null;
+      if (!latestEvent) return;
+      processPointerMove(latestEvent);
+    });
+  }
+
   function onPointerUp() {
+    if (pointerMoveRafRef.current) {
+      cancelAnimationFrame(pointerMoveRafRef.current);
+      pointerMoveRafRef.current = null;
+    }
+    pendingPointerEventRef.current = null;
     slashRef.current = [];
     setTimeout(() => setSlashTrail([]), 160);
   }
@@ -1587,7 +1625,17 @@ function spawnLogic() {
             </button>
           )}
 
-          <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8, zIndex: 8 }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 14,
+              left: phase === "play" ? "50%" : 12,
+              transform: phase === "play" ? "translateX(-50%)" : "none",
+              display: "flex",
+              gap: 8,
+              zIndex: 8,
+            }}
+          >
             {phase === "play" && (
               <button
                 type="button"
@@ -1642,35 +1690,37 @@ function spawnLogic() {
               top: 16,
               right: isMobileArena ? 16 : 22,
               display: "flex",
-              alignItems: isCompactArena ? "flex-end" : "flex-start",
+              alignItems: phase === "play" ? (isCompactArena ? "flex-end" : "flex-start") : "center",
               gap: isMobileArena ? 6 : 10,
               zIndex: 4,
-              maxWidth: isSmallMobileArena ? "62vw" : "unset",
+              maxWidth: phase === "play" ? (isSmallMobileArena ? "62vw" : "unset") : "40vw",
             }}
           >
-            <div style={{ color: "#ffd339", fontSize: isSmallMobileArena ? 30 : isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(orderTimeLeft % 60).padStart(2, "0")}` : "∞"}</div>
-            <div
-              style={{
-                marginTop: 2,
-                display: "flex",
-                gap: isMobileArena ? 4 : 6,
-                alignItems: "center",
-                flexWrap: isCompactArena ? "wrap" : "nowrap",
-                justifyContent: "flex-end",
-                color: "#fff5dd",
-                fontSize: isSmallMobileArena ? 9 : isMobileArena ? 10 : 13,
-                fontWeight: 800,
-                whiteSpace: isCompactArena ? "normal" : "nowrap",
-                textShadow: "0 2px 0 rgba(62,31,2,0.95)",
-                maxWidth: isCompactArena ? 130 : "unset",
-              }}
-            >
-              <span>⚡x{Math.max(1, combo)}</span>
-              <span>{isZenMode ? "🫀♾️" : `🫀${"❤️".repeat(lives)}`}</span>
-              <span>🚚{wave}</span>
-              {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
-              <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : `🟡 x2 • ⭐ x3 • 💣 ${isClassicMode ? "-1 vida" : "-2s"}`}</span>
-            </div>
+            <div style={{ color: "#ffd339", fontSize: phase === "play" ? (isSmallMobileArena ? 30 : isMobileArena ? 42 : 68) : (isSmallMobileArena ? 24 : isMobileArena ? 30 : 40), fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(orderTimeLeft % 60).padStart(2, "0")}` : "∞"}</div>
+            {phase === "play" && (
+              <div
+                style={{
+                  marginTop: 2,
+                  display: "flex",
+                  gap: isMobileArena ? 4 : 6,
+                  alignItems: "center",
+                  flexWrap: isCompactArena ? "wrap" : "nowrap",
+                  justifyContent: "flex-end",
+                  color: "#fff5dd",
+                  fontSize: isSmallMobileArena ? 9 : isMobileArena ? 10 : 13,
+                  fontWeight: 800,
+                  whiteSpace: isCompactArena ? "normal" : "nowrap",
+                  textShadow: "0 2px 0 rgba(62,31,2,0.95)",
+                  maxWidth: isCompactArena ? 130 : "unset",
+                }}
+              >
+                <span>⚡x{Math.max(1, combo)}</span>
+                <span>{isZenMode ? "🫀♾️" : `🫀${"❤️".repeat(lives)}`}</span>
+                <span>🚚{wave}</span>
+                {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
+                <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : `🟡 x2 • ⭐ x3 • 💣 ${isClassicMode ? "-1 vida" : "-2s"}`}</span>
+              </div>
+            )}
           </div>
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
@@ -1958,8 +2008,8 @@ function spawnLogic() {
           )}
 
           {phase !== "play" && (
-            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
-              <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
+            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "start center", background: "rgba(5,6,12,0.5)", padding: isSmallMobileArena ? "58px 8px 10px" : "64px 12px 14px" }}>
+              <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "14px 12px" : "20px 20px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(96vw, 370px)" : "min(94vw, 560px)", maxHeight: "100%", overflowY: "auto" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameTitleIdle : ui.gameOver}</h3>
                 <p style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameDescIdle : `Pontuação final: ${score}`}</p>
                 {!hasStoredPlayerName && (
@@ -2014,45 +2064,84 @@ function spawnLogic() {
                   {phase === "idle" ? ui.start : ui.playAgain}
                 </button>
 
-                {(phase === "idle" || settings.showTutorial) && (
-                  <div style={{ marginTop: 14, marginBottom: 12, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
-                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
-                    <ul style={{ margin: 0, paddingLeft: 18 }}>
-                      <li>{ui.tutorialCut}</li>
-                      <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
-                      <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
-                      <li>{ui.bonusText}</li>
-                    </ul>
-                  </div>
-                )}
-
                 <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
                   <p style={{ margin: "0 0 8px", fontWeight: 800 }}>{ui.top10}</p>
                   {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>{ui.loading}</p>}
                   {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>{ui.noScores}</p>}
-                  {Object.entries(GAME_MODES).map(([modeKey, modeData]) => {
-                    const modeRanking = rankingByMode[modeKey] || [];
+                  {(() => {
+                    const selectedModeKey = normalizeGameMode(settings.mode);
+                    const modeData = GAME_MODES[selectedModeKey];
+                    const modeRanking = rankingByMode[selectedModeKey] || [];
                     if (rankingStatus === "loading" || modeRanking.length === 0) return null;
 
                     return (
-                      <div key={modeKey} style={{ marginTop: 10 }}>
-                        <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 800, opacity: 0.9 }}>{modeData.label}</p>
-                        {modeRanking.map((entry, index) => (
-                          <div key={`${modeKey}-${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
-                            <span style={{ overflowWrap: "anywhere" }}>{index + 1}. {entry.player_name}</span>
-                            <span>{entry.score} {ui.points}</span>
-                          </div>
-                        ))}
+                      <div
+                        key={selectedModeKey}
+                        style={{
+                          marginTop: 12,
+                          borderRadius: 12,
+                          border: "1px solid rgba(255,255,255,0.16)",
+                          background: "rgba(255,255,255,0.05)",
+                          padding: "8px 10px",
+                        }}
+                      >
+                        <p style={{ margin: "0 0 6px", fontSize: 13, fontWeight: 900, opacity: 0.95 }}>{modeData.label}</p>
+                        {modeRanking.map((entry, index) => {
+                          const isLeader = index === 0;
+
+                          return (
+                            <div
+                              key={`${selectedModeKey}-${entry.player_name}-${entry.date}-${index}`}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                gap: 10,
+                                fontWeight: isLeader ? 900 : 700,
+                                opacity: isLeader ? 1 : 0.92,
+                                marginTop: index === 0 ? 0 : 2,
+                                padding: "5px 8px",
+                                borderRadius: 8,
+                                background: isLeader ? "linear-gradient(90deg, rgba(255,203,84,0.3), rgba(255,144,90,0.2))" : "rgba(255,255,255,0.02)",
+                                border: isLeader ? "1px solid rgba(255,223,120,0.6)" : "1px solid transparent",
+                              }}
+                            >
+                              <span style={{ overflowWrap: "anywhere" }}>
+                                {isLeader ? "👑 " : ""}
+                                {index + 1}. {entry.player_name}
+                              </span>
+                              <span style={{ color: isLeader ? "#ffe79a" : "white" }}>{entry.score} {ui.points}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
-                  })}
-                  {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
-                  <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.profileMissions}: {missionProgress.completedCount}</p>
-                  <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.achievements}: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
+                  })()}
                   {newAchievementsUnlocked.length > 0 && (
                     <p style={{ margin: "6px 0 0", fontSize: 12, color: "#9ff5aa", fontWeight: 700 }}>
                       {ui.newOnes}: {newAchievementsUnlocked.map((id) => ACHIEVEMENT_DEFINITIONS.find((item) => item.id === id)?.label || id).join(" • ")}
                     </p>
+                  )}
+                </div>
+
+                <div style={{ marginTop: 12, marginBottom: 12, textAlign: "left" }}>
+                  <button
+                    type="button"
+                    onClick={() => setSettings((old) => ({ ...old, showTutorial: !old.showTutorial }))}
+                    style={{ border: "1px solid rgba(255,255,255,0.35)", borderRadius: 10, background: "rgba(15, 8, 4, 0.62)", color: "#fff", fontWeight: 800, padding: "7px 12px", cursor: "pointer" }}
+                  >
+                    Quick tutorial
+                  </button>
+
+                  {settings.showTutorial && (
+                    <div style={{ marginTop: 10, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
+                      <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        <li>{ui.tutorialCut}</li>
+                        <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
+                        <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
+                        <li>{ui.bonusText}</li>
+                      </ul>
+                    </div>
                   )}
                 </div>
               </div>
