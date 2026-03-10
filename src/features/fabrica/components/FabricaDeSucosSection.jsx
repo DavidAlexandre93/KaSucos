@@ -15,6 +15,10 @@ const FRUITS = [
 
 const BOMB = { id: "bomb", emoji: "💣" };
 const STAR_FRUIT = { id: "star-fruit", emoji: "⭐", color: "#ffd84d" };
+const BANANA_DOUBLE = { id: "banana-double", emoji: "🍌", color: "#79b7ff" };
+const BANANA_FRENZY = { id: "banana-frenzy", emoji: "🍌", color: "#ff6b6b" };
+const BANANA_FREEZE = { id: "banana-freeze", emoji: "🍌", color: "#94f2ff" };
+const POMEGRANATE = { id: "pomegranate", emoji: "🍎", color: "#ff4f86" };
 const WOOD_CRACKS = [
   { x1: 0.08, y1: 0.28, x2: 0.21, y2: 0.36 },
   { x1: 0.18, y1: 0.53, x2: 0.31, y2: 0.44 },
@@ -45,17 +49,22 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.met
 const RANKING_TABLE = import.meta.env.VITE_SUPABASE_RANKING_TABLE || "game_scores";
 const SWIPE_VARIANT_COUNT = 7;
 const CLEAN_SLICE_VARIANT_COUNT = 3;
+const BLITZ_TIMEOUT_MS = 2600;
+const BANANA_EFFECT_DURATION_MS = 8000;
+const FRENZY_DURATION_MS = 6000;
+const FREEZE_TIMER_MULTIPLIER = 0.45;
 const GAME_MODES = {
   arcade: {
     label: "Arcade",
-    description: "Cronômetro correndo, bombas tiram tempo e frutas perdidas tiram 2s.",
+    description: "60s de rodada com bananas especiais, blitz e romã final para maximizar pontos.",
     usesTimer: true,
+    roundTime: 60,
     allowBombs: true,
-    penalizeMisses: true,
+    penalizeMisses: false,
   },
   classic: {
     label: "Clássico",
-    description: "Sem cronômetro, mas perdeu fruta ou acertou bomba = perde vida.",
+    description: "Sobreviva sem cortar bombas e sem deixar frutas caírem (3 erros no total).",
     usesTimer: false,
     allowBombs: true,
     penalizeMisses: true,
@@ -434,16 +443,49 @@ function createItem(width, height, speed = 1, forcedKind) {
   const isBomb = forcedKind ? forcedKind === "bomb" : roll < 0.12;
   const isDoubleFruit = forcedKind ? forcedKind === "doubleFruit" : roll >= 0.12 && roll < 0.22;
   const isStarFruit = forcedKind ? forcedKind === "starFruit" : roll >= 0.22 && roll < 0.31;
+  const isBananaDouble = forcedKind === "bananaDouble";
+  const isBananaFrenzy = forcedKind === "bananaFrenzy";
+  const isBananaFreeze = forcedKind === "bananaFreeze";
+  const isPomegranate = forcedKind === "pomegranate";
   const baseFruit = pick(FRUITS);
   const size = isBomb ? random(72, 88) : random(86, 112);
   const spawnY = height + random(30, 120);
+  const kind = isBomb
+    ? "bomb"
+    : isBananaDouble
+      ? "bananaDouble"
+      : isBananaFrenzy
+        ? "bananaFrenzy"
+        : isBananaFreeze
+          ? "bananaFreeze"
+          : isPomegranate
+            ? "pomegranate"
+            : isDoubleFruit
+              ? "doubleFruit"
+              : isStarFruit
+                ? "starFruit"
+                : "fruit";
+
+  const fruitMeta = isBomb
+    ? BOMB
+    : isBananaDouble
+      ? BANANA_DOUBLE
+      : isBananaFrenzy
+        ? BANANA_FRENZY
+        : isBananaFreeze
+          ? BANANA_FREEZE
+          : isPomegranate
+            ? POMEGRANATE
+            : isStarFruit
+              ? STAR_FRUIT
+              : baseFruit;
 
   return {
     uid: `${Date.now()}-${Math.random()}`,
-    kind: isBomb ? "bomb" : isDoubleFruit ? "doubleFruit" : isStarFruit ? "starFruit" : "fruit",
-    fruitId: isBomb ? BOMB.id : baseFruit.id,
-    emoji: isBomb ? BOMB.emoji : isStarFruit ? STAR_FRUIT.emoji : baseFruit.emoji,
-    color: isBomb ? "#fff" : isStarFruit ? STAR_FRUIT.color : baseFruit.color || "#fff",
+    kind,
+    fruitId: fruitMeta.id,
+    emoji: fruitMeta.emoji,
+    color: fruitMeta.color || baseFruit.color || "#fff",
     x: random(40, Math.max(45, width - 90)),
     y: spawnY,
     vx: random(-1.8, 1.8),
@@ -451,6 +493,7 @@ function createItem(width, height, speed = 1, forcedKind) {
     size,
     rot: random(-25, 25),
     rotVel: random(-7, 7),
+    hitsRemaining: isPomegranate ? 12 : 0,
     cut: false,
   };
 }
@@ -463,6 +506,7 @@ function getWaveSettings(wave) {
   const bombChance = Math.min(0.28, 0.1 + normalizedWave * 0.015);
   const doubleFruitChance = Math.max(0.08, 0.13 - normalizedWave * 0.006);
   const starFruitChance = Math.max(0.05, 0.12 - normalizedWave * 0.004);
+  const bananaChance = Math.min(0.14, 0.03 + normalizedWave * 0.008);
   const orderTimeLimit = Math.max(MIN_ORDER_TIME_LIMIT, ORDER_TIME_LIMIT - Math.floor((normalizedWave - 1) / 2));
 
   return {
@@ -472,6 +516,7 @@ function getWaveSettings(wave) {
     bombChance,
     doubleFruitChance,
     starFruitChance,
+    bananaChance,
     orderTimeLimit,
   };
 }
@@ -479,6 +524,18 @@ function getWaveSettings(wave) {
 function createWaveItem(width, height, wave, options = {}) {
   const config = getWaveSettings(wave);
   const allowBombs = options.allowBombs !== false;
+  const allowArcadeBananas = options.allowArcadeBananas === true;
+  const spawnPomegranate = options.spawnPomegranate === true;
+
+  if (spawnPomegranate) {
+    return createItem(width, height, config.speed * 0.95, "pomegranate");
+  }
+
+  if (allowArcadeBananas && Math.random() < config.bananaChance) {
+    const bananaRoll = Math.random();
+    const bananaKind = bananaRoll < 0.34 ? "bananaDouble" : bananaRoll < 0.67 ? "bananaFrenzy" : "bananaFreeze";
+    return createItem(width, height, config.speed * 0.9, bananaKind);
+  }
 
   if (!allowBombs) {
     const specialRoll = Math.random();
@@ -691,6 +748,14 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const [missedStreak, setMissedStreak] = useState(0);
   const [settings, setSettings] = useState(loadSettings);
   const [runStats, setRunStats] = useState({ fruitsSliced: 0, bombsSliced: 0, maxCombo: 0 });
+  const [arcadeEffects, setArcadeEffects] = useState({
+    blitzLevel: 0,
+    lastComboAt: 0,
+    doubleUntil: 0,
+    frenzyUntil: 0,
+    freezeUntil: 0,
+    pomegranateSpawned: false,
+  });
   const [missionProgress, setMissionProgress] = useState(loadMissionProgress);
   const [missionCompletedInRun, setMissionCompletedInRun] = useState(false);
   const [achievementsProgress, setAchievementsProgress] = useState(loadAchievementsProgress);
@@ -723,6 +788,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const modeConfig = GAME_MODES[settings.mode] || GAME_MODES.arcade;
   const isClassicMode = settings.mode === "classic";
   const isZenMode = settings.mode === "zen";
+  const isArcadeMode = settings.mode === "arcade";
   const usesTimer = modeConfig.usesTimer ?? true;
   const isSmallMobileArena = size.width <= 520;
   const isCompactArena = size.width <= 680;
@@ -878,6 +944,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
     setIsPaused(false);
     setMissedStreak(0);
     setRunStats({ fruitsSliced: 0, bombsSliced: 0, maxCombo: 0 });
+    setArcadeEffects({ blitzLevel: 0, lastComboAt: 0, doubleUntil: 0, frenzyUntil: 0, freezeUntil: 0, pomegranateSpawned: false });
     setMissionCompletedInRun(false);
     setNewAchievementsUnlocked([]);
     lastActiveItemsAtRef.current = Date.now();
@@ -1130,15 +1197,23 @@ function spawnLogic() {
     const now = performance.now();
     const currentWave = waveRef.current;
     const config = getWaveSettings(currentWave);
+    const frenzyActive = isArcadeMode && Date.now() < arcadeEffects.frenzyUntil;
+    const effectiveSpawnInterval = frenzyActive ? Math.max(180, config.spawnInterval * 0.42) : config.spawnInterval;
+    const effectiveMaxItems = frenzyActive ? Math.min(14, config.maxItems + 5) : config.maxItems;
 
     setItems((prev) => {
-      if (now - lastSpawnAtRef.current < config.spawnInterval) return prev;
-      if (prev.length >= config.maxItems) return prev;
+      if (now - lastSpawnAtRef.current < effectiveSpawnInterval) return prev;
+      if (prev.length >= effectiveMaxItems) return prev;
 
       lastSpawnAtRef.current = now;
       const next = [...prev];
-      next.push(createWaveItem(sizeRef.current.width, sizeRef.current.height, currentWave, { allowBombs: modeConfig.allowBombs }));
-      const normalizedItems = next.slice(-config.maxItems);
+      next.push(
+        createWaveItem(sizeRef.current.width, sizeRef.current.height, currentWave, {
+          allowBombs: modeConfig.allowBombs,
+          allowArcadeBananas: isArcadeMode,
+        }),
+      );
+      const normalizedItems = next.slice(-effectiveMaxItems);
       itemsRef.current = normalizedItems;
       return normalizedItems;
     });
@@ -1170,7 +1245,7 @@ function spawnLogic() {
       if (escapedItems.length > 0) {
         setCombo(0);
         if (!modeConfig.penalizeMisses) {
-          setToast(`🥝 ${escapedItems.length} fruta(s) escaparam (modo Zen sem penalidade).`);
+          setToast(`🥝 ${escapedItems.length} fruta(s) escaparam sem penalidade neste modo.`);
           setMissedStreak((old) => old + escapedItems.length);
         } else if (isClassicMode) {
           setToast(`❌ ${escapedItems.length} fruta(s) escaparam! -${escapedItems.length} vida(s).`);
@@ -1253,14 +1328,20 @@ function spawnLogic() {
       lastActiveItemsAtRef.current = Date.now();
       setItems((prev) => {
         if (prev.length > 0) return prev;
-        const nextItems = [...prev, createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current, { allowBombs: modeConfig.allowBombs })];
+        const nextItems = [
+          ...prev,
+          createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current, {
+            allowBombs: modeConfig.allowBombs,
+            allowArcadeBananas: isArcadeMode,
+          }),
+        ];
         itemsRef.current = nextItems;
         return nextItems;
       });
     }, 380);
 
     return () => window.clearInterval(fallbackSpawner);
-  }, [phase]);
+  }, [isArcadeMode, modeConfig.allowBombs, phase, isPaused]);
 
   function applySlice(pointA, pointB) {
     if (phase !== "play" || isPaused) return;
@@ -1269,6 +1350,7 @@ function spawnLogic() {
     let bombHits = 0;
     let correctHits = 0;
     let earnedPoints = 0;
+    let specialHits = 0;
 
     const splitEffects = [];
     const burstEffects = [];
@@ -1295,6 +1377,35 @@ function spawnLogic() {
           continue;
         }
 
+        if (item.kind === "bananaDouble" || item.kind === "bananaFrenzy" || item.kind === "bananaFreeze") {
+          specialHits += 1;
+          if (isArcadeMode) {
+            const effectEnd = Date.now() + BANANA_EFFECT_DURATION_MS;
+            if (item.kind === "bananaDouble") {
+              setArcadeEffects((old) => ({ ...old, doubleUntil: effectEnd }));
+              setToast("🍌 Banana azul! Pontuação dobrada ativa.");
+            } else if (item.kind === "bananaFrenzy") {
+              setArcadeEffects((old) => ({ ...old, frenzyUntil: Date.now() + FRENZY_DURATION_MS }));
+              setToast("🍌 Banana vermelha! Frenzy de frutas ativado.");
+            } else {
+              setArcadeEffects((old) => ({ ...old, freezeUntil: effectEnd }));
+              setToast("🍌 Banana congelada! Tempo desacelerado.");
+            }
+          }
+          continue;
+        }
+
+        if (item.kind === "pomegranate") {
+          specialHits += 1;
+          hits += 1;
+          correctHits += 1;
+          earnedPoints += 15;
+          if ((item.hitsRemaining || 0) > 1) {
+            remainingItems.push({ ...item, hitsRemaining: item.hitsRemaining - 1 });
+          }
+          continue;
+        }
+
         hits += 1;
         splitEffects.push(...limitEffects(createFruitSplits(item), isPerformanceMode ? 1 : 2));
         burstEffects.push({
@@ -1304,7 +1415,7 @@ function spawnLogic() {
           color: item.color,
           createdAt: Date.now(),
         });
-        const basePoints = 10 + combo * 2;
+        const basePoints = 10;
         const pointMultiplier = item.kind === "doubleFruit" ? 2 : item.kind === "starFruit" ? 3 : 1;
         correctHits += 1;
         earnedPoints += basePoints * pointMultiplier;
@@ -1331,12 +1442,8 @@ function spawnLogic() {
       setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-(isPerformanceMode ? 8 : 14)));
       setCombo(0);
       if (isClassicMode) {
-        setToast(`💣 Bomba cortada! -${bombHits} vida(s).`);
-        setLives((old) => {
-          const next = Math.max(0, old - bombHits);
-          if (next <= 0) endGame("Fim de jogo: você acertou bombas demais.");
-          return next;
-        });
+        setLives(0);
+        endGame("Fim de jogo: você cortou uma bomba no modo Clássico.");
       } else {
         setOrderTimeLeft((old) => Math.max(0, old - bombHits * 2));
         setToast(`💣 Bomba cortada! -${bombHits * 2}s.`);
@@ -1344,23 +1451,48 @@ function spawnLogic() {
     }
 
     if (correctHits > 0) {
+      const now = Date.now();
+      const comboCount = correctHits >= 3;
+      const criticalHits = Array.from({ length: correctHits }).reduce((sum) => sum + (Math.random() < 0.16 ? 1 : 0), 0);
+      const arcadeDoubleActive = isArcadeMode && now < arcadeEffects.doubleUntil;
+      const blitzLevel = isArcadeMode && comboCount ? Math.min(5, arcadeEffects.blitzLevel + 1) : arcadeEffects.blitzLevel;
+      const blitzMultiplier = isArcadeMode && blitzLevel > 0 ? 1 + blitzLevel * 0.2 : 1;
+      const comboMultiplier = comboCount ? 2 : 1;
+      const activeMultiplier = comboMultiplier * (arcadeDoubleActive ? 2 : 1) * blitzMultiplier;
+      const adjustedPoints = Math.round(earnedPoints * activeMultiplier + criticalHits * 10);
+
       playSliceSound("cleanSlice");
       if (!isPerformanceMode) {
         playSliceSound("slash");
         playSliceSound("splat");
       }
-      if ((hits > 1 || combo + 1 >= 3) && !isPerformanceMode) {
+      if ((hits > 1 || comboCount) && !isPerformanceMode) {
         playSliceSound("combo");
       }
-      setCombo((old) => old + 1);
+      setCombo((old) => (comboCount ? old + 1 : 0));
+      if (isArcadeMode) {
+        setArcadeEffects((old) => ({
+          ...old,
+          blitzLevel: comboCount ? Math.min(5, old.blitzLevel + 1) : old.blitzLevel,
+          lastComboAt: comboCount ? now : old.lastComboAt,
+        }));
+      }
       setRunStats((old) => ({
         ...old,
         fruitsSliced: old.fruitsSliced + correctHits,
-        maxCombo: Math.max(old.maxCombo, combo + 1),
+        maxCombo: Math.max(old.maxCombo, comboCount ? combo + 1 : combo),
       }));
-      setScore((old) => old + earnedPoints);
-      const hasMultiplier = earnedPoints > correctHits * (10 + combo * 2);
-      setToast(hasMultiplier ? `Especial x2/x3! +${earnedPoints} ${ui.points}` : hits > 1 ? `Combo x${combo + 1}!` : `+${earnedPoints} ${ui.points}`);
+      setScore((old) => old + adjustedPoints);
+      const hasMultiplier = activeMultiplier > 1;
+      setToast(
+        hasMultiplier
+          ? `Combo x${comboCount ? combo + 1 : 1} • Blitz ${isArcadeMode ? `x${blitzMultiplier.toFixed(1)}` : "x1"} • +${adjustedPoints} ${ui.points}`
+          : criticalHits > 0
+            ? `Critical +${criticalHits * 10}! +${adjustedPoints} ${ui.points}`
+            : hits > 1
+              ? `Combo x${combo + 1}!`
+              : `+${adjustedPoints} ${ui.points}`,
+      );
       setWaveProgress((old) => {
         const next = old + correctHits;
         if (next < FRUITS_PER_WAVE) return next;
@@ -1377,17 +1509,54 @@ function spawnLogic() {
         return next % FRUITS_PER_WAVE;
       });
     }
+
+    if (specialHits > 0 && !correctHits) {
+      setScore((old) => old + specialHits * 10);
+    }
   }
 
   useEffect(() => {
     if (phase !== "play" || isPaused || !usesTimer) return;
 
     const timer = window.setInterval(() => {
-      setOrderTimeLeft((old) => Math.max(0, old - 1));
+      const freezeActive = isArcadeMode && Date.now() < arcadeEffects.freezeUntil;
+      const decrement = freezeActive ? FREEZE_TIMER_MULTIPLIER : 1;
+      setOrderTimeLeft((old) => Math.max(0, old - decrement));
     }, 1000);
 
     return () => window.clearInterval(timer);
-  }, [phase, isPaused, usesTimer]);
+  }, [phase, isPaused, usesTimer, isArcadeMode, arcadeEffects.freezeUntil]);
+
+  useEffect(() => {
+    if (!isArcadeMode || phase !== "play") return undefined;
+
+    const blitzWatcher = window.setInterval(() => {
+      setArcadeEffects((old) => {
+        if (old.blitzLevel <= 0) return old;
+        if (Date.now() - old.lastComboAt <= BLITZ_TIMEOUT_MS) return old;
+        return { ...old, blitzLevel: 0 };
+      });
+    }, 240);
+
+    return () => window.clearInterval(blitzWatcher);
+  }, [isArcadeMode, phase]);
+
+  useEffect(() => {
+    if (!isArcadeMode || phase !== "play" || arcadeEffects.pomegranateSpawned || orderTimeLeft > 8) return;
+
+    const pomegranate = createWaveItem(sizeRef.current.width, sizeRef.current.height, waveRef.current, {
+      allowBombs: false,
+      spawnPomegranate: true,
+    });
+
+    setItems((old) => {
+      const next = [...old, pomegranate];
+      itemsRef.current = next;
+      return next;
+    });
+    setArcadeEffects((old) => ({ ...old, pomegranateSpawned: true }));
+    setToast("🍎 Romã final! Faça cortes rápidos para bônus.");
+  }, [arcadeEffects.pomegranateSpawned, isArcadeMode, orderTimeLeft, phase]);
 
   useEffect(() => {
     if (sliceBursts.length === 0) return undefined;
@@ -1738,7 +1907,7 @@ function spawnLogic() {
               maxWidth: phase === "play" ? (isSmallMobileArena ? "62vw" : "unset") : "40vw",
             }}
           >
-            <div style={{ color: "#ffd339", fontSize: phase === "play" ? (isSmallMobileArena ? 30 : isMobileArena ? 42 : 68) : (isSmallMobileArena ? 24 : isMobileArena ? 30 : 40), fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(orderTimeLeft % 60).padStart(2, "0")}` : "∞"}</div>
+            <div style={{ color: "#ffd339", fontSize: phase === "play" ? (isSmallMobileArena ? 30 : isMobileArena ? 42 : 68) : (isSmallMobileArena ? 24 : isMobileArena ? 30 : 40), fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(Math.max(0, Math.floor(orderTimeLeft % 60))).padStart(2, "0")}` : "∞"}</div>
             {phase === "play" && (
               <div
                 style={{
@@ -1760,7 +1929,7 @@ function spawnLogic() {
                 <span>{isZenMode ? "🫀♾️" : `🫀${"❤️".repeat(lives)}`}</span>
                 <span>🚚{wave}</span>
                 {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
-                <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : `🟡 x2 • ⭐ x3 • 💣 ${isClassicMode ? "-1 vida" : "-2s"}`}</span>
+                <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : isClassicMode ? "🟡 x2 • ⭐ x3 • 💣 fim de rodada" : `🟡 x2 • ⭐ x3 • 🍌 bônus • Blitz x${Math.max(1, 1 + arcadeEffects.blitzLevel * 0.2).toFixed(1)}`}</span>
               </div>
             )}
           </div>
