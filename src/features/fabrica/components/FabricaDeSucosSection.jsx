@@ -608,6 +608,9 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const sizeRef = useRef({ width: 980, height: 700 });
   const itemsRef = useRef([]);
   const lastActiveItemsAtRef = useRef(Date.now());
+  const frameTimeRef = useRef(0);
+  const pointerMoveRafRef = useRef(null);
+  const pendingPointerEventRef = useRef(null);
 
   const [size, setSize] = useState({ width: 980, height: 700 });
   const [phase, setPhase] = useState("idle");
@@ -1099,6 +1102,12 @@ function spawnLogic() {
 
     rafRef.current = requestAnimationFrame(tick);
 
+    const now = performance.now();
+    const targetFrameMs = settings.reducedEffects || isMobileDevice ? 33 : 20;
+    if (now - frameTimeRef.current < targetFrameMs) return;
+    frameTimeRef.current = now;
+    const currentTime = Date.now();
+
     setItems((prev) => {
       const movedItems = prev.map((item) => ({
         ...item,
@@ -1148,7 +1157,7 @@ function spawnLogic() {
           vy: piece.vy + GRAVITY * 0.9,
           rot: piece.rot + piece.rotVel,
         }))
-        .filter((piece) => piece.y < sizeRef.current.height + 140 && Date.now() - piece.createdAt < 850)
+        .filter((piece) => piece.y < sizeRef.current.height + 140 && currentTime - piece.createdAt < 850)
     );
 
     setJuiceDrops((prev) =>
@@ -1159,7 +1168,7 @@ function spawnLogic() {
           y: drop.y + drop.vy,
           vy: drop.vy + GRAVITY * 0.5,
         }))
-        .filter((drop) => Date.now() - drop.createdAt < JUICE_DROP_LIFETIME)
+        .filter((drop) => currentTime - drop.createdAt < JUICE_DROP_LIFETIME)
     );
 
     setExplosionSparks((prev) =>
@@ -1170,7 +1179,7 @@ function spawnLogic() {
           y: spark.y + spark.vy,
           vy: spark.vy + GRAVITY * 0.45,
         }))
-        .filter((spark) => Date.now() - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
+        .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
     );
   }
 
@@ -1181,6 +1190,7 @@ function spawnLogic() {
     }
 
     lastSpawnAtRef.current = performance.now() - 1400;
+    frameTimeRef.current = 0;
     tick();
 
     return () => cancelAnimationFrame(rafRef.current);
@@ -1443,9 +1453,8 @@ function spawnLogic() {
     setSlashTrail([point]);
   }
 
-  function onPointerMove(ev) {
+  function processPointerMove(ev) {
     if (phase !== "play" || isPaused) return;
-    if ("touches" in ev) ev.preventDefault();
 
     const point = toLocalPoint(ev);
     if (slashRef.current.length === 0) {
@@ -1473,7 +1482,28 @@ function spawnLogic() {
     }
   }
 
+  function onPointerMove(ev) {
+    if (phase !== "play" || isPaused) return;
+    if ("touches" in ev) ev.preventDefault();
+
+    pendingPointerEventRef.current = ev;
+    if (pointerMoveRafRef.current) return;
+
+    pointerMoveRafRef.current = requestAnimationFrame(() => {
+      pointerMoveRafRef.current = null;
+      const latestEvent = pendingPointerEventRef.current;
+      pendingPointerEventRef.current = null;
+      if (!latestEvent) return;
+      processPointerMove(latestEvent);
+    });
+  }
+
   function onPointerUp() {
+    if (pointerMoveRafRef.current) {
+      cancelAnimationFrame(pointerMoveRafRef.current);
+      pointerMoveRafRef.current = null;
+    }
+    pendingPointerEventRef.current = null;
     slashRef.current = [];
     setTimeout(() => setSlashTrail([]), 160);
   }
