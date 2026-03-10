@@ -1384,6 +1384,15 @@ function spawnLogic() {
 
         if (item.kind === "bananaDouble" || item.kind === "bananaFrenzy" || item.kind === "bananaFreeze") {
           specialHits += 1;
+          hits += 1;
+          splitEffects.push(...limitEffects(createFruitSplits(item), isPerformanceMode ? 1 : 2));
+          burstEffects.push({
+            id: `${item.uid}-burst-${Math.random()}`,
+            x: item.x + item.size / 2,
+            y: item.y + item.size / 2,
+            color: item.color,
+            createdAt: Date.now(),
+          });
           if (isArcadeMode) {
             const effectEnd = Date.now() + BANANA_EFFECT_DURATION_MS;
             if (item.kind === "bananaDouble") {
