@@ -167,7 +167,7 @@ body.splash-lock {
 .splash-v2-field {
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 4;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -182,7 +182,7 @@ body.splash-lock {
 }
 
 .splash-v2-vignette {
-  z-index: 4;
+  z-index: 2;
 }
 
 .splash-v2-vignette-gradient {
@@ -337,7 +337,7 @@ body.splash-lock {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 2;
   overflow: hidden;
 }
 
@@ -1202,7 +1202,9 @@ body.game-fullscreen-active .topbar nav {
   padding: 12px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 0;
+  opacity: 0.62;
+  mix-blend-mode: multiply;
   backdrop-filter: blur(8px);
   text-align: left;
   box-shadow: 0 10px 20px rgba(20, 7, 37, 0.24);
@@ -1805,69 +1807,21 @@ body.game-fullscreen-active .topbar nav {
   position: absolute;
   z-index: 2;
   bottom: 18px;
-  width: 210px;
-  height: 272px;
-  border: 2px solid rgba(255, 255, 255, 0.78);
-  border-radius: 20px 20px 48px 48px;
+  width: 238px;
+  height: 340px;
   overflow: hidden;
-  box-shadow:
-    inset 0 0 0 1px rgba(237, 246, 255, 0.9),
-    inset 0 -22px 28px rgba(218, 228, 255, 0.28),
-    inset 9px 0 16px rgba(255, 255, 255, 0.22),
-    inset -10px 0 18px rgba(112, 95, 154, 0.12),
-    0 34px 38px rgba(42, 17, 81, 0.28),
-    0 9px 20px rgba(255, 255, 255, 0.22);
-  background:
-    linear-gradient(185deg, rgba(255, 255, 255, 0.7) 0%, rgba(244, 249, 255, 0.46) 24%, rgba(228, 239, 255, 0.2) 100%),
-    radial-gradient(circle at 16% 34%, rgba(255, 255, 255, 0.48), transparent 42%);
 }
 
-.juice-cup::before,
-.juice-cup::after {
-  content: "";
+.juice-bottle {
   position: absolute;
-  pointer-events: none;
-}
-
-.juice-cup::before {
-  left: 50%;
-  top: 5px;
-  transform: translateX(-50%);
-  width: 186px;
-  height: 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.82);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(231, 238, 255, 0.1));
-  z-index: 5;
-}
-
-.juice-cup::after {
-  right: 22px;
-  top: 18px;
-  width: 14px;
-  height: 232px;
-  border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.08));
-  filter: blur(0.2px);
-  opacity: 0.85;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   z-index: 3;
-}
-
-.juice-handle {
-  position: absolute;
-  right: -42px;
-  top: 70px;
-  width: 64px;
-  height: 132px;
-  border: 11px solid rgba(255, 255, 255, 0.72);
-  border-left: 0;
-  border-radius: 0 40px 40px 0;
-  box-shadow:
-    inset 0 0 0 1px rgba(232, 243, 255, 0.65),
-    inset -6px 0 8px rgba(124, 114, 168, 0.16),
-    0 7px 12px rgba(45, 17, 84, 0.14);
-  z-index: 1;
   pointer-events: none;
+  opacity: 0.62;
+  filter: drop-shadow(0 22px 30px rgba(42, 17, 81, 0.2));
 }
 
 .juice-drop-zone {
@@ -1905,7 +1859,7 @@ body.game-fullscreen-active .topbar nav {
   border-radius: 50%;
   display: grid;
   place-items: center;
-  z-index: 4;
+  z-index: 2;
   box-shadow:
     0 8px 16px rgba(55, 20, 96, 0.25),
     inset 0 1px 3px rgba(255, 255, 255, 0.6);
@@ -1913,55 +1867,21 @@ body.game-fullscreen-active .topbar nav {
   pointer-events: none;
 }
 
-.juice-glass-highlight {
-  position: absolute;
-  top: 24px;
-  left: 13px;
-  width: 34px;
-  height: 178px;
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.08));
-  z-index: 3;
-  filter: blur(0.15px);
-}
-
-.juice-glass-reflection {
-  position: absolute;
-  right: 34px;
-  top: 40px;
-  width: 8px;
-  height: 116px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.54);
-  z-index: 3;
-}
-
-.juice-lid {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 166px;
-  height: 24px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.86);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(227, 233, 255, 0.34));
-  box-shadow: 0 3px 4px rgba(70, 48, 104, 0.12);
-  z-index: 4;
-}
-
 .juice-liquid {
-  --liquid-level: 48;
+  --liquid-level: 308;
   position: absolute;
-  left: 9px;
-  right: 9px;
-  bottom: 9px;
+  left: 96px;
+  right: 88px;
+  bottom: 30px;
   top: calc(var(--liquid-level) * 1px);
-  border-radius: 22px 22px 38px 38px;
+  border-radius: 12px 12px 10px 10px;
   transition: background 0.3s ease, top 0.28s ease;
   z-index: 2;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 0;
+  opacity: 1;
+  mix-blend-mode: normal;
+  filter: saturate(1.7) contrast(1.08);
   box-shadow:
     inset 0 13px 24px rgba(255, 255, 255, 0.3),
     inset 0 -18px 26px rgba(92, 44, 16, 0.16),
@@ -1970,11 +1890,11 @@ body.game-fullscreen-active .topbar nav {
 
 .juice-wave {
   position: absolute;
-  top: -12px;
-  left: -6px;
-  right: -6px;
-  height: 28px;
-  border-radius: 50%;
+  top: -7px;
+  left: 0;
+  right: 0;
+  height: 16px;
+  border-radius: 999px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.1)),
     radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.4), transparent 55%);
@@ -2052,36 +1972,13 @@ body.game-fullscreen-active .topbar nav {
 .juice-shadow {
   position: absolute;
   bottom: 8px;
-  width: 210px;
+  width: 238px;
   height: 38px;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(42, 27, 62, 0.35), rgba(42, 27, 62, 0));
   z-index: 1;
 }
 
-.cup-logo {
-  position: absolute;
-  top: 56%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 84px;
-  height: 84px;
-  border-radius: 999px;
-  overflow: hidden;
-  z-index: 6;
-  border: 3px solid rgba(255, 255, 255, 0.92);
-  box-shadow:
-    0 8px 18px rgba(64, 28, 95, 0.2),
-    inset 0 2px 5px rgba(255, 255, 255, 0.75);
-}
-
-.cup-logo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-  display: block;
-}
 
 .builder-grid {
   display: grid;
@@ -2198,12 +2095,18 @@ body.game-fullscreen-active .topbar nav {
 
   .juice-cup {
     bottom: 14px;
-    width: 180px;
-    height: 236px;
+    width: 206px;
+    height: 295px;
+  }
+
+  .juice-liquid {
+    left: 82px;
+    right: 74px;
+    bottom: 26px;
   }
 
   .juice-shadow {
-    width: 180px;
+    width: 206px;
   }
 
   .builder-grid {
