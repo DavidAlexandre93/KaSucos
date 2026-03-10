@@ -13,12 +13,12 @@ export const combos = [
   {
     title: { pt: "Combo Performance", en: "Performance Combo", es: "Combo Rendimiento", fr: "Combo Performance" },
     detail: {
-      pt: "20 sucos + 5 bônus (25 no total) • 500 ml",
-      en: "20 juices + 5 bonus (25 total) • 500 ml",
-      es: "20 jugos + 5 bonus (25 en total) • 500 ml",
-      fr: "20 jus + 5 bonus (25 au total) • 500 ml",
+      pt: "20 sucos + 3 bônus (23 no total) • 500 ml",
+      en: "20 juices + 3 bonus (23 total) • 500 ml",
+      es: "20 jugos + 3 bonus (23 en total) • 500 ml",
+      fr: "20 jus + 3 bonus (23 au total) • 500 ml",
     },
-    visualMath: { base: 20, bonus: 5 },
+    visualMath: { base: 20, bonus: 3 },
     price: "R$ 137,50",
     highlight: true,
   },
