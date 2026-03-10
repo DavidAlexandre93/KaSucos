@@ -2068,28 +2068,6 @@ function spawnLogic() {
                   {phase === "idle" ? ui.start : ui.playAgain}
                 </button>
 
-                <div style={{ marginTop: 12, marginBottom: 12, textAlign: "left" }}>
-                  <button
-                    type="button"
-                    onClick={() => setSettings((old) => ({ ...old, showTutorial: !old.showTutorial }))}
-                    style={{ border: "1px solid rgba(255,255,255,0.35)", borderRadius: 10, background: "rgba(15, 8, 4, 0.62)", color: "#fff", fontWeight: 800, padding: "7px 12px", cursor: "pointer" }}
-                  >
-                    Quick tutorial
-                  </button>
-
-                  {settings.showTutorial && (
-                    <div style={{ marginTop: 10, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
-                      <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
-                      <ul style={{ margin: 0, paddingLeft: 18 }}>
-                        <li>{ui.tutorialCut}</li>
-                        <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
-                        <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
-                        <li>{ui.bonusText}</li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
                 <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
                   <p style={{ margin: "0 0 8px", fontWeight: 800 }}>{ui.top10}</p>
                   {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>{ui.loading}</p>}
@@ -2149,6 +2127,28 @@ function spawnLogic() {
                     <p style={{ margin: "6px 0 0", fontSize: 12, color: "#9ff5aa", fontWeight: 700 }}>
                       {ui.newOnes}: {newAchievementsUnlocked.map((id) => ACHIEVEMENT_DEFINITIONS.find((item) => item.id === id)?.label || id).join(" • ")}
                     </p>
+                  )}
+                </div>
+
+                <div style={{ marginTop: 12, marginBottom: 12, textAlign: "left" }}>
+                  <button
+                    type="button"
+                    onClick={() => setSettings((old) => ({ ...old, showTutorial: !old.showTutorial }))}
+                    style={{ border: "1px solid rgba(255,255,255,0.35)", borderRadius: 10, background: "rgba(15, 8, 4, 0.62)", color: "#fff", fontWeight: 800, padding: "7px 12px", cursor: "pointer" }}
+                  >
+                    Quick tutorial
+                  </button>
+
+                  {settings.showTutorial && (
+                    <div style={{ marginTop: 10, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
+                      <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        <li>{ui.tutorialCut}</li>
+                        <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
+                        <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
+                        <li>{ui.bonusText}</li>
+                      </ul>
+                    </div>
                   )}
                 </div>
               </div>
