@@ -46,21 +46,12 @@ function Root() {
       }
     };
 
-    const handleUnexpectedError = () => {
-      redirectToNotFound();
-      setShowNotFound(true);
-    };
-
     window.addEventListener("popstate", syncWithPath);
-    window.addEventListener("error", handleUnexpectedError);
-    window.addEventListener("unhandledrejection", handleUnexpectedError);
 
     syncWithPath();
 
     return () => {
       window.removeEventListener("popstate", syncWithPath);
-      window.removeEventListener("error", handleUnexpectedError);
-      window.removeEventListener("unhandledrejection", handleUnexpectedError);
     };
   }, []);
 
