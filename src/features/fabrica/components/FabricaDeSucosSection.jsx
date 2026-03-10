@@ -637,7 +637,6 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const [toast, setToast] = useState("");
   const [ranking, setRanking] = useState([]);
   const [rankingStatus, setRankingStatus] = useState("idle");
-  const [rankingMessage, setRankingMessage] = useState("");
   const [slicedPieces, setSlicedPieces] = useState([]);
   const [sliceBursts, setSliceBursts] = useState([]);
   const [cutMarks, setCutMarks] = useState([]);
@@ -797,7 +796,6 @@ function JuiceFactoryNinja({ language = "pt" }) {
       if (!canUseSupabase) {
         setRanking(loadLocalRanking());
         setRankingStatus("ready");
-        setRankingMessage("Ranking local (configure o Supabase para ranking global).");
         return;
       }
 
@@ -805,12 +803,10 @@ function JuiceFactoryNinja({ language = "pt" }) {
         const entries = await fetchSupabaseRanking();
         setRanking(entries);
         setRankingStatus("ready");
-        setRankingMessage("Top 3 por modo carregado do Supabase.");
       } catch (error) {
         logWarn("Falha ao carregar ranking do Supabase", { error: String(error) });
         setRanking(loadLocalRanking());
         setRankingStatus("ready");
-        setRankingMessage("Não foi possível acessar o Supabase. Exibindo ranking local.");
       }
     }
 
@@ -2142,9 +2138,6 @@ function spawnLogic() {
                       </div>
                     );
                   })()}
-                  {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
-                  <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.profileMissions}: {missionProgress.completedCount}</p>
-                  <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.achievements}: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
                   {newAchievementsUnlocked.length > 0 && (
                     <p style={{ margin: "6px 0 0", fontSize: 12, color: "#9ff5aa", fontWeight: 700 }}>
                       {ui.newOnes}: {newAchievementsUnlocked.map((id) => ACHIEVEMENT_DEFINITIONS.find((item) => item.id === id)?.label || id).join(" • ")}
