@@ -19,15 +19,6 @@ const BANANA_DOUBLE = { id: "banana-double", emoji: "🍌", color: "#79b7ff" };
 const BANANA_FRENZY = { id: "banana-frenzy", emoji: "🍌", color: "#ff6b6b" };
 const BANANA_FREEZE = { id: "banana-freeze", emoji: "🍌", color: "#94f2ff" };
 const POMEGRANATE = { id: "pomegranate", emoji: "🍎", color: "#ff4f86" };
-const WOOD_CRACKS = [
-  { x1: 0.08, y1: 0.28, x2: 0.21, y2: 0.36 },
-  { x1: 0.18, y1: 0.53, x2: 0.31, y2: 0.44 },
-  { x1: 0.33, y1: 0.31, x2: 0.43, y2: 0.46 },
-  { x1: 0.52, y1: 0.37, x2: 0.67, y2: 0.29 },
-  { x1: 0.61, y1: 0.66, x2: 0.77, y2: 0.61 },
-  { x1: 0.73, y1: 0.24, x2: 0.92, y2: 0.35 },
-  { x1: 0.75, y1: 0.73, x2: 0.91, y2: 0.62 },
-];
 const GRAVITY = 0.14;
 const ORDER_TIME_LIMIT = 20;
 const FRUITS_PER_WAVE = 18;
@@ -1320,8 +1311,8 @@ function spawnLogic() {
           y: spark.y + spark.vy,
           vy: spark.vy + GRAVITY * 0.45,
         }))
-        .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
-    );
+        .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME);
+    });
 
     setExplosionWaves((prev) => prev.filter((wave) => currentTime - wave.createdAt < EXPLOSION_WAVE_LIFETIME));
   }
@@ -1906,24 +1897,6 @@ function spawnLogic() {
               </button>
             )}
           </div>
-
-          {WOOD_CRACKS.map((crack, index) => (
-            <div
-              key={`crack-${index}`}
-              style={{
-                position: "absolute",
-                left: `${crack.x1 * 100}%`,
-                top: `${crack.y1 * 100}%`,
-                width: `${Math.hypot(crack.x2 - crack.x1, crack.y2 - crack.y1) * 100}%`,
-                height: 2,
-                transform: `rotate(${Math.atan2(crack.y2 - crack.y1, crack.x2 - crack.x1) * (180 / Math.PI)}deg)`,
-                transformOrigin: "0 0",
-                background: "linear-gradient(90deg, rgba(35,16,8,0.95), rgba(12,7,4,0.95))",
-                opacity: 0.55,
-                pointerEvents: "none",
-              }}
-            />
-          ))}
 
           <div style={{ position: "absolute", bottom: isCompactArena ? 10 : 16, left: isMobileArena ? 10 : 18, display: "grid", gap: 2, color: "#ffd335", zIndex: 5, textShadow: "0 2px 0 #5b3900", maxWidth: isSmallMobileArena ? "54vw" : "unset" }}>
             <div style={{ display: "flex", alignItems: "center", gap: isMobileArena ? 6 : 10 }}>
