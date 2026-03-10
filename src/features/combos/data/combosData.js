@@ -25,12 +25,12 @@ export const combos = [
   {
     title: { pt: "Combo Família", en: "Family Combo", es: "Combo Familia", fr: "Combo Famille" },
     detail: {
-      pt: "30 sucos + 5 bônus (35 no total) • 500 ml",
-      en: "30 juices + 5 bonus (35 total) • 500 ml",
-      es: "30 jugos + 5 bonus (35 en total) • 500 ml",
-      fr: "30 jus + 5 bonus (35 au total) • 500 ml",
+      pt: "30 sucos + 4 bônus (34 no total) • 500 ml",
+      en: "30 juices + 4 bonus (34 total) • 500 ml",
+      es: "30 jugos + 4 bonus (34 en total) • 500 ml",
+      fr: "30 jus + 4 bonus (34 au total) • 500 ml",
     },
-    visualMath: { base: 30, bonus: 5 },
+    visualMath: { base: 30, bonus: 4 },
     price: "R$ 192,50",
   },
 ];
