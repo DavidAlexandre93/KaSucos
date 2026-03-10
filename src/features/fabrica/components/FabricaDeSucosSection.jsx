@@ -311,7 +311,7 @@ async function insertSupabaseScore(name, score, mode) {
 
 
 function loadSettings() {
-  if (typeof window === "undefined") return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: true };
+  if (typeof window === "undefined") return { mode: "arcade", reducedEffects: false, muteAudio: false, highContrast: false, showTutorial: false };
 
   const isMobileDevice = window.matchMedia?.("(pointer: coarse)")?.matches || window.innerWidth <= 820;
 
@@ -322,10 +322,10 @@ function loadSettings() {
       reducedEffects: Boolean(parsed.reducedEffects),
       muteAudio: isMobileDevice ? true : Boolean(parsed.muteAudio),
       highContrast: Boolean(parsed.highContrast),
-      showTutorial: parsed.showTutorial !== false,
+      showTutorial: Boolean(parsed.showTutorial),
     };
   } catch {
-    return { mode: "arcade", reducedEffects: false, muteAudio: isMobileDevice, highContrast: false, showTutorial: true };
+    return { mode: "arcade", reducedEffects: false, muteAudio: isMobileDevice, highContrast: false, showTutorial: false };
   }
 }
 
@@ -1617,7 +1617,17 @@ function spawnLogic() {
             </button>
           )}
 
-          <div style={{ position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 8, zIndex: 8 }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 14,
+              left: phase === "play" ? "50%" : 12,
+              transform: phase === "play" ? "translateX(-50%)" : "none",
+              display: "flex",
+              gap: 8,
+              zIndex: 8,
+            }}
+          >
             {phase === "play" && (
               <button
                 type="button"
@@ -1672,35 +1682,37 @@ function spawnLogic() {
               top: 16,
               right: isMobileArena ? 16 : 22,
               display: "flex",
-              alignItems: isCompactArena ? "flex-end" : "flex-start",
+              alignItems: phase === "play" ? (isCompactArena ? "flex-end" : "flex-start") : "center",
               gap: isMobileArena ? 6 : 10,
               zIndex: 4,
-              maxWidth: isSmallMobileArena ? "62vw" : "unset",
+              maxWidth: phase === "play" ? (isSmallMobileArena ? "62vw" : "unset") : "40vw",
             }}
           >
-            <div style={{ color: "#ffd339", fontSize: isSmallMobileArena ? 30 : isMobileArena ? 42 : 68, fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(orderTimeLeft % 60).padStart(2, "0")}` : "∞"}</div>
-            <div
-              style={{
-                marginTop: 2,
-                display: "flex",
-                gap: isMobileArena ? 4 : 6,
-                alignItems: "center",
-                flexWrap: isCompactArena ? "wrap" : "nowrap",
-                justifyContent: "flex-end",
-                color: "#fff5dd",
-                fontSize: isSmallMobileArena ? 9 : isMobileArena ? 10 : 13,
-                fontWeight: 800,
-                whiteSpace: isCompactArena ? "normal" : "nowrap",
-                textShadow: "0 2px 0 rgba(62,31,2,0.95)",
-                maxWidth: isCompactArena ? 130 : "unset",
-              }}
-            >
-              <span>⚡x{Math.max(1, combo)}</span>
-              <span>{isZenMode ? "🫀♾️" : `🫀${"❤️".repeat(lives)}`}</span>
-              <span>🚚{wave}</span>
-              {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
-              <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : `🟡 x2 • ⭐ x3 • 💣 ${isClassicMode ? "-1 vida" : "-2s"}`}</span>
-            </div>
+            <div style={{ color: "#ffd339", fontSize: phase === "play" ? (isSmallMobileArena ? 30 : isMobileArena ? 42 : 68) : (isSmallMobileArena ? 24 : isMobileArena ? 30 : 40), fontWeight: 900, lineHeight: 0.8, fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif", textShadow: "0 3px 0 #5b3900" }}>{usesTimer ? `${Math.floor(orderTimeLeft / 60)}:${String(orderTimeLeft % 60).padStart(2, "0")}` : "∞"}</div>
+            {phase === "play" && (
+              <div
+                style={{
+                  marginTop: 2,
+                  display: "flex",
+                  gap: isMobileArena ? 4 : 6,
+                  alignItems: "center",
+                  flexWrap: isCompactArena ? "wrap" : "nowrap",
+                  justifyContent: "flex-end",
+                  color: "#fff5dd",
+                  fontSize: isSmallMobileArena ? 9 : isMobileArena ? 10 : 13,
+                  fontWeight: 800,
+                  whiteSpace: isCompactArena ? "normal" : "nowrap",
+                  textShadow: "0 2px 0 rgba(62,31,2,0.95)",
+                  maxWidth: isCompactArena ? 130 : "unset",
+                }}
+              >
+                <span>⚡x{Math.max(1, combo)}</span>
+                <span>{isZenMode ? "🫀♾️" : `🫀${"❤️".repeat(lives)}`}</span>
+                <span>🚚{wave}</span>
+                {!isClassicMode && missedStreak > 0 && <span style={{ opacity: 0.85 }}>⚠️ Erros: {missedStreak}</span>}
+                <span style={{ opacity: 0.85 }}>{isZenMode ? "🟡 x2 • ⭐ x3 • sem bombas" : `🟡 x2 • ⭐ x3 • 💣 ${isClassicMode ? "-1 vida" : "-2s"}`}</span>
+              </div>
+            )}
           </div>
 
           <div style={{ position: "absolute", inset: 14, pointerEvents: "none" }}>
@@ -1988,8 +2000,8 @@ function spawnLogic() {
           )}
 
           {phase !== "play" && (
-            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(5,6,12,0.5)" }}>
-              <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "16px 14px" : "22px 24px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(94vw, 370px)" : "min(92vw, 520px)", maxHeight: isSmallMobileArena ? "88dvh" : "unset", overflowY: isSmallMobileArena ? "auto" : "visible" }}>
+            <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "start center", background: "rgba(5,6,12,0.5)", padding: isSmallMobileArena ? "58px 8px 10px" : "64px 12px 14px" }}>
+              <div style={{ background: "rgba(24,20,44,0.92)", border: "1px solid rgba(255,255,255,0.3)", borderRadius: 20, padding: isSmallMobileArena ? "14px 12px" : "20px 20px", textAlign: "center", color: "white", width: isSmallMobileArena ? "min(96vw, 370px)" : "min(94vw, 560px)", maxHeight: "100%", overflowY: "auto" }}>
                 <h3 style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameTitleIdle : ui.gameOver}</h3>
                 <p style={{ marginTop: 0 }}>{phase === "idle" ? ui.gameDescIdle : `Pontuação final: ${score}`}</p>
                 {!hasStoredPlayerName && (
@@ -2044,17 +2056,27 @@ function spawnLogic() {
                   {phase === "idle" ? ui.start : ui.playAgain}
                 </button>
 
-                {(phase === "idle" || settings.showTutorial) && (
-                  <div style={{ marginTop: 14, marginBottom: 12, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
-                    <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
-                    <ul style={{ margin: 0, paddingLeft: 18 }}>
-                      <li>{ui.tutorialCut}</li>
-                      <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
-                      <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
-                      <li>{ui.bonusText}</li>
-                    </ul>
-                  </div>
-                )}
+                <div style={{ marginTop: 12, marginBottom: 12, textAlign: "left" }}>
+                  <button
+                    type="button"
+                    onClick={() => setSettings((old) => ({ ...old, showTutorial: !old.showTutorial }))}
+                    style={{ border: "1px solid rgba(255,255,255,0.35)", borderRadius: 10, background: "rgba(15, 8, 4, 0.62)", color: "#fff", fontWeight: 800, padding: "7px 12px", cursor: "pointer" }}
+                  >
+                    Quick tutorial
+                  </button>
+
+                  {settings.showTutorial && (
+                    <div style={{ marginTop: 10, textAlign: "left", fontSize: 13, lineHeight: 1.35, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 12, padding: "10px 12px" }}>
+                      <p style={{ margin: "0 0 6px", fontWeight: 900 }}>{ui.tutorial}</p>
+                      <ul style={{ margin: 0, paddingLeft: 18 }}>
+                        <li>{ui.tutorialCut}</li>
+                        <li>{isZenMode ? ui.noBombsZen : `💣 ${language === "en" ? "Bomb removes" : language === "fr" ? "La bombe retire" : language === "es" ? "La bomba quita" : "Bomba tira"} ${isClassicMode ? ui.bombPenaltyClassic : ui.bombPenaltyArcade}.`}</li>
+                        <li>{isZenMode ? (language === "en" ? "Missing fruit does not penalize in Zen." : language === "es" ? "La fruta perdida no penaliza en Zen." : language === "fr" ? "Un fruit manqué ne pénalise pas en Zen." : "Fruta perdida não penaliza no Zen.") : `${language === "en" ? "Missed fruit removes" : language === "fr" ? "Un fruit manqué retire" : language === "es" ? "Fruta perdida quita" : "Fruta perdida tira"} ${isClassicMode ? ui.missPenaltyClassic : ui.missPenaltyArcade}.`}</li>
+                        <li>{ui.bonusText}</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
 
                 <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,255,255,0.2)", paddingTop: 14, textAlign: "left" }}>
                   <p style={{ margin: "0 0 8px", fontWeight: 800 }}>{ui.top10}</p>
