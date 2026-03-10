@@ -213,6 +213,10 @@ function normalizePlayerName(name) {
   return name.replace(/\s+/g, " ").trim().slice(0, 24);
 }
 
+function normalizePlayerNameKey(name) {
+  return normalizePlayerName(String(name || "")).toLocaleLowerCase();
+}
+
 function normalizeGameMode(mode) {
   return mode === "classic" || mode === "zen" ? mode : "arcade";
 }
@@ -226,15 +230,53 @@ function sortRanking(entries = [], limit = 10) {
     .slice(0, limit);
 }
 
+function mergeRankingByPlayer(entries = []) {
+  const merged = new Map();
+
+  entries.forEach((entry) => {
+    const normalizedMode = normalizeGameMode(entry.mode);
+    const normalizedName = normalizePlayerName(entry.player_name || "Anônimo") || "Anônimo";
+    const key = `${normalizedMode}:${normalizePlayerNameKey(normalizedName)}`;
+    const score = Number(entry.score) || 0;
+    const candidate = {
+      ...entry,
+      player_name: normalizedName,
+      score,
+      mode: normalizedMode,
+    };
+
+    const previous = merged.get(key);
+    if (!previous) {
+      merged.set(key, candidate);
+      return;
+    }
+
+    if (score > (Number(previous.score) || 0)) {
+      merged.set(key, candidate);
+      return;
+    }
+
+    if (score === (Number(previous.score) || 0)) {
+      const previousDate = new Date(previous.date || 0).getTime();
+      const candidateDate = new Date(candidate.date || 0).getTime();
+      if (candidateDate < previousDate) {
+        merged.set(key, candidate);
+      }
+    }
+  });
+
+  return Array.from(merged.values());
+}
+
 function loadLocalRanking() {
   if (typeof window === "undefined") return [];
   try {
     const parsed = JSON.parse(window.localStorage.getItem(RANKING_STORAGE_KEY) || "[]");
     if (!Array.isArray(parsed)) return [];
-    return sortRanking(parsed.map((entry) => ({
+    return sortRanking(mergeRankingByPlayer(parsed.map((entry) => ({
       ...entry,
       mode: normalizeGameMode(entry.mode),
-    })), Number.POSITIVE_INFINITY);
+    }))), Number.POSITIVE_INFINITY);
   } catch {
     return [];
   }
@@ -242,7 +284,7 @@ function loadLocalRanking() {
 
 function saveLocalRanking(entries) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(entries, Number.POSITIVE_INFINITY)));
+  window.localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(sortRanking(mergeRankingByPlayer(entries), Number.POSITIVE_INFINITY)));
 }
 
 function loadBestScore() {
@@ -292,12 +334,12 @@ async function fetchSupabaseRanking() {
   }
 
   const data = await response.json();
-  return sortRanking(data.map((item) => ({
+  return sortRanking(mergeRankingByPlayer(data.map((item) => ({
     player_name: item.player_name,
     score: Number(item.score) || 0,
     date: item.date,
     mode: normalizeGameMode(item.mode),
-  })), Number.POSITIVE_INFINITY);
+  }))), Number.POSITIVE_INFINITY);
 }
 
 async function insertSupabaseScore(name, score, mode) {
@@ -907,10 +949,10 @@ function JuiceFactoryNinja({ language = "pt" }) {
     }
 
     const localEntries = loadLocalRanking();
-    const updated = sortRanking([
+    const updated = sortRanking(mergeRankingByPlayer([
       ...localEntries,
       { player_name: normalizedName, score: finalScore, date: new Date().toISOString(), mode: settings.mode },
-    ], Number.POSITIVE_INFINITY);
+    ]), Number.POSITIVE_INFINITY);
     saveLocalRanking(updated);
     saveBestScore(Math.max(finalScore, ...updated.map((entry) => Number(entry.score) || 0), bestScoreLocal));
     setBestScoreLocal((oldBest) => Math.max(oldBest, finalScore, ...updated.map((entry) => Number(entry.score) || 0)));
