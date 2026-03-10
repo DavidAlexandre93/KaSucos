@@ -1483,6 +1483,13 @@ function spawnLogic() {
       }
     }
 
+    if (specialHits > 0 && correctHits === 0 && bombHits === 0) {
+      playSliceSound("cleanSlice");
+      if (!shouldThrottleEffects) {
+        playSliceSound("slash");
+      }
+    }
+
     if (correctHits > 0) {
       const now = Date.now();
       const comboCount = correctHits >= 3;
