@@ -35,6 +35,7 @@ const CUT_MARK_LIFETIME = 850;
 const JUICE_DROP_LIFETIME = 520;
 const EXPLOSION_SPARK_LIFETIME = 420;
 const ARENA_FLASH_LIFETIME = 260;
+const EXPLOSION_WAVE_LIFETIME = 520;
 const MIN_ORDER_TIME_LIMIT = 9;
 const PERFORMANCE_FRAME_MS = 40;
 const NORMAL_FRAME_MS = 20;
@@ -216,6 +217,15 @@ function createExplosionSparks(item) {
     size: random(5, 14),
     createdAt: Date.now(),
   }));
+}
+
+function createExplosionWave(item) {
+  return {
+    id: `${item.uid}-wave-${Math.random()}`,
+    x: item.x + item.size / 2,
+    y: item.y + item.size / 2,
+    createdAt: Date.now(),
+  };
 }
 
 function normalizePlayerName(name) {
@@ -741,6 +751,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
   const [cutMarks, setCutMarks] = useState([]);
   const [juiceDrops, setJuiceDrops] = useState([]);
   const [explosionSparks, setExplosionSparks] = useState([]);
+  const [explosionWaves, setExplosionWaves] = useState([]);
   const [arenaFlash, setArenaFlash] = useState([]);
   const [isArenaExpanded, setIsArenaExpanded] = useState(false);
   const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
@@ -940,6 +951,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
     setCutMarks([]);
     setJuiceDrops([]);
     setExplosionSparks([]);
+    setExplosionWaves([]);
     setArenaFlash([]);
     setIsPaused(false);
     setMissedStreak(0);
@@ -1156,10 +1168,12 @@ function JuiceFactoryNinja({ language = "pt" }) {
 
     if (type === "bomb" || type === "explosion") {
       createTone({ wave: "sawtooth", startHz: 180, endHz: 48, duration: 0.42, peak: 0.22, band: 180 });
+      createTone({ wave: "triangle", startHz: 96, endHz: 38, duration: 0.5, peak: 0.2, band: 130 });
       createNoiseBurst({ duration: 0.34, highpass: 90, lowpass: 1400, attack: 0.008, peak: 0.35 });
       setTimeout(() => {
         if (ctx.state === "running") {
           createNoiseBurst({ duration: 0.2, highpass: 140, lowpass: 2200, attack: 0.007, peak: 0.26 });
+          createTone({ wave: "square", startHz: 120, endHz: 62, duration: 0.2, peak: 0.14, band: 210 });
         }
       }, 70);
       return;
@@ -1303,6 +1317,8 @@ function spawnLogic() {
         }))
         .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
     );
+
+    setExplosionWaves((prev) => prev.filter((wave) => currentTime - wave.createdAt < EXPLOSION_WAVE_LIFETIME));
   }
 
   useEffect(() => {
@@ -1356,6 +1372,7 @@ function spawnLogic() {
     const burstEffects = [];
     const bombSparkEffects = [];
     const bombFlashEffects = [];
+    const bombWaveEffects = [];
 
     const remainingItems = [];
     for (const item of itemsRef.current) {
@@ -1374,6 +1391,7 @@ function spawnLogic() {
             y: item.y + item.size / 2,
             createdAt: Date.now(),
           });
+          bombWaveEffects.push(createExplosionWave(item));
           continue;
         }
 
@@ -1439,6 +1457,7 @@ function spawnLogic() {
       playSliceSound("explosion");
       setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-(isPerformanceMode ? 28 : 80)));
       setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-(isPerformanceMode ? 4 : 8)));
+      setExplosionWaves((old) => [...old, ...bombWaveEffects].slice(-(isPerformanceMode ? 4 : 10)));
       setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-(isPerformanceMode ? 8 : 14)));
       setCombo(0);
       if (isClassicMode) {
@@ -1974,6 +1993,32 @@ function spawnLogic() {
               </div>
             )}
           </div>
+
+          {!settings.reducedEffects && <AnimatePresence>
+            {explosionWaves.map((wave) => (
+              <motion.div
+                key={wave.id}
+                initial={{ opacity: 0.9, scale: 0.18 }}
+                animate={{ opacity: 0, scale: 2.4 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.42, ease: "easeOut" }}
+                style={{
+                  position: "absolute",
+                  left: wave.x,
+                  top: wave.y,
+                  width: 280,
+                  height: 280,
+                  borderRadius: "50%",
+                  transform: "translate(-50%, -50%)",
+                  border: "2px solid rgba(255,219,121,0.82)",
+                  boxShadow: "0 0 36px rgba(255,121,74,0.74), inset 0 0 26px rgba(255,188,102,0.46)",
+                  background: "radial-gradient(circle, rgba(255,246,196,0.46) 0%, rgba(255,178,99,0.2) 35%, rgba(255,96,60,0.08) 62%, transparent 100%)",
+                  pointerEvents: "none",
+                  mixBlendMode: "screen",
+                }}
+              />
+            ))}
+          </AnimatePresence>}
 
           {!settings.reducedEffects && <AnimatePresence>
             {arenaFlash.map((flash) => (
