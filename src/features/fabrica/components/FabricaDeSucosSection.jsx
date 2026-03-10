@@ -1320,8 +1320,8 @@ function spawnLogic() {
           y: spark.y + spark.vy,
           vy: spark.vy + GRAVITY * 0.45,
         }))
-        .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME)
-    );
+        .filter((spark) => currentTime - spark.createdAt < EXPLOSION_SPARK_LIFETIME);
+    });
 
     setExplosionWaves((prev) => prev.filter((wave) => currentTime - wave.createdAt < EXPLOSION_WAVE_LIFETIME));
   }
