@@ -113,7 +113,7 @@ export function InicioSection({ hero, onViewCombos, onBuyNow }) {
           </div>
         </div>
         <motion.div className="hero-card" {...cardMotion}>
-          <img src="/img/presentation-banner/presentation-sub-banner.png" alt="Apresentação KaSucos" />
+          <img src="/img/presentation-banner/presentation-sub-banner.jpeg" alt="Apresentação KaSucos" />
         </motion.div>
       </div>
     </section>
