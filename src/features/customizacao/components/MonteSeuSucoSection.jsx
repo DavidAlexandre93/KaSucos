@@ -6,35 +6,35 @@ import { useGSAP } from "@/shared/lib/useGSAP";
 const MAX_COMBINATIONS = 2;
 
 const FRUIT_COLORS = {
-  acerola: "#ea2f2f",
-  laranja: "#ff9f1c",
-  orange: "#ff9f1c",
-  abacaxi: "#ffd447",
-  pineapple: "#ffd447",
-  pina: "#ffd447",
-  ananas: "#ffd447",
-  limao: "#b7df4a",
-  lemon: "#b7df4a",
-  citron: "#b7df4a",
-  maracuja: "#f4be34",
-  "passion fruit": "#f4be34",
-  maracuya: "#f4be34",
-  "fruit de la passion": "#f4be34",
-  goiaba: "#ff6f91",
-  guava: "#ff6f91",
-  guayaba: "#ff6f91",
-  goyave: "#ff6f91",
-  melancia: "#37b24d",
-  watermelon: "#37b24d",
-  sandia: "#37b24d",
-  pasteque: "#37b24d",
-  morango: "#f74d6a",
-  strawberry: "#f74d6a",
-  fresa: "#f74d6a",
-  fraise: "#f74d6a",
+  acerola: "#ff2b3d",
+  laranja: "#ff8f00",
+  orange: "#ff8f00",
+  abacaxi: "#ffd300",
+  pineapple: "#ffd300",
+  pina: "#ffd300",
+  ananas: "#ffd300",
+  limao: "#a7d900",
+  lemon: "#a7d900",
+  citron: "#a7d900",
+  maracuja: "#ffba08",
+  "passion fruit": "#ffba08",
+  maracuya: "#ffba08",
+  "fruit de la passion": "#ffba08",
+  goiaba: "#ff4d8d",
+  guava: "#ff4d8d",
+  guayaba: "#ff4d8d",
+  goyave: "#ff4d8d",
+  melancia: "#00b24f",
+  watermelon: "#00b24f",
+  sandia: "#00b24f",
+  pasteque: "#00b24f",
+  morango: "#ff365f",
+  strawberry: "#ff365f",
+  fresa: "#ff365f",
+  fraise: "#ff365f",
 };
 
-const DEFAULT_JUICE_COLOR = "#ffad0f";
+const DEFAULT_JUICE_COLOR = "#ff9300";
 
 const FRUIT_EMOJIS = {
   acerola: "🍒",
@@ -125,6 +125,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
   useGSAP(
     ({ selector }) => {
       const scene = selector(".juice-scene")[0];
+      const cup = selector(".juice-cup")[0];
       const liquid = selector(".juice-liquid")[0];
       const bubbles = selector(".juice-bubble");
       const droplets = selector(".juice-droplet");
@@ -133,7 +134,11 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
       gsap.timeline().fromTo(scene, { opacity: 0, y: 30, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.65 });
 
       if (liquid) {
-        const liquidLevel = selectedFruits.length === 0 ? 308 : selectedFruits.length === 1 ? 214 : 108;
+        const cupHeight = cup?.offsetHeight || 340;
+        const emptyLevel = Math.round(cupHeight * 0.905);
+        const singleFruitLevel = Math.round(cupHeight * 0.629);
+        const comboLevel = Math.round(cupHeight * 0.318);
+        const liquidLevel = selectedFruits.length === 0 ? emptyLevel : selectedFruits.length === 1 ? singleFruitLevel : comboLevel;
         gsap.to(liquid, { "--liquid-level": liquidLevel, duration: 0.72, ease: "power2.out" });
       }
 

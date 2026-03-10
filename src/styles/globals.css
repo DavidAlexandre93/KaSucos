@@ -1807,8 +1807,8 @@ body.game-fullscreen-active .topbar nav {
   position: absolute;
   z-index: 2;
   bottom: 18px;
-  width: 238px;
-  height: 340px;
+  width: clamp(172px, 48vw, 238px);
+  aspect-ratio: 238 / 340;
   overflow: hidden;
 }
 
@@ -1870,9 +1870,9 @@ body.game-fullscreen-active .topbar nav {
 .juice-liquid {
   --liquid-level: 308;
   position: absolute;
-  left: 96px;
-  right: 88px;
-  bottom: 30px;
+  left: 40.3%;
+  right: 37%;
+  bottom: 8.8%;
   top: calc(var(--liquid-level) * 1px);
   border-radius: 12px 12px 10px 10px;
   transition: background 0.3s ease, top 0.28s ease;
@@ -1881,7 +1881,7 @@ body.game-fullscreen-active .topbar nav {
   border: 0;
   opacity: 1;
   mix-blend-mode: normal;
-  filter: saturate(1.7) contrast(1.08);
+  filter: saturate(1.95) contrast(1.14) brightness(1.04);
   box-shadow:
     inset 0 13px 24px rgba(255, 255, 255, 0.3),
     inset 0 -18px 26px rgba(92, 44, 16, 0.16),
@@ -2095,18 +2095,17 @@ body.game-fullscreen-active .topbar nav {
 
   .juice-cup {
     bottom: 14px;
-    width: 206px;
-    height: 295px;
+    width: clamp(162px, 54vw, 206px);
   }
 
   .juice-liquid {
-    left: 82px;
-    right: 74px;
-    bottom: 26px;
+    left: 40.3%;
+    right: 37%;
+    bottom: 8.8%;
   }
 
   .juice-shadow {
-    width: 206px;
+    width: clamp(162px, 54vw, 206px);
   }
 
   .builder-grid {
@@ -2123,6 +2122,23 @@ body.game-fullscreen-active .topbar nav {
     width: 44px;
     height: 44px;
     font-size: 1.45rem;
+  }
+}
+
+
+@media (max-width: 420px) {
+  .juice-scene {
+    min-height: 300px;
+  }
+
+  .juice-cup {
+    width: clamp(150px, 58vw, 182px);
+    bottom: 12px;
+  }
+
+  .juice-shadow {
+    width: clamp(150px, 58vw, 182px);
+    height: 30px;
   }
 }
 
