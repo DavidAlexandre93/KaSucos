@@ -34,7 +34,7 @@ const FRUIT_COLORS = {
   fraise: "#f74d6a",
 };
 
-const DEFAULT_JUICE_COLOR = "#ffbf3f";
+const DEFAULT_JUICE_COLOR = "#ffad0f";
 
 const FRUIT_EMOJIS = {
   acerola: "🍒",
@@ -133,7 +133,7 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
       gsap.timeline().fromTo(scene, { opacity: 0, y: 30, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.65 });
 
       if (liquid) {
-        const liquidLevel = selectedFruits.length === 0 ? 124 : selectedFruits.length === 1 ? 78 : 38;
+        const liquidLevel = selectedFruits.length === 0 ? 308 : selectedFruits.length === 1 ? 214 : 108;
         gsap.to(liquid, { "--liquid-level": liquidLevel, duration: 0.72, ease: "power2.out" });
       }
 
@@ -175,7 +175,6 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
             className="juice-cup"
             style={{ left: "50%", transform: "translateX(-50%)" }}
           >
-            <div className="juice-handle" aria-hidden="true" />
             <div className="juice-liquid" style={cupFillStyle}>
               <span className="juice-wave" />
               <span className="juice-liquid-glow" />
@@ -183,15 +182,10 @@ export function MonteSeuSucoSection({ content, onAddCustomJuice }) {
               <span className="juice-bubble juice-bubble--two" />
               <span className="juice-bubble juice-bubble--three" />
             </div>
-            <div className="juice-lid" />
-            <div className="juice-glass-highlight" aria-hidden="true" />
-            <div className="juice-glass-reflection" aria-hidden="true" />
+            <img className="juice-bottle" src="/img/monte/garrafa.svg" alt="" aria-hidden="true" loading="lazy" />
             <span className="juice-droplet juice-droplet--one" aria-hidden="true" />
             <span className="juice-droplet juice-droplet--two" aria-hidden="true" />
             <span className="juice-droplet juice-droplet--three" aria-hidden="true" />
-            <div className="cup-logo" aria-hidden="true">
-              <img src="/img/nav/logo.jpeg" alt="" loading="lazy" />
-            </div>
           </motion.div>
 
           <div className="juice-shadow" aria-hidden="true" style={{ left: "50%", transform: "translateX(-50%)" }} />
