@@ -32,6 +32,8 @@ const JUICE_DROP_LIFETIME = 520;
 const EXPLOSION_SPARK_LIFETIME = 420;
 const ARENA_FLASH_LIFETIME = 260;
 const MIN_ORDER_TIME_LIMIT = 9;
+const PERFORMANCE_FRAME_MS = 40;
+const NORMAL_FRAME_MS = 20;
 const RANKING_STORAGE_KEY = "kasucos-fabrica-ranking";
 const BEST_SCORE_STORAGE_KEY = "kasucos-fabrica-best-score";
 const PLAYER_NAME_STORAGE_KEY = "kasucos-fabrica-player-name";
@@ -183,6 +185,12 @@ function createJuiceDrops(pointA, pointB, color) {
     color,
     createdAt: Date.now(),
   }));
+}
+
+function limitEffects(list, max) {
+  if (!Array.isArray(list)) return [];
+  if (list.length <= max) return list;
+  return list.slice(0, max);
 }
 
 
@@ -670,6 +678,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
 
   const isMobileArena = size.width <= 820;
   const isMobileDevice = typeof window !== "undefined" && (window.matchMedia?.("(pointer: coarse)")?.matches || window.innerWidth <= 820);
+  const isPerformanceMode = settings.reducedEffects || isMobileDevice;
   const modeConfig = GAME_MODES[settings.mode] || GAME_MODES.arcade;
   const isClassicMode = settings.mode === "classic";
   const isZenMode = settings.mode === "zen";
@@ -1103,7 +1112,7 @@ function spawnLogic() {
     rafRef.current = requestAnimationFrame(tick);
 
     const now = performance.now();
-    const targetFrameMs = settings.reducedEffects || isMobileDevice ? 33 : 20;
+    const targetFrameMs = isPerformanceMode ? PERFORMANCE_FRAME_MS : NORMAL_FRAME_MS;
     if (now - frameTimeRef.current < targetFrameMs) return;
     frameTimeRef.current = now;
     const currentTime = Date.now();
@@ -1238,7 +1247,7 @@ function spawnLogic() {
 
         if (item.kind === "bomb") {
           bombHits += 1;
-          bombSparkEffects.push(...createExplosionSparks(item));
+          bombSparkEffects.push(...limitEffects(createExplosionSparks(item), isPerformanceMode ? 8 : 16));
           bombFlashEffects.push({
             id: `${item.uid}-flash-${Math.random()}`,
             x: item.x + item.size / 2,
@@ -1249,7 +1258,7 @@ function spawnLogic() {
         }
 
         hits += 1;
-        splitEffects.push(...createFruitSplits(item));
+        splitEffects.push(...limitEffects(createFruitSplits(item), isPerformanceMode ? 1 : 2));
         burstEffects.push({
           id: `${item.uid}-burst-${Math.random()}`,
           x: item.x + item.size / 2,
@@ -1267,20 +1276,21 @@ function spawnLogic() {
     setItems(remainingItems);
 
     if (splitEffects.length > 0) {
-      setSlicedPieces((old) => [...old, ...splitEffects].slice(-24));
-      setSliceBursts((old) => [...old, ...burstEffects].slice(-16));
+      setSlicedPieces((old) => [...old, ...splitEffects].slice(-(isPerformanceMode ? 12 : 24)));
+      setSliceBursts((old) => [...old, ...burstEffects].slice(-(isPerformanceMode ? 8 : 16)));
       const markColor = "rgba(225,29,72,0.62)";
-      setCutMarks((old) => [...old, createCutMark(pointA, pointB, markColor)].slice(-14));
+      setCutMarks((old) => [...old, createCutMark(pointA, pointB, markColor)].slice(-(isPerformanceMode ? 8 : 14)));
       const splashColor = "rgba(248,47,79,0.84)";
-      setJuiceDrops((old) => [...old, ...createJuiceDrops(pointA, pointB, splashColor)].slice(-72));
+      const drops = limitEffects(createJuiceDrops(pointA, pointB, splashColor), isPerformanceMode ? 3 : 8);
+      setJuiceDrops((old) => [...old, ...drops].slice(-(isPerformanceMode ? 20 : 72)));
     }
 
     if (bombHits > 0) {
       setRunStats((old) => ({ ...old, bombsSliced: old.bombsSliced + bombHits }));
       playSliceSound("explosion");
-      setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-80));
-      setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-8));
-      setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-14));
+      setExplosionSparks((old) => [...old, ...bombSparkEffects].slice(-(isPerformanceMode ? 28 : 80)));
+      setArenaFlash((old) => [...old, ...bombFlashEffects].slice(-(isPerformanceMode ? 4 : 8)));
+      setCutMarks((old) => [...old, createCutMark(pointA, pointB, "rgba(255,190,112,0.72)")].slice(-(isPerformanceMode ? 8 : 14)));
       setCombo(0);
       if (isClassicMode) {
         setToast(`💣 Bomba cortada! -${bombHits} vida(s).`);
@@ -1297,9 +1307,11 @@ function spawnLogic() {
 
     if (correctHits > 0) {
       playSliceSound("cleanSlice");
-      playSliceSound("slash");
-      playSliceSound("splat");
-      if (hits > 1 || combo + 1 >= 3) {
+      if (!isPerformanceMode) {
+        playSliceSound("slash");
+        playSliceSound("splat");
+      }
+      if ((hits > 1 || combo + 1 >= 3) && !isPerformanceMode) {
         playSliceSound("combo");
       }
       setCombo((old) => old + 1);
