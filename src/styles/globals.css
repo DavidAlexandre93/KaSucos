@@ -3093,6 +3093,22 @@ body.site-party-mode::after {
     grid-template-columns: 1fr;
   }
 
+  .card-media {
+    height: auto;
+    aspect-ratio: auto;
+    min-height: 0;
+    padding: 0;
+  }
+
+  .card-bottle,
+  .card:hover .card-bottle {
+    width: 100%;
+    height: auto;
+    transform: none;
+    object-fit: contain;
+    object-position: center;
+  }
+
   .effect-decor__fence {
     width: min(80vw, 460px);
   }
