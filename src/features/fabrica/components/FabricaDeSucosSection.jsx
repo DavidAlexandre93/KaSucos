@@ -505,7 +505,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 vida",
     missPenaltyArcade: "2 segundos",
     bonusText: "🟡 vale x2 pontos e ⭐ vale x3 pontos.",
-    top10: "🏆 Top 10 pontuadores por modo",
+    top10: "🏆 Top 3 pontuadores",
     loading: "Carregando ranking...",
     noScores: "Ainda sem pontuações registradas.",
     profileMissions: "Missões concluídas no perfil",
@@ -534,7 +534,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 life",
     missPenaltyArcade: "2 seconds",
     bonusText: "🟡 is worth x2 points and ⭐ is worth x3 points.",
-    top10: "🏆 Top 10 players by mode",
+    top10: "🏆 Top 3 players",
     loading: "Loading ranking...",
     noScores: "No scores yet.",
     profileMissions: "Missions completed on profile",
@@ -563,7 +563,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 vida",
     missPenaltyArcade: "2 segundos",
     bonusText: "🟡 vale x2 puntos y ⭐ vale x3 puntos.",
-    top10: "🏆 Top 10 puntuadores por modo",
+    top10: "🏆 Top 3 puntuadores",
     loading: "Cargando ranking...",
     noScores: "Aún no hay puntuaciones registradas.",
     profileMissions: "Misiones completadas en el perfil",
@@ -592,7 +592,7 @@ const FACTORY_I18N = {
     missPenaltyClassic: "1 vie",
     missPenaltyArcade: "2 secondes",
     bonusText: "🟡 vaut x2 points et ⭐ vaut x3 points.",
-    top10: "🏆 Top 10 des scores par mode",
+    top10: "🏆 Top 3 des scores",
     loading: "Chargement du classement...",
     noScores: "Pas encore de scores enregistrés.",
     profileMissions: "Missions complétées sur le profil",
@@ -704,9 +704,9 @@ function JuiceFactoryNinja({ language = "pt" }) {
     });
 
     return {
-      arcade: sortRanking(grouped.arcade),
-      classic: sortRanking(grouped.classic),
-      zen: sortRanking(grouped.zen),
+      arcade: sortRanking(grouped.arcade).slice(0, 3),
+      classic: sortRanking(grouped.classic).slice(0, 3),
+      zen: sortRanking(grouped.zen).slice(0, 3),
     };
   }, [ranking]);
 
@@ -805,7 +805,7 @@ function JuiceFactoryNinja({ language = "pt" }) {
         const entries = await fetchSupabaseRanking();
         setRanking(entries);
         setRankingStatus("ready");
-        setRankingMessage("Top 10 por modo carregado do Supabase.");
+        setRankingMessage("Top 3 por modo carregado do Supabase.");
       } catch (error) {
         logWarn("Falha ao carregar ranking do Supabase", { error: String(error) });
         setRanking(loadLocalRanking());
@@ -2072,22 +2072,54 @@ function spawnLogic() {
                   <p style={{ margin: "0 0 8px", fontWeight: 800 }}>{ui.top10}</p>
                   {rankingStatus === "loading" && <p style={{ margin: 0, opacity: 0.8 }}>{ui.loading}</p>}
                   {rankingStatus !== "loading" && ranking.length === 0 && <p style={{ margin: 0, opacity: 0.8 }}>{ui.noScores}</p>}
-                  {Object.entries(GAME_MODES).map(([modeKey, modeData]) => {
-                    const modeRanking = rankingByMode[modeKey] || [];
+                  {(() => {
+                    const selectedModeKey = normalizeGameMode(settings.mode);
+                    const modeData = GAME_MODES[selectedModeKey];
+                    const modeRanking = rankingByMode[selectedModeKey] || [];
                     if (rankingStatus === "loading" || modeRanking.length === 0) return null;
 
                     return (
-                      <div key={modeKey} style={{ marginTop: 10 }}>
-                        <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 800, opacity: 0.9 }}>{modeData.label}</p>
-                        {modeRanking.map((entry, index) => (
-                          <div key={`${modeKey}-${entry.player_name}-${entry.date}-${index}`} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontWeight: 700, opacity: 0.95 }}>
-                            <span style={{ overflowWrap: "anywhere" }}>{index + 1}. {entry.player_name}</span>
-                            <span>{entry.score} {ui.points}</span>
-                          </div>
-                        ))}
+                      <div
+                        key={selectedModeKey}
+                        style={{
+                          marginTop: 12,
+                          borderRadius: 12,
+                          border: "1px solid rgba(255,255,255,0.16)",
+                          background: "rgba(255,255,255,0.05)",
+                          padding: "8px 10px",
+                        }}
+                      >
+                        <p style={{ margin: "0 0 6px", fontSize: 13, fontWeight: 900, opacity: 0.95 }}>{modeData.label}</p>
+                        {modeRanking.map((entry, index) => {
+                          const isLeader = index === 0;
+
+                          return (
+                            <div
+                              key={`${selectedModeKey}-${entry.player_name}-${entry.date}-${index}`}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                gap: 10,
+                                fontWeight: isLeader ? 900 : 700,
+                                opacity: isLeader ? 1 : 0.92,
+                                marginTop: index === 0 ? 0 : 2,
+                                padding: "5px 8px",
+                                borderRadius: 8,
+                                background: isLeader ? "linear-gradient(90deg, rgba(255,203,84,0.3), rgba(255,144,90,0.2))" : "rgba(255,255,255,0.02)",
+                                border: isLeader ? "1px solid rgba(255,223,120,0.6)" : "1px solid transparent",
+                              }}
+                            >
+                              <span style={{ overflowWrap: "anywhere" }}>
+                                {isLeader ? "👑 " : ""}
+                                {index + 1}. {entry.player_name}
+                              </span>
+                              <span style={{ color: isLeader ? "#ffe79a" : "white" }}>{entry.score} {ui.points}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
-                  })}
+                  })()}
                   {rankingMessage && <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.8 }}>{rankingMessage}</p>}
                   <p style={{ margin: "8px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.profileMissions}: {missionProgress.completedCount}</p>
                   <p style={{ margin: "6px 0 0", fontSize: 12, opacity: 0.85 }}>{ui.achievements}: {achievementsProgress.unlockedIds.length}/{ACHIEVEMENT_DEFINITIONS.length}</p>
