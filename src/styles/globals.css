@@ -1870,12 +1870,12 @@ body.game-fullscreen-active .topbar nav {
 .juice-liquid {
   --liquid-level: 308;
   position: absolute;
-  left: 40.9%;
-  right: 37.8%;
-  bottom: 8.8%;
+  left: 41.2%;
+  right: 38.4%;
+  bottom: 9.4%;
   top: calc(var(--liquid-level) * 1px);
-  border-radius: 12px 12px 10px 10px;
-  clip-path: polygon(18% 0%, 82% 0%, 94% 18%, 96% 100%, 4% 100%, 6% 18%);
+  border-radius: 12px 12px 11px 11px;
+  clip-path: polygon(20% 0%, 80% 0%, 91% 17%, 93% 100%, 7% 100%, 9% 17%);
   transition: background 0.3s ease, top 0.28s ease;
   z-index: 2;
   overflow: hidden;
